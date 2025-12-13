@@ -22,12 +22,13 @@
 
         /* --- NAGŁÓWEK --- */
         header {
-            height: 170px; /* Optymalna wysokość */
-            background: linear-gradient(135deg, #064e3b 0%, #14532d 100%);
+            height: 160px;
+            /* Gradient poziomy: Od jaśniejszej zieleni (lewo) do głębokiej czerni/zieleni (prawo) */
+            background: linear-gradient(90deg, #059669 0%, #020617 90%);
             display: flex;
             align-items: center;
             padding: 0 40px;
-            border-bottom: 5px solid #4ade80; 
+            border-bottom: 5px solid #10b981; 
             box-shadow: 0 10px 30px rgba(0,0,0,0.6);
             position: relative;
             z-index: 10;
@@ -35,30 +36,19 @@
 
         .logo-container {
             margin-right: 35px;
-        }
-
-        /* TWORZYMY BIAŁE KOŁO (KONTENER) */
-        .logo-circle {
-            width: 140px;  /* Duże koło */
-            height: 140px; /* Duże koło */
-            background-color: #fff;
-            border-radius: 50%;
-            border: 4px solid #f0fdf4;
-            box-shadow: 0 0 25px rgba(74, 222, 128, 0.4);
-            
-            /* Centrowanie obrazka w środku */
+            /* Flex, żeby wyśrodkować obrazek wertykalnie */
             display: flex;
-            justify-content: center;
             align-items: center;
-            overflow: hidden; /* Na wszelki wypadek */
         }
 
-        /* SAM OBRAZEK LOGO - MNIEJSZY W ŚRODKU */
-        .logo-img {
-            width: 75%;  /* Zmniejszamy logo do 75% wielkości koła */
-            height: 75%; 
-            object-fit: contain; /* Zachowaj proporcje, nie ucinaj */
-            display: block;
+        .logo {
+            /* Bez tła, bez kółka */
+            height: 140px; 
+            width: auto;
+            object-fit: contain;
+            
+            /* Lekki cień, żeby logo nie zlewało się z gradientem */
+            filter: drop-shadow(0 5px 15px rgba(0,0,0,0.3));
         }
 
         .header-text {
@@ -72,15 +62,15 @@
             text-transform: uppercase; 
             letter-spacing: 2px; 
             margin: 0; 
-            color: #f0fdf4; 
+            color: #ecfdf5; /* Prawie biały, lekko miętowy */
             font-weight: 800;
             line-height: 1.1;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5); /* Cień pod tekstem dla czytelności */
         }
         
         .header-text h2 { 
             font-size: 1.4rem; 
-            color: #86efac; 
+            color: #6ee7b7; /* Jasny zielony akcent */
             font-weight: 500; 
             margin-top: 8px;
             font-family: 'Consolas', monospace;
@@ -104,7 +94,7 @@
             display: flex;
             flex-direction: column;
             gap: 25px;
-            background: radial-gradient(circle at center, #052e16 0%, #020617 100%);
+            background: radial-gradient(circle at center, #064e3b 0%, #020617 100%);
         }
 
         /* --- KARTA KLASY --- */
@@ -220,9 +210,7 @@
 
 <header>
     <div class="logo-container">
-        <div class="logo-circle">
-            <img src="orzeł.png" alt="Godło" class="logo-img" onerror="this.style.display='none'">
-        </div>
+        <img src="orzeł.png" alt="Godło" class="logo" onerror="this.style.display='none'">
     </div>
     <div class="header-text">
         <h1>PLAN LEKCJI KLAS</h1>
