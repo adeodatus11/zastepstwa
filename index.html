@@ -2,7 +2,7 @@
 <html lang="pl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Plan lekcji - Panel Kiosk</title>
     <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
     <style>
@@ -46,10 +46,8 @@
 
             --empty: #1f2937;
 
-            /* ZMIENNE WYSOKOŚCI NAGŁÓWKA DO STICKY HEADERÓW */
-            /* Obliczone na podstawie paddingów i min-height głównego header'a */
             --header-height-desktop: 134px; 
-            --header-height-mobile: 280px; /* Szacowana wysokość na telefonie po zawinięciu */
+            --header-height-mobile: 340px; 
         }
 
         body { 
@@ -61,34 +59,25 @@
             min-height: 100vh;
         }
 
-        /* --- NAGŁÓWEK GŁÓWNY --- */
+        /* --- NAGŁÓWEK --- */
         header { 
-            background: linear-gradient(
-                to right, 
-                #4dff88 0%, 
-                #33cc66 30%, 
-                #020617 100%
-            );
+            background: linear-gradient(to right, #4dff88 0%, #33cc66 30%, #020617 100%);
             color: white; 
             padding: 10px 30px; 
-            /* Główny nagłówek jest przyklejony do samej góry */
             position: sticky; top: 0; z-index: 1000; 
             box-shadow: 0 10px 30px rgba(0,0,0,0.6);
             display: flex; justify-content: space-between; align-items: center;
             min-height: 110px;
             border-bottom: 4px solid #22c55e;
             flex-wrap: wrap; 
-            /* Box-sizing jest ważny do obliczania wysokości */
             box-sizing: border-box;
         }
 
         .header-left { display: flex; align-items: center; gap: 20px; }
         
         .logo { 
-            height: 85px; 
-            width: auto; 
-            mix-blend-mode: multiply; 
-            filter: contrast(1.1);
+            height: 85px; width: auto; 
+            mix-blend-mode: multiply; filter: contrast(1.1);
         }
 
         .header-text { display: flex; flex-direction: column; justify-content: center; }
@@ -100,32 +89,28 @@
             font-family: 'Consolas', monospace; font-size: 1.1rem; 
             color: #f0fdf4; margin-top: 4px; font-weight: 600;
         }
-
-        /* --- NAWIGATOR TYGODNI --- */
-        .week-nav {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-            background: rgba(0, 0, 0, 0.25);
-            padding: 8px 20px;
-            border-radius: 12px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(5px);
+        
+        .selection-info {
+            font-size: 1.4rem; font-weight: 700; color: #fbbf24; margin-top: 5px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.8); display: none; 
+            text-transform: uppercase; letter-spacing: 0.5px;
         }
 
+        .week-nav {
+            display: flex; align-items: center; gap: 20px;
+            background: rgba(0, 0, 0, 0.25); padding: 8px 20px;
+            border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(5px);
+        }
         .week-nav-btn {
             background: none; border: none; color: #4ade80;
             font-size: 2rem; cursor: pointer; padding: 0 10px;
             transition: transform 0.2s, color 0.2s; line-height: 1;
         }
         .week-nav-btn:hover { color: #fff; transform: scale(1.2); }
-
         .week-display { display: flex; flex-direction: column; align-items: center; min-width: 180px; }
         .week-label { font-size: 0.7rem; text-transform: uppercase; color: #a7f3d0; letter-spacing: 1px; }
-        .week-range { 
-            font-family: 'Consolas', monospace; font-size: 1.3rem; font-weight: 700; 
-            color: #fff; text-shadow: 0 2px 5px rgba(0,0,0,0.5); 
-        }
+        .week-range { font-family: 'Consolas', monospace; font-size: 1.3rem; font-weight: 700; color: #fff; text-shadow: 0 2px 5px rgba(0,0,0,0.5); }
 
         .controls { display: flex; gap: 15px; align-items: center; }
         
@@ -139,43 +124,6 @@
         }
         button.back-btn:hover { background: #dc2626; transform: translateY(-2px); box-shadow: 0 6px 12px rgba(0,0,0,0.5); }
 
-        /* --- RESPONSYWNOŚĆ (MOBILE) --- */
-        @media (max-width: 900px) {
-            header {
-                flex-direction: column;
-                height: auto;
-                padding: 15px 10px;
-                gap: 15px;
-                background: linear-gradient(to bottom, #4dff88 0%, #020617 80%);
-            }
-
-            .header-left { width: 100%; justify-content: center; margin-bottom: 5px; }
-            .logo { height: 60px; }
-            .header-text h1 { font-size: 1.3rem; text-align: center; }
-            .clock { font-size: 1rem; text-align: center; }
-
-            .week-nav { width: 100%; justify-content: space-between; box-sizing: border-box; order: 2; }
-            .week-display { min-width: auto; }
-            .week-range { font-size: 1.1rem; }
-
-            .controls { width: 100%; justify-content: center; order: 3; }
-            button.back-btn { width: 100%; justify-content: center; }
-            
-            /* WYMUSZENIE JEDNEJ KOLUMNY NA TELEFONIE */
-            .week-container { grid-template-columns: 1fr !important; }
-
-            /* DOSTOSOWANIE PŁYWAJĄCEGO NAGŁÓWKA DNIA NA TELEFONIE */
-            .day-header {
-                /* Na telefonie główny header jest wyższy, więc ten musi przykleić się niżej */
-                top: var(--header-height-mobile) !important;
-            }
-        }
-
-        #debug-bar { 
-            background: #111827; font-size: 0.75rem; padding: 4px 20px; color: #64748b; 
-            border-bottom: 1px solid #1f2937; text-align: center; letter-spacing: 1px;
-        }
-
         /* --- DASHBOARD --- */
         #dashboard-view { padding: 40px; display: block; max-width: 1400px; margin: 0 auto; width: 100%; box-sizing: border-box; }
         
@@ -187,6 +135,7 @@
         }
         .section-title:first-child { margin-top: 0; }
 
+        /* KAFELKI (WIDOCZNE TYLKO NA DESKTOP) */
         .tile-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 20px; }
 
         .tile {
@@ -204,58 +153,105 @@
         .tile.room { border-bottom: 4px solid var(--accent-room); }
         .tile.class { border-bottom: 4px solid var(--accent-class); }
 
+        /* STYLIZACJA LISTY ROZWIJANEJ (MOBILE SELECT) */
+        .mobile-select-container {
+            display: none; /* Domyślnie ukryte na PC */
+            margin-bottom: 30px;
+        }
+        
+        .mobile-select {
+            width: 100%;
+            padding: 15px 20px;
+            font-size: 1.2rem;
+            background-color: #1e293b;
+            color: #ffffff;
+            border: 2px solid #334155;
+            border-radius: 10px;
+            appearance: none; /* Usuwa domyślny styl systemowy */
+            -webkit-appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 15px center;
+            background-size: 20px;
+        }
+        
+        .mobile-select:focus { outline: none; box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.3); }
+        
+        /* Kolorowe ramki dla selectów na mobile */
+        .mobile-select.teacher { border-color: var(--accent-teacher); }
+        .mobile-select.room { border-color: var(--accent-room); }
+        .mobile-select.class { border-color: var(--accent-class); }
+
+
+        /* --- RESPONSYWNOŚĆ (MOBILE) --- */
+        @media (max-width: 900px) {
+            header {
+                flex-direction: column; height: auto; padding: 15px 10px; gap: 10px;
+                background: linear-gradient(to bottom, #4dff88 0%, #020617 80%);
+            }
+            .header-left { width: 100%; justify-content: center; flex-direction: column; gap: 5px; }
+            .logo { height: 60px; }
+            .header-text { align-items: center; text-align: center; }
+            .header-text h1 { font-size: 1.2rem; }
+            .clock { font-size: 0.9rem; }
+            
+            .selection-info {
+                font-size: 1.2rem; color: #fbbf24; margin: 5px 0;
+                background: rgba(0,0,0,0.4); padding: 2px 10px;
+                border-radius: 6px; white-space: normal;
+            }
+
+            .week-nav { width: 100%; justify-content: space-between; box-sizing: border-box; order: 2; margin-top: 5px; }
+            .week-display { min-width: auto; }
+            .week-range { font-size: 1.1rem; }
+
+            .controls { width: 100%; justify-content: center; order: 3; }
+            button.back-btn { width: 100%; justify-content: center; }
+            
+            /* UKRYJ KAFELKI, POKAŻ SELECTY */
+            .tile-grid { display: none !important; }
+            .mobile-select-container { display: block !important; }
+            
+            .section-title { font-size: 1.5rem; margin: 20px 0 10px 0; }
+            #dashboard-view { padding: 20px; }
+
+            .week-container { grid-template-columns: 1fr !important; }
+            .day-header { top: var(--header-height-mobile) !important; }
+        }
+
+        #debug-bar { 
+            background: #111827; font-size: 0.75rem; padding: 4px 20px; color: #64748b; 
+            border-bottom: 1px solid #1f2937; text-align: center; letter-spacing: 1px;
+        }
+
         /* --- WIDOK PLANU --- */
         #schedule-view { display: none; width: 100%; padding-bottom: 40px; }
         
-        /* Domyślny widok (desktop) - 5 kolumn */
-        .week-container {
-            display: grid; grid-template-columns: repeat(5, 1fr); 
-            gap: 15px; padding: 20px; align-items: start;
-        }
+        .week-container { display: grid; grid-template-columns: repeat(5, 1fr); gap: 15px; padding: 20px; align-items: start; }
         
         .day-col {
-            background: #1e293b; 
-            border-radius: 10px; 
-            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
-            display: flex; flex-direction: column;
-            border: 1px solid #334155;
-            /* Usunięto overflow:hidden, bo psuje sticky na niektórych przeglądarkach */
-            /* overflow: hidden; */
+            background: #1e293b; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+            display: flex; flex-direction: column; border: 1px solid #334155;
         }
         
-        /* --- PŁYWAJĄCY NAGŁÓWEK DNIA (KLUCZOWE ZMIANY) --- */
         .day-header {
-            background: linear-gradient(to bottom, #065f46, #064e3b);
-            color: #ecfdf5; 
-            padding: 15px; 
-            text-align: center; font-weight: 700; 
-            border-bottom: 1px solid #047857;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            
-            /* Przywrócono sticky */
-            position: sticky; 
-            /* Ustawiono "top" tak, by zaczynał się pod głównym headerem */
-            top: var(--header-height-desktop); 
-            z-index: 900; /* Mniejszy z-index niż główny header (1000) */
-            border-top-left-radius: 10px;
-            border-top-right-radius: 10px;
+            background: linear-gradient(to bottom, #065f46, #064e3b); color: #ecfdf5; 
+            padding: 15px; text-align: center; font-weight: 700; 
+            border-bottom: 1px solid #047857; text-transform: uppercase; letter-spacing: 1px;
+            position: sticky; top: var(--header-height-desktop); z-index: 900;
+            border-top-left-radius: 10px; border-top-right-radius: 10px;
         }
         .day-date { font-weight: 400; font-size: 0.8em; color: #a7f3d0; display: block; margin-top: 4px; }
         .day-content { padding: 10px; display: flex; flex-direction: column; gap: 8px; }
         .slot-wrapper { 
             border: 1px solid #334155; border-radius: 8px; overflow: hidden; 
-            display: flex; flex-direction: column; gap: 0px; 
-            background: #0f172a;
+            display: flex; flex-direction: column; gap: 0px; background: #0f172a;
         }
 
         .card {
-            background: var(--card-bg); 
-            border-left: 4px solid var(--lesson-border);
-            color: #e2e8f0;
+            background: var(--card-bg); border-left: 4px solid var(--lesson-border); color: #e2e8f0;
             padding: 10px 12px; min-height: 55px; display: flex; flex-direction: column; gap: 3px;
-            border-bottom: 1px solid #334155;
-            position: relative;
+            border-bottom: 1px solid #334155; position: relative;
         }
         .card:last-child { border-bottom: none; }
         .card.empty {
@@ -307,10 +303,7 @@
         }
         footer a { color: #fff; text-decoration: none; font-weight: bold; }
 
-        /* MEDIA QUERIES DLA UKŁADU KOLUMN */
         @media (max-width: 1200px) { .week-container { grid-template-columns: repeat(3, 1fr); } }
-        /* To już jest obsłużone w głównym bloku media query dla mobile, ale zostawiam dla porządku */
-        /* @media (max-width: 900px) { .week-container { grid-template-columns: 1fr; } } */
     </style>
 </head>
 <body>
@@ -320,6 +313,7 @@
         <img src="orzeł.png" alt="ZSZ5 Logo" class="logo" onerror="this.style.display='none'">
         <div class="header-text">
             <h1>Plan lekcji - ZSZ5</h1>
+            <div id="selection-info" class="selection-info"></div>
             <div id="clock" class="clock">--:--</div>
         </div>
     </div>
@@ -401,6 +395,11 @@
         document.getElementById('schedule-view').style.display = 'none';
         document.getElementById('nav-controls').style.display = 'none';
         document.getElementById('week-nav-container').style.display = 'none';
+        
+        // Ukryj info o wyborze
+        document.getElementById('selection-info').style.display = 'none';
+        document.getElementById('selection-info').innerText = '';
+
         document.body.className = '';
         log("Menu Główne");
     }
@@ -414,6 +413,15 @@
         populateSelect(false);
         dataSel.value = id;
         document.body.className = `mode-${mode}`;
+
+        const displayDiv = document.getElementById('selection-info');
+        let displayName = id;
+        if (mode === 'teacher' && DB.teachers[id]) displayName = DB.teachers[id].name;
+        else if (mode === 'room') displayName = "Sala " + id;
+        else if (mode === 'class') displayName = "Klasa " + id;
+        
+        displayDiv.innerText = displayName;
+        displayDiv.style.display = 'block';
 
         document.getElementById('dashboard-view').style.display = 'none';
         document.getElementById('schedule-view').style.display = 'block';
@@ -465,11 +473,17 @@
     function renderDashboard() {
         const container = document.getElementById('tiles-container');
         container.innerHTML = "";
+        
         const createSection = (title, items, type, clickFn) => {
             if(!items.length) return;
             const div = document.createElement('div');
+            
+            // Tytuł sekcji
             div.innerHTML = `<div class="section-title">${title}</div>`;
-            const grid = document.createElement('div'); grid.className = 'tile-grid';
+            
+            // 1. Kontener Kafelków (Desktop)
+            const grid = document.createElement('div'); 
+            grid.className = 'tile-grid';
             items.forEach(item => {
                 const tile = document.createElement('div');
                 tile.className = `tile ${type}`;
@@ -478,12 +492,45 @@
                 grid.appendChild(tile);
             });
             div.appendChild(grid);
+
+            // 2. Kontener Selecta (Mobile)
+            const selectContainer = document.createElement('div');
+            selectContainer.className = 'mobile-select-container';
+            
+            const select = document.createElement('select');
+            select.className = `mobile-select ${type}`;
+            
+            // Domyślna opcja "Wybierz..."
+            const defaultOpt = document.createElement('option');
+            defaultOpt.text = `Wybierz ${title.toLowerCase()}...`;
+            defaultOpt.value = "";
+            defaultOpt.disabled = true;
+            defaultOpt.selected = true;
+            select.add(defaultOpt);
+
+            items.forEach(item => {
+                const opt = document.createElement('option');
+                opt.value = item.val;
+                opt.text = item.txt;
+                select.add(opt);
+            });
+
+            // Obsługa wyboru z listy
+            select.onchange = (e) => {
+                if(e.target.value) clickFn(e.target.value);
+            };
+
+            selectContainer.appendChild(select);
+            div.appendChild(selectContainer);
+
             container.appendChild(div);
         };
+
         const teachers = Object.entries(DB.teachers)
             .sort((a,b) => a[1].name.localeCompare(b[1].name))
             .filter(([id, t]) => !t.name.toLowerCase().includes('wakat'))
             .map(([id, t]) => ({val: id, txt: t.name}));
+            
         createSection("Nauczyciele", teachers, 'teacher', (id) => openSchedule('teacher', id));
         createSection("Sale Lekcyjne", DB.rooms.sort().map(r => ({val: r, txt: r})), 'room', (id) => openSchedule('room', id));
         createSection("Oddziały", DB.classesList.sort().map(c => ({val: c, txt: c})), 'class', (id) => openSchedule('class', id));
