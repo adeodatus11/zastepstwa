@@ -58,10 +58,7 @@
         .header-text h1 { margin: 0; font-size: 1.4rem; font-weight: 600; }
         .clock { font-family: monospace; font-size: 1.1rem; color: #9ca3af; margin-top: 4px; }
 
-        /* Ukryte kontrolki w trybie dashboard */
         .controls { display: flex; gap: 10px; align-items: center; }
-        .controls.hidden { display: none; }
-
         button.back-btn {
             background: #dc2626; color: white; border: none; padding: 10px 25px; 
             border-radius: 8px; cursor: pointer; font-weight: 700; font-size: 1.1rem;
@@ -95,7 +92,7 @@
             cursor: pointer;
             box-shadow: 0 2px 4px rgba(0,0,0,0.05);
             transition: transform 0.2s, box-shadow 0.2s;
-            font-size: 1.25rem; /* ~20px (Word 16pt) */
+            font-size: 1.25rem; 
             font-weight: 600;
             display: flex; align-items: center; justify-content: center;
             min-height: 80px;
@@ -114,10 +111,9 @@
         .tile.class:hover { background: var(--tile-class-hover); }
 
 
-        /* --- WIDOK PLANU (SCHOWANY DOMYŚLNIE) --- */
+        /* --- WIDOK PLANU --- */
         #schedule-view { display: none; width: 100%; }
         
-        /* SIATKA PLANU */
         .week-container {
             display: grid; grid-template-columns: repeat(5, 1fr); 
             gap: 15px; padding: 20px; align-items: start;
@@ -135,16 +131,26 @@
         }
         .day-date { font-weight: 400; font-size: 0.8em; color: #6b7280; display: block; margin-top: 2px; }
         .day-content { padding: 10px; display: flex; flex-direction: column; gap: 8px; }
-        .slot-wrapper { border: 1px solid #e5e7eb; border-radius: 8px; overflow: hidden; display: flex; flex-direction: column; }
+        
+        /* Slot wrapper może teraz zawierać wiele kart (grup) */
+        .slot-wrapper { 
+            border: 1px solid #e5e7eb; border-radius: 8px; overflow: hidden; 
+            display: flex; flex-direction: column; gap: 0px; /* Karty pod sobą bez odstępu, oddzielone borderem */
+        }
 
         /* KAFELKI LEKCJI */
         .card {
             background: var(--card-bg); border-left: 4px solid var(--lesson-border);
-            padding: 10px; min-height: 50px; display: flex; flex-direction: column; gap: 2px;
+            padding: 8px 10px; min-height: 45px; display: flex; flex-direction: column; gap: 2px;
+            border-bottom: 1px solid #e5e7eb;
+            position: relative;
         }
+        .card:last-child { border-bottom: none; }
+
         .card.empty {
             background: var(--empty); border-left-color: #d1d5db; color: #9ca3af;
             display: flex; align-items: center; justify-content: center; font-style: italic; font-size: 0.85rem;
+            min-height: 40px;
         }
         body.mode-room .card { border-left-color: var(--room-border); }
         body.mode-class .card { border-left-color: var(--class-border); }
@@ -153,6 +159,21 @@
         .nr { background: #f3f4f6; padding: 1px 6px; border-radius: 4px; color: #374151; }
         .main-info { font-weight: 700; font-size: 0.95rem; }
         .sub-line { font-weight: 600; font-size: 0.85rem; color: #111827; }
+        
+        /* Oznaczenie grupy */
+        .group-badge {
+            display: inline-block;
+            background: #e5e7eb;
+            color: #374151;
+            font-size: 0.7rem;
+            padding: 1px 5px;
+            border-radius: 4px;
+            margin-left: 5px;
+            font-weight: normal;
+            vertical-align: middle;
+            border: 1px solid #d1d5db;
+        }
+
         .is-sub { background: var(--sub-bg); border-left-color: var(--sub-border) !important; }
         .is-sub .main-info { text-decoration: line-through; opacity: 0.7; }
         .note-red { color: var(--sub-color); font-weight: 600; font-size: 0.8rem; }
@@ -191,11 +212,7 @@
     </div>
     
     <div class="controls" id="nav-controls" style="display:none">
-        <select id="mode-select" style="display:none">
-            <option value="teacher">Nauczyciel</option>
-            <option value="class">Oddział</option>
-            <option value="room">Sala</option>
-        </select>
+        <select id="mode-select" style="display:none"><option value="teacher">Nauczyciel</option><option value="class">Oddział</option><option value="room">Sala</option></select>
         <select id="data-select" style="display:none"></select>
         
         <button class="back-btn" onclick="returnToDashboard()">
@@ -224,12 +241,12 @@
         xml: './plan.xml',
         dyzury: './dyzury.xlsx',
         zastepstwa: './zastepstwa.xlsx',
-        refreshInterval: 120000, // 2 minuty (120s)
-        idleTimeout: 20000       // 20 sekund bezczynności
+        refreshInterval: 120000, // 2 minuty
+        idleTimeout: 20000       // 20 sekund
     };
 
     const DB = {
-        teachers: {}, rooms: [], classes: {}, classesList: [], 
+        teachers: {}, rooms: [], classes: {}, classesList: [], groups: {},
         locations: [], periods: [], lessons: [], duties: [], subs: [], dutyChanges: []
     };
 
@@ -238,21 +255,18 @@
     let idleTimer = null;
     let isDashboardActive = true;
 
-    // === START ===
     window.onload = () => {
         startClock();
-        refreshData(); // Pierwsze pobranie
+        refreshData();
         refreshTimer = setInterval(refreshData, CONFIG.refreshInterval);
         
-        // Eventy resetujące licznik bezczynności
         document.addEventListener('mousemove', resetIdle);
         document.addEventListener('click', resetIdle);
         document.addEventListener('touchstart', resetIdle);
     };
 
-    // === OBSŁUGA BEZCZYNNOŚCI ===
     function resetIdle() {
-        if (isDashboardActive) return; // Na dashboardzie nie ma timeoutu
+        if (isDashboardActive) return;
         clearTimeout(idleTimer);
         idleTimer = setTimeout(returnToDashboard, CONFIG.idleTimeout);
     }
@@ -263,38 +277,30 @@
         document.getElementById('dashboard-view').style.display = 'block';
         document.getElementById('schedule-view').style.display = 'none';
         document.getElementById('nav-controls').style.display = 'none';
-        document.body.className = ''; // Reset klas stylów
+        document.body.className = '';
         log("Menu Główne");
     }
 
     function openSchedule(mode, id) {
         isDashboardActive = false;
-        
-        // Ustawienie selectów (dla kompatybilności z funkcją render)
         const modeSel = document.getElementById('mode-select');
         const dataSel = document.getElementById('data-select');
-        
         modeSel.value = mode;
-        populateSelect(false); // Wypełnij opcje w data-select
-        dataSel.value = id; // Wybierz odpowiednią
+        populateSelect(false);
+        dataSel.value = id;
         
-        // Zmiana widoku
         document.getElementById('dashboard-view').style.display = 'none';
         document.getElementById('schedule-view').style.display = 'block';
         document.getElementById('nav-controls').style.display = 'flex';
         
-        // Renderowanie planu
         render();
-        resetIdle(); // Start licznika
+        resetIdle();
     }
 
-    // === GŁÓWNA FUNKCJA DANYCH ===
     async function refreshData() {
         log("Aktualizacja danych...", false);
-        
-        // Reset kontenerów
         DB.lessons = []; DB.periods = []; DB.duties = []; DB.subs = []; DB.dutyChanges = [];
-        DB.teachers = {}; DB.classes = {}; DB.classesList = []; DB.rooms = [];
+        DB.teachers = {}; DB.classes = {}; DB.classesList = []; DB.rooms = []; DB.groups = {};
 
         try {
             await loadXML();
@@ -305,81 +311,47 @@
             
             addMissingTeachers();
             
-            // Po pobraniu odśwież widok
-            if(isDashboardActive) {
-                renderDashboard();
-            } else {
-                // Jeśli użytkownik ogląda plan, odśwież go w tle (chyba że dane zniknęły)
-                populateSelect(false);
-                render();
-            }
+            if(isDashboardActive) renderDashboard();
+            else { populateSelect(false); render(); }
             
-            const now = new Date();
-            log(`Dane zaktualizowane: ${now.toLocaleTimeString()}`);
+            log(`Dane zaktualizowane: ${new Date().toLocaleTimeString()}`);
         } catch (e) {
             console.error(e);
             log("Błąd aktualizacji danych!", true);
         }
     }
 
-    // === RENDER DASHBOARD (KAFELKI) ===
     function renderDashboard() {
         const container = document.getElementById('tiles-container');
         container.innerHTML = "";
 
-        // 1. Nauczyciele
-        const secTeachers = document.createElement('div');
-        secTeachers.innerHTML = `<div class="section-title">Nauczyciele</div>`;
-        const gridT = document.createElement('div'); gridT.className = 'tile-grid';
-        
-        const sortedTeachers = Object.entries(DB.teachers)
-            .sort((a,b) => a[1].name.localeCompare(b[1].name));
+        const createSection = (title, items, type, clickFn) => {
+            if(!items.length) return;
+            const div = document.createElement('div');
+            div.innerHTML = `<div class="section-title">${title}</div>`;
+            const grid = document.createElement('div'); grid.className = 'tile-grid';
+            items.forEach(item => {
+                const tile = document.createElement('div');
+                tile.className = `tile ${type}`;
+                tile.innerText = item.txt;
+                tile.onclick = () => clickFn(item.val);
+                grid.appendChild(tile);
+            });
+            div.appendChild(grid);
+            container.appendChild(div);
+        };
 
-        sortedTeachers.forEach(([id, t]) => {
-            // Pomiń wakaty i techniczne
-            if(t.name.toLowerCase().includes('wakat')) return;
-            
-            const tile = document.createElement('div');
-            tile.className = 'tile teacher';
-            tile.innerText = t.name;
-            tile.onclick = () => openSchedule('teacher', id);
-            gridT.appendChild(tile);
-        });
-        secTeachers.appendChild(gridT);
-        container.appendChild(secTeachers);
+        const teachers = Object.entries(DB.teachers)
+            .sort((a,b) => a[1].name.localeCompare(b[1].name))
+            .filter(([id, t]) => !t.name.toLowerCase().includes('wakat'))
+            .map(([id, t]) => ({val: id, txt: t.name}));
 
-        // 2. Sale
-        const secRooms = document.createElement('div');
-        secRooms.innerHTML = `<div class="section-title">Sale Lekcyjne</div>`;
-        const gridR = document.createElement('div'); gridR.className = 'tile-grid';
-        
-        DB.rooms.sort().forEach(r => {
-            const tile = document.createElement('div');
-            tile.className = 'tile room';
-            tile.innerText = r;
-            tile.onclick = () => openSchedule('room', r);
-            gridR.appendChild(tile);
-        });
-        secRooms.appendChild(gridR);
-        container.appendChild(secRooms);
-
-        // 3. Oddziały
-        const secClasses = document.createElement('div');
-        secClasses.innerHTML = `<div class="section-title">Oddziały</div>`;
-        const gridC = document.createElement('div'); gridC.className = 'tile-grid';
-        
-        DB.classesList.sort().forEach(c => {
-            const tile = document.createElement('div');
-            tile.className = 'tile class';
-            tile.innerText = c;
-            tile.onclick = () => openSchedule('class', c);
-            gridC.appendChild(tile);
-        });
-        secClasses.appendChild(gridC);
-        container.appendChild(secClasses);
+        createSection("Nauczyciele", teachers, 'teacher', (id) => openSchedule('teacher', id));
+        createSection("Sale Lekcyjne", DB.rooms.sort().map(r => ({val: r, txt: r})), 'room', (id) => openSchedule('room', id));
+        createSection("Oddziały", DB.classesList.sort().map(c => ({val: c, txt: c})), 'class', (id) => openSchedule('class', id));
     }
 
-    // === XML & PARSERS (Zachowane z poprzedniej wersji) ===
+    // === PARSOWANIE DANYCH ===
     async function fetchFresh(url) {
         const res = await fetch(url + "?t=" + new Date().getTime());
         if(!res.ok) throw new Error(`HTTP ${res.status}`);
@@ -404,6 +376,12 @@
     async function loadXML() {
         const txt = await fetchText(CONFIG.xml);
         const xml = new DOMParser().parseFromString(txt, "text/xml");
+
+        // Grupy
+        xml.querySelectorAll('groups group').forEach(g => {
+            DB.groups[g.getAttribute('id')] = g.getAttribute('name');
+        });
+
         xml.querySelectorAll('teachers teacher').forEach(t => {
             const id = t.getAttribute('id');
             const name = (t.getAttribute('firstname')||'') + ' ' + (t.getAttribute('lastname')||t.getAttribute('name'));
@@ -413,8 +391,8 @@
             const id = c.getAttribute('id'); const name = c.getAttribute('name');
             DB.classes[id] = name; if(!DB.classesList.includes(name)) DB.classesList.push(name);
         });
-        const roomSet = new Set();
         const roomMap = {};
+        const roomSet = new Set();
         xml.querySelectorAll('classrooms classroom').forEach(r => {
             const name = r.getAttribute('name'); roomMap[r.getAttribute('id')] = name; roomSet.add(name);
         });
@@ -425,6 +403,7 @@
         DB.periods.sort((a,b) => a.nr - b.nr);
         const subjects = {};
         xml.querySelectorAll('subjects subject').forEach(s => subjects[s.getAttribute('id')] = s.getAttribute('name'));
+        
         xml.querySelectorAll('cards card').forEach(c => {
             const lesson = xml.querySelector(`lessons lesson[id="${c.getAttribute('lessonid')}"]`);
             if(!lesson) return;
@@ -433,6 +412,11 @@
             const roomId = c.getAttribute('classroomids');
             const classIds = lesson.getAttribute('classids').split(',');
             const classNames = classIds.map(cid => DB.classes[cid]).join(', ');
+            
+            // Pobranie nazwy grupy
+            const groupIds = lesson.getAttribute('groupids');
+            const groupName = groupIds ? groupIds.split(',').map(gid => DB.groups[gid]).join(',') : '';
+
             if(dayIdx > 0 && tidsRaw) {
                 const tidsArray = tidsRaw.split(',');
                 const mainTeacherId = tidsArray[0].trim();
@@ -441,13 +425,14 @@
                     teacherId: mainTeacherId, day: dayIdx, period: parseInt(c.getAttribute('period')),
                     subject: subjects[lesson.getAttribute('subjectid')] || 'Lekcja',
                     room: roomMap[roomId] || '', classNames: classNames, branch: '',
+                    groupName: groupName, // Dodajemy nazwę grupy
                     supportInfo: supportTeachers.length ? supportTeachers.join(', ') : null
                 });
             }
         });
     }
 
-    function parseDuties(wb) { /* ...Logika dyżurów bez zmian... */
+    function parseDuties(wb) { /* Skrót - logika dyżurów bez zmian */
         wb.SheetNames.forEach(sheetName => {
             const ws = wb.Sheets[sheetName];
             const data = XLSX.utils.sheet_to_json(ws, {header: 1});
@@ -553,7 +538,6 @@
         const mode = document.getElementById('mode-select').value;
         const sel = document.getElementById('data-select');
         sel.innerHTML = "";
-        document.body.className = `mode-${mode}`;
         let items = [];
         if (mode === 'teacher') items = Object.entries(DB.teachers).sort((a,b) => a[1].name.localeCompare(b[1].name)).map(x => ({val: x[0], txt: x[1].name}));
         else if (mode === 'room') items = DB.rooms.sort().map(x => ({val: x, txt: x}));
@@ -580,7 +564,7 @@
         return res;
     }
 
-    // === RENDER PLANU ===
+    // === RENDER PLANU (POPRAWIONA OBSŁUGA GRUP) ===
     function render() {
         const mode = document.getElementById('mode-select').value;
         const selectedId = document.getElementById('data-select').value;
@@ -597,6 +581,7 @@
             col.innerHTML = `<div class="day-header">${DAYS[dayNum]}<span class="day-date">${curDate.toLocaleDateString('pl-PL')}</span></div>`;
             const content = document.createElement('div'); content.className = 'day-content';
 
+            // Dyżury poranne (tylko dla nauczyciela)
             if (mode === 'teacher') {
                 getDutiesForTime(selectedId, dayNum, dateStr, 0, 480).forEach(d => {
                     const div = document.createElement('div'); div.className = 'card morning-duty'; 
@@ -606,43 +591,97 @@
                     content.appendChild(div);
                 });
             }
+
             DB.periods.forEach(p => {
                 const wrapper = document.createElement('div'); wrapper.className = 'slot-wrapper';
-                const div = document.createElement('div');
-                let lesson = null, subAbs = null, subAdd = null;
+                
+                // 1. ZNAJDŹ WSZYSTKIE LEKCJE DLA TEGO SLOTU (FILTER ZAMIAST FIND)
+                let lessons = [];
+                if (mode === 'teacher') lessons = DB.lessons.filter(l => l.teacherId == selectedId && l.day == dayNum && l.period == p.nr);
+                else if (mode === 'room') lessons = DB.lessons.filter(l => l.room === selectedId && l.day == dayNum && l.period == p.nr);
+                else if (mode === 'class') lessons = DB.lessons.filter(l => l.classNames.includes(selectedId) && l.day == dayNum && l.period == p.nr);
 
-                if (mode === 'teacher') {
-                    lesson = DB.lessons.find(l => l.teacherId == selectedId && l.day == dayNum && l.period == p.nr);
-                    subAbs = lesson ? DB.subs.find(s => s.date == dateStr && s.absent == selectedId && s.periodRaw.startsWith(p.nr+',')) : null;
-                    subAdd = DB.subs.find(s => s.date == dateStr && s.sub == selectedId && s.periodRaw.startsWith(p.nr+','));
-                } else if (mode === 'room') {
-                    lesson = DB.lessons.find(l => l.room === selectedId && l.day == dayNum && l.period == p.nr);
-                    subAdd = DB.subs.find(s => s.date == dateStr && s.room === selectedId && s.periodRaw.startsWith(p.nr+','));
-                    if(lesson) subAbs = DB.subs.find(s => s.date == dateStr && s.absent == lesson.teacherId && s.periodRaw.startsWith(p.nr+','));
-                } else if (mode === 'class') {
-                    lesson = DB.lessons.find(l => l.classNames.includes(selectedId) && l.day == dayNum && l.period == p.nr);
-                    subAdd = DB.subs.find(s => s.date == dateStr && normalizeClass(s.branch) === normalizeClass(selectedId) && s.periodRaw.startsWith(p.nr+','));
-                    if(lesson) subAbs = DB.subs.find(s => s.date == dateStr && s.absent == lesson.teacherId && s.periodRaw.startsWith(p.nr+','));
+                // 2. ZNAJDŹ WSZYSTKIE ZASTĘPSTWA DLA TEGO SLOTU
+                // Szukamy zastępstw "nowych" (wstawionych w puste miejsce lub jako dodatkowa grupa)
+                let subAdds = [];
+                if (mode === 'teacher') subAdds = DB.subs.filter(s => s.date == dateStr && s.sub == selectedId && s.periodRaw.startsWith(p.nr+','));
+                else if (mode === 'room') subAdds = DB.subs.filter(s => s.date == dateStr && s.room === selectedId && s.periodRaw.startsWith(p.nr+','));
+                else if (mode === 'class') subAdds = DB.subs.filter(s => s.date == dateStr && normalizeClass(s.branch).includes(normalizeClass(selectedId)) && s.periodRaw.startsWith(p.nr+','));
+
+                // Sortowanie lekcji (np. wg grupy)
+                lessons.sort((a,b) => (a.groupName||"").localeCompare(b.groupName||""));
+
+                // RENDEROWANIE KART LEKCJI
+                if(lessons.length > 0) {
+                    lessons.forEach(lesson => {
+                        const div = document.createElement('div');
+                        
+                        // Sprawdź czy TA KONKRETNA lekcja ma zastępstwo (nieobecność nauczyciela)
+                        // Próbujemy dopasować też grupę jeśli to możliwe (w uproszczeniu po nauczycielu)
+                        const subAbs = DB.subs.find(s => s.date == dateStr && s.absent == lesson.teacherId && s.periodRaw.startsWith(p.nr+','));
+
+                        if(subAbs) {
+                            div.className = 'card is-sub';
+                            div.innerHTML = `
+                                <div class="meta">
+                                    <span class="nr">${p.nr}</span> ${p.start}-${p.end}
+                                    ${lesson.groupName ? `<span class="group-badge">${lesson.groupName}</span>` : ''}
+                                </div>
+                                <div class="main-info">${lesson.subject}</div>
+                                <span class="note-red">Nieobecność</span>`;
+                        } else {
+                            div.className = 'card';
+                            let line = "";
+                            if(mode === 'teacher') line = `${lesson.classNames} / s.${lesson.room}`;
+                            else if(mode === 'room') line = `${lesson.classNames} / ${getTeacherName(lesson.teacherId)}`;
+                            else line = `${getTeacherName(lesson.teacherId)} / s.${lesson.room}`;
+                            
+                            div.innerHTML = `
+                                <div class="meta">
+                                    <span class="nr">${p.nr}</span> ${p.start}-${p.end}
+                                    ${lesson.groupName ? `<span class="group-badge">${lesson.groupName}</span>` : ''}
+                                </div>
+                                <div class="main-info">${lesson.subject}</div>
+                                <div class="sub-line">${line}</div>`;
+                        }
+                        wrapper.appendChild(div);
+                    });
                 }
 
-                if(subAdd) {
-                    div.className = 'card is-new';
-                    let line = mode==='teacher' ? `s.${subAdd.room} / ${subAdd.branch}` : `${getTeacherName(subAdd.sub)}`;
-                    div.innerHTML = `<div class="meta"><span class="nr">${p.nr}</span> ${p.start}-${p.end}</div><div class="main-info">ZASTĘPSTWO</div><div class="sub-line">${line} / ${subAdd.subject}</div><div class="details">Za: ${subAdd.rawAbs}</div>`;
-                } else if(lesson) {
-                    if(subAbs) {
-                        div.className = 'card is-sub';
-                        div.innerHTML = `<div class="meta"><span class="nr">${p.nr}</span> ${p.start}-${p.end}</div><div class="main-info">${lesson.subject}</div><span class="note-red">Nieobecność</span>`;
-                    } else {
-                        div.className = 'card';
-                        let line = "";
-                        if(mode === 'teacher') line = `${lesson.classNames} / s.${lesson.room}`;
-                        else line = `${getTeacherName(lesson.teacherId)}`;
-                        div.innerHTML = `<div class="meta"><span class="nr">${p.nr}</span> ${p.start}-${p.end}</div><div class="main-info">${lesson.subject}</div><div class="sub-line">${line}</div>`;
-                    }
-                } else { div.className = 'card empty'; div.innerHTML = `${p.nr}. ${p.start}`; }
-                wrapper.appendChild(div);
+                // RENDEROWANIE DODANYCH ZASTĘPSTW (NEW)
+                if(subAdds.length > 0) {
+                    subAdds.forEach(sub => {
+                        // Spróbuj wyciągnąć grupę z nazwy oddziału w Excelu (np. "3K|DZ" -> "DZ")
+                        let subGroup = "";
+                        if(sub.branch && sub.branch.includes('|')) {
+                            subGroup = sub.branch.split('|')[1];
+                        }
+
+                        const div = document.createElement('div');
+                        div.className = 'card is-new';
+                        let line = mode==='teacher' ? `s.${sub.room} / ${sub.branch}` : `${getTeacherName(sub.sub)}`;
+                        
+                        div.innerHTML = `
+                            <div class="meta">
+                                <span class="nr">${p.nr}</span> ${p.start}-${p.end}
+                                ${subGroup ? `<span class="group-badge">${subGroup}</span>` : ''}
+                            </div>
+                            <div class="main-info">ZASTĘPSTWO</div>
+                            <div class="sub-line">${line} / ${sub.subject}</div>
+                            <div class="details">Za: ${sub.rawAbs}</div>`;
+                        wrapper.appendChild(div);
+                    });
+                }
+
+                // JEŚLI PUSTO
+                if(lessons.length === 0 && subAdds.length === 0) {
+                     const div = document.createElement('div');
+                     div.className = 'card empty'; 
+                     div.innerHTML = `${p.nr}. ${p.start}`;
+                     wrapper.appendChild(div);
+                }
                 
+                // Dyżury na przerwie (tylko nauczyciel)
                 if(mode === 'teacher') {
                     const pEnd = timeToMin(p.end);
                     getDutiesForTime(selectedId, dayNum, dateStr, pEnd-5, pEnd+15).forEach(d => {
@@ -652,6 +691,7 @@
                         wrapper.appendChild(dDiv);
                     });
                 }
+                
                 content.appendChild(wrapper);
             });
             col.appendChild(content); grid.appendChild(col);
