@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Plan Lekcji i Dyżurów</title>
+    <title>Szkolny Planer - Zintegrowany</title>
     <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
     <style>
         :root {
@@ -12,14 +12,17 @@
             --text-main: #1f2937;
             --card-bg: #ffffff;
             
-            /* Paski boczne */
-            --lesson-border: #3b82f6; --room-border: #8b5cf6;
-            --class-border: #ec4899;  --loc-border: #f59e0b;
+            /* Paski boczne (border-left) */
+            --lesson-border: #3b82f6; /* Nauczyciel */
+            --room-border: #8b5cf6;   /* Sala */
+            --class-border: #ec4899;  /* Klasa */
+            --loc-border: #f59e0b;    /* Miejsce dyżuru */
             
             /* Statusy */
-            --sub-bg: #fee2e2; --sub-color: #991b1b; --sub-border: #f87171;
-            --new-bg: #dcfce7; --new-color: #14532d; --new-border: #22c55e;
+            --sub-bg: #fee2e2; --sub-color: #991b1b; --sub-border: #f87171; /* Odwołane/Zastępowane */
+            --new-bg: #dcfce7; --new-color: #14532d; --new-border: #22c55e; /* Nowe/Zastępstwo */
             
+            /* Dyżury */
             --duty-bg: #fef3c7; --duty-color: #92400e; --duty-border: #fcd34d;
             --duty-sub-bg: #ccff33; --duty-sub-border: #a3d700; --duty-sub-color: #000;
 
@@ -34,7 +37,7 @@
             position: sticky; top: 0; z-index: 1000; 
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
             display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 10px;
-            min-height: 60px; /* Rezerwujemy miejsce */
+            min-height: 60px;
         }
 
         .header-left h1 { margin: 0; font-size: 1.2rem; font-weight: 600; }
@@ -64,7 +67,6 @@
         .day-col {
             background: #fff; border-radius: 10px; 
             box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-            /* WAŻNE: Usunięto overflow: hidden, aby sticky header wewnątrz działał */
             display: flex; flex-direction: column;
         }
 
@@ -74,9 +76,8 @@
             text-align: center; font-weight: 700; border-bottom: 1px solid #e5e7eb;
             border-top-left-radius: 10px; border-top-right-radius: 10px;
             
-            /* Sticky Magic */
             position: sticky; 
-            top: 80px; /* Odstęp od góry (wysokość głównego nagłówka + margines) */
+            top: 80px; /* Wysokość nagłówka głównego + margines */
             z-index: 900;
             box-shadow: 0 2px 5px rgba(0,0,0,0.05);
         }
@@ -108,6 +109,11 @@
         .sub-line { font-weight: 600; font-size: 0.85rem; color: #111827; margin-top: 2px; }
         .details { font-size: 0.8rem; color: #4b5563; }
         .pay-info { font-weight: 800; color: #047857; font-size: 0.75rem; margin-top: 4px; text-transform: uppercase; }
+
+        /* Informacja o nauczycielu wspomagającym */
+        .support-info {
+            font-size: 0.75rem; color: #6b7280; font-style: italic; margin-top: 2px;
+        }
 
         .is-sub { background: var(--sub-bg); border-left-color: var(--sub-border) !important; }
         .is-sub .main-info { text-decoration: line-through; opacity: 0.7; }
@@ -170,7 +176,7 @@
             <option>Wczytywanie...</option>
         </select>
         
-        <button onclick="render()">Pokaż</button>
+        <button id="show-btn" onclick="render()">Pokaż</button>
     </div>
 </header>
 
@@ -299,7 +305,6 @@
     function render() {
         const mode = document.getElementById('mode-select').value;
         const selectedId = document.getElementById('data-select').value;
-        // Brak inputu daty - pobieramy bieżącą
         const today = new Date(); 
         const grid = document.getElementById('grid');
         grid.innerHTML = "";
@@ -376,8 +381,9 @@
                 }
             }
 
-            // RENDER
+            // RENDER KAFELKA
             if(subAdd) {
+                // === NOWA LEKCJA / ZASTĘPSTWO ===
                 div.className = 'card is-new';
                 let subLine = "";
                 if(mode === 'teacher') subLine = `${subAdd.branch || '?'} / s.${subAdd.room} / ${subAdd.subject}`;
@@ -392,6 +398,7 @@
                     ${subAdd.payInfo ? `<div class="pay-info">${subAdd.payInfo}</div>` : ''}
                 `;
             } else if(lesson) {
+                // === ZWYKŁA LEKCJA ===
                 if(subAbs) {
                     div.className = 'card is-sub';
                     div.innerHTML = `
@@ -408,10 +415,17 @@
                     if(mode === 'room') subLine = `${lesson.classNames || ''} / ${getTeacherName(lesson.teacherId)}`;
                     if(mode === 'class') subLine = `${getTeacherName(lesson.teacherId)} / s.${lesson.room}`;
 
-                    div.innerHTML = `
+                    let html = `
                         <div class="meta"><span class="nr">${p.nr}</span> ${p.start}-${p.end}</div>
                         <div class="main-info">${lesson.subject}</div>
                         <div class="sub-line">${subLine}</div>`;
+                    
+                    // Pokazujemy nauczyciela wspomagającego, jeśli istnieje
+                    // (I jeśli nie jesteśmy w trybie klasy - tam może być to mylące, choć opcjonalnie można dodać)
+                    if (lesson.supportInfo) {
+                        html += `<div class="support-info">+ ${lesson.supportInfo}</div>`;
+                    }
+                    div.innerHTML = html;
                 }
             } else {
                 div.className = 'card empty'; div.innerHTML = `${p.nr}. ${p.start}`;
@@ -518,6 +532,7 @@
             DB.teachers[id] = { name: name.trim(), normalized: normalize(name) };
         });
 
+        // PARSOWANIE KLAS
         xml.querySelectorAll('classes class').forEach(c => {
             const id = c.getAttribute('id');
             const name = c.getAttribute('name');
@@ -540,26 +555,37 @@
         const subjects = {};
         xml.querySelectorAll('subjects subject').forEach(s => subjects[s.getAttribute('id')] = s.getAttribute('name'));
 
+        // --- ZMODYFIKOWANA LOGIKA KARTY (WSPOMAGANIE) ---
         xml.querySelectorAll('cards card').forEach(c => {
             const lesson = xml.querySelector(`lessons lesson[id="${c.getAttribute('lessonid')}"]`);
             if(!lesson) return;
-            const tids = lesson.getAttribute('teacherids');
+            
+            const tidsRaw = lesson.getAttribute('teacherids');
             const days = c.getAttribute('days');
             const dayIdx = days.indexOf('1') + 1;
             const roomId = c.getAttribute('classroomids');
-            
             const classIds = lesson.getAttribute('classids').split(',');
             const classNames = classIds.map(cid => DB.classes[cid]).join(', ');
 
-            if(dayIdx > 0 && tids) {
-                tids.split(',').forEach(tid => {
-                    DB.lessons.push({
-                        teacherId: tid.trim(), day: dayIdx, period: parseInt(c.getAttribute('period')),
-                        subject: subjects[lesson.getAttribute('subjectid')] || 'Lekcja',
-                        room: rooms[roomId] || '', 
-                        classNames: classNames, 
-                        branch: '' 
-                    });
+            if(dayIdx > 0 && tidsRaw) {
+                const tidsArray = tidsRaw.split(',');
+                
+                // 1. Pierwszy nauczyciel = GŁÓWNY (dodajemy lekcję)
+                const mainTeacherId = tidsArray[0].trim();
+                
+                // 2. Reszta = WSPOMAGAJĄCY (tylko tekst)
+                const supportTeachers = tidsArray.slice(1).map(tid => getTeacherName(tid.trim()));
+                const supportInfoString = supportTeachers.length > 0 ? supportTeachers.join(', ') : null;
+
+                DB.lessons.push({
+                    teacherId: mainTeacherId, 
+                    day: dayIdx, 
+                    period: parseInt(c.getAttribute('period')),
+                    subject: subjects[lesson.getAttribute('subjectid')] || 'Lekcja',
+                    room: rooms[roomId] || '', 
+                    classNames: classNames, 
+                    branch: '',
+                    supportInfo: supportInfoString // Info dla widoku
                 });
             }
         });
