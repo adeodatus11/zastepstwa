@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=1080, initial-scale=1.0">
+    <title>Tablica Informacyjna ZSZ5</title>
+    <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
+    <style>
+        /* RESET I BAZA */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body {
+            background-color: #1a1a1a; /* Ciemne tło oszczędza energię i wzrok */
+            color: #ffffff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            width: 1080px;
+            height: 1920px;
+            overflow: hidden; /* Ukrywamy paski przewijania */
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* NAGŁÓWEK (Data i Zegar) */
+        header {
+            height: 120px;
+            background-color: #0d47a1; /* Granatowy */
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 40px;
+            border-bottom: 5px solid #fbc02d; /* Złoty pasek */
+        }
+        .header-title { font-size: 2.5rem; font-weight: 700; text-transform: uppercase; }
+        .header-clock { font-size: 2.2rem; font-family: monospace; font-weight: bold; color: #ffeb3b; }
+
+        /* GŁÓWNY KONTENER NA SLAJDY */
+        #slide-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            padding: 20px;
+        }
+
+        /* POJEDYNCZA SEKCJA KLASY */
+        .class-section {
+            flex: 1; /* Każda z 3 klas zajmuje 1/3 dostępnego miejsca */
+            background: #2d2d2d;
+            border-radius: 15px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            border-left: 15px solid #1976d2; /* Pasek koloru */
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+        }
+
+        .class-header {
+            background: #333;
+            padding: 10px 20px;
+            font-size: 2.2rem;
+            font-weight: bold;
+            color: #fff;
+            border-bottom: 2px solid #444;
+            display: flex;
+            justify-content: space-between;
+        }
+        .class-name { color: #42a5f5; }
+
+        /* TABELA PLANU */
+        .lesson-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 1.4rem; /* Duża czcionka */
+        }
+        .lesson-table th {
+            text-align: left;
+            padding: 8px 15px;
+            color: #888;
+            font-size: 1rem;
+            border-bottom: 1px solid #555;
+        }
+        .lesson-table td {
+            padding: 8px 15px;
+            border-bottom: 1px solid #444;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 300px;
+        }
+        
+        .col-nr { width: 5%; color: #aaa; font-weight: bold; }
+        .col-subj { width: 45%; font-weight: 600; }
+        .col-room { width: 10%; text-align: center; color: #fbc02d; font-weight: bold; }
+        .col-teach { width: 40%; font-size: 0.9em; color: #ccc; }
+
+        /* STYLE ZASTĘPSTW */
+        .row-sub { background-color: #3e2723; } /* Tło dla zastępstwa */
+        .row-sub .col-subj { color: #ff5252; } /* Czerwony przedmiot */
+        .row-sub .col-teach { color: #ff8a80; }
+        
+        .sub-badge {
+            display: inline-block;
+            background: #d32f2f;
+            color: white;
+            font-size: 0.7em;
+            padding: 2px 6px;
+            border-radius: 4px;
+            margin-right: 5px;
+            vertical-align: middle;
+        }
+
+        .cancelled { text-decoration: line-through; opacity: 0.6; }
+
+        /* STOPKA */
+        footer {
+            height: 60px;
+            background: #111;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #555;
+            font-size: 1rem;
+        }
+
+        /* Komunikat o braku danych / błędzie */
+        .fullscreen-msg {
+            display: flex; justify-content: center; align-items: center;
+            height: 100%; font-size: 3rem; color: #777; text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="header-title">PLAN LEKCJI <span id="header-date" style="font-weight:400; font-size:0.8em; margin-left:20px">...</span></div>
+    <div id="clock" class="header-clock">--:--</div>
+</header>
+
+<div id="slide-container">
+    <div class="fullscreen-msg">Ładowanie danych...</div>
+</div>
+
+<footer>
+    ZSZ5 System Informacji • Aktualizacja co 10 min
+</footer>
+
+<script>
+    // === KONFIGURACJA ===
+    const FILES = {
+        xml: './plan.xml',
+        zastepstwa: './zastepstwa.xlsx'
+    };
+
+    const DB = {
+        classes: {},     // Mapa ID -> Nazwa
+        classesList: [], // Lista nazw
+        periods: [],
+        lessons: [],     // Wszystkie lekcje
+        subs: []         // Zastępstwa
+    };
+
+    // Globalne zmienne dla karuzeli
+    let groupedClasses = [];
+    let currentSlideIndex = 0;
+    let slideInterval = null;
+
+    // === START ===
+    window.onload = async () => {
+        startClock();
+        await reloadData();
+        
+        // Automatyczne odświeżanie danych co 10 minut
+        setInterval(() => {
+            console.log("Auto-odświeżanie danych...");
+            window.location.reload();
+        }, 10 * 60 * 1000);
+    };
+
+    async function reloadData() {
+        try {
+            await loadXML();
+            // Próbujemy wczytać zastępstwa (nieobowiązkowe)
+            await loadExcel(FILES.zastepstwa).catch(e => console.warn("Brak zastępstw:", e));
+            
+            prepareSlides();
+        } catch (e) {
+            document.getElementById('slide-container').innerHTML = `<div class="fullscreen-msg" style="color:red">Błąd: ${e.message}</div>`;
+        }
+    }
+
+    // === LOGIKA KARUZELI ===
+    function prepareSlides() {
+        const today = new Date();
+        const dayOfWeek = today.getDay(); // 0-ND, 1-PN
+        
+        // 1. Sprawdź czy weekend
+        if(dayOfWeek === 0 || dayOfWeek === 6) {
+            document.getElementById('slide-container').innerHTML = `<div class="fullscreen-msg">WEEKEND<br>Szkoła zamknięta</div>`;
+            return;
+        }
+
+        // 2. Znajdź klasy, które mają dzisiaj lekcje
+        const activeClasses = [];
+        
+        // Sortujemy klasy alfabetycznie
+        DB.classesList.sort().forEach(className => {
+            // Sprawdź czy ta klasa ma jakiekolwiek lekcje w XML w tym dniu
+            const hasLessons = DB.lessons.some(l => l.day === dayOfWeek && normalize(l.className) === normalize(className));
+            if(hasLessons) {
+                activeClasses.push(className);
+            }
+        });
+
+        if(activeClasses.length === 0) {
+            document.getElementById('slide-container').innerHTML = `<div class="fullscreen-msg">Brak zajęć w dniu dzisiejszym</div>`;
+            return;
+        }
+
+        // 3. Podziel na grupy po 3
+        groupedClasses = [];
+        for (let i = 0; i < activeClasses.length; i += 3) {
+            groupedClasses.push(activeClasses.slice(i, i + 3));
+        }
+
+        // 4. Uruchom karuzelę
+        currentSlideIndex = 0;
+        renderSlide(); // Pokaż pierwszy od razu
+        
+        if(slideInterval) clearInterval(slideInterval);
+        slideInterval = setInterval(() => {
+            currentSlideIndex++;
+            if(currentSlideIndex >= groupedClasses.length) currentSlideIndex = 0;
+            renderSlide();
+        }, 5000); // 5 sekund
+    }
+
+    function renderSlide() {
+        const container = document.getElementById('slide-container');
+        const classesToShow = groupedClasses[currentSlideIndex];
+        const today = new Date();
+        const dateStr = today.toISOString().split('T')[0];
+        const dayOfWeek = today.getDay();
+
+        // Budowanie HTML stringa (szybciej niż createElement przy pełnym odświeżaniu)
+        let html = '';
+
+        classesToShow.forEach(clsName => {
+            html += `<div class="class-section">`;
+            html += `<div class="class-header"><span>Oddział</span> <span class="class-name">${clsName}</span></div>`;
+            
+            html += `<table class="lesson-table">`;
+            html += `<thead><tr><th class="col-nr">Nr</th><th class="col-subj">Przedmiot</th><th class="col-room">Sala</th><th class="col-teach">Nauczyciel</th></tr></thead>`;
+            html += `<tbody>`;
+
+            // Pobierz lekcje dla tej klasy na dziś
+            // 1. Plan bazowy
+            const lessons = DB.lessons.filter(l => l.day === dayOfWeek && normalize(l.className) === normalize(clsName));
+            
+            // Mapuj lekcje na sloty (1-9)
+            // Zakładamy max 9 lekcji na ekranie, żeby się zmieściło
+            for(let i=1; i<=9; i++) {
+                // Znajdź lekcję bazową
+                let lesson = lessons.find(l => l.period === i);
+                
+                // Sprawdź zastępstwo dla TEJ KLASY i TEJ LEKCJI
+                // Szukamy w subs wpisu gdzie branch == clsName i period == i
+                let sub = DB.subs.find(s => s.date === dateStr && normalize(s.branch) === normalize(clsName) && s.periodRaw.startsWith(i+','));
+
+                if(sub) {
+                    // Mamy zastępstwo lub zmianę sali
+                    const isCancelled = sub.sub === null && sub.note && sub.note.toLowerCase().includes('odwoł');
+                    
+                    html += `<tr class="row-sub">`;
+                    html += `<td class="col-nr">${i}</td>`;
+                    
+                    if(sub.subject === 'Okienko' || isCancelled) {
+                        html += `<td class="col-subj cancelled">${lesson ? lesson.subject : 'Lekcja'}</td>`;
+                        html += `<td class="col-room">-</td>`;
+                        html += `<td class="col-teach"><span class="sub-badge">ODWOŁANE</span></td>`;
+                    } else {
+                        html += `<td class="col-subj"><span class="sub-badge">ZAST</span> ${sub.subject}</td>`;
+                        html += `<td class="col-room">${sub.room || '?'}</td>`;
+                        html += `<td class="col-teach">${sub.subName || sub.rawSub}</td>`;
+                    }
+                    html += `</tr>`;
+
+                } else if (lesson) {
+                    // Zwykła lekcja (sprawdź czy nauczyciel nie jest nieobecny, ale klasa nie ma wpisanego zastępstwa - to rzadkie, ale możliwe)
+                    // Tutaj prosta wersja: wyświetlamy plan
+                    html += `<tr>`;
+                    html += `<td class="col-nr">${i}</td>`;
+                    html += `<td class="col-subj">${lesson.subject}</td>`;
+                    html += `<td class="col-room">${lesson.room}</td>`;
+                    html += `<td class="col-teach">${lesson.teacherName}</td>`;
+                    html += `</tr>`;
+                } else {
+                    // Pusta godzina - opcjonalnie można nie wyświetlać, żeby oszczędzić miejsce,
+                    // ale tabela wygląda lepiej jak jest równa.
+                    // Dla czystości wyświetlimy tylko pusty wiersz jeśli chcemy trzymać strukturę,
+                    // albo pominiemy. W wersji TV lepiej pominąć puste wiersze środkowe? 
+                    // Zróbmy tak: jeśli nie ma lekcji, wstawiamy pusty wiersz tylko by zachować wysokość, albo nic.
+                    // W tej wersji: wyświetlamy pusty wiersz z kropką dla zachowania gridu? Nie, pomijamy.
+                }
+            }
+
+            html += `</tbody></table>`;
+            html += `</div>`;
+        });
+
+        container.innerHTML = html;
+    }
+
+    // === DATA FETCHING ===
+    // (Skopiowane i uproszczone z app.js)
+
+    async function fetchFresh(url) {
+        return fetch(url + "?t=" + new Date().getTime());
+    }
+
+    async function loadXML() {
+        const res = await fetchFresh(FILES.xml);
+        const txt = await res.text();
+        const xml = new DOMParser().parseFromString(txt, "text/xml");
+
+        // Mapy pomocnicze
+        const teachers = {};
+        xml.querySelectorAll('teachers teacher').forEach(t => {
+            const name = (t.getAttribute('firstname')||'') + ' ' + (t.getAttribute('lastname')||t.getAttribute('name'));
+            teachers[t.getAttribute('id')] = name.trim();
+        });
+
+        const rooms = {};
+        xml.querySelectorAll('classrooms classroom').forEach(r => rooms[r.getAttribute('id')] = r.getAttribute('name'));
+
+        const subjects = {};
+        xml.querySelectorAll('subjects subject').forEach(s => subjects[s.getAttribute('id')] = s.getAttribute('name'));
+
+        // Klasy
+        DB.classes = {}; DB.classesList = [];
+        xml.querySelectorAll('classes class').forEach(c => {
+            const name = c.getAttribute('name');
+            DB.classes[c.getAttribute('id')] = name;
+            DB.classesList.push(name);
+        });
+
+        // Lekcje
+        DB.lessons = [];
+        xml.querySelectorAll('cards card').forEach(c => {
+            const lNode = xml.querySelector(`lessons lesson[id="${c.getAttribute('lessonid')}"]`);
+            if(!lNode) return;
+            
+            const tids = lNode.getAttribute('teacherids').split(',');
+            const classIds = lNode.getAttribute('classids').split(',');
+            const subject = subjects[lNode.getAttribute('subjectid')];
+            const room = rooms[c.getAttribute('classroomids')] || '';
+            const dayIdx = c.getAttribute('days').indexOf('1') + 1;
+            const period = parseInt(c.getAttribute('period'));
+
+            // Tworzymy wpis dla każdej klasy przypisanej do lekcji
+            // (Ważne dla lekcji łączonych np. WF)
+            classIds.forEach(cid => {
+                const className = DB.classes[cid];
+                if(dayIdx > 0 && className) {
+                    DB.lessons.push({
+                        day: dayIdx,
+                        period: period,
+                        className: className,
+                        subject: subject,
+                        room: room,
+                        teacherName: teachers[tids[0].trim()] // Główny nauczyciel
+                    });
+                }
+            });
+        });
+    }
+
+    async function loadExcel(url) {
+        const res = await fetchFresh(url);
+        const ab = await res.arrayBuffer();
+        const wb = XLSX.read(ab, {type: 'array'});
+        
+        const sheet = wb.Sheets["Oddziały"] || wb.Sheets[0];
+        const data = XLSX.utils.sheet_to_json(sheet);
+        
+        DB.subs = [];
+        data.forEach(r => {
+            const dStr = r['Dzień']; // Format "dd.mm.yyyy" lub serial
+            // Parsowanie daty
+            let isoDate = null;
+            if(typeof dStr === 'number') {
+                const d = XLSX.SSF.parse_date_code(dStr);
+                isoDate = `${d.y}-${pad(d.m)}-${pad(d.d)}`;
+            } else if (typeof dStr === 'string') {
+                const p = dStr.split('.');
+                if(p.length===3) isoDate = `${p[2]}-${p[1]}-${p[0]}`;
+            }
+
+            if(isoDate) {
+                DB.subs.push({
+                    date: isoDate,
+                    periodRaw: r['Lekcja'], // "2, 08:50..."
+                    branch: r['Oddział'],
+                    subject: r['Przedmiot'],
+                    room: r['Sala'],
+                    rawSub: r['Zastępca'],
+                    subName: r['Zastępca'], // Tutaj można by mapować po ID jeśli mamy, ale raw wystarczy
+                    note: r['Uwagi']
+                });
+            }
+        });
+    }
+
+    // === UTILS ===
+    function startClock() {
+        const update = () => {
+            const now = new Date();
+            document.getElementById('clock').innerText = now.toLocaleTimeString('pl-PL', {hour:'2-digit', minute:'2-digit'});
+            document.getElementById('header-date').innerText = now.toLocaleDateString('pl-PL', {weekday:'long', year:'numeric', month:'long', day:'numeric'});
+        };
+        update(); setInterval(update, 1000);
+    }
+    function normalize(str) { return (str||"").toLowerCase().replace(/\s/g, ''); }
+    function pad(n) { return n<10?'0'+n:n; }
+
+</script>
+
+</body>
+</html>
