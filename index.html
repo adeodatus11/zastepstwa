@@ -3,113 +3,130 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Plan Lekcji - Nauczyciele</title>
+    <title>Plan Tygodniowy Nauczyciela</title>
     <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
     <style>
         :root {
-            --bg: #f0f2f5;
-            --card-bg: #fff;
-            --primary: #007bff;
-            --secondary: #6c757d;
-            --success: #28a745;
-            --danger: #dc3545;
-            --warning: #ffc107;
-            --font-main: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            --bg: #f4f7f6;
+            --header-bg: #fff;
+            --card-bg: #ffffff;
+            --primary: #3498db;
+            --primary-dark: #2980b9;
+            --text: #2c3e50;
+            --border: #e0e0e0;
+            --lesson-border: #3498db;
+            --duty-border: #f1c40f;
+            --sub-border: #e74c3c;
+            --new-border: #2ecc71;
+            --duty-bg: #fffcf0;
+            --sub-bg: #fff5f5;
         }
-        body { font-family: var(--font-main); background: var(--bg); margin: 0; padding: 20px; color: #333; }
-        .container { max-width: 1000px; margin: 0 auto; }
+
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--bg); margin: 0; padding: 0; color: var(--text); }
         
-        header { text-align: center; margin-bottom: 25px; }
-        h1 { margin: 0; color: var(--primary); }
-        .subtitle { color: var(--secondary); font-size: 0.9em; margin-top: 5px; }
-
-        /* Panel Sterowania */
-        .controls { 
-            background: var(--card-bg); padding: 15px; border-radius: 8px; 
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1); display: flex; flex-wrap: wrap; gap: 15px; 
-            align-items: center; justify-content: center; margin-bottom: 20px;
-        }
-        select, input[type="date"] { padding: 8px; border: 1px solid #ced4da; border-radius: 4px; font-size: 1rem; }
-        button { 
-            padding: 8px 16px; background: var(--primary); color: white; border: none; 
-            border-radius: 4px; cursor: pointer; font-size: 1rem; transition: 0.2s; 
-        }
-        button:hover { background: #0056b3; }
-
-        /* Status i Ładowanie */
-        #status-bar { text-align: center; margin: 10px 0; font-weight: bold; min-height: 24px; }
-        .loading { color: var(--primary); }
-        .error { color: var(--danger); }
-
-        /* Lista zdarzeń (Timeline) */
-        .timeline { display: flex; flex-direction: column; gap: 10px; }
+        /* HEADER */
+        header { background: var(--header-bg); padding: 15px 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; }
+        h1 { margin: 0; font-size: 1.2rem; color: var(--primary-dark); }
         
+        .controls { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+        select, input { padding: 8px; border: 1px solid #ccc; border-radius: 4px; font-size: 0.9rem; }
+        button { padding: 8px 15px; background: var(--primary); color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; }
+        button:hover { background: var(--primary-dark); }
+
+        #status-bar { text-align: center; font-size: 0.8rem; padding: 5px; background: #eee; display: none; }
+        #status-bar.show { display: block; }
+
+        /* GRID TYGODNIOWY */
+        .week-container {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr); /* 5 równych kolumn */
+            gap: 10px;
+            padding: 20px;
+            align-items: start;
+        }
+
+        /* KOLUMNA DNIA */
+        .day-column {
+            background: #eef2f3;
+            border-radius: 8px;
+            min-height: 200px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .day-header {
+            background: var(--primary-dark);
+            color: white;
+            padding: 10px;
+            text-align: center;
+            border-radius: 8px 8px 0 0;
+            font-weight: bold;
+        }
+        .day-date { font-size: 0.8rem; opacity: 0.8; font-weight: normal; display: block; margin-top: 2px; }
+
+        .day-content { padding: 10px; display: flex; flex-direction: column; gap: 10px; }
+
+        /* KAFELEK LEKCJI/DYŻURU */
         .card {
-            background: var(--card-bg); border-radius: 6px; padding: 15px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1); border-left: 5px solid var(--secondary);
-            display: grid; grid-template-columns: 80px 1fr; gap: 15px;
+            background: var(--card-bg);
+            border-radius: 6px;
+            padding: 10px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+            border-left: 4px solid var(--border);
             position: relative;
+            font-size: 0.9rem;
         }
 
-        .time-box { 
-            display: flex; flex-direction: column; justify-content: center; 
-            align-items: center; border-right: 1px solid #eee; padding-right: 15px;
-            font-size: 0.85em; color: #555; font-weight: bold;
-        }
-        .period-num { font-size: 1.4em; color: var(--primary); margin-bottom: 2px; }
-
-        .info-box { display: flex; flex-direction: column; justify-content: center; }
-        .main-title { font-weight: bold; font-size: 1.1em; margin-bottom: 4px; }
-        .sub-title { color: #666; font-size: 0.9em; }
-        .details { font-size: 0.85em; color: #888; margin-top: 4px; }
-
-        /* Rodzaje zdarzeń */
-        .type-lesson { border-left-color: var(--primary); }
-        .type-duty { border-left-color: var(--warning); background-color: #fffdf5; }
-        .type-sub { border-left-color: var(--danger); background-color: #fff5f5; }
-        .type-added { border-left-color: var(--success); background-color: #f0fff4; }
-
-        .badge { 
-            display: inline-block; padding: 2px 6px; border-radius: 4px; 
-            font-size: 0.75em; color: white; font-weight: bold; margin-right: 5px; 
-        }
-        .bg-sub { background: var(--danger); }
-        .bg-duty { background: var(--warning); color: #333; }
-        .bg-new { background: var(--success); }
-
-        .cancelled-text { text-decoration: line-through; opacity: 0.5; }
+        .card-time { font-weight: bold; color: #7f8c8d; font-size: 0.8em; margin-bottom: 4px; display: flex; justify-content: space-between; }
+        .card-nr { background: #eee; padding: 1px 5px; border-radius: 3px; color: #555; }
         
-        /* Debug info o dopasowaniu nazwisk */
-        .match-info { font-size: 0.7em; color: #aaa; margin-top: 5px; font-style: italic; display: none; }
-        .show-debug .match-info { display: block; }
+        .card-title { font-weight: bold; margin-bottom: 2px; color: #333; }
+        .card-info { font-size: 0.85em; color: #666; }
+        .card-note { font-size: 0.8em; margin-top: 5px; padding-top: 5px; border-top: 1px dashed #eee; font-style: italic; }
+
+        /* TYPY KAFELKÓW */
+        .type-lesson { border-left-color: var(--lesson-border); }
+        .type-duty { border-left-color: var(--duty-border); background-color: var(--duty-bg); }
+        .type-sub { border-left-color: var(--sub-border); background-color: var(--sub-bg); }
+        .type-added { border-left-color: var(--new-border); }
+        
+        .cancelled { text-decoration: line-through; opacity: 0.6; }
+        
+        .badge { font-size: 0.7em; padding: 2px 4px; border-radius: 3px; color: white; vertical-align: middle; margin-right: 4px; }
+        .bg-sub { background: var(--sub-border); }
+        .bg-new { background: var(--new-border); }
+        .bg-duty { background: var(--duty-border); color: #333; }
+
+        .empty-msg { text-align: center; color: #999; font-size: 0.8rem; padding: 20px 0; font-style: italic; }
+
+        /* RESPANSYWNOŚĆ - Na telefonie kolumny jedna pod drugą */
+        @media (max-width: 800px) {
+            .week-container { grid-template-columns: 1fr; }
+            header { flex-direction: column; gap: 10px; }
+        }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <header>
-        <h1>Plan Lekcji + Dyżury</h1>
-        <div class="subtitle">Zintegrowany system z automatyczną korektą nazwisk</div>
-    </header>
-
+<header>
+    <h1>Plan Tygodniowy</h1>
     <div class="controls">
-        <label>Data: <input type="date" id="date-picker"></label>
+        <input type="date" id="date-picker" title="Wybierz dowolny dzień w tygodniu">
         <select id="teacher-select" disabled>
-            <option>Ładowanie danych...</option>
+            <option>Ładowanie bazy...</option>
         </select>
-        <button onclick="render()">Pokaż Plan</button>
-        <label style="font-size: 0.8em; margin-left: 10px;">
-            <input type="checkbox" id="debug-mode" onchange="document.body.classList.toggle('show-debug')"> Debug
-        </label>
+        <button onclick="renderWeek()">Pokaż</button>
+    </div>
+</header>
+
+<div id="status-bar"></div>
+
+<div class="week-container" id="week-grid">
     </div>
 
-    <div id="status-bar"></div>
-    <div id="timeline" class="timeline"></div>
-</div>
-
 <script>
-    // === KONFIGURACJA ===
-    // Upewnij się, że nazwy plików w repozytorium są identyczne (wielkość liter ma znaczenie na GitHub!)
+    // === KONFIGURACJA PLIKÓW ===
     const CONFIG = {
         xmlUrl: './plan.xml',
         dyzuryUrl: './dyzury.xlsx',
@@ -118,165 +135,127 @@
 
     // Baza danych w pamięci
     const DB = {
-        teachers: {}, // Mapa: ID -> { name: "Nazwisko Imie", normalized: "imienazwisko" }
-        periods: [],  // Godziny lekcyjne
-        lessons: [],  // Lekcje z XML
-        duties: [],   // Dyżury stałe
-        substitutions: [], // Zastępstwa lekcyjne
-        dutyChanges: []    // Zastępstwa dyżurowe
+        teachers: {}, 
+        periods: [],  
+        lessons: [],  
+        duties: [],   
+        substitutions: [], 
+        dutyChanges: []    
     };
+
+    const DAYS_PL = ["Niedziela", "Poniedziałek", "Wtorek", "Środa", "Czwartek", "Piątek", "Sobota"];
 
     // === START ===
     window.onload = async () => {
         document.getElementById('date-picker').valueAsDate = new Date();
-        setStatus("Ładowanie plików...", "loading");
+        setStatus("Ładowanie plików...");
         
         try {
-            await loadXML();
-            await loadExcel(CONFIG.dyzuryUrl, 'dyzury');
-            await loadExcel(CONFIG.zastepstwaUrl, 'zastepstwa');
+            await Promise.all([
+                loadXML(),
+                loadExcel(CONFIG.dyzuryUrl, 'dyzury'),
+                loadExcel(CONFIG.zastepstwaUrl, 'zastepstwa')
+            ]);
             
             populateSelect();
-            setStatus("", "");
-            // render(); // Opcjonalnie od razu pokaż dla pierwszego nauczyciela
+            setStatus("");
         } catch (e) {
             console.error(e);
-            setStatus("Błąd: " + e.message, "error");
+            setStatus("Błąd: " + e.message, true);
         }
     };
 
-    function setStatus(msg, type) {
+    function setStatus(msg, isError = false) {
         const el = document.getElementById('status-bar');
-        el.innerText = msg;
-        el.className = type;
+        el.textContent = msg;
+        el.style.color = isError ? 'red' : 'black';
+        el.className = msg ? 'show' : '';
     }
 
-    // === 1. SILNIK NORMALIZACJI NAZWISK (FUZZY MATCHING) ===
-    
-    // Funkcja czyszcząca nazwę do porównań
+    // === 1. SILNIK FUZZY MATCHING (BEZ ZMIAN) ===
     function normalizeString(str) {
         if (!str) return "";
         return str.toString().toLowerCase()
-            .replace(/^(x\.|ks\.|p\.|pani|pan)\s+/g, '') // Usuń prefiksy
-            .replace(/[^a-złąceźżńóś\s]/g, '')   // Usuń znaki specjalne (zostaw polskie litery i spacje)
+            .replace(/^(x\.|ks\.|p\.|pani|pan)\s+/g, '')
+            .replace(/[^a-złąceźżńóś\s]/g, '')
             .trim()
-            .split(/\s+/)       // Podziel na słowa
-            .sort()             // Posortuj (Jan Kowalski == Kowalski Jan)
-            .join(' ');         // Złącz
+            .split(/\s+/)
+            .sort()
+            .join(' ');
     }
 
-    // Algorytm Levenshteina (odległość edycyjna)
     function levenshtein(a, b) {
         const matrix = [];
         for(let i=0; i<=b.length; i++) matrix[i] = [i];
         for(let j=0; j<=a.length; j++) matrix[0][j] = j;
-
         for(let i=1; i<=b.length; i++){
             for(let j=1; j<=a.length; j++){
-                if(b.charAt(i-1) == a.charAt(j-1)){
-                    matrix[i][j] = matrix[i-1][j-1];
-                } else {
-                    matrix[i][j] = Math.min(
-                        matrix[i-1][j-1] + 1, // zamiana
-                        Math.min(matrix[i][j-1] + 1, matrix[i-1][j] + 1) // wstawienie/usunięcie
-                    );
-                }
+                if(b.charAt(i-1) == a.charAt(j-1)) matrix[i][j] = matrix[i-1][j-1];
+                else matrix[i][j] = Math.min(matrix[i-1][j-1]+1, Math.min(matrix[i][j-1]+1, matrix[i-1][j]+1));
             }
         }
         return matrix[b.length][a.length];
     }
 
-    // Znajdź ID nauczyciela z XML pasujące do nazwy z Excela
     function findTeacherId(rawName) {
         if (!rawName || rawName.length < 3) return null;
-        if (rawName.toLowerCase().includes("wakat") || rawName.toLowerCase().includes("brak")) return null;
+        if (rawName.toLowerCase().match(/wakat|brak|okienko/)) return null;
 
         const target = normalizeString(rawName);
-        let bestId = null;
-        let minDistance = 100;
+        let bestId = null, minDistance = 100;
 
         for (const [id, tData] of Object.entries(DB.teachers)) {
             const source = tData.normalized;
-            
-            // 1. Dokładne dopasowanie po normalizacji (szybkie)
             if (source === target) return id;
-
-            // 2. Jeśli jedno zawiera drugie (np. "Kowalski" w "Kowalski Jan")
             if (target.length > 4 && (source.includes(target) || target.includes(source))) {
-                // Preferujemy dokładniejsze dopasowania, ale to jest silny sygnał
-                if (minDistance > 1) {
-                    minDistance = 1;
-                    bestId = id;
-                }
+                if (minDistance > 1) { minDistance = 1; bestId = id; }
             }
-
-            // 3. Levenshtein dla literówek (Barabara)
             const dist = levenshtein(source, target);
-            // Dopuszczamy błąd zależny od długości słowa (max 3 znaki różnicy dla długich)
-            const threshold = source.length > 5 ? 3 : 1; 
-            
-            if (dist < minDistance && dist <= threshold) {
-                minDistance = dist;
-                bestId = id;
-            }
+            const threshold = source.length > 5 ? 3 : 1;
+            if (dist < minDistance && dist <= threshold) { minDistance = dist; bestId = id; }
         }
-        
         return bestId;
     }
 
-    // === 2. OBSŁUGA DANYCH ===
-
+    // === 2. ŁADOWANIE DANYCH ===
     async function loadXML() {
         const resp = await fetch(CONFIG.xmlUrl);
-        if (!resp.ok) throw new Error("Brak pliku plan.xml");
+        if(!resp.ok) throw new Error("Brak pliku plan.xml");
         const txt = await resp.text();
         const xml = new DOMParser().parseFromString(txt, "text/xml");
 
-        // 1. Nauczyciele
         xml.querySelectorAll('teachers teacher').forEach(t => {
             const id = t.getAttribute('id');
-            const rawName = `${t.getAttribute('lastname')} ${t.getAttribute('firstname')} ${t.getAttribute('name')}`; 
-            // Czasem name to skrót, firstname imię, lastname nazwisko. Składamy wszystko co jest.
-            
+            const fname = t.getAttribute('firstname') || '';
+            const lname = t.getAttribute('lastname') || t.getAttribute('name');
             DB.teachers[id] = {
-                name: `${t.getAttribute('firstname') || ''} ${t.getAttribute('lastname') || t.getAttribute('name')}`.trim(),
-                normalized: normalizeString(`${t.getAttribute('firstname')} ${t.getAttribute('lastname')}`)
+                name: `${fname} ${lname}`.trim(),
+                normalized: normalizeString(`${fname} ${lname}`)
             };
         });
 
-        // 2. Godziny
         xml.querySelectorAll('periods period').forEach(p => {
-            DB.periods.push({
-                nr: p.getAttribute('period'),
-                start: p.getAttribute('starttime'),
-                end: p.getAttribute('endtime')
-            });
+            DB.periods.push({ nr: p.getAttribute('period'), start: p.getAttribute('starttime'), end: p.getAttribute('endtime') });
         });
 
-        // 3. Lekcje
-        // Pomocniczo: Przedmioty i Sale
         const subjects = {};
         xml.querySelectorAll('subjects subject').forEach(s => subjects[s.getAttribute('id')] = s.getAttribute('name'));
         const rooms = {};
         xml.querySelectorAll('classrooms classroom').forEach(r => rooms[r.getAttribute('id')] = r.getAttribute('name'));
 
         xml.querySelectorAll('cards card').forEach(c => {
-            const lessonId = c.getAttribute('lessonid');
-            const lNode = xml.querySelector(`lessons lesson[id="${lessonId}"]`);
+            const lNode = xml.querySelector(`lessons lesson[id="${c.getAttribute('lessonid')}"]`);
             if (!lNode) return;
-
-            const teacherId = lNode.getAttribute('teacherids');
-            const dayBit = c.getAttribute('days'); 
-            const dayIdx = dayBit.indexOf('1') + 1; // 1=Poniedziałek
-            
-            if (dayIdx > 0 && teacherId) {
+            const tId = lNode.getAttribute('teacherids');
+            const days = c.getAttribute('days'); 
+            const dayIdx = days.indexOf('1') + 1;
+            if (dayIdx > 0 && tId) {
                 DB.lessons.push({
-                    teacherId: teacherId,
+                    teacherId: tId,
                     day: dayIdx,
                     period: c.getAttribute('period'),
                     subject: subjects[lNode.getAttribute('subjectid')] || 'Lekcja',
-                    room: rooms[c.getAttribute('classroomids')] || '',
-                    className: '' // XML aSc ma skomplikowaną relację klas, pomijam dla czytelności kodu
+                    room: rooms[c.getAttribute('classroomids')] || ''
                 });
             }
         });
@@ -284,104 +263,75 @@
 
     async function loadExcel(url, type) {
         const resp = await fetch(url);
-        if (!resp.ok) throw new Error(`Brak pliku ${url}`);
+        if(!resp.ok) throw new Error("Brak pliku " + url);
         const ab = await resp.arrayBuffer();
         const wb = XLSX.read(ab, {type: 'array'});
-
-        if (type === 'dyzury') parseDuties(wb);
-        if (type === 'zastepstwa') parseSubstitutions(wb);
+        if(type==='dyzury') parseDuties(wb);
+        if(type==='zastepstwa') parseSubstitutions(wb);
     }
 
     function parseDuties(wb) {
-        // Logika szukania arkusza z dyżurami
-        const sheet = wb.Sheets[wb.SheetNames.find(n => n.toLowerCase().includes('plan')) || wb.SheetNames[0]];
+        const sheet = wb.Sheets[wb.SheetNames.find(n => n.includes('plan')) || wb.SheetNames[0]];
         const data = XLSX.utils.sheet_to_json(sheet, {header: 1});
-
-        // Szukanie wiersza nagłówkowego (Poniedziałek, Wtorek...)
         let headRow = -1;
         const dayMap = {};
         
         for(let i=0; i<data.length; i++) {
-            const row = data[i];
-            row.forEach((cell, idx) => {
-                if(typeof cell === 'string') {
-                    if(cell.includes('Poniedziałek')) { headRow = i; dayMap[idx] = 1; }
-                    if(cell.includes('Wtorek')) { headRow = i; dayMap[idx] = 2; }
-                    if(cell.includes('Środa')) { headRow = i; dayMap[idx] = 3; }
-                    if(cell.includes('Czwartek')) { headRow = i; dayMap[idx] = 4; }
-                    if(cell.includes('Piątek')) { headRow = i; dayMap[idx] = 5; }
-                }
-            });
-            if(headRow > -1) break;
+            if(data[i].some(c => typeof c==='string' && c.includes('Poniedziałek'))) {
+                headRow = i; 
+                data[i].forEach((v, idx) => {
+                    if(!v) return;
+                    if(v.includes('Poniedziałek')) dayMap[idx]=1;
+                    if(v.includes('Wtorek')) dayMap[idx]=2;
+                    if(v.includes('Środa')) dayMap[idx]=3;
+                    if(v.includes('Czwartek')) dayMap[idx]=4;
+                    if(v.includes('Piątek')) dayMap[idx]=5;
+                });
+                break;
+            }
         }
-
         if(headRow === -1) return;
 
-        // Czytanie danych
-        for(let i = headRow + 1; i < data.length; i++) {
-            const row = data[i];
-            const place = row[0]; // Założenie: kol 0 to miejsce
-            const timeRaw = row[1]; // Założenie: kol 1 to czas
-            
-            if(!timeRaw || !place) continue;
-
-            for(const [colIdx, dayNr] of Object.entries(dayMap)) {
-                const rawName = row[colIdx];
-                if(rawName && rawName.length > 2) {
-                    // TUTAJ DZIAŁA MAGICZNE DOPASOWANIE
-                    const tId = findTeacherId(rawName);
-                    if (tId) {
-                        DB.duties.push({
-                            teacherId: tId,
-                            day: dayNr,
-                            time: timeRaw.trim(),
-                            place: place,
-                            rawName: rawName // do debugowania
-                        });
-                    }
+        for(let i=headRow+1; i<data.length; i++) {
+            const r = data[i];
+            const place = r[0]; 
+            const time = r[1];
+            if(!time || !place) continue;
+            for(const [col, day] of Object.entries(dayMap)) {
+                if(r[col] && r[col].length > 2) {
+                    const tid = findTeacherId(r[col]);
+                    if(tid) DB.duties.push({ teacherId: tid, day: day, time: time.trim(), place: place });
                 }
             }
         }
     }
 
     function parseSubstitutions(wb) {
-        // Arkusz Oddziały (zastępstwa lekcyjne)
         const sSub = wb.Sheets["Oddziały"] || wb.Sheets[0];
-        const dSub = XLSX.utils.sheet_to_json(sSub);
-        
-        dSub.forEach(row => {
-            const dateStr = normalizeDate(row['Dzień']);
-            if(!dateStr) return;
-
-            // Kto nieobecny?
-            const absId = findTeacherId(row['Nauczyciel/wakat']);
-            // Kto zastępuje?
-            const subId = findTeacherId(row['Zastępca']);
-            
-            DB.substitutions.push({
-                date: dateStr,
-                periodInfo: row['Lekcja'], // "2, 08:50-09:35"
-                absentId: absId,
-                subId: subId,
-                subject: row['Przedmiot'],
-                branch: row['Oddział'],
-                note: row['Uwagi'],
-                rawAbs: row['Nauczyciel/wakat'], // debug
-                rawSub: row['Zastępca'] // debug
+        XLSX.utils.sheet_to_json(sSub).forEach(r => {
+            const d = normalizeDate(r['Dzień']);
+            if(d) DB.substitutions.push({
+                date: d,
+                periodInfo: r['Lekcja'],
+                absentId: findTeacherId(r['Nauczyciel/wakat']),
+                subId: findTeacherId(r['Zastępca']),
+                subject: r['Przedmiot'],
+                branch: r['Oddział'],
+                note: r['Uwagi'],
+                rawSub: r['Zastępca']
             });
         });
 
-        // Arkusz Dyżury (zmiany w dyżurach)
         const sDuty = wb.Sheets["Dyżury"];
         if(sDuty) {
-            const dDuty = XLSX.utils.sheet_to_json(sDuty);
-            dDuty.forEach(row => {
-                DB.dutyChanges.push({
-                    date: normalizeDate(row['Dzień']),
-                    time: row['Godzina'],
-                    absentId: findTeacherId(row['Nauczyciel']),
-                    subId: findTeacherId(row['Zastępca']),
-                    place: row['Miejsce dyżuru']
+            XLSX.utils.sheet_to_json(sDuty).forEach(r => {
+                const d = normalizeDate(r['Dzień']);
+                if(d) DB.dutyChanges.push({
+                    date: d,
+                    time: r['Godzina'],
+                    absentId: findTeacherId(r['Nauczyciel']),
+                    subId: findTeacherId(r['Zastępca']),
+                    place: r['Miejsce dyżuru']
                 });
             });
         }
@@ -389,65 +339,98 @@
 
     function normalizeDate(val) {
         if(!val) return null;
-        // Obsługa formatu Excel (liczba dni od 1900)
         if(typeof val === 'number') {
             const d = XLSX.SSF.parse_date_code(val);
             return `${d.y}-${pad(d.m)}-${pad(d.d)}`;
         }
-        // Obsługa tekstu "08.12.2025"
         if(typeof val === 'string') {
-            const parts = val.trim().split('.');
-            if(parts.length === 3) return `${parts[2]}-${parts[1]}-${parts[0]}`;
+            const p = val.trim().split('.');
+            if(p.length === 3) return `${p[2]}-${p[1]}-${p[0]}`;
         }
         return null;
     }
     function pad(n) { return n < 10 ? '0'+n : n; }
 
-    // === 3. WYŚWIETLANIE (UI) ===
-
     function populateSelect() {
         const sel = document.getElementById('teacher-select');
         sel.innerHTML = '<option value="">-- Wybierz Nauczyciela --</option>';
         sel.disabled = false;
-
-        // Sortuj po nazwie wyświetlanej
-        const sorted = Object.entries(DB.teachers).sort((a,b) => a[1].name.localeCompare(b[1].name));
-        
-        sorted.forEach(([id, t]) => {
-            const opt = document.createElement('option');
-            opt.value = id;
-            opt.textContent = t.name;
-            sel.appendChild(opt);
-        });
+        Object.entries(DB.teachers)
+            .sort((a,b) => a[1].name.localeCompare(b[1].name))
+            .forEach(([id, t]) => {
+                const opt = document.createElement('option');
+                opt.value = id;
+                opt.textContent = t.name;
+                sel.appendChild(opt);
+            });
     }
 
-    function render() {
+    // === 3. RENDEROWANIE TYGODNIA ===
+
+    // Pomoc: Znajdź datę poniedziałku dla wybranego dnia
+    function getMonday(d) {
+        d = new Date(d);
+        const day = d.getDay();
+        const diff = d.getDate() - day + (day == 0 ? -6 : 1); 
+        return new Date(d.setDate(diff));
+    }
+
+    function formatDate(d) {
+        return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+    }
+
+    function renderWeek() {
         const tId = document.getElementById('teacher-select').value;
-        const dateVal = document.getElementById('date-picker').value;
-        const box = document.getElementById('timeline');
-        box.innerHTML = '';
+        const rawDate = document.getElementById('date-picker').value;
+        const grid = document.getElementById('week-grid');
+        grid.innerHTML = '';
 
-        if(!tId || !dateVal) return;
+        if(!tId || !rawDate) return;
 
-        const dateObj = new Date(dateVal);
-        const dayOfWeek = dateObj.getDay(); // 0-ND, 1-PN
-        
-        if(dayOfWeek === 0 || dayOfWeek === 6) {
-            box.innerHTML = '<div style="padding:20px; text-align:center;">Weekend - brak zajęć</div>';
-            return;
+        const monday = getMonday(rawDate);
+
+        // Pętla przez 5 dni tygodnia (Pon-Pt)
+        for (let i = 0; i < 5; i++) {
+            const currentObj = new Date(monday);
+            currentObj.setDate(monday.getDate() + i);
+            const dateStr = formatDate(currentObj);
+            const dayNum = i + 1; // 1=Pon
+
+            // Stwórz kolumnę
+            const col = document.createElement('div');
+            col.className = 'day-column';
+            col.innerHTML = `
+                <div class="day-header">
+                    ${DAYS_PL[dayNum]}
+                    <span class="day-date">${dateStr}</span>
+                </div>
+                <div class="day-content" id="content-${dayNum}"></div>
+            `;
+            grid.appendChild(col);
+
+            const contentBox = col.querySelector('.day-content');
+            const events = getEventsForDay(tId, dayNum, dateStr);
+
+            if (events.length === 0) {
+                contentBox.innerHTML = '<div class="empty-msg">Brak zajęć</div>';
+            } else {
+                events.forEach(ev => contentBox.appendChild(createCard(ev)));
+            }
         }
+    }
 
-        // --- ZBIERANIE DANYCH ---
+    // Pobiera i przetwarza zdarzenia dla jednego dnia
+    function getEventsForDay(tId, dayNum, dateStr) {
         let events = [];
 
-        // 1. Lekcje z planu bazowego (XML)
-        DB.lessons.filter(l => l.teacherId === tId && l.day === dayOfWeek).forEach(l => {
-            const period = DB.periods.find(p => p.nr == l.period);
+        // 1. Lekcje bazowe
+        DB.lessons.filter(l => l.teacherId === tId && l.day === dayNum).forEach(l => {
+            const p = DB.periods.find(p => p.nr == l.period);
             events.push({
                 type: 'lesson',
-                sortTime: period.start,
+                sortTime: p.start,
                 period: l.period,
-                timeDesc: `${period.start} - ${period.end}`,
+                time: `${p.start}-${p.end}`,
                 title: l.subject,
                 subtitle: `Sala: ${l.room}`,
                 original: true
@@ -455,124 +438,115 @@
         });
 
         // 2. Dyżury stałe
-        DB.duties.filter(d => d.teacherId === tId && d.day === dayOfWeek).forEach(d => {
+        DB.duties.filter(d => d.teacherId === tId && d.day === dayNum).forEach(d => {
             events.push({
                 type: 'duty',
                 sortTime: d.time.split('-')[0].trim(),
-                timeDesc: d.time,
+                time: d.time,
                 title: 'DYŻUR',
                 subtitle: d.place,
-                original: true,
-                rawName: d.rawName // do debugu
+                original: true
             });
         });
 
-        // 3. Aplikowanie zastępstw
-        
-        // A. Lekcje - czy jestem nieobecny?
-        const myAbsences = DB.substitutions.filter(s => s.date === dateVal && s.absentId === tId);
-        myAbsences.forEach(sub => {
-            const nr = sub.periodInfo.split(',')[0]; // "2"
-            // Znajdź tę lekcję w events i oznacz
+        // 3. Zastępstwa (Lekcje)
+        // A. Jestem nieobecny
+        DB.substitutions.filter(s => s.date === dateStr && s.absentId === tId).forEach(sub => {
+            const nr = sub.periodInfo.split(',')[0];
             const ev = events.find(e => e.type === 'lesson' && e.period == nr);
             if(ev) {
                 ev.status = 'cancelled';
-                ev.subInfo = `Zastępstwo: ${sub.rawSub || 'Brak'} (${sub.note || ''})`;
-                ev.type = 'sub'; // Zmienia styl
+                ev.subInfo = `Zastępca: ${sub.rawSub || 'Brak'}`;
+                ev.note = sub.note;
+                ev.typeOverride = 'sub'; // Zmiana koloru
             }
         });
 
-        // B. Lekcje - czy zastępuję kogoś?
-        const mySubs = DB.substitutions.filter(s => s.date === dateVal && s.subId === tId);
-        mySubs.forEach(sub => {
+        // B. Zastępuję kogoś
+        DB.substitutions.filter(s => s.date === dateStr && s.subId === tId).forEach(sub => {
             const parts = sub.periodInfo.split(',');
-            const nr = parts[0];
-            const timeRange = parts[1] || "";
-            const startTime = timeRange.split('-')[0].trim() || "00:00";
+            const nr = parts[0].trim();
+            const timeRange = parts[1] ? parts[1].trim() : "";
+            const startTime = timeRange.split('-')[0] || "00:00";
+            
+            // Spróbuj znaleźć godziny jeśli timeRange pusty
+            let pTime = timeRange;
+            if(!pTime) {
+                const p = DB.periods.find(x => x.nr == nr);
+                if(p) { pTime = `${p.start}-${p.end}`; startTime = p.start; }
+            }
 
             events.push({
                 type: 'added',
                 sortTime: startTime,
                 period: nr,
-                timeDesc: timeRange,
-                title: `Zastępstwo za: ${sub.rawAbs}`,
-                subtitle: `${sub.subject} | Klasa: ${sub.branch}`,
+                time: pTime,
+                title: `ZASTĘPSTWO`,
+                subtitle: `${sub.subject} (${sub.branch})`,
                 note: sub.note
             });
         });
 
-        // C. Dyżury - czy jestem nieobecny?
-        const dutyAbs = DB.dutyChanges.filter(d => d.date === dateVal && d.absentId === tId);
-        dutyAbs.forEach(da => {
-            // Szukamy dyżuru o tej godzinie
-            const ev = events.find(e => e.type === 'duty' && e.timeDesc === da.time);
+        // 4. Zmiany dyżurów
+        // A. Odwołane moje
+        DB.dutyChanges.filter(dc => dc.date === dateStr && dc.absentId === tId).forEach(dc => {
+            const ev = events.find(e => e.type === 'duty' && e.time === dc.time);
             if(ev) {
                 ev.status = 'cancelled';
-                ev.subInfo = `Zastępstwo na dyżurze: ${da.subId ? 'Tak' : 'Nie'}`;
+                ev.subInfo = "Dyżur odwołany/zastępowany";
             }
         });
 
-        // D. Dyżury - czy zastępuję?
-        const dutyNew = DB.dutyChanges.filter(d => d.date === dateVal && d.subId === tId);
-        dutyNew.forEach(dn => {
+        // B. Dodane (zastępuję kogoś)
+        DB.dutyChanges.filter(dc => dc.date === dateStr && dc.subId === tId).forEach(dc => {
             events.push({
                 type: 'duty',
-                sortTime: dn.time.split('-')[0],
-                timeDesc: dn.time,
-                title: 'DYŻUR (Zastępstwo)',
-                subtitle: dn.place,
+                sortTime: dc.time.split('-')[0],
+                time: dc.time,
+                title: 'DYŻUR (ZA KOGOŚ)',
+                subtitle: dc.place,
                 typeOverride: 'added'
             });
         });
 
-        // --- SORTOWANIE I RENDEROWANIE ---
-        events.sort((a,b) => a.sortTime.localeCompare(b.sortTime));
+        return events.sort((a,b) => a.sortTime.localeCompare(b.sortTime));
+    }
 
-        if(events.length === 0) {
-            box.innerHTML = '<div style="padding:20px; text-align:center;">Brak planu na ten dzień.</div>';
-            return;
+    function createCard(ev) {
+        const div = document.createElement('div');
+        let cls = ['card'];
+        
+        // Ustalanie klasy CSS
+        if (ev.typeOverride) {
+            if (ev.typeOverride === 'sub') cls.push('type-sub');
+            if (ev.typeOverride === 'added') cls.push('type-added');
+        } else {
+            if (ev.type === 'lesson') cls.push('type-lesson');
+            if (ev.type === 'duty') cls.push('type-duty');
+            if (ev.type === 'added') cls.push('type-added');
+        }
+        if (ev.status === 'cancelled') cls.push('cancelled');
+        
+        div.className = cls.join(' ');
+
+        let html = `<div class="card-time">`;
+        if(ev.period) html += `<span class="card-nr">${ev.period}</span>`;
+        html += `<span>${ev.time}</span></div>`;
+
+        html += `<div class="card-title">${ev.title}</div>`;
+        html += `<div class="card-info">${ev.subtitle}</div>`;
+
+        if (ev.subInfo) {
+            html += `<div class="card-note" style="color:red; font-weight:bold">${ev.subInfo}</div>`;
+        }
+        if (ev.note) {
+            html += `<div class="card-note">${ev.note}</div>`;
         }
 
-        events.forEach(ev => {
-            const el = document.createElement('div');
-            // Klasy CSS
-            let classes = ['card'];
-            if(ev.type === 'lesson') classes.push('type-lesson');
-            if(ev.type === 'duty') classes.push('type-duty');
-            if(ev.type === 'sub') classes.push('type-sub');
-            if(ev.type === 'added' || ev.typeOverride === 'added') classes.push('type-added');
-            
-            el.className = classes.join(' ');
-
-            let html = `
-                <div class="time-box">
-                    ${ev.period ? `<span class="period-num">${ev.period}</span>` : ''}
-                    <span>${ev.timeDesc}</span>
-                </div>
-                <div class="info-box">
-                    <div class="main-title ${ev.status==='cancelled'?'cancelled-text':''}">
-                        ${ev.status==='cancelled' ? '<span class="badge bg-sub">ODWOŁANE</span>' : ''}
-                        ${ev.type==='added' ? '<span class="badge bg-new">NOWE</span>' : ''}
-                        ${ev.title}
-                    </div>
-                    <div class="sub-title">${ev.subtitle}</div>
-            `;
-            
-            if(ev.note) html += `<div class="details">Uwagi: ${ev.note}</div>`;
-            if(ev.subInfo) html += `<div class="details" style="color:var(--danger)">${ev.subInfo}</div>`;
-            
-            // Debug info
-            if(ev.rawName) {
-                html += `<div class="match-info">Oryginał w Excelu: "${ev.rawName}" -> Zmapowano na ID XML</div>`;
-            }
-
-            html += `</div>`; // koniec info-box
-            el.innerHTML = html;
-            box.appendChild(el);
-        });
+        div.innerHTML = html;
+        return div;
     }
 
 </script>
-
 </body>
 </html>
