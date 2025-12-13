@@ -46,8 +46,9 @@
 
             --empty: #1f2937;
 
+            /* Wysokości nagłówka do obliczania pozycji sticky */
             --header-height-desktop: 134px; 
-            --header-height-mobile: 340px; 
+            --header-height-mobile: 155px; /* ZNACZNIE MNIEJ NIŻ WCZEŚNIEJ */
         }
 
         body { 
@@ -126,7 +127,6 @@
 
         /* --- DASHBOARD --- */
         #dashboard-view { padding: 40px; display: block; max-width: 1400px; margin: 0 auto; width: 100%; box-sizing: border-box; }
-        
         .section-title { 
             font-size: 2rem; font-weight: 700; color: #f0fdf4; margin: 40px 0 20px 0; 
             border-bottom: 2px solid #22c55e; padding-bottom: 10px;
@@ -135,9 +135,7 @@
         }
         .section-title:first-child { margin-top: 0; }
 
-        /* KAFELKI (WIDOCZNE TYLKO NA DESKTOP) */
         .tile-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 20px; }
-
         .tile {
             padding: 25px 15px; text-align: center; border-radius: 12px; cursor: pointer;
             box-shadow: 0 4px 6px rgba(0,0,0,0.3);
@@ -153,68 +151,97 @@
         .tile.room { border-bottom: 4px solid var(--accent-room); }
         .tile.class { border-bottom: 4px solid var(--accent-class); }
 
-        /* STYLIZACJA LISTY ROZWIJANEJ (MOBILE SELECT) */
-        .mobile-select-container {
-            display: none; /* Domyślnie ukryte na PC */
-            margin-bottom: 30px;
-        }
-        
+        .mobile-select-container { display: none; margin-bottom: 30px; }
         .mobile-select {
-            width: 100%;
-            padding: 15px 20px;
-            font-size: 1.2rem;
-            background-color: #1e293b;
-            color: #ffffff;
-            border: 2px solid #334155;
-            border-radius: 10px;
-            appearance: none; /* Usuwa domyślny styl systemowy */
-            -webkit-appearance: none;
+            width: 100%; padding: 15px 20px; font-size: 1.2rem;
+            background-color: #1e293b; color: #ffffff;
+            border: 2px solid #334155; border-radius: 10px;
+            appearance: none; -webkit-appearance: none;
             background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
-            background-repeat: no-repeat;
-            background-position: right 15px center;
-            background-size: 20px;
+            background-repeat: no-repeat; background-position: right 15px center; background-size: 20px;
         }
-        
-        .mobile-select:focus { outline: none; box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.3); }
-        
-        /* Kolorowe ramki dla selectów na mobile */
         .mobile-select.teacher { border-color: var(--accent-teacher); }
         .mobile-select.room { border-color: var(--accent-room); }
         .mobile-select.class { border-color: var(--accent-class); }
 
 
-        /* --- RESPONSYWNOŚĆ (MOBILE) --- */
+        /* --- OPTYMALIZACJA MOBILE (GRUNTOWNA PRZEBUDOWA) --- */
         @media (max-width: 900px) {
             header {
-                flex-direction: column; height: auto; padding: 15px 10px; gap: 10px;
-                background: linear-gradient(to bottom, #4dff88 0%, #020617 80%);
+                /* Ustawienie elementów w rzędach, ale z zawijaniem */
+                flex-direction: row; 
+                flex-wrap: wrap;
+                align-content: flex-start;
+                height: auto;
+                padding: 10px;
+                background: linear-gradient(to bottom, #4dff88 0%, #020617 100%);
             }
-            .header-left { width: 100%; justify-content: center; flex-direction: column; gap: 5px; }
-            .logo { height: 60px; }
-            .header-text { align-items: center; text-align: center; }
-            .header-text h1 { font-size: 1.2rem; }
-            .clock { font-size: 0.9rem; }
+
+            /* RZĄD 1: LOGO (LEWA) + INFO (PRAWA) */
+            .header-left { 
+                width: 100%; 
+                flex-direction: row; /* Logo obok tekstu */
+                justify-content: flex-start; /* Do lewej */
+                align-items: center;
+                gap: 15px;
+                margin-bottom: 8px; /* Odstęp od dolnego rzędu */
+            }
+
+            .logo { height: 50px; /* Mniejsze logo */ margin-right: 5px; }
+            
+            .header-text { 
+                align-items: flex-start; /* Tekst do lewej */
+                text-align: left; 
+                flex: 1; /* Zajmij resztę miejsca */
+            }
+            .header-text h1 { font-size: 1.1rem; line-height: 1.1; margin-bottom: 2px; }
+            .clock { font-size: 0.85rem; }
             
             .selection-info {
-                font-size: 1.2rem; color: #fbbf24; margin: 5px 0;
-                background: rgba(0,0,0,0.4); padding: 2px 10px;
-                border-radius: 6px; white-space: normal;
+                font-size: 1rem; color: #fbbf24; margin: 2px 0;
+                background: rgba(0,0,0,0.4); padding: 2px 8px;
+                border-radius: 4px;
+                display: inline-block; /* Żeby nie zajmował całej szerokości */
             }
 
-            .week-nav { width: 100%; justify-content: space-between; box-sizing: border-box; order: 2; margin-top: 5px; }
+            /* RZĄD 2: TYDZIEŃ + MENU (W JEDNEJ LINII) */
+            .week-nav { 
+                order: 2;
+                flex: 6; /* 60% szerokości */
+                justify-content: space-between; 
+                margin-top: 0;
+                padding: 4px 8px; /* Mniejszy padding */
+                gap: 5px;
+                height: 42px; /* Stała wysokość */
+                box-sizing: border-box;
+            }
             .week-display { min-width: auto; }
-            .week-range { font-size: 1.1rem; }
+            .week-label { display: none; /* Ukrywamy napis "Wybrany tydzień" dla oszczędności miejsca */ }
+            .week-range { font-size: 0.95rem; white-space: nowrap; }
+            .week-nav-btn { font-size: 1.4rem; padding: 0 5px; }
 
-            .controls { width: 100%; justify-content: center; order: 3; }
-            button.back-btn { width: 100%; justify-content: center; }
+            .controls { 
+                order: 3;
+                flex: 4; /* 40% szerokości */
+                margin-top: 0;
+                justify-content: flex-end;
+                margin-left: 10px; /* Odstęp od nawigatora */
+            }
             
-            /* UKRYJ KAFELKI, POKAŻ SELECTY */
+            button.back-btn { 
+                width: 100%; 
+                justify-content: center; 
+                padding: 0 10px;
+                height: 42px; /* Taka sama wysokość jak nawigator */
+                font-size: 0.8rem;
+                white-space: nowrap;
+            }
+            
+            /* RESZTA */
             .tile-grid { display: none !important; }
             .mobile-select-container { display: block !important; }
-            
             .section-title { font-size: 1.5rem; margin: 20px 0 10px 0; }
-            #dashboard-view { padding: 20px; }
-
+            #dashboard-view { padding: 15px; }
             .week-container { grid-template-columns: 1fr !important; }
             .day-header { top: var(--header-height-mobile) !important; }
         }
@@ -312,7 +339,7 @@
     <div class="header-left">
         <img src="orzeł.png" alt="ZSZ5 Logo" class="logo" onerror="this.style.display='none'">
         <div class="header-text">
-            <h1>Plan lekcji - ZSZ5</h1>
+            <h1>PLAN LEKCJI - ZSZ5</h1>
             <div id="selection-info" class="selection-info"></div>
             <div id="clock" class="clock">--:--</div>
         </div>
@@ -332,7 +359,7 @@
         <select id="data-select" style="display:none"></select>
         
         <button class="back-btn" onclick="returnToDashboard()">
-            <span>&#8617;</span> MENU GŁÓWNE
+            <span>&#8617;</span> MENU
         </button>
     </div>
 </header>
@@ -395,11 +422,8 @@
         document.getElementById('schedule-view').style.display = 'none';
         document.getElementById('nav-controls').style.display = 'none';
         document.getElementById('week-nav-container').style.display = 'none';
-        
-        // Ukryj info o wyborze
         document.getElementById('selection-info').style.display = 'none';
         document.getElementById('selection-info').innerText = '';
-
         document.body.className = '';
         log("Menu Główne");
     }
@@ -421,7 +445,7 @@
         else if (mode === 'class') displayName = "Klasa " + id;
         
         displayDiv.innerText = displayName;
-        displayDiv.style.display = 'block';
+        displayDiv.style.display = 'block'; // Na mobile CSS zrobi z tego inline-block
 
         document.getElementById('dashboard-view').style.display = 'none';
         document.getElementById('schedule-view').style.display = 'block';
@@ -477,11 +501,9 @@
         const createSection = (title, items, type, clickFn) => {
             if(!items.length) return;
             const div = document.createElement('div');
-            
-            // Tytuł sekcji
             div.innerHTML = `<div class="section-title">${title}</div>`;
             
-            // 1. Kontener Kafelków (Desktop)
+            // 1. Kafelki (Desktop)
             const grid = document.createElement('div'); 
             grid.className = 'tile-grid';
             items.forEach(item => {
@@ -493,33 +515,24 @@
             });
             div.appendChild(grid);
 
-            // 2. Kontener Selecta (Mobile)
+            // 2. Select (Mobile)
             const selectContainer = document.createElement('div');
             selectContainer.className = 'mobile-select-container';
-            
             const select = document.createElement('select');
             select.className = `mobile-select ${type}`;
-            
-            // Domyślna opcja "Wybierz..."
             const defaultOpt = document.createElement('option');
             defaultOpt.text = `Wybierz ${title.toLowerCase()}...`;
             defaultOpt.value = "";
             defaultOpt.disabled = true;
             defaultOpt.selected = true;
             select.add(defaultOpt);
-
             items.forEach(item => {
                 const opt = document.createElement('option');
                 opt.value = item.val;
                 opt.text = item.txt;
                 select.add(opt);
             });
-
-            // Obsługa wyboru z listy
-            select.onchange = (e) => {
-                if(e.target.value) clickFn(e.target.value);
-            };
-
+            select.onchange = (e) => { if(e.target.value) clickFn(e.target.value); };
             selectContainer.appendChild(select);
             div.appendChild(selectContainer);
 
