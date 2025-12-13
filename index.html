@@ -4,316 +4,120 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ZSZ5 - Pulpit nauczyciela</title>
-    <style>
-        :root {
-            --primary-color: #2c3e50;
-            --accent-color: #3498db;
-            --light-bg: #ecf0f1;
-            --border-color: #bdc3c7;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f4;
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-        }
-
-        /* Nagłówek i Zegar */
-        header {
-            background-color: var(--primary-color);
-            color: white;
-            padding: 15px 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        h1 {
-            margin: 0;
-            font-size: 1.5rem;
-        }
-
-        #clock {
-            font-weight: bold;
-            font-family: monospace;
-            font-size: 1.1rem;
-        }
-
-        /* Główna zawartość */
-        main {
-            max-width: 1000px;
-            margin: 20px auto;
-            padding: 20px;
-            background: white;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-            border-radius: 8px;
-            flex: 1; /* Rozpycha treść, by stopka była na dole */
-        }
-
-        h2 {
-            border-bottom: 2px solid var(--accent-color);
-            padding-bottom: 10px;
-            color: var(--primary-color);
-            margin-top: 30px;
-        }
-
-        /* Tabele */
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 20px;
-        }
-
-        th, td {
-            border: 1px solid var(--border-color);
-            padding: 10px;
-            text-align: center;
-        }
-
-        th {
-            background-color: var(--accent-color);
-            color: white;
-        }
-
-        tr:nth-child(even) {
-            background-color: var(--light-bg);
-        }
-
-        /* Stylizacja Lekcji 0 */
-        .lesson-zero {
-            background-color: #fff3cd !important; /* Żółtawy kolor wyróżniający */
-            font-weight: bold;
-            color: #856404;
-        }
-
-        /* Sekcja Lokalizacji */
-        .location-search {
-            background-color: var(--light-bg);
-            padding: 15px;
-            border-radius: 5px;
-            margin-bottom: 20px;
-            display: flex;
-            gap: 10px;
-            align-items: center;
-        }
-
-        select, button {
-            padding: 8px 12px;
-            border: 1px solid var(--border-color);
-            border-radius: 4px;
-            font-size: 1rem;
-        }
-
-        button {
-            background-color: var(--primary-color);
-            color: white;
-            cursor: pointer;
-            border: none;
-        }
-
-        button:hover {
-            background-color: #1a252f;
-        }
-
-        #location-result {
-            margin-top: 15px;
-        }
-
-        /* Stopka */
-        footer {
-            background-color: #333;
-            color: #aaa;
-            text-align: center;
-            padding: 15px;
-            margin-top: auto;
-            font-size: 0.9rem;
-        }
-
-        footer a {
-            color: var(--accent-color);
-            text-decoration: none;
-        }
-
-        footer a:hover {
-            text-decoration: underline;
-        }
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
     <header>
-        <h1>ZSZ5 - Pulpit nauczyciela</h1>
-        <div id="clock">--.--.---- --:--</div>
+        <div class="header-content">
+            <h1>ZSZ5 - Pulpit nauczyciela</h1>
+            <div id="clock">--.--.---- --:--</div>
+        </div>
     </header>
 
     <main>
-        <h2>Tygodniowy Plan i Dyżury</h2>
-        <table>
-            <thead>
-                <tr>
-                    <th>Nr</th>
-                    <th>Godziny</th>
-                    <th>Poniedziałek</th>
-                    <th>Wtorek</th>
-                    <th>Środa</th>
-                    <th>Czwartek</th>
-                    <th>Piątek</th>
-                </tr>
-            </thead>
-            <tbody id="schedule-body">
-                </tbody>
-        </table>
-
-        <h2>Sprawdź Dyżury w Lokalizacji</h2>
-        <div class="location-search">
-            <label for="location-select">Wybierz miejsce:</label>
-            <select id="location-select">
-                <option value="">-- wybierz --</option>
-                <option value="Korytarz Parter">Korytarz Parter</option>
-                <option value="Korytarz I Piętro">Korytarz I Piętro</option>
-                <option value="Stołówka">Stołówka</option>
-                <option value="Szatnia">Szatnia</option>
-                <option value="Boisko">Boisko</option>
-            </select>
-            <button onclick="checkDuty()">Pokaż dyżury</button>
-        </div>
-
-        <div id="location-result">
-            </div>
-    </main>
-
-    <footer>
-        autor: mn | <a href="https://www.zsz5.edupage.org" target="_blank">www.zsz5.edupage.org</a>
-    </footer>
-
-    <script>
-        // 1. ZEGAR (Data i Godzina)
-        function updateClock() {
-            const now = new Date();
-            
-            // Formatowanie daty: dd.mm.rrrr
-            const day = String(now.getDate()).padStart(2, '0');
-            const month = String(now.getMonth() + 1).padStart(2, '0');
-            const year = now.getFullYear();
-            
-            // Formatowanie czasu: hh:mm:ss
-            const hours = String(now.getHours()).padStart(2, '0');
-            const minutes = String(now.getMinutes()).padStart(2, '0');
-            // const seconds = String(now.getSeconds()).padStart(2, '0'); // Opcjonalnie sekundy
-
-            const dateString = `${day}.${month}.${year} ${hours}:${minutes}`;
-            document.getElementById('clock').innerText = dateString;
-        }
-
-        // Uruchom zegar od razu i odświeżaj co sekundę
-        updateClock();
-        setInterval(updateClock, 1000);
-
-
-        // 2. DANE (Przykładowe dane planu lekcji i dyżurów)
-        // W prawdziwej aplikacji te dane pochodziłyby z bazy danych
-        
-        const scheduleData = [
-            { nr: 0, time: "07:55 - 08:00", type: "duty", info: ["Dyżur: J. Kowalski (Parter)", "Dyżur: A. Nowak (I Piętro)", "Dyżur: M. Wiśniewski (Stołówka)", "Dyżur: B. Zielona (Szatnia)", "Dyżur: K. Lew (Boisko)"] },
-            { nr: 1, time: "08:00 - 08:45", type: "lesson", info: ["Matematyka 1A", "Polski 2B", "WF 3C", "Angielski 1B", "Historia 2A"] },
-            { nr: 2, time: "08:55 - 09:40", type: "lesson", info: ["Fizyka 1A", "Matematyka 2B", "Polski 3C", "WF 1B", "Geografia 2A"] },
-            { nr: 3, time: "09:50 - 10:35", type: "lesson", info: ["Informatyka 1A", "Angielski 2B", "Matematyka 3C", "Chemia 1B", "WF 2A"] }
-            // ... więcej lekcji
-        ];
-
-        // Dane do wyszukiwarki lokalizacji (kto, gdzie, kiedy)
-        const dutiesDatabase = [
-            { teacher: "J. Kowalski", location: "Korytarz Parter", time: "07:55 - 08:00 (Lekcja 0)", day: "Poniedziałek", status: "Bez zmian" },
-            { teacher: "A. Nowak", location: "Korytarz I Piętro", time: "07:55 - 08:00 (Lekcja 0)", day: "Poniedziałek", status: "Zastępstwo za K. Iksińskiego" },
-            { teacher: "M. Wiśniewski", location: "Stołówka", time: "11:30 - 11:45 (Długa przerwa)", day: "Wtorek", status: "Bez zmian" },
-            { teacher: "B. Zielona", location: "Szatnia", time: "07:55 - 08:00 (Lekcja 0)", day: "Środa", status: "Bez zmian" },
-            { teacher: "K. Lew", location: "Boisko", time: "07:55 - 08:00 (Lekcja 0)", day: "Piątek", status: "Bez zmian" },
-            { teacher: "J. Kowalski", location: "Korytarz Parter", time: "09:40 - 09:50", day: "Czwartek", status: "Bez zmian" }
-        ];
-
-
-        // 3. GENEROWANIE TABELI PLANU
-        function renderSchedule() {
-            const tbody = document.getElementById('schedule-body');
-            let html = '';
-
-            scheduleData.forEach(row => {
-                // Sprawdź czy to lekcja 0, żeby nadać jej specjalną klasę CSS
-                const rowClass = row.nr === 0 ? 'class="lesson-zero"' : '';
-                
-                html += `<tr ${rowClass}>`;
-                html += `<td>${row.nr}</td>`;
-                html += `<td>${row.time}</td>`;
-                
-                // Generujemy komórki dla dni tygodnia (uproszczone wyświetlanie danych)
-                row.info.forEach(cellData => {
-                    html += `<td>${cellData}</td>`;
-                });
-                
-                html += `</tr>`;
-            });
-
-            tbody.innerHTML = html;
-        }
-
-        // 4. FUNKCJA SPRAWDZANIA DYŻURÓW WG LOKALIZACJI
-        function checkDuty() {
-            const location = document.getElementById('location-select').value;
-            const resultContainer = document.getElementById('location-result');
-
-            if (!location) {
-                resultContainer.innerHTML = '<p style="color:red;">Proszę wybrać lokalizację.</p>';
-                return;
-            }
-
-            // Filtrujemy bazę dyżurów
-            const filteredDuties = dutiesDatabase.filter(duty => duty.location === location);
-
-            if (filteredDuties.length === 0) {
-                resultContainer.innerHTML = `<p>Brak dyżurów zaplanowanych w lokalizacji: <strong>${location}</strong></p>`;
-                return;
-            }
-
-            // Budujemy tabelę wyników
-            let tableHtml = `
-                <h3>Harmonogram dla: ${location}</h3>
+        <section class="schedule-section">
+            <h2>Tygodniowy Plan i Dyżury</h2>
+            <div class="table-responsive">
                 <table>
                     <thead>
                         <tr>
-                            <th>Dzień</th>
-                            <th>Godzina</th>
-                            <th>Nauczyciel</th>
-                            <th>Uwagi / Status</th>
+                            <th>Nr</th>
+                            <th>Godziny</th>
+                            <th>Poniedziałek</th>
+                            <th>Wtorek</th>
+                            <th>Środa</th>
+                            <th>Czwartek</th>
+                            <th>Piątek</th>
                         </tr>
                     </thead>
                     <tbody>
-            `;
+                        <tr class="lesson-zero">
+                            <td>0</td>
+                            <td>07:55 - 08:00</td>
+                            <td>
+                                <strong>Dyżur:</strong><br>
+                                Parter: J. Kowalski<br>
+                                I Piętro: A. Nowak
+                            </td>
+                            <td>
+                                <strong>Dyżur:</strong><br>
+                                Parter: B. Iksiński<br>
+                                I Piętro: C. Igrek
+                            </td>
+                            <td>
+                                <strong>Dyżur:</strong><br>
+                                Parter: D. Zeto<br>
+                                I Piętro: E. Alfa
+                            </td>
+                            <td>
+                                <strong>Dyżur:</strong><br>
+                                Parter: F. Beta<br>
+                                I Piętro: G. Gamma
+                            </td>
+                            <td>
+                                <strong>Dyżur:</strong><br>
+                                Parter: H. Delta<br>
+                                I Piętro: I. Omega
+                            </td>
+                        </tr>
+                        
+                        <tr>
+                            <td>1</td>
+                            <td>08:00 - 08:45</td>
+                            <td>Matematyka 1A</td>
+                            <td>Polski 2B</td>
+                            <td>WF 3C</td>
+                            <td>Historia 1B</td>
+                            <td>Angielski 2A</td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>08:55 - 09:40</td>
+                            <td>Fizyka 1A</td>
+                            <td>Matematyka 2B</td>
+                            <td>Polski 3C</td>
+                            <td>WF 1B</td>
+                            <td>Geografia 2A</td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td>09:50 - 10:35</td>
+                            <td>Informatyka 1A</td>
+                            <td>Angielski 2B</td>
+                            <td>Matematyka 3C</td>
+                            <td>Chemia 1B</td>
+                            <td>WF 2A</td>
+                        </tr>
+                        </tbody>
+                </table>
+            </div>
+        </section>
 
-            filteredDuties.forEach(duty => {
-                // Jeśli jest zastępstwo, zaznaczamy kolorem
-                const statusStyle = duty.status.includes("Zastępstwo") ? 'style="color: red; font-weight: bold;"' : '';
-                
-                tableHtml += `
-                    <tr>
-                        <td>${duty.day}</td>
-                        <td>${duty.time}</td>
-                        <td>${duty.teacher}</td>
-                        <td ${statusStyle}>${duty.status}</td>
-                    </tr>
-                `;
-            });
+        <section class="duty-check-section">
+            <h2>Sprawdź dyżury w danej lokalizacji</h2>
+            <div class="search-box">
+                <label for="location-select">Wybierz miejsce:</label>
+                <select id="location-select">
+                    <option value="">-- wybierz lokalizację --</option>
+                    <option value="Korytarz Parter">Korytarz Parter</option>
+                    <option value="Korytarz I Piętro">Korytarz I Piętro</option>
+                    <option value="Stołówka">Stołówka</option>
+                    <option value="Szatnia">Szatnia</option>
+                    <option value="Boisko">Boisko</option>
+                </select>
+                <button onclick="checkDuty()">Pokaż obsadę</button>
+            </div>
+            
+            <div id="location-result">
+                </div>
+        </section>
+    </main>
 
-            tableHtml += `</tbody></table>`;
-            resultContainer.innerHTML = tableHtml;
-        }
+    <footer>
+        <p>autor: mn | <a href="https://www.zsz5.edupage.org" target="_blank">www.zsz5.edupage.org</a></p>
+    </footer>
 
-        // Inicjalizacja planu przy starcie strony
-        renderSchedule();
-
-    </script>
+    <script src="script.js"></script>
 </body>
 </html>
