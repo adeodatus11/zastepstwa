@@ -14,9 +14,9 @@
             
             /* Paski boczne */
             --lesson-border: #3b82f6; 
-            --room-border: #8b5cf6;   
-            --class-border: #ec4899;  
-            --loc-border: #f59e0b;    
+            --room-border: #8b5cf6;    
+            --class-border: #ec4899;   
+            --loc-border: #f59e0b;     
             
             /* Statusy */
             --sub-bg: #fee2e2; --sub-color: #991b1b; --sub-border: #f87171; 
@@ -81,6 +81,7 @@
         #debug-bar { 
             background: #e5e7eb; font-size: 0.75rem; padding: 4px 20px; color: #4b5563; 
             border-bottom: 1px solid #d1d5db; 
+            transition: background-color 0.3s;
         }
 
         /* --- STREFA GŁÓWNA --- */
@@ -229,7 +230,8 @@
     const CONFIG = {
         xml: './plan.xml',
         dyzury: './dyzury.xlsx',
-        zastepstwa: './zastepstwa.xlsx'
+        zastepstwa: './zastepstwa.xlsx',
+        refreshInterval: 10000 // 10 sekund
     };
 
     const DB = {
@@ -246,17 +248,41 @@
     };
 
     const DAYS = ["Niedziela", "Poniedziałek", "Wtorek", "Środa", "Czwartek", "Piątek", "Sobota"];
+    let refreshTimer = null;
 
     // === START APLIKACJI ===
-    window.onload = async () => {
+    window.onload = () => {
         startClock();
-        log("Ładowanie plików...", true);
+        // Pierwsze pobranie danych
+        refreshData();
+        // Ustawienie cyklicznego odświeżania
+        refreshTimer = setInterval(refreshData, CONFIG.refreshInterval);
+    };
+
+    // === GŁÓWNA FUNKCJA ODŚWIEŻANIA DANYCH ===
+    async function refreshData() {
+        const debugBar = document.getElementById('debug-bar');
+        debugBar.style.backgroundColor = "#fffbeb"; // Jasny żółty na czas ładowania
+        log("Pobieranie aktualnych danych...", false);
         
+        // 1. Reset dynamicznych kontenerów DB (aby uniknąć duplikatów)
+        DB.lessons = [];
+        DB.periods = [];
+        DB.duties = [];
+        DB.subs = [];
+        DB.dutyChanges = [];
+        // Resetujemy też słowniki, które są nadpisywane przez XML, dla pewności spójności
+        DB.teachers = {}; 
+        DB.classes = {};
+        DB.classesList = [];
+        // DB.rooms jest tablicą z Set, też odświeżamy
+        DB.rooms = [];
+
         try {
-            // 1. Plan XML (krytyczny)
+            // 2. Plan XML (krytyczny)
             await loadXML();
 
-            // 2. Pliki Excel (opcjonalne)
+            // 3. Pliki Excel (opcjonalne)
             await Promise.all([
                 loadExcel(CONFIG.dyzury, 'dyzury').catch(e => {
                     console.warn("Brak pliku dyżurów lub błąd: ", e);
@@ -269,17 +295,38 @@
             addMissingTeachers();
             extractUniqueLocations();
             
-            populateSelect();
+            // 4. Obsługa Selecta - zachowanie wyboru użytkownika
+            const selectEl = document.getElementById('data-select');
+            const currentSelection = selectEl.value; // Zapamiętaj co użytkownik ogląda
             
-            log(`Dane wczytane. (Lekcje: ${DB.lessons.length}, Zastępstwa: ${DB.subs.length})`);
+            populateSelect(); // Przebuduj listę (mogły dojść nowe nazwiska/sale)
+            
+            // Jeśli poprzednia wartość nadal istnieje na nowej liście, przywróć ją
+            if (currentSelection) {
+                const options = Array.from(selectEl.options);
+                if (options.some(opt => opt.value === currentSelection)) {
+                    selectEl.value = currentSelection;
+                }
+            }
+            
+            // 5. Renderuj widok
+            render();
+            
+            const now = new Date();
+            const timeStr = now.toLocaleTimeString('pl-PL');
+            debugBar.style.backgroundColor = "#e5e7eb"; // Powrót do szarego
+            log(`Ostatnia aktualizacja: ${timeStr} (Lekcje: ${DB.lessons.length}, Zastępstwa: ${DB.subs.length})`);
+            
         } catch (e) {
             console.error(e);
-            log("BŁĄD KRYTYCZNY (Brak plan.xml): " + e.message, true);
+            debugBar.style.backgroundColor = "#fee2e2"; // Czerwony przy błędzie
+            log("BŁĄD AKTUALIZACJI: " + e.message, true);
         }
-    };
+    }
 
     // === FETCH Z CACHE BUSTING ===
     async function fetchFresh(url) {
+        // Dodajemy parametr t=czas, aby przeglądarka nie brała plików z pamięci podręcznej
         const bustUrl = url + "?t=" + new Date().getTime();
         const res = await fetch(bustUrl);
         if(!res.ok) throw new Error(`HTTP ${res.status} dla ${url}`);
@@ -322,6 +369,7 @@
         const el = document.getElementById('debug-bar');
         el.innerText = msg;
         if(important) el.style.fontWeight = "bold";
+        else el.style.fontWeight = "normal";
     }
 
     // === XML ===
@@ -531,7 +579,11 @@
     function populateSelect() {
         const mode = document.getElementById('mode-select').value;
         const sel = document.getElementById('data-select');
-        sel.innerHTML = ""; sel.disabled = false;
+        
+        // Zapisujemy, co było wybrane, ale funkcja refreshData robi to lepiej globalnie
+        // Tutaj czyścimy opcje
+        sel.innerHTML = ""; 
+        sel.disabled = false;
         document.body.className = `mode-${mode}`;
         
         let items = [];
@@ -545,7 +597,9 @@
             opt.value = i.val; opt.innerText = i.txt;
             sel.appendChild(opt);
         });
-        if(items.length) sel.value = items[0].val;
+        
+        // Domyślny wybór (jeśli wywołane ręcznie, a nie przez refresh)
+        if(items.length && !sel.value) sel.value = items[0].val;
     }
     function getDutiesForTime(tid, day, date, min, max) {
         const res = [];
@@ -620,8 +674,8 @@
                 lesson = DB.lessons.find(l => l.classNames.includes(id) && l.day == day && l.period == p.nr);
                 subAdd = DB.subs.find(s => s.date == dateStr && normalizeClass(s.branch) === normalizeClass(id) && s.periodRaw.startsWith(p.nr+','));
                 if(lesson) {
-                     const abs = DB.subs.find(s => s.date == dateStr && s.absent == lesson.teacherId && s.periodRaw.startsWith(p.nr+','));
-                     if(abs) subAbs = abs; 
+                      const abs = DB.subs.find(s => s.date == dateStr && s.absent == lesson.teacherId && s.periodRaw.startsWith(p.nr+','));
+                      if(abs) subAbs = abs; 
                 }
             }
 
