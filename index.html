@@ -1,458 +1,585 @@
+<!DOCTYPE html>
 <html lang="pl">
 <head>
     <meta charset="UTF-8">
-    <title>ZSZ nr 5 – fullpit nauczyciela</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interaktywny Plan Lekcji + Dyżury i Zastępstwa</title>
     <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
-
     <style>
-        :root { --primary: #2980b9; --bg: #ecf0f1; --white: #ffffff; --err: #c0392b; --ok: #27ae60; --dark: #2c3e50; }
-        body { font-family: 'Segoe UI', Tahoma, sans-serif; background: var(--bg); margin: 0; padding: 20px; color: #333; }
-
-        /* NAGŁÓWEK I LOGO */
-        .top-bar {
-            display: flex; justify-content: space-between; align-items: center;
-            border-bottom: 2px solid #bdc3c7; padding-bottom: 15px; margin-bottom: 20px;
-        }
-        h1 { margin: 0; color: var(--dark); font-weight: 400; font-size: 1.8rem; }
-        .logo-img { height: 60px; width: auto; object-fit: contain; }
-
-        /* STATUS BOX */
-        #status-box { 
-            padding: 15px; border-radius: 5px; margin-bottom: 20px; font-size: 0.9rem; 
-            display: none; border-left: 5px solid; 
-@@ -20,48 +26,70 @@
-        .status-error { background: #f8d7da; color: #721c24; border-color: #f5c6cb; }
-        .status-success { background: #d4edda; color: #155724; border-color: #c3e6cb; }
-
-        /* PANEL STEROWANIA */
-        .dashboard { 
-            background: var(--white); padding: 20px; border-radius: 8px; 
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05); display: flex; flex-wrap: wrap; gap: 15px; 
-            align-items: flex-end; margin-bottom: 20px; 
+        :root {
+            --bg-color: #f4f6f9;
+            --card-bg: #ffffff;
+            --primary: #3498db;
+            --text: #2c3e50;
+            --danger: #e74c3c;
+            --warning: #f1c40f;
+            --success: #2ecc71;
+            --sub-bg: #fff3cd; /* Kolor tła dla zastępstw */
         }
 
-        .input-group { display: flex; flex-direction: column; flex: 1; min-width: 200px; }
-        .input-group label { font-size: 0.75rem; font-weight: 700; color: #7f8c8d; margin-bottom: 5px; text-transform: uppercase; }
-        .input-group select, .input-group input { padding: 10px; border: 1px solid #bdc3c7; border-radius: 4px; width: 100%; box-sizing: border-box; }
-        .btn-refresh { padding: 10px; background: var(--primary); color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; }
-        .btn-refresh:hover { background: #1f618d; }
-
-        /* Ręczne wgrywanie (ukryte) */
-        .manual-upload { display: none; border-top: 1px dashed #ccc; padding-top: 15px; width: 100%; margin-top: 10px; }
-        .manual-upload.visible { display: flex; flex-wrap: wrap; gap: 15px; }
-
-        /* TABELA PLANU */
-        .timetable { display: grid; grid-template-columns: 70px repeat(5, 1fr); gap: 10px; padding-bottom: 50px; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--bg-color); color: var(--text); padding: 20px; margin: 0; }
         
-        /* HEADER (STICKY - TO JEST NOWOŚĆ) */
-        .header { 
-            background: var(--dark); color: white; padding: 12px; text-align: center; 
-            border-radius: 4px; font-weight: 600; 
-            /* Sticky logic */
-            position: sticky; top: 0; z-index: 100;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        header { text-align: center; margin-bottom: 20px; }
+        .controls { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-bottom: 20px; }
+        select, input { padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-size: 16px; }
+        button { padding: 10px 20px; background-color: var(--primary); color: white; border: none; border-radius: 5px; cursor: pointer; }
+        button:hover { background-color: #2980b9; }
+
+        #loading { text-align: center; font-size: 1.2em; color: var(--primary); display: none; }
+        #error-msg { text-align: center; color: var(--danger); font-weight: bold; margin: 10px 0; }
+
+        .schedule-container { display: grid; grid-gap: 15px; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); }
+
+        /* Styl kafelka lekcji/dyżuru */
+        .slot-card {
+            background: var(--card-bg);
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            padding: 15px;
+            border-left: 5px solid var(--primary);
+            position: relative;
         }
+
+        .slot-time { font-weight: bold; color: #7f8c8d; font-size: 0.9em; margin-bottom: 5px; }
+        .slot-title { font-size: 1.1em; font-weight: bold; margin-bottom: 5px; }
+        .slot-info { font-size: 0.9em; margin-bottom: 3px; }
         
-        .time-col { background: #dfe6e9; padding: 5px; text-align: center; display: flex; flex-direction: column; justify-content: center; font-weight: bold; border-radius: 4px; font-size: 0.8rem; }
-        .day-col { display: flex; flex-direction: column; gap: 8px; }
+        /* Warianty kafelków */
+        .type-duty { border-left-color: var(--warning); background-color: #fffaf0; }
+        .type-sub { border-left-color: var(--danger); background-color: var(--sub-bg); }
+        .cancelled { text-decoration: line-through; opacity: 0.6; }
+        
+        .badge {
+            display: inline-block; padding: 2px 6px; border-radius: 4px; font-size: 0.8em; color: white; font-weight: bold;
+        }
+        .badge-sub { background-color: var(--danger); }
+        .badge-duty { background-color: var(--warning); color: #333; }
+        .badge-ok { background-color: var(--success); }
 
-        /* KARTY LEKCJI */
-        .card { background: white; border-left: 5px solid var(--primary); padding: 10px; border-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); min-height: 80px; position: relative; font-size: 0.9rem; }
-        .card.empty { background: transparent; border: 2px dashed #dcdde1; box-shadow: none; border-left: none; }
-
-        .subject { font-weight: 700; color: var(--dark); }
-        .class-name { font-size: 0.85rem; color: #7f8c8d; font-weight: 600; margin-top: 2px; }
-        .room { position: absolute; top: 8px; right: 8px; background: #f1c40f; color: #fff; padding: 2px 6px; border-radius: 3px; font-size: 0.75rem; font-weight: 700; }
-
-        /* Zastępstwa */
-        .cancelled { background: #fff5f5; border-left-color: var(--err); opacity: 0.7; }
-        .cancelled .subject { text-decoration: line-through; color: var(--err); }
-        .added { background: #f0fdf4; border-left-color: var(--ok); }
-        .added .subject { color: var(--ok); }
-
-        .sub-info { display: block; font-size: 0.75rem; font-weight: bold; margin-top: 5px; padding-top: 5px; border-top: 1px dashed #ccc; }
-        .sub-alert { color: var(--err); } 
-        .sub-success { color: var(--ok); }
-
-        /* Dyżury */
-        .duty { margin-top: 5px; padding: 5px; background: #e1f5fe; border: 1px solid #81d4fa; color: #0277bd; border-radius: 3px; font-size: 0.75rem; display: flex; flex-direction: column; }
-        .duty-lbl { font-weight: 900; font-size: 0.65rem; text-transform: uppercase; margin-bottom: 2px; letter-spacing: 0.5px; }
-        .duty-row { display: flex; justify-content: space-between; }
-        .duty.cancelled { background: #ffebee; border-color: #ef9a9a; color: #c62828; text-decoration: line-through; opacity: 0.7; }
-        .duty.added { background: #e8f5e9; border-color: #a5d6a7; color: #2e7d32; }
-
+        .sub-details {
+            margin-top: 5px; padding-top: 5px; border-top: 1px dashed #ccc; color: var(--danger); font-size: 0.9em;
+        }
     </style>
 </head>
 <body>
 
-    <div class="top-bar">
-        <h1>ZSZ nr 5 – fullpit nauczyciela</h1>
-        <img src="orzeł.png" alt="Logo Orzeł" class="logo-img" onerror="this.style.display='none'"> 
-    </div>
+<header>
+    <h1>Pulpit Nauczyciela</h1>
+    <p>Plan lekcji zintegrowany z dyżurami i zastępstwami</p>
+</header>
 
-    <div id="status-box"></div>
+<div id="error-msg"></div>
 
-@@ -76,7 +104,7 @@ <h1>📅 Pulpit Nauczyciela</h1>
-        </div>
-        <div class="input-group" style="max-width: 120px;">
-            <label>&nbsp;</label>
-            <button onclick="initAutoLoad()" class="btn-refresh">Odśwież</button>
-        </div>
+<div class="controls">
+    <input type="date" id="date-picker">
+    
+    <select id="teacher-select">
+        <option value="">-- Wybierz Nauczyciela --</option>
+    </select>
+    
+    <button onclick="renderSchedule()">Pokaż Plan</button>
+</div>
 
-        <div id="manual-section" class="manual-upload">
-@@ -91,25 +119,22 @@ <h1>📅 Pulpit Nauczyciela</h1>
+<div id="loading">Ładowanie danych...</div>
+<div id="schedule-box" class="schedule-container"></div>
 
 <script>
-    // ==========================================
-    // ⚙️ KONFIGURACJA PLIKÓW
-
-    // ==========================================
-    const CONFIG = {
-        xml: 'plan.xml',        // Plik XML
-        duties: 'dyzury.xlsx',  // Plik dyżurów stałych
-        subs: 'zastepstwa.xlsx' // Plik zastępstw
+    // === KONFIGURACJA PLIKÓW ===
+    const FILES = {
+        xml: './plan.xml',
+        dyzury: './dyzury.xlsx',
+        zastepstwa: './zastepstwa.xlsx'
     };
 
-    // --- Baza Danych ---
-    const DB = { teachers: {}, lessons: [], periods: [], permDuties: [], subLessons: [], subDuties: [] };
+    // Baza danych w pamięci
+    const DB = {
+        xmlDoc: null,      // sparsowany XML
+        periods: [],       // godziny lekcyjne
+        teachers: {},      // mapa id -> nazwa
+        lessons: [],       // wszystkie lekcje z planu bazowego
+        duties: [],        // sparsowane dyżury stałe
+        substitutions: [], // sparsowane zastępstwa
+        dutyChanges: []    // zmiany w dyżurach
+    };
 
-    // --- Start ---
-    document.getElementById('datePicker').valueAsDate = new Date();
-
-
-    window.addEventListener('DOMContentLoaded', initAutoLoad);
-
-    // Listenery
-    document.getElementById('teacherSelect').addEventListener('change', render);
-    document.getElementById('datePicker').addEventListener('change', render);
-    document.getElementById('fileXml').addEventListener('change', (e) => loadFile(e.target.files[0], 'xml'));
-@@ -120,273 +145,232 @@ <h1>📅 Pulpit Nauczyciela</h1>
-    function setStatus(msg, type) {
-        const box = document.getElementById('status-box');
-        box.style.display = 'block';
-        box.className = `status-${type}`;
-        box.innerHTML = msg;
-    }
-
-    // ==========================================
-    // 1. AUTO LOAD (GitHub / Server)
-    // ==========================================
-    async function initAutoLoad() {
-        setStatus('🔄 Pobieranie plików z serwera...', 'loading');
-        document.getElementById('manual-section').classList.remove('visible');
-
-        const t = new Date().getTime(); // Anti-cache
-        const fetchList = [
-            { url: `${CONFIG.xml}?t=${t}`, type: 'xml', name: CONFIG.xml },
-            { url: `${CONFIG.duties}?t=${t}`, type: 'duty', name: CONFIG.duties },
-            { url: `${CONFIG.subs}?t=${t}`, type: 'subs', name: CONFIG.subs }
-        ];
+    async function init() {
+        document.getElementById('loading').style.display = 'block';
+        document.getElementById('date-picker').valueAsDate = new Date();
 
         try {
-            if (window.location.protocol === 'file:') throw new Error("Protokół file:// nieobsługiwany automatycznie. Użyj serwera (np. GitHub Pages) lub wgraj pliki ręcznie.");
-
-
-
-
-            const responses = await Promise.all(fetchList.map(f => fetch(f.url)));
-            for(let i=0; i<responses.length; i++) {
-                if(!responses[i].ok) throw new Error(`Brak pliku: <b>${fetchList[i].name}</b>`);
-
-
-            }
-
-            const blobs = await Promise.all(responses.map(r => r.blob()));
-            await loadFile(blobs[0], 'xml');
-            await loadFile(blobs[1], 'duty');
-            await loadFile(blobs[2], 'subs');
-
-
-
-
-
-
-
-            setStatus('✅ Dane załadowane pomyślnie.', 'success');
-        } catch (err) {
-            console.warn(err);
-            setStatus(`❌ <b>Błąd pobierania:</b> ${err.message}<br>Użyj panelu ręcznego poniżej.`, 'error');
-            document.getElementById('manual-section').classList.add('visible');
-            document.getElementById('teacherSelect').innerHTML = '<option>Wybierz pliki ręcznie</option>';
-
-
+            await Promise.all([
+                fetchXML(),
+                fetchExcel(FILES.dyzury, 'dyzury'),
+                fetchExcel(FILES.zastepstwa, 'zastepstwa')
+            ]);
+            
+            populateTeacherSelect();
+            renderSchedule(); // Pokaż plan dla domyślnej daty/nauczyciela
+        } catch (e) {
+            showError("Błąd ładowania danych: " + e.message);
+            console.error(e);
+        } finally {
+            document.getElementById('loading').style.display = 'none';
         }
     }
 
-    // ==========================================
-    // 2. FILE READER
-    // ==========================================
-    function loadFile(blob, type) {
-        return new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            if(type === 'xml') reader.readAsText(blob, "windows-1250");
-            else reader.readAsArrayBuffer(blob);
+    // --- 1. ŁADOWANIE XML (PLAN BAZOWY) ---
+    async function fetchXML() {
+        const res = await fetch(FILES.xml);
+        if (!res.ok) throw new Error(`Nie znaleziono pliku ${FILES.xml}`);
+        const text = await res.text();
+        const parser = new DOMParser();
+        DB.xmlDoc = parser.parseFromString(text, "text/xml");
+        
+        parseXMLData();
+    }
 
+    function parseXMLData() {
+        const xml = DB.xmlDoc;
+        
+        // 1. Pobierz godziny (Periods)
+        const periods = xml.querySelectorAll('periods period');
+        periods.forEach(p => {
+            DB.periods.push({
+                nr: p.getAttribute('period'),
+                start: p.getAttribute('starttime'),
+                end: p.getAttribute('endtime')
+            });
+        });
 
+        // 2. Pobierz nauczycieli
+        const teachers = xml.querySelectorAll('teachers teacher');
+        teachers.forEach(t => {
+            // "short" lub "name" jako identyfikator wyświetlany
+            DB.teachers[t.getAttribute('id')] = t.getAttribute('name') + " " + t.getAttribute('firstname'); 
+        });
 
+        // 3. Pobierz lekcje (Cards)
+        // W aSc lekcje są w <cards>. Trzeba połączyć classroom, subject, teacher
+        const cards = xml.querySelectorAll('cards card');
+        
+        // Pomocnicze mapy
+        const subjects = {};
+        xml.querySelectorAll('subjects subject').forEach(s => subjects[s.getAttribute('id')] = s.getAttribute('name'));
+        const classrooms = {};
+        xml.querySelectorAll('classrooms classroom').forEach(c => classrooms[c.getAttribute('id')] = c.getAttribute('name'));
 
+        cards.forEach(card => {
+            const lessonId = card.getAttribute('lessonid');
+            // Znajdź definicję lekcji, by pobrać nauczyciela i przedmiot
+            const lessonNode = xml.querySelector(`lessons lesson[id="${lessonId}"]`);
+            if(!lessonNode) return;
 
+            const teacherId = lessonNode.getAttribute('teacherids');
+            const subjectId = lessonNode.getAttribute('subjectid');
+            const classIds = lessonNode.getAttribute('classids'); // ID klasy (oddziału)
 
-            reader.onload = (e) => {
-                try {
-                    if(type === 'xml') parseXml(e.target.result);
-                    if(type === 'duty') parseDuties(e.target.result);
-                    if(type === 'subs') parseSubs(e.target.result);
-                    resolve();
-                    render();
-                } catch (err) { reject(err); }
+            // Dni są zapisane jako bitmaska np. "10000" (Poniedziałek)
+            const daysStr = card.getAttribute('days'); 
+            const dayIndex = daysStr.indexOf('1'); // 0 = Poniedziałek
+            
+            if (dayIndex === -1) return; // Lekcja bez dnia?
 
-
-
-            };
+            DB.lessons.push({
+                dayOfWeek: dayIndex + 1, // 1=Pon, 5=Piątek
+                period: card.getAttribute('period'),
+                teacherId: teacherId,
+                teacherName: DB.teachers[teacherId],
+                subject: subjects[subjectId] || 'Inny',
+                room: classrooms[card.getAttribute('classroomids')] || '',
+                rawDays: daysStr
+            });
         });
     }
 
-    // ==========================================
-    // 3. PARSERS
-    // ==========================================
-    function parseXml(str) {
-        const xml = new DOMParser().parseFromString(str, "text/xml");
-        if(xml.querySelector("parsererror")) throw new Error("Błąd XML");
+    // --- 2. ŁADOWANIE EXCEL (DYŻURY I ZASTĘPSTWA) ---
+    async function fetchExcel(url, type) {
+        const res = await fetch(url);
+        if (!res.ok) throw new Error(`Nie znaleziono pliku ${url}`);
+        const ab = await res.arrayBuffer();
+        const workbook = XLSX.read(ab, {type: 'array'});
 
-        const sel = document.getElementById('teacherSelect');
-        const oldVal = sel.value;
-        sel.innerHTML = '<option value="">-- Wybierz Nauczyciela --</option>';
+        if (type === 'dyzury') parseDuties(workbook);
+        if (type === 'zastepstwa') parseSubstitutions(workbook);
+    }
 
+    function parseDuties(wb) {
+        // Zakładamy, że dyżury są w pierwszym arkuszu lub arkuszu o nazwie 'plan dyżurów'
+        const sheetName = wb.SheetNames.find(n => n.includes("plan")) || wb.SheetNames[0];
+        const ws = wb.Sheets[sheetName];
+        const data = XLSX.utils.sheet_to_json(ws, {header: 1}); // Tablica tablic
 
+        // Szukamy nagłówka z dniami tygodnia
+        let headerRowIdx = -1;
+        for(let i=0; i<data.length; i++) {
+            if(data[i].some(cell => cell && typeof cell === 'string' && cell.includes('Poniedziałek'))) {
+                headerRowIdx = i;
+                break;
+            }
+        }
 
+        if(headerRowIdx === -1) {
+            console.warn("Nie znaleziono nagłówka dni w pliku dyżurów.");
+            return;
+        }
 
-
-
-
-        const tList = Array.from(xml.querySelectorAll('teachers teacher'));
-        tList.sort((a,b) => a.getAttribute('name').localeCompare(b.getAttribute('name')));
-        tList.forEach(t => {
-
-            const id = t.getAttribute('id');
-            const name = t.getAttribute('name');
-            DB.teachers[id] = { name };
-            sel.innerHTML += `<option value="${id}">${name}</option>`;
-        });
-        sel.disabled = false;
-        if(oldVal) sel.value = oldVal;
-
-        // Metadata
-        const classes = {}, subjs = {}, rooms = {};
-        xml.querySelectorAll('classes class').forEach(x => classes[x.getAttribute('id')] = x.getAttribute('name'));
-        xml.querySelectorAll('subjects subject').forEach(x => subjs[x.getAttribute('id')] = x.getAttribute('short') || x.getAttribute('name'));
-        xml.querySelectorAll('classrooms classroom').forEach(x => rooms[x.getAttribute('id')] = x.getAttribute('short') || x.getAttribute('name'));
-
-        DB.periods = Array.from(xml.querySelectorAll('periods period')).map(p => ({
-            id: p.getAttribute('period'), start: p.getAttribute('starttime'), end: p.getAttribute('endtime')
-        }));
-
-        // Lessons
-        const lDefs = {};
-        xml.querySelectorAll('lessons lesson').forEach(l => {
-            const cNames = l.getAttribute('classids').split(',').map(id => classes[id]).join(', ');
-            lDefs[l.getAttribute('id')] = {
-                subj: subjs[l.getAttribute('subjectid')]||'?',
-                teaIds: l.getAttribute('teacherids'),
-                cls: cNames
-            };
+        // Mapowanie kolumn na dni (np. kol 2 = Poniedziałek)
+        const header = data[headerRowIdx];
+        const dayMap = {}; // index kolumny -> numer dnia (1-5)
+        header.forEach((val, idx) => {
+            if(!val) return;
+            if(val.includes('Poniedziałek')) dayMap[idx] = 1;
+            if(val.includes('Wtorek')) dayMap[idx] = 2;
+            if(val.includes('Środa')) dayMap[idx] = 3;
+            if(val.includes('Czwartek')) dayMap[idx] = 4;
+            if(val.includes('Piątek')) dayMap[idx] = 5;
         });
 
-        DB.lessons = [];
-        xml.querySelectorAll('cards card').forEach(c => {
-            const def = lDefs[c.getAttribute('lessonid')];
-            if(def) {
-                const dayIdx = c.getAttribute('days').indexOf('1') + 1;
-                if(dayIdx > 0) {
-                    DB.lessons.push({
-                        day: dayIdx, period: c.getAttribute('period'),
-                        teacherIds: def.teaIds, subject: def.subj, className: def.cls,
-                        room: rooms[c.getAttribute('classroomids')]||''
+        // Iteracja po wierszach poniżej nagłówka
+        for(let i = headerRowIdx + 1; i < data.length; i++) {
+            const row = data[i];
+            const location = row[0]; // Zakładamy: Kol 0 = Miejsce
+            const time = row[1];     // Zakładamy: Kol 1 = Czas (np. 07:55-08:00)
+
+            if(!time || !location) continue;
+
+            // Iteruj po kolumnach z dniami
+            for (const [colIdx, dayNum] of Object.entries(dayMap)) {
+                const teacherRaw = row[colIdx];
+                if (teacherRaw && teacherRaw.trim().length > 2 && !teacherRaw.includes("brak dyżuru")) {
+                    DB.duties.push({
+                        dayOfWeek: dayNum,
+                        time: time.trim(),
+                        location: location,
+                        teacher: teacherRaw.trim()
                     });
                 }
             }
+        }
+    }
+
+    function parseSubstitutions(wb) {
+        // Arkusz "Oddziały" - zastępstwa lekcyjne
+        const subSheet = wb.Sheets["Oddziały"] || wb.Sheets[Object.keys(wb.Sheets)[0]];
+        const subData = XLSX.utils.sheet_to_json(subSheet);
+
+        subData.forEach(row => {
+            // Oczekiwane kolumny: "Dzień", "Lekcja", "Nauczyciel/wakat", "Zastępca", "Uwagi"
+            // Konwersja daty Excela lub stringa
+            let dateStr = row['Dzień']; 
+            if(!dateStr) return;
+            
+            // Proste normalizowanie daty do YYYY-MM-DD
+            // Zakładamy format z pliku CSV użytkownika: "08.12.2025"
+            // Uwaga: SheetJS może automatycznie zamienić na format daty JS jeśli typ komórki był Date
+            
+            DB.substitutions.push({
+                date: normalizeDate(dateStr),
+                lessonInfo: row['Lekcja'], // np. "2, 08:50-09:35"
+                teacher: row['Nauczyciel/wakat'],
+                substitute: row['Zastępca'],
+                note: row['Uwagi'],
+                subject: row['Przedmiot'],
+                branch: row['Oddział']
+            });
+        });
+
+        // Arkusz "Dyżury" - zastępstwa na dyżurach
+        const dutySheet = wb.Sheets["Dyżury"];
+        if(dutySheet) {
+            const dutyData = XLSX.utils.sheet_to_json(dutySheet);
+            dutyData.forEach(row => {
+                DB.dutyChanges.push({
+                    date: normalizeDate(row['Dzień']),
+                    time: row['Godzina'],
+                    originalTeacher: row['Nauczyciel'],
+                    newTeacher: row['Zastępca'],
+                    location: row['Miejsce dyżuru']
+                });
+            });
+        }
+    }
+
+    // --- POMOCNICZE ---
+    function normalizeDate(val) {
+        if (!val) return "";
+        // Jeśli Excel zwróci liczbę (serial date)
+        if (typeof val === 'number') {
+            const date = XLSX.SSF.parse_date_code(val);
+            return `${date.y}-${String(date.m).padStart(2,'0')}-${String(date.d).padStart(2,'0')}`;
+        }
+        // Jeśli string "08.12.2025"
+        if (val.includes('.')) {
+            const parts = val.split('.');
+            return `${parts[2]}-${parts[1]}-${parts[0]}`; // YYYY-MM-DD
+        }
+        return val;
+    }
+
+    function populateTeacherSelect() {
+        const select = document.getElementById('teacher-select');
+        const sortedTeachers = Object.values(DB.teachers).sort();
+        
+        // Używamy Set aby uniknąć duplikatów
+        const uniqueTeachers = [...new Set(sortedTeachers)];
+
+        uniqueTeachers.forEach(t => {
+            const opt = document.createElement('option');
+            opt.value = t;
+            opt.textContent = t;
+            select.appendChild(opt);
         });
     }
 
-    function parseDuties(buf) {
-        const wb = XLSX.read(buf, {type: 'array'});
+    function showError(msg) {
+        document.getElementById('error-msg').innerText = msg;
+    }
 
-        const ws = wb.Sheets[wb.SheetNames[0]];
-        const data = XLSX.utils.sheet_to_json(ws, {header:1, defval:""});
-        DB.permDuties = [];
-        let loc = "";
-        data.forEach(r => {
-            if(r.length<3) return;
-            if(r[0] && isNaN(parseInt(r[0][0]))) loc = r[0];
-            const t = (r[1]||"").toString();
-            if(t.match(/\d{1,2}:\d{2}-\d{1,2}:\d{2}/)) {
-                const [s,e] = t.split('-');
+    // --- 3. RENDEROWANIE (LOGIKA ŁĄCZENIA) ---
+    function renderSchedule() {
+        const container = document.getElementById('schedule-box');
+        container.innerHTML = '';
 
+        const selectedDateVal = document.getElementById('date-picker').value;
+        const selectedTeacher = document.getElementById('teacher-select').value;
 
-                for(let d=0; d<5; d++) {
-                    const tn = (r[d+2]||"").trim();
-                    if(tn.length>2 && !tn.toLowerCase().includes('brak') && !tn.toLowerCase().includes('x.')) {
-                        DB.permDuties.push({ day: d+1, start: s.trim(), end: e.trim(), loc: loc, teacher: tn });
-                    }
+        if (!selectedDateVal || !selectedTeacher) {
+            return;
+        }
+
+        const selectedDate = new Date(selectedDateVal);
+        const dayOfWeek = selectedDate.getDay(); // 1=Poniedziałek
+        const dateStr = selectedDateVal; // YYYY-MM-DD
+
+        if (dayOfWeek === 0 || dayOfWeek === 6) {
+            container.innerHTML = '<p>Wybrano weekend. Brak planu lekcji.</p>';
+            return;
+        }
+
+        // 1. Pobierz lekcje z planu XML dla tego nauczyciela i dnia
+        // Uwaga: W pliku XML nauczyciele mają ID, a w Excelu Imię Nazwisko.
+        // Musimy dopasować te dane.
+        // Znajdź ID nauczyciela na podstawie nazwy (proste wyszukiwanie)
+        let teacherId = Object.keys(DB.teachers).find(key => {
+            const nameInXml = DB.teachers[key]; // "Kowalski Jan"
+            // Proste porównanie (można ulepszyć np. fuzzy search)
+            return compareNames(nameInXml, selectedTeacher);
+        });
+
+        // KROK 1: PLAN BAZOWY
+        let dayLessons = DB.lessons.filter(l => 
+            l.dayOfWeek === dayOfWeek && 
+            l.teacherId === teacherId
+        );
+
+        // Sortuj wg lekcji
+        dayLessons.sort((a,b) => parseInt(a.period) - parseInt(b.period));
+
+        // Przygotuj sloty czasowe (wszystkie lekcje + dyżury)
+        // Musimy przeiterować przez wszystkie okresy lekcyjne, żeby pokazać też "okienka" jeśli jest dyżur
+        const allEvents = [];
+
+        DB.periods.forEach(p => {
+            // Sprawdź czy jest lekcja
+            const lesson = dayLessons.find(l => l.period === p.nr);
+            
+            // Sprawdź zastępstwo LEKCYJNE
+            // W zastępstwach szukamy po nazwisku, nie ID
+            let sub = DB.substitutions.find(s => 
+                s.date === dateStr && 
+                compareNames(s.teacher, selectedTeacher) &&
+                s.lessonInfo.startsWith(p.nr + ",") // Format "2, 08:50..."
+            );
+            
+            // Może nauczyciel jest "Zastępcą" (ma dodaną lekcję)?
+            let addedSub = DB.substitutions.find(s =>
+                s.date === dateStr &&
+                compareNames(s.substitute, selectedTeacher) &&
+                s.lessonInfo.startsWith(p.nr + ",")
+            );
+
+            // Sprawdź DYŻUR (przerwa po lekcji lub przed)
+            // Zakładamy mapowanie czasu dyżuru na przerwy
+            // Dyżury w pliku mają format "07:55-08:00". Musimy dopasować je do slotów.
+            // Dla uproszczenia wyświetlimy dyżury jako osobne kafelki posortowane po czasie.
+        });
+
+        // Alternatywne podejście: Zbieramy listę obiektów {timeStart, type, content} i sortujemy
+        let timeline = [];
+
+        // A. Dodaj lekcje bazowe
+        dayLessons.forEach(l => {
+            const p = DB.periods.find(per => per.nr === l.period);
+            timeline.push({
+                type: 'lesson',
+                start: p.start,
+                end: p.end,
+                periodNr: l.period,
+                data: l,
+                original: true
+            });
+        });
+
+        // B. Przetwórz zastępstwa (usuń/zmodyfikuj bazowe, dodaj nowe)
+        // 1. Anulowania i zmiany dla aktualnego nauczyciela
+        const mySubs = DB.substitutions.filter(s => s.date === dateStr && compareNames(s.teacher, selectedTeacher));
+        mySubs.forEach(sub => {
+            const nr = sub.lessonInfo.split(',')[0];
+            const existingIdx = timeline.findIndex(t => t.type === 'lesson' && t.periodNr == nr);
+            
+            if (existingIdx > -1) {
+                // Modyfikacja istniejącej lekcji
+                timeline[existingIdx].subInfo = sub;
+                timeline[existingIdx].status = 'cancelled_or_changed';
+            }
+        });
+
+        // 2. Dodane lekcje (gdzie nauczyciel jest zastępcą)
+        const imSub = DB.substitutions.filter(s => s.date === dateStr && compareNames(s.substitute, selectedTeacher));
+        imSub.forEach(sub => {
+            const nr = sub.lessonInfo.split(',')[0];
+            // Znajdź godziny dla tego numeru lekcji
+            const p = DB.periods.find(per => per.nr == nr);
+            if(p) {
+                timeline.push({
+                    type: 'lesson',
+                    start: p.start,
+                    end: p.end,
+                    periodNr: nr,
+                    subData: sub, // To jest zastępstwo
+                    status: 'added'
+                });
+            }
+        });
+
+        // C. Dodaj Dyżury
+        // 1. Stałe dyżury
+        const myDuties = DB.duties.filter(d => d.dayOfWeek === dayOfWeek && compareNames(d.teacher, selectedTeacher));
+        myDuties.forEach(d => {
+            timeline.push({
+                type: 'duty',
+                start: d.time.split('-')[0], // Uproszczone sortowanie
+                time: d.time,
+                location: d.location,
+                original: true
+            });
+        });
+
+        // 2. Zmiany w dyżurach (zastepstwa.xlsx - Dyżury)
+        // Jeśli ja mam dyżur, ale ktoś mnie zastępuje -> anuluj mój
+        const dutyCancelled = DB.dutyChanges.filter(dc => dc.date === dateStr && compareNames(dc.originalTeacher, selectedTeacher));
+        
+        // Jeśli ja zastępuję kogoś -> dodaj nowy dyżur
+        const dutyAdded = DB.dutyChanges.filter(dc => dc.date === dateStr && compareNames(dc.newTeacher, selectedTeacher));
+
+        // Aplikuj zmiany dyżurów
+        timeline.forEach(item => {
+            if(item.type === 'duty') {
+                const isCanc = dutyCancelled.find(dc => dc.time === item.time);
+                if(isCanc) {
+                    item.status = 'cancelled';
+                    item.subInfo = isCanc;
                 }
             }
         });
-    }
 
-    function parseSubs(buf) {
-        const wb = XLSX.read(buf, {type: 'array'});
-        const sl = wb.SheetNames.find(n => n.toLowerCase().includes('oddział'));
-        if(sl) {
-            DB.subLessons = XLSX.utils.sheet_to_json(wb.Sheets[sl], {raw:false, dateNF:'dd.mm.yyyy'}).map(r => ({
-
-
-
-
-                date: r['Dzień'], period: (r['Lekcja']||'').split(',')[0].trim(),
-                absent: r['Nauczyciel/wakat'], sub: r['Zastępca'],
-                subject: r['Przedmiot'], room: r['Sala'], info: r['Oddział']
-            })).filter(x => x.date);
-        }
-        const sd = wb.SheetNames.find(n => n.toLowerCase().includes('dyżur'));
-        if(sd) {
-            DB.subDuties = XLSX.utils.sheet_to_json(wb.Sheets[sd], {raw:false}).map(r => ({
-
-
-
-                date: r['Dzień'], time: r['Godzina'],
-                absent: r['Nauczyciel'], sub: r['Zastępca'], loc: r['Miejsce dyżuru']
-            })).filter(x => x.date);
-        }
-    }
-
-    // ==========================================
-    // 4. LOGIC & RENDER
-    // ==========================================
-    function normalize(n) {
-        if(!n) return "";
-        return n.toLowerCase().replace(/x\./,'').replace(/[-.]/g,' ').split(/\s+/).filter(t=>t.length>1).sort().join('');
-
-
-
-
-
-    }
-    
-
-    function isSame(n1, n2) {
-        if(!n1 || !n2) return false;
-        const t1 = n1.toLowerCase().replace(/x\./,'').replace(/[-]/g,' ').split(' ').filter(x=>x.length>1);
-        const t2 = n2.toLowerCase().replace(/x\./,'').replace(/[-]/g,' ').split(' ').filter(x=>x.length>1);
-
-
-
-
-        let hits = 0;
-        t1.forEach(t => { if(t2.includes(t)) hits++; });
-        return hits >= 2;
-    }
-
-    function timeToMin(t) {
-        if(!t) return 0;
-        const [h,m] = t.split(':').map(Number);
-        return h*60+m;
-    }
-
-    function render() {
-        const tid = document.getElementById('teacherSelect').value;
-        if(!tid || !DB.teachers[tid]) return;
-        const tName = DB.teachers[tid].name;
-
-
-        const box = document.getElementById('timetable');
-        box.innerHTML = '';
-
-        // Dates
-        const dateInput = document.getElementById('datePicker').value;
-        const dObj = new Date(dateInput);
-        const dayNum = dObj.getDay();
-        const mon = new Date(dObj);
-        mon.setDate(dObj.getDate() - (dayNum===0?6:dayNum-1));
-
-        const week = [];
-
-        for(let i=0; i<5; i++) {
-            let d = new Date(mon); d.setDate(mon.getDate()+i);
-            week.push(d.toLocaleDateString('pl-PL'));
-        }
-
-        const headers = ['Godziny', 'Poniedziałek', 'Wtorek', 'Środa', 'Czwartek', 'Piątek'];
-        headers.forEach((h, i) => {
-            box.innerHTML += `<div class="header">${h}${i>0 ? '<br><small>'+week[i-1]+'</small>' : ''}</div>`;
+        dutyAdded.forEach(da => {
+            timeline.push({
+                type: 'duty',
+                start: da.time.split('-')[0],
+                time: da.time,
+                location: da.location,
+                status: 'added',
+                subInfo: da
+            });
         });
 
-        const periods = (DB.periods.length) ? DB.periods : [1,2,3,4,5,6,7,8,9].map(i=>({id:i, start:'', end:''}));
+        // SORTOWANIE CAŁOŚCI PO GODZINIE
+        timeline.sort((a, b) => {
+            return a.start.localeCompare(b.start);
+        });
 
-        periods.forEach(p => {
-            box.innerHTML += `<div class="time-col"><div>${p.id}</div><div>${p.start}<br>${p.end}</div></div>`;
-            const pStart = timeToMin(p.start);
-            const pEnd = timeToMin(p.end);
+        // RENDEROWANIE DO HTML
+        if(timeline.length === 0) {
+            container.innerHTML = "<p>Brak lekcji i dyżurów w tym dniu.</p>";
+            return;
+        }
 
-            for(let d=1; d<=5; d++) {
-                const dateStr = week[d-1];
-                const cell = document.createElement('div');
-                cell.className = 'day-col';
+        timeline.forEach(item => {
+            const el = document.createElement('div');
+            el.className = 'slot-card';
+            
+            if (item.type === 'lesson') {
+                let html = `<div class="slot-time">Lekcja ${item.periodNr} (${item.start} - ${item.end})</div>`;
+                
+                if (item.status === 'added') {
+                    // Dodana lekcja (zastępstwo za kogoś)
+                    el.classList.add('type-sub');
+                    html += `<div class="slot-title">Zastępstwo za: ${item.subData.teacher}</div>`;
+                    html += `<div class="slot-info">Klasa: ${item.subData.branch || '?'} | Sala: ?</div>`;
+                    html += `<div class="sub-details">Przedmiot: ${item.subData.subject} <br> ${item.subData.note || ''}</div>`;
+                } else {
+                    // Zwykła lekcja (być może odwołana)
+                    const lesson = item.data;
+                    const isCancelled = item.subInfo && !item.subInfo.substitute; // Jeśli brak zastępcy w wierszu, to często odwołane
+                    const isChanged = item.subInfo && item.subInfo.substitute;
+                    
+                    if (isCancelled) el.classList.add('cancelled');
+                    if (isChanged) el.classList.add('type-sub');
 
-                // LEKCJE
-                const lXml = DB.lessons.find(l => l.day == d && l.period == p.id && l.teacherIds.includes(tid));
-                const subAbs = DB.subLessons.find(s => s.date == dateStr && s.period == p.id && isSame(s.absent, tName));
-                const subAdd = DB.subLessons.find(s => s.date == dateStr && s.period == p.id && isSame(s.sub, tName));
+                    html += `<div class="slot-title">${lesson.subject}</div>`;
+                    html += `<div class="slot-info">Klasa: ? | Sala: ${lesson.room}</div>`;
 
-                if(lXml || subAdd) {
-                    const card = document.createElement('div');
-@@ -400,7 +384,6 @@ <h1>📅 Pulpit Nauczyciela</h1>
-                            card.innerHTML = `<div class="subject">${lXml.subject}</div><div class="class-name">${lXml.className}</div><div class="room">${lXml.room}</div>`;
-                        }
+                    if (item.subInfo) {
+                         html += `<div class="sub-details">
+                            <span class="badge badge-sub">ZMIANA</span> 
+                            ${item.subInfo.note || 'Zastępstwo'} 
+                            ${item.subInfo.substitute ? '-> ' + item.subInfo.substitute : ''}
+                         </div>`;
                     }
-
-                    if(subAdd) {
-                        const div = document.createElement('div');
-                        if(lXml) div.style.marginTop = "8px"; else card.classList.add('added');
-@@ -412,38 +395,32 @@ <h1>📅 Pulpit Nauczyciela</h1>
-                    cell.innerHTML += `<div class="card empty"></div>`;
                 }
+                el.innerHTML = html;
 
-                // DYŻURY
+            } else if (item.type === 'duty') {
+                el.classList.add('type-duty');
+                let html = `<div class="slot-time">DYŻUR: ${item.time}</div>`;
+                
+                if (item.status === 'cancelled') {
+                    el.classList.add('cancelled');
+                    html += `<div class="slot-title">${item.location}</div>`;
+                    html += `<div class="sub-details">Zastępstwo: ${item.subInfo.newTeacher}</div>`;
+                } else if (item.status === 'added') {
+                    html += `<div class="slot-title">${item.location}</div>`;
+                    html += `<div class="sub-details"><span class="badge badge-sub">NOWY</span> Za: ${item.subInfo.originalTeacher}</div>`;
+                } else {
+                    html += `<div class="slot-title">${item.location}</div>`;
+                    html += `<span class="badge badge-duty">Twój dyżur</span>`;
+                }
+                el.innerHTML = html;
+            }
+            
+            container.appendChild(el);
+        });
+    }
 
+    // Funkcja pomocnicza do porównywania nazwisk (np. "Kowalski Jan" vs "Jan Kowalski" vs "Kowalski J.")
+    function compareNames(n1, n2) {
+        if(!n1 || !n2) return false;
+        // Uproszczone: sprawdzamy czy jedno nazwisko zawiera się w drugim (case insensitive)
+        const a = n1.toLowerCase().replace(',', '').split(' ');
+        const b = n2.toLowerCase().replace(',', '').split(' ');
+        
+        // Sprawdź czy jakakolwiek część nazwiska (np. Kowalski) występuje w obu
+        const surnameA = a[0].length > 2 ? a[0] : a[1];
+        const surnameB = b[0].length > 2 ? b[0] : b[1];
+        
+        return n1.toLowerCase().includes(surnameB) || n2.toLowerCase().includes(surnameA);
+    }
 
+    // Start
+    init();
 
-                const showDuty = (tRange) => {
-                    const ds = timeToMin(tRange.split('-')[0]);
-                    if(p.id == 1 && ds < pStart) return true; 
-                    if(Math.abs(ds - pEnd) <= 15) return true; 
-                    return false;
-                };
+</script>
 
-                const printDuty = (t, loc, type, info) => {
-                    const el = document.createElement('div');
-                    el.className = `duty ${type}`;
-                    el.innerHTML = `<span class="duty-lbl">DYŻUR</span><div class="duty-row"><span>${t}</span> <span>${loc}</span></div>`;
-                    if(info) el.innerHTML += `<small>${info}</small>`;
-                    if(cell.lastElementChild) cell.lastElementChild.appendChild(el); else cell.appendChild(el);
-                };
-
-                DB.permDuties.filter(pd => pd.day == d && isSame(pd.teacher, tName)).forEach(pd => {
-
-                    const t = `${pd.start}-${pd.end}`;
-                    if(showDuty(t)) {
-                        const isCanc = DB.subDuties.find(s => s.date == dateStr && s.time.startsWith(pd.start) && isSame(s.absent, tName));
-                        if(isCanc) printDuty(t, pd.loc, 'cancelled', `Zast: ${isCanc.sub}`);
-                        else printDuty(t, pd.loc, '', '');
-                    }
-                });
-                DB.subDuties.filter(s => s.date == dateStr && isSame(s.sub, tName)).forEach(sd => {
-                    if(showDuty(sd.time)) printDuty(sd.time, sd.loc, 'added', `Za: ${sd.absent}`);
-
-
-                });
-
-                box.appendChild(cell);
+</body>
+</html>
