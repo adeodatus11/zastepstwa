@@ -70,7 +70,7 @@
             position: sticky; top: 0; z-index: 1000; 
             box-shadow: 0 10px 30px rgba(0,0,0,0.6);
             display: flex; justify-content: space-between; align-items: center;
-            min-height: 100px;
+            min-height: 110px; /* Nieco wyższy dla nawigatora */
             border-bottom: 4px solid #22c55e;
         }
 
@@ -85,12 +85,59 @@
 
         .header-text { display: flex; flex-direction: column; justify-content: center; }
         .header-text h1 { 
-            margin: 0; font-size: 1.8rem; font-weight: 800; 
+            margin: 0; font-size: 1.6rem; font-weight: 800; 
             text-transform: uppercase; text-shadow: 0 2px 4px rgba(0,0,0,0.4);
         }
         .clock { 
-            font-family: 'Consolas', monospace; font-size: 1.2rem; 
+            font-family: 'Consolas', monospace; font-size: 1.1rem; 
             color: #f0fdf4; margin-top: 4px; font-weight: 600;
+        }
+
+        /* --- NOWY NAWIGATOR TYGODNI --- */
+        .week-nav {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            background: rgba(0, 0, 0, 0.25);
+            padding: 10px 20px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(5px);
+        }
+
+        .week-nav-btn {
+            background: none;
+            border: none;
+            color: #4ade80;
+            font-size: 2rem;
+            cursor: pointer;
+            padding: 0 10px;
+            transition: transform 0.2s, color 0.2s;
+            line-height: 1;
+        }
+        .week-nav-btn:hover { color: #fff; transform: scale(1.2); }
+
+        .week-display {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-width: 200px;
+        }
+
+        .week-label {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            color: #a7f3d0;
+            letter-spacing: 1px;
+            margin-bottom: 2px;
+        }
+
+        .week-range {
+            font-family: 'Consolas', monospace;
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #fff;
+            text-shadow: 0 2px 5px rgba(0,0,0,0.5);
         }
 
         .controls { display: flex; gap: 15px; align-items: center; }
@@ -160,8 +207,6 @@
             overflow: hidden;
         }
         
-        /* --- POPRAWKA NAGŁÓWKA DNIA --- */
-        /* Zmieniono sticky na relative, żeby nie zasłaniał treści */
         .day-header {
             background: linear-gradient(to bottom, #065f46, #064e3b);
             color: #ecfdf5; 
@@ -170,8 +215,7 @@
             border-bottom: 1px solid #047857;
             text-transform: uppercase;
             letter-spacing: 1px;
-            /* ZMIANA TUTAJ: */
-            position: relative; 
+            position: relative; /* Naprawione: nie zasłania treści */
             top: auto; 
             z-index: 10;
         }
@@ -262,6 +306,15 @@
             <div id="clock" class="clock">--:--</div>
         </div>
     </div>
+
+    <div class="week-nav" id="week-nav-container" style="display:none">
+        <button class="week-nav-btn" onclick="changeWeek(-1)">&#10094;</button>
+        <div class="week-display">
+            <span class="week-label">Wybrany tydzień</span>
+            <span class="week-range" id="week-range-text">...</span>
+        </div>
+        <button class="week-nav-btn" onclick="changeWeek(1)">&#10095;</button>
+    </div>
     
     <div class="controls" id="nav-controls" style="display:none">
         <select id="mode-select" style="display:none"><option value="teacher">Nauczyciel</option><option value="class">Oddział</option><option value="room">Sala</option></select>
@@ -294,7 +347,7 @@
         dyzury: './dyzury.xlsx',
         zastepstwa: './zastepstwa.xlsx',
         refreshInterval: 120000, 
-        idleTimeout: 30000       
+        idleTimeout: 45000       
     };
 
     const DB = {
@@ -306,6 +359,9 @@
     let refreshTimer = null;
     let idleTimer = null;
     let isDashboardActive = true;
+    
+    // NOWA ZMIENNA DO NAWIGACJI
+    let weekOffset = 0; 
 
     window.onload = () => {
         startClock();
@@ -325,16 +381,20 @@
 
     function returnToDashboard() {
         isDashboardActive = true;
+        weekOffset = 0; // Reset daty przy powrocie do menu
         clearTimeout(idleTimer);
         document.getElementById('dashboard-view').style.display = 'block';
         document.getElementById('schedule-view').style.display = 'none';
         document.getElementById('nav-controls').style.display = 'none';
+        document.getElementById('week-nav-container').style.display = 'none'; // Ukryj nawigator
         document.body.className = '';
         log("Menu Główne");
     }
 
     function openSchedule(mode, id) {
         isDashboardActive = false;
+        weekOffset = 0; // Reset daty przy otwarciu
+        
         const modeSel = document.getElementById('mode-select');
         const dataSel = document.getElementById('data-select');
         modeSel.value = mode;
@@ -345,9 +405,30 @@
         document.getElementById('dashboard-view').style.display = 'none';
         document.getElementById('schedule-view').style.display = 'block';
         document.getElementById('nav-controls').style.display = 'flex';
+        document.getElementById('week-nav-container').style.display = 'flex'; // Pokaż nawigator
         
         render();
         resetIdle();
+    }
+
+    // --- NOWA FUNKCJA ZMIANY TYGODNIA ---
+    function changeWeek(direction) {
+        weekOffset += direction;
+        render(); // Przeładuj widok z nową datą
+        resetIdle();
+    }
+
+    // --- OBLICZANIE DATY PONIEDZIAŁKU ---
+    function getStartOfWeek(date) {
+        const d = new Date(date);
+        const day = d.getDay();
+        // Poniedziałek = 1. Jeśli niedziela (0), cofamy o 6 dni.
+        const diff = d.getDate() - day + (day == 0 ? -6 : 1);
+        return new Date(d.setDate(diff));
+    }
+
+    function formatDateShort(d) {
+        return `${d.getDate()}.${d.getMonth()+1}`;
     }
 
     async function refreshData() {
@@ -374,7 +455,6 @@
     function renderDashboard() {
         const container = document.getElementById('tiles-container');
         container.innerHTML = "";
-
         const createSection = (title, items, type, clickFn) => {
             if(!items.length) return;
             const div = document.createElement('div');
@@ -390,12 +470,10 @@
             div.appendChild(grid);
             container.appendChild(div);
         };
-
         const teachers = Object.entries(DB.teachers)
             .sort((a,b) => a[1].name.localeCompare(b[1].name))
             .filter(([id, t]) => !t.name.toLowerCase().includes('wakat'))
             .map(([id, t]) => ({val: id, txt: t.name}));
-
         createSection("Nauczyciele", teachers, 'teacher', (id) => openSchedule('teacher', id));
         createSection("Sale Lekcyjne", DB.rooms.sort().map(r => ({val: r, txt: r})), 'room', (id) => openSchedule('room', id));
         createSection("Oddziały", DB.classesList.sort().map(c => ({val: c, txt: c})), 'class', (id) => openSchedule('class', id));
@@ -567,7 +645,6 @@
         if(typeof val === 'string') { const p = val.trim().split('.'); if(p.length===3) return `${p[2]}-${p[1]}-${p[0]}`; }
         return null;
     }
-    function getMonday(d) { d = new Date(d); const day = d.getDay(); const diff = d.getDate() - day + (day == 0 ? -6:1); return new Date(d.setDate(diff)); }
     function getTeacherName(id) { return DB.teachers[id] ? DB.teachers[id].name : id; }
     function normalizeClass(c) { return (c || "").replace(/\s/g, '').toLowerCase(); }
     function addMissingTeachers() {
@@ -610,7 +687,16 @@
         const grid = document.getElementById('grid');
         grid.innerHTML = "";
         if(!selectedId) return;
-        const monday = getMonday(new Date());
+        
+        // --- ZMIANA: POBIERZ PONIEDZIAŁEK Z UWZGLĘDNIENIEM OFFSETU ---
+        const today = new Date();
+        today.setDate(today.getDate() + (weekOffset * 7));
+        const monday = getStartOfWeek(today);
+
+        // Zaktualizuj wyświetlacz tygodnia w nagłówku
+        const friday = new Date(monday); friday.setDate(friday.getDate() + 4);
+        document.getElementById('week-range-text').innerText = 
+            `${formatDateShort(monday)} - ${formatDateShort(friday)}`;
 
         for(let i=0; i<5; i++) {
             const curDate = new Date(monday); curDate.setDate(monday.getDate() + i);
@@ -638,6 +724,7 @@
                 else if (mode === 'class') lessons = DB.lessons.filter(l => l.classNames.includes(selectedId) && l.day == dayNum && l.period == p.nr);
                 
                 let subAdds = [];
+                // --- FILTROWANIE PO DACIE (działa dla przyszłych/przeszłych tygodni, o ile są w Excelu) ---
                 if (mode === 'teacher') subAdds = DB.subs.filter(s => s.date == dateStr && s.sub == selectedId && s.periodRaw.startsWith(p.nr+','));
                 else if (mode === 'room') subAdds = DB.subs.filter(s => s.date == dateStr && s.room === selectedId && s.periodRaw.startsWith(p.nr+','));
                 else if (mode === 'class') subAdds = DB.subs.filter(s => s.date == dateStr && normalizeClass(s.branch).includes(normalizeClass(selectedId)) && s.periodRaw.startsWith(p.nr+','));
