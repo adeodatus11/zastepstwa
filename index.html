@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Szkolny Planer - Zintegrowany</title>
+    <title>Szkolny Planer - Odporny na błędy</title>
     <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
     <style>
         :root {
@@ -77,7 +77,7 @@
             border-top-left-radius: 10px; border-top-right-radius: 10px;
             
             position: sticky; 
-            top: 80px; /* Wysokość nagłówka głównego + margines */
+            top: 80px; 
             z-index: 900;
             box-shadow: 0 2px 5px rgba(0,0,0,0.05);
         }
@@ -212,19 +212,24 @@
         log("Ładowanie plików...", true);
         
         try {
+            // 1. Plan XML jest krytyczny - bez niego aplikacja nie ma sensu
             await loadXML();
-            await loadExcel(CONFIG.dyzury, 'dyzury');
-            await loadExcel(CONFIG.zastepstwa, 'zastepstwa');
+
+            // 2. Pliki Excel są opcjonalne. Używamy .catch() żeby błąd nie zatrzymał wszystkiego
+            await Promise.all([
+                loadExcel(CONFIG.dyzury, 'dyzury').catch(e => console.warn("Brak pliku dyżurów lub błąd: ", e)),
+                loadExcel(CONFIG.zastepstwa, 'zastepstwa').catch(e => console.warn("Brak pliku zastępstw lub błąd: ", e))
+            ]);
             
             addMissingTeachers();
             extractUniqueLocations();
             
             populateSelect();
             
-            log(`Dane wczytane pomyślnie.`);
+            log(`Dane wczytane (Plan bazowy aktywny).`);
         } catch (e) {
             console.error(e);
-            log("BŁĄD: " + e.message, true);
+            log("BŁĄD KRYTYCZNY (Brak plan.xml): " + e.message, true);
         }
     };
 
@@ -381,9 +386,8 @@
                 }
             }
 
-            // RENDER KAFELKA
+            // RENDER
             if(subAdd) {
-                // === NOWA LEKCJA / ZASTĘPSTWO ===
                 div.className = 'card is-new';
                 let subLine = "";
                 if(mode === 'teacher') subLine = `${subAdd.branch || '?'} / s.${subAdd.room} / ${subAdd.subject}`;
@@ -398,7 +402,6 @@
                     ${subAdd.payInfo ? `<div class="pay-info">${subAdd.payInfo}</div>` : ''}
                 `;
             } else if(lesson) {
-                // === ZWYKŁA LEKCJA ===
                 if(subAbs) {
                     div.className = 'card is-sub';
                     div.innerHTML = `
@@ -420,8 +423,6 @@
                         <div class="main-info">${lesson.subject}</div>
                         <div class="sub-line">${subLine}</div>`;
                     
-                    // Pokazujemy nauczyciela wspomagającego, jeśli istnieje
-                    // (I jeśli nie jesteśmy w trybie klasy - tam może być to mylące, choć opcjonalnie można dodać)
                     if (lesson.supportInfo) {
                         html += `<div class="support-info">+ ${lesson.supportInfo}</div>`;
                     }
@@ -555,7 +556,7 @@
         const subjects = {};
         xml.querySelectorAll('subjects subject').forEach(s => subjects[s.getAttribute('id')] = s.getAttribute('name'));
 
-        // --- ZMODYFIKOWANA LOGIKA KARTY (WSPOMAGANIE) ---
+        // --- LOGIKA KART LEKCJI (WSPOMAGANIE) ---
         xml.querySelectorAll('cards card').forEach(c => {
             const lesson = xml.querySelector(`lessons lesson[id="${c.getAttribute('lessonid')}"]`);
             if(!lesson) return;
@@ -569,11 +570,9 @@
 
             if(dayIdx > 0 && tidsRaw) {
                 const tidsArray = tidsRaw.split(',');
-                
-                // 1. Pierwszy nauczyciel = GŁÓWNY (dodajemy lekcję)
+                // Pierwszy to główny
                 const mainTeacherId = tidsArray[0].trim();
-                
-                // 2. Reszta = WSPOMAGAJĄCY (tylko tekst)
+                // Reszta to wspomagający
                 const supportTeachers = tidsArray.slice(1).map(tid => getTeacherName(tid.trim()));
                 const supportInfoString = supportTeachers.length > 0 ? supportTeachers.join(', ') : null;
 
@@ -585,7 +584,7 @@
                     room: rooms[roomId] || '', 
                     classNames: classNames, 
                     branch: '',
-                    supportInfo: supportInfoString // Info dla widoku
+                    supportInfo: supportInfoString
                 });
             }
         });
