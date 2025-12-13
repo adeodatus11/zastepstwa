@@ -20,11 +20,16 @@
             flex-direction: column;
         }
 
-        /* --- NAGŁÓWEK --- */
+        /* --- NAGŁÓWEK (NOWY DESIGN) --- */
         header {
             height: 170px;
-            /* Gradient leśny */
-            background: linear-gradient(90deg, #064e3b 0%, #020617 100%);
+            /* Nowy gradient: Bardzo jasny zielony po lewej (dla czarnego logo), przechodzący w ciemny */
+            background: linear-gradient(
+                to right, 
+                #4dff88 0%,   /* Start: Jasna zieleń */
+                #33cc66 30%,  /* Środek: Soczysta zieleń */
+                #020617 100%  /* Koniec: Ciemne tło pasujące do reszty strony */
+            );
             display: flex;
             align-items: center;
             padding: 0 40px;
@@ -34,39 +39,28 @@
             z-index: 10;
         }
 
-        /* --- KONTENER LOGO (NOWY STYL - PROSTOKĄT) --- */
+        /* --- KONTENER LOGO (BEZ TŁA) --- */
         .logo-container {
             margin-right: 40px;
-            
-            /* TŁO POD LOGO: Półprzezroczysta biel (szkło) */
-            /* Dzięki temu czarne napisy w logo będą widoczne */
-            background-color: rgba(255, 255, 255, 0.95);
-            
-            /* Kształt: Zaokrąglony prostokąt, a nie koło */
-            border-radius: 16px;
-            
-            /* Odstęp wewnątrz, żeby logo nie dotykało krawędzi */
-            padding: 10px 20px;
-            
-            /* Subtelna ramka i poświata */
-            border: 2px solid #4ade80;
-            box-shadow: 0 0 25px rgba(34, 197, 94, 0.3);
-            
-            /* Flex do centrowania */
+            flex-shrink: 0; /* Zapobiega ściskaniu logo */
             display: flex;
             align-items: center;
             justify-content: center;
-            
-            /* Ograniczenie wysokości, szerokość automatyczna */
             height: 130px;
-            min-width: 130px; /* Minimalna szerokość */
+            width: 180px; /* Stała szerokość dla wektora */
         }
 
-        .logo {
-            height: 100%;       /* Wypełnij wysokość kontenera */
-            width: auto;        /* Szerokość dopasuje się sama (nie utnie napisów) */
-            object-fit: contain;
-            display: block;
+        /* Stylizacja wektora SVG */
+        .logo-svg {
+            width: 100%;
+            height: 100%;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2)); /* Lekki cień pod orłem dla głębi */
+        }
+
+        /* Kolor elementów logo (czarny, żeby kontrastował z jasnym tłem) */
+        .logo-svg path,
+        .logo-svg text {
+            fill: #000000;
         }
 
         .header-text {
@@ -80,7 +74,7 @@
             text-transform: uppercase; 
             letter-spacing: 2px; 
             margin: 0; 
-            color: #f0fdf4; 
+            color: #ffffff; /* Biały tekst na ciemniejszej części gradientu */
             font-weight: 800;
             line-height: 1.1;
             text-shadow: 0 2px 4px rgba(0,0,0,0.5);
@@ -228,7 +222,11 @@
 
 <header>
     <div class="logo-container">
-        <img src="orzeł.png" alt="Godło" class="logo" onerror="this.style.display='none'">
+        <svg class="logo-svg" viewBox="0 0 220 150" xmlns="http://www.w3.org/2000/svg">
+            <path d="M160 40 C 130 10, 80 10, 50 40 C 30 50, 20 70, 25 85 C 35 80, 60 75, 75 80 C 65 90, 70 105, 75 115 L 85 100 C 85 120, 90 135, 100 150 L 110 130 C 130 145, 160 120, 180 90 C 190 60, 180 50, 160 40 Z M 65 65 C 70 60, 85 60, 90 68 C 80 70, 70 70, 65 65 Z" />
+            <text x="105" y="115" font-family="Arial, sans-serif" font-weight="900" font-size="52" letter-spacing="-2">ZSZ5</text>
+            <text x="105" y="145" font-family="Arial, sans-serif" font-weight="bold" font-size="18">WE WROCŁAWIU</text>
+        </svg>
     </div>
     
     <div class="header-text">
