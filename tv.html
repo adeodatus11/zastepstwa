@@ -6,12 +6,12 @@
     <title>ZSZ5 TV - Plan Lekcji</title>
     <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
     <style>
-        /* --- BAZA I CIEMNY MOTYW (DLA TV 1080x1920) --- */
+        /* --- BAZA I MOTYW ZIELONY (FOREST THEME) --- */
         * { box-sizing: border-box; margin: 0; padding: 0; }
         
         body {
-            background-color: #0f0f11; /* Głęboka czerń/szarość */
-            color: #e0e0e0;
+            background-color: #020617; /* Prawie czarny, z nutą zieleni */
+            color: #e2e8f0;
             font-family: 'Segoe UI', 'Roboto', Helvetica, Arial, sans-serif;
             width: 1080px;
             height: 1920px;
@@ -22,33 +22,35 @@
 
         /* --- NAGŁÓWEK --- */
         header {
-            height: 180px; /* Więcej miejsca dla Orła */
-            /* Elegancki gradient pasujący do powagi godła */
-            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            height: 180px;
+            /* Gradient leśny: od ciemnego lasu do głębokiej zieleni */
+            background: linear-gradient(135deg, #064e3b 0%, #14532d 100%);
             display: flex;
             align-items: center;
             padding: 0 40px;
-            border-bottom: 6px solid #d97706; /* Bursztynowo-złoty akcent */
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            /* Jasnozielony akcent na dole */
+            border-bottom: 6px solid #4ade80; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.6);
             position: relative;
             z-index: 10;
         }
 
         .logo-container {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding-right: 30px;
-            border-right: 2px solid rgba(255,255,255,0.1); /* Separator */
-            margin-right: 30px;
+            margin-right: 35px;
+            /* Usunąłem kreskę, żeby logo bardziej "wisiało" */
         }
 
         .logo {
-            height: 130px; /* Duży, wyraźny orzeł */
-            width: auto;
-            /* Subtelny cień sprawia, że logo "wisi" nad tłem */
-            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.4));
-            transition: transform 0.3s;
+            height: 130px; 
+            width: 130px;
+            /* KLUCZOWA ZMIANA: Robimy z logo emblemat */
+            background-color: #fff; /* Białe tło dla orła */
+            border-radius: 50%;     /* Idealne koło */
+            padding: 5px;           /* Odstęp orła od krawędzi koła */
+            object-fit: contain;
+            /* Cień i ramka sprawiają, że wygląda jak przypinka/herb */
+            border: 4px solid #f0fdf4; 
+            box-shadow: 0 0 20px rgba(74, 222, 128, 0.3); /* Zielona poświata */
         }
 
         .header-text {
@@ -62,7 +64,7 @@
             text-transform: uppercase; 
             letter-spacing: 3px; 
             margin: 0; 
-            color: #f1f5f9;
+            color: #f0fdf4; /* Bardzo jasna mięta */
             font-weight: 800;
             line-height: 1.1;
             text-shadow: 0 2px 4px rgba(0,0,0,0.3);
@@ -70,10 +72,10 @@
         
         .header-text h2 { 
             font-size: 1.5rem; 
-            color: #fbbf24; /* Złoty kolor dla daty */
+            color: #86efac; /* Jasny zielony dla daty */
             font-weight: 500; 
             margin-top: 10px;
-            font-family: 'Consolas', monospace; /* Monospace dla cyfr - nie skaczą */
+            font-family: 'Consolas', monospace;
             display: flex;
             align-items: center;
             gap: 10px;
@@ -81,10 +83,10 @@
 
         .live-dot {
             height: 12px; width: 12px;
-            background-color: #ef4444;
+            background-color: #22c55e; /* Zielona kropka zamiast czerwonej */
             border-radius: 50%;
             display: inline-block;
-            box-shadow: 0 0 10px #ef4444;
+            box-shadow: 0 0 10px #22c55e;
         }
 
         /* --- KONTENER GŁÓWNY --- */
@@ -94,33 +96,36 @@
             display: flex;
             flex-direction: column;
             gap: 30px;
-            background: radial-gradient(circle at center, #18181b 0%, #000000 100%);
+            /* Tło z bardzo subtelnym gradientem */
+            background: radial-gradient(circle at center, #052e16 0%, #020617 100%);
         }
 
         /* --- KARTA KLASY --- */
         .class-card {
             flex: 1;
-            background-color: #1e1e1e;
+            background-color: #111827; /* Ciemnoszary z nutą granatu */
             border-radius: 16px;
             overflow: hidden;
             display: flex;
             flex-direction: column;
-            border-left: 12px solid #3b82f6;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.5); /* Mocniejszy cień */
-            border: 1px solid #333;
+            /* Zmiana paska bocznego na zielony */
+            border-left: 12px solid #16a34a; 
+            box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+            border: 1px solid #1f2937;
         }
 
         .class-header {
-            background: linear-gradient(90deg, #2c2c2c 0%, #202020 100%);
+            /* Ciemnozielony nagłówek karty */
+            background: linear-gradient(90deg, #064e3b 0%, #065f46 100%);
             padding: 15px 30px;
             font-size: 2.2rem;
             font-weight: 700;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 2px solid #444;
+            border-bottom: 2px solid #047857;
         }
-        .class-name { color: #60a5fa; text-shadow: 0 0 15px rgba(96, 165, 250, 0.3); }
+        .class-name { color: #d1fae5; text-shadow: 0 0 15px rgba(16, 185, 129, 0.3); }
 
         /* --- TABELA LEKCJI --- */
         .lesson-table {
@@ -136,25 +141,24 @@
             color: #94a3b8;
             font-size: 0.9rem;
             text-transform: uppercase;
-            border-bottom: 1px solid #444;
-            background: #202022;
+            border-bottom: 1px solid #374151;
+            background: #1f2937;
             letter-spacing: 1px;
         }
 
         .lesson-table td {
             padding: 8px 15px;
-            border-bottom: 1px solid #2d2d2d;
+            border-bottom: 1px solid #1f2937;
             vertical-align: middle;
-            height: 60px; /* Stała wysokość wiersza */
+            height: 60px;
         }
 
-        /* Szerokości kolumn */
-        .col-nr { width: 60px; color: #52525b; font-weight: bold; text-align: center; font-size: 1.1em; }
-        .col-subj { width: 45%; font-weight: 600; color: #e5e5e5; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
-        .col-room { width: 15%; text-align: center; font-weight: bold; color: #fbbf24; }
+        .col-nr { width: 60px; color: #64748b; font-weight: bold; text-align: center; font-size: 1.1em; }
+        .col-subj { width: 45%; font-weight: 600; color: #f1f5f9; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+        .col-room { width: 15%; text-align: center; font-weight: bold; color: #fbbf24; /* Sala zostaje żółta dla kontrastu */ }
         .col-teach { width: 35%; font-size: 0.9em; color: #9ca3af; text-align: right; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
 
-        /* --- STYL ZASTĘPSTW I GRUP (Flexible Layout) --- */
+        /* --- STYL ZASTĘPSTW I GRUP --- */
         .multi-item {
             display: flex;
             flex-direction: column;
@@ -169,31 +173,31 @@
             line-height: 1.2;
         }
         
-        /* Zastępstwa */
         .is-sub .item-text { color: #f87171; }
         .is-sub .item-teach { color: #fca5a5; }
-        .is-new .item-text { color: #4ade80; }
+        .is-new .item-text { color: #4ade80; } /* Zielony jasny */
 
         .badge {
             display: inline-block; padding: 2px 6px; border-radius: 4px; 
             font-size: 0.6em; font-weight: bold; margin-right: 8px;
             text-transform: uppercase; letter-spacing: 0.5px;
         }
-        .badge-sub { background: #991b1b; color: white; box-shadow: 0 0 5px rgba(220, 38, 38, 0.4); }
+        .badge-sub { background: #991b1b; color: white; }
         .badge-group { background: #374151; color: #e5e7eb; border: 1px solid #4b5563; }
-        .badge-new { background: #166534; color: #dcfce7; }
+        /* Nowa lekcja - intensywna zieleń */
+        .badge-new { background: #15803d; color: #dcfce7; box-shadow: 0 0 5px rgba(34, 197, 94, 0.4); }
 
         /* --- STOPKA --- */
         footer {
             height: 60px;
-            background-color: #0f172a;
+            background-color: #064e3b;
             display: flex;
             justify-content: space-between;
             align-items: center;
             padding: 0 40px;
             font-size: 1rem;
-            color: #64748b;
-            border-top: 1px solid #1e293b;
+            color: #a7f3d0;
+            border-top: 1px solid #047857;
         }
 
         .fullscreen-msg {
@@ -202,7 +206,7 @@
             justify-content: center;
             align-items: center;
             font-size: 3rem;
-            color: #555;
+            color: #4b5563;
             flex-direction: column;
             text-align: center;
         }
@@ -222,8 +226,8 @@
 
 <div id="slide-container">
     <div class="fullscreen-msg">
-        <div style="font-weight:300">Wczytywanie systemu</div>
-        <div style="font-size:1.2rem; margin-top:20px; color:#888; font-family:monospace">INITIALIZING...</div>
+        <div style="font-weight:300; color:#d1fae5">Wczytywanie systemu</div>
+        <div style="font-size:1.2rem; margin-top:20px; color:#6ee7b7; font-family:monospace">INITIALIZING...</div>
     </div>
 </div>
 
@@ -276,7 +280,7 @@
 
         if(dayOfWeek === 0 || dayOfWeek === 6) {
             document.getElementById('slide-container').innerHTML = 
-                `<div class="fullscreen-msg">WEEKEND<br><span style="font-size:2rem;color:#777">Szkoła zamknięta</span></div>`;
+                `<div class="fullscreen-msg">WEEKEND<br><span style="font-size:2rem;color:#64748b">Szkoła zamknięta</span></div>`;
             return;
         }
 
@@ -288,7 +292,7 @@
 
         if(activeClasses.length === 0) {
             document.getElementById('slide-container').innerHTML = 
-                `<div class="fullscreen-msg">BRAK ZAJĘĆ<br><span style="font-size:2rem;color:#777">W dniu dzisiejszym</span></div>`;
+                `<div class="fullscreen-msg">BRAK ZAJĘĆ<br><span style="font-size:2rem;color:#64748b">W dniu dzisiejszym</span></div>`;
             return;
         }
 
