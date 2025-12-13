@@ -1,168 +1,26 @@
-/* RESET I PODSTAWY */
-body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    margin: 0;
-    padding: 0;
-    background-color: #f4f4f9;
-    color: #333;
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-}
+body { font-family: 'Segoe UI', sans-serif; margin: 0; background-color: #f4f4f9; display: flex; flex-direction: column; min-height: 100vh; }
+header { background-color: #2c3e50; color: white; padding: 15px 0; }
+.header-content { max-width: 1000px; margin: 0 auto; padding: 0 20px; display: flex; justify-content: space-between; align-items: center; }
+#clock { font-family: monospace; font-weight: bold; font-size: 1.1rem; }
 
-/* NAGŁÓWEK */
-header {
-    background-color: #2c3e50;
-    color: white;
-    padding: 15px 0;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-}
+main { max-width: 1000px; margin: 20px auto; padding: 0 20px; flex: 1; width: 100%; box-sizing: border-box; }
+section { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); margin-bottom: 20px; }
+h2 { color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 10px; }
 
-.header-content {
-    max-width: 1000px;
-    margin: 0 auto;
-    padding: 0 20px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
+table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+th, td { border: 1px solid #ddd; padding: 8px; text-align: center; font-size: 0.9rem; }
+th { background-color: #3498db; color: white; }
 
-h1 {
-    margin: 0;
-    font-size: 1.5rem;
-}
+/* Styl dla Lekcji 0 */
+.lesson-zero { background-color: #fff3cd; }
+.lesson-zero td { color: #856404; font-size: 0.85rem; vertical-align: top; }
 
-#clock {
-    font-family: monospace;
-    font-weight: bold;
-    font-size: 1.1rem;
-    background: rgba(0,0,0,0.2);
-    padding: 5px 10px;
-    border-radius: 4px;
-}
+/* Wyszukiwarka */
+.search-box { background-color: #ecf0f1; padding: 15px; border-radius: 5px; display: flex; gap: 10px; align-items: center; }
+select, button { padding: 8px; border: 1px solid #bdc3c7; border-radius: 4px; }
+button { background-color: #27ae60; color: white; border: none; cursor: pointer; }
+button:hover { background-color: #219150; }
 
-/* GŁÓWNA TREŚĆ */
-main {
-    max-width: 1000px;
-    margin: 30px auto;
-    padding: 0 20px;
-    flex: 1;
-    width: 100%;
-    box-sizing: border-box;
-}
-
-section {
-    background: white;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-    margin-bottom: 30px;
-}
-
-h2 {
-    color: #2c3e50;
-    border-bottom: 2px solid #3498db;
-    padding-bottom: 10px;
-    margin-top: 0;
-}
-
-/* TABELA PLANU LEKCJI */
-.table-responsive {
-    overflow-x: auto;
-}
-
-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 10px;
-}
-
-th, td {
-    border: 1px solid #ddd;
-    padding: 10px;
-    text-align: center;
-    font-size: 0.95rem;
-}
-
-th {
-    background-color: #3498db;
-    color: white;
-}
-
-tr:nth-child(even) {
-    background-color: #f9f9f9;
-}
-
-/* Lekcja 0 - Wyróżnienie */
-.lesson-zero {
-    background-color: #fff3cd !important;
-    border: 2px solid #ffeeba;
-}
-
-.lesson-zero td {
-    color: #856404;
-    vertical-align: middle;
-}
-
-/* WYSZUKIWARKA DYŻURÓW */
-.search-box {
-    background-color: #ecf0f1;
-    padding: 15px;
-    border-radius: 5px;
-    display: flex;
-    gap: 10px;
-    align-items: center;
-    flex-wrap: wrap;
-}
-
-select, button {
-    padding: 8px 12px;
-    border: 1px solid #bdc3c7;
-    border-radius: 4px;
-    font-size: 1rem;
-}
-
-button {
-    background-color: #27ae60;
-    color: white;
-    border: none;
-    cursor: pointer;
-    transition: background 0.3s;
-}
-
-button:hover {
-    background-color: #219150;
-}
-
-/* Wyniki wyszukiwania */
-#location-result {
-    margin-top: 20px;
-}
-
-#location-result h3 {
-    margin-bottom: 10px;
-    font-size: 1.2rem;
-}
-
-#location-result table th {
-    background-color: #7f8c8d;
-}
-
-/* STOPKA */
-footer {
-    background-color: #333;
-    color: #aaa;
-    text-align: center;
-    padding: 15px;
-    font-size: 0.9rem;
-    margin-top: auto;
-}
-
-footer a {
-    color: #3498db;
-    text-decoration: none;
-}
-
-footer a:hover {
-    text-decoration: underline;
-}
+#location-result table { margin-top: 15px; }
+footer { background-color: #333; color: #aaa; text-align: center; padding: 15px; margin-top: auto; }
+footer a { color: #3498db; text-decoration: none; }
