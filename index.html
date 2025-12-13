@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ZSZ5 - Pulpit nauczyciela</title>
     <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
 </head>
 <body>
 
@@ -32,85 +33,34 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr class="lesson-zero">
+                        <tr class="lesson-zero" id="row-zero">
                             <td>0</td>
                             <td>07:55 - 08:00</td>
-                            <td>
-                                <strong>Dyżur:</strong><br>
-                                Parter: J. Kowalski<br>
-                                I Piętro: A. Nowak
-                            </td>
-                            <td>
-                                <strong>Dyżur:</strong><br>
-                                Parter: B. Iksiński<br>
-                                I Piętro: C. Igrek
-                            </td>
-                            <td>
-                                <strong>Dyżur:</strong><br>
-                                Parter: D. Zeto<br>
-                                I Piętro: E. Alfa
-                            </td>
-                            <td>
-                                <strong>Dyżur:</strong><br>
-                                Parter: F. Beta<br>
-                                I Piętro: G. Gamma
-                            </td>
-                            <td>
-                                <strong>Dyżur:</strong><br>
-                                Parter: H. Delta<br>
-                                I Piętro: I. Omega
-                            </td>
+                            <td data-day="Poniedziałek"></td>
+                            <td data-day="Wtorek"></td>
+                            <td data-day="Środa"></td>
+                            <td data-day="Czwartek"></td>
+                            <td data-day="Piątek"></td>
                         </tr>
-                        
-                        <tr>
-                            <td>1</td>
-                            <td>08:00 - 08:45</td>
-                            <td>Matematyka 1A</td>
-                            <td>Polski 2B</td>
-                            <td>WF 3C</td>
-                            <td>Historia 1B</td>
-                            <td>Angielski 2A</td>
-                        </tr>
-                        <tr>
-                            <td>2</td>
-                            <td>08:55 - 09:40</td>
-                            <td>Fizyka 1A</td>
-                            <td>Matematyka 2B</td>
-                            <td>Polski 3C</td>
-                            <td>WF 1B</td>
-                            <td>Geografia 2A</td>
-                        </tr>
-                        <tr>
-                            <td>3</td>
-                            <td>09:50 - 10:35</td>
-                            <td>Informatyka 1A</td>
-                            <td>Angielski 2B</td>
-                            <td>Matematyka 3C</td>
-                            <td>Chemia 1B</td>
-                            <td>WF 2A</td>
-                        </tr>
-                        </tbody>
+                        <tr><td>1</td><td>08:00 - 08:45</td><td></td><td></td><td></td><td></td><td></td></tr>
+                        <tr><td>2</td><td>08:55 - 09:40</td><td></td><td></td><td></td><td></td><td></td></tr>
+                        <tr><td>3</td><td>09:50 - 10:35</td><td></td><td></td><td></td><td></td><td></td></tr>
+                    </tbody>
                 </table>
             </div>
         </section>
 
         <section class="duty-check-section">
-            <h2>Sprawdź dyżury w danej lokalizacji</h2>
+            <h2>Sprawdź dyżury w lokalizacji</h2>
             <div class="search-box">
                 <label for="location-select">Wybierz miejsce:</label>
                 <select id="location-select">
-                    <option value="">-- wybierz lokalizację --</option>
-                    <option value="Korytarz Parter">Korytarz Parter</option>
-                    <option value="Korytarz I Piętro">Korytarz I Piętro</option>
-                    <option value="Stołówka">Stołówka</option>
-                    <option value="Szatnia">Szatnia</option>
-                    <option value="Boisko">Boisko</option>
+                    <option value="">-- wczytywanie lokalizacji... --</option>
                 </select>
-                <button onclick="checkDuty()">Pokaż obsadę</button>
+                <button onclick="displayDutiesForLocation()">Pokaż obsadę</button>
             </div>
             
-            <div id="location-result">
-                </div>
+            <div id="location-result"></div>
         </section>
     </main>
 
