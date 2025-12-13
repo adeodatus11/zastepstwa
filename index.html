@@ -8,44 +8,44 @@
     <style>
         :root {
             /* --- PALETA CIEMNA (FOREST THEME) --- */
-            --bg: #020617;              /* Główne tło strony */
-            --text-main: #e2e8f0;       /* Główny kolor tekstu */
-            --card-bg: #111827;         /* Tło kart lekcji */
+            --bg: #020617;
+            --text-main: #e2e8f0;
+            --card-bg: #111827;
             
-            /* Kolory kafelków menu (Ciemne z poświatą) */
+            /* Kafelki */
             --tile-bg: #0f172a;
             --tile-border: #1e293b;
             
-            /* Akcenty kafelków */
-            --accent-teacher: #22c55e;  /* Zielony */
-            --accent-room: #fbbf24;     /* Bursztynowy */
-            --accent-class: #38bdf8;    /* Błękitny */
+            /* Akcenty */
+            --accent-teacher: #22c55e;
+            --accent-room: #fbbf24;
+            --accent-class: #38bdf8;
 
-            /* Paski boczne planu */
-            --lesson-border: #16a34a;   /* Zielony standardowy */
+            /* Paski boczne */
+            --lesson-border: #16a34a;
             --room-border: #d97706;     
             --class-border: #0284c7;    
             
-            /* Statusy (Dostosowane do ciemnego tła) */
-            --sub-bg: #450a0a;          /* Ciemna czerwień tła */
-            --sub-color: #fca5a5;       /* Jasna czerwień tekstu */
-            --sub-border: #ef4444;      /* Czerwony pasek */
+            /* Statusy */
+            --sub-bg: #450a0a;
+            --sub-color: #fca5a5;
+            --sub-border: #ef4444;
             
-            --new-bg: #064e3b;          /* Ciemna zieleń tła */
-            --new-color: #4ade80;       /* Jasna zieleń tekstu */
-            --new-border: #22c55e;      /* Zielony pasek */
+            --new-bg: #064e3b;
+            --new-color: #4ade80;
+            --new-border: #22c55e;
             
             /* Dyżury */
-            --duty-bg: #3f2c06;         /* Ciemny żółty/brąz */
-            --duty-color: #fcd34d;      /* Jasny żółty tekst */
+            --duty-bg: #3f2c06;
+            --duty-color: #fcd34d;
             --duty-border: #f59e0b;
             
             --duty-sub-bg: #14532d; 
             --duty-sub-border: #4ade80; 
             --duty-sub-color: #dcfce7;
 
-            --empty: #1f2937;           /* Kolor pustego okienka */
-            --col-header: #064e3b;      /* Nagłówek dnia */
+            --empty: #1f2937;
+            --col-header: #064e3b;
         }
 
         body { 
@@ -57,9 +57,8 @@
             min-height: 100vh;
         }
 
-        /* --- NAGŁÓWEK (Nowy styl gradientowy) --- */
+        /* --- NAGŁÓWEK --- */
         header { 
-            /* Gradient: Jasna zieleń po lewej dla logo, ciemny po prawej */
             background: linear-gradient(
                 to right, 
                 #4dff88 0%, 
@@ -71,62 +70,47 @@
             position: sticky; top: 0; z-index: 1000; 
             box-shadow: 0 10px 30px rgba(0,0,0,0.6);
             display: flex; justify-content: space-between; align-items: center;
-            min-height: 100px; /* Nieco wyższy dla logo */
+            min-height: 100px;
             border-bottom: 4px solid #22c55e;
         }
 
         .header-left { display: flex; align-items: center; gap: 20px; height: 100%; }
         
-        /* LOGO Z WTAPIANIEM */
         .logo { 
             height: 85px; 
             width: auto; 
-            mix-blend-mode: multiply; /* KLUCZOWE: Usuwa białe tło */
+            mix-blend-mode: multiply; 
             filter: contrast(1.1);
         }
 
-        .header-text {
-            display: flex; flex-direction: column; justify-content: center;
-        }
-
+        .header-text { display: flex; flex-direction: column; justify-content: center; }
         .header-text h1 { 
-            margin: 0; 
-            font-size: 1.8rem; 
-            font-weight: 800; 
-            text-transform: uppercase; 
-            text-shadow: 0 2px 4px rgba(0,0,0,0.4);
+            margin: 0; font-size: 1.8rem; font-weight: 800; 
+            text-transform: uppercase; text-shadow: 0 2px 4px rgba(0,0,0,0.4);
         }
-        
         .clock { 
-            font-family: 'Consolas', monospace; 
-            font-size: 1.2rem; 
-            color: #f0fdf4; /* Bardzo jasna zieleń/biel */
-            margin-top: 4px; 
-            font-weight: 600;
+            font-family: 'Consolas', monospace; font-size: 1.2rem; 
+            color: #f0fdf4; margin-top: 4px; font-weight: 600;
         }
 
         .controls { display: flex; gap: 15px; align-items: center; }
         
         button.back-btn {
-            background: #b91c1c; /* Ciemna czerwień */
-            color: white; border: 1px solid #ef4444; 
-            padding: 12px 30px; 
-            border-radius: 8px; cursor: pointer; 
+            background: #b91c1c; color: white; border: 1px solid #ef4444; 
+            padding: 12px 30px; border-radius: 8px; cursor: pointer; 
             font-weight: 700; font-size: 1rem;
             display: flex; align-items: center; gap: 10px;
             box-shadow: 0 4px 6px rgba(0,0,0,0.3);
-            transition: all 0.2s;
-            text-transform: uppercase;
+            transition: all 0.2s; text-transform: uppercase;
         }
         button.back-btn:hover { background: #dc2626; transform: translateY(-2px); box-shadow: 0 6px 12px rgba(0,0,0,0.5); }
 
         #debug-bar { 
             background: #111827; font-size: 0.75rem; padding: 4px 20px; color: #64748b; 
-            border-bottom: 1px solid #1f2937; text-align: center;
-            letter-spacing: 1px;
+            border-bottom: 1px solid #1f2937; text-align: center; letter-spacing: 1px;
         }
 
-        /* --- DASHBOARD (KAFELKI - CIEMNY STYL) --- */
+        /* --- DASHBOARD --- */
         #dashboard-view { padding: 40px; display: block; max-width: 1400px; margin: 0 auto; width: 100%; box-sizing: border-box; }
         
         .section-title { 
@@ -137,44 +121,24 @@
         }
         .section-title:first-child { margin-top: 0; }
 
-        .tile-grid {
-            display: grid; 
-            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); 
-            gap: 20px;
-        }
+        .tile-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 20px; }
 
         .tile {
-            padding: 25px 15px;
-            text-align: center;
-            border-radius: 12px;
-            cursor: pointer;
+            padding: 25px 15px; text-align: center; border-radius: 12px; cursor: pointer;
             box-shadow: 0 4px 6px rgba(0,0,0,0.3);
             transition: transform 0.2s, box-shadow 0.2s, background-color 0.2s;
-            font-size: 1.3rem; 
-            font-weight: 600;
+            font-size: 1.3rem; font-weight: 600;
             display: flex; align-items: center; justify-content: center;
             min-height: 90px;
-            background-color: var(--tile-bg);
-            color: #e2e8f0;
-            border: 1px solid var(--tile-border);
-            position: relative;
-            overflow: hidden;
+            background-color: var(--tile-bg); color: #e2e8f0;
+            border: 1px solid var(--tile-border); position: relative; overflow: hidden;
         }
-        
-        /* Efekt poświaty i ruchu */
-        .tile:hover { 
-            transform: translateY(-5px); 
-            box-shadow: 0 10px 25px rgba(0,0,0,0.5); 
-            z-index: 2;
-        }
+        .tile:hover { transform: translateY(-5px); box-shadow: 0 10px 25px rgba(0,0,0,0.5); z-index: 2; }
 
-        /* Specyficzne kolory obramowań dolnych dla sekcji */
         .tile.teacher { border-bottom: 4px solid var(--accent-teacher); }
         .tile.teacher:hover { background-color: #064e3b; border-color: var(--accent-teacher); box-shadow: 0 0 20px rgba(34, 197, 94, 0.2); }
-
         .tile.room { border-bottom: 4px solid var(--accent-room); }
         .tile.room:hover { background-color: #451a03; border-color: var(--accent-room); box-shadow: 0 0 20px rgba(251, 191, 36, 0.2); }
-
         .tile.class { border-bottom: 4px solid var(--accent-class); }
         .tile.class:hover { background-color: #0c4a6e; border-color: var(--accent-class); box-shadow: 0 0 20px rgba(56, 189, 248, 0.2); }
 
@@ -188,7 +152,7 @@
         }
         
         .day-col {
-            background: #1e293b; /* Ciemne tło kolumny */
+            background: #1e293b; 
             border-radius: 10px; 
             box-shadow: 0 4px 6px rgba(0,0,0,0.3);
             display: flex; flex-direction: column;
@@ -196,15 +160,20 @@
             overflow: hidden;
         }
         
+        /* --- POPRAWKA NAGŁÓWKA DNIA --- */
+        /* Zmieniono sticky na relative, żeby nie zasłaniał treści */
         .day-header {
-            background: linear-gradient(to bottom, #065f46, #064e3b); /* Gradient w nagłówku dnia */
+            background: linear-gradient(to bottom, #065f46, #064e3b);
             color: #ecfdf5; 
             padding: 15px; 
             text-align: center; font-weight: 700; 
             border-bottom: 1px solid #047857;
             text-transform: uppercase;
             letter-spacing: 1px;
-            position: sticky; top: 120px; z-index: 900; /* Adjusted sticky top */
+            /* ZMIANA TUTAJ: */
+            position: relative; 
+            top: auto; 
+            z-index: 10;
         }
         .day-date { font-weight: 400; font-size: 0.8em; color: #a7f3d0; display: block; margin-top: 4px; }
         
@@ -241,21 +210,13 @@
         .main-info { font-weight: 700; font-size: 1rem; color: #f8fafc; }
         .sub-line { font-weight: 500; font-size: 0.9rem; color: #cbd5e1; margin-top: 2px; }
         
-        /* Oznaczenie grupy */
         .group-badge {
-            display: inline-block;
-            background: #334155;
-            color: #e2e8f0;
-            font-size: 0.7rem;
-            padding: 1px 6px;
-            border-radius: 4px;
-            margin-left: 6px;
-            font-weight: bold;
-            vertical-align: middle;
+            display: inline-block; background: #334155; color: #e2e8f0;
+            font-size: 0.7rem; padding: 1px 6px; border-radius: 4px;
+            margin-left: 6px; font-weight: bold; vertical-align: middle;
             border: 1px solid #475569;
         }
 
-        /* Statusy - zmienione na ciemne tła */
         .is-sub { background: var(--sub-bg); border-left-color: var(--sub-border) !important; }
         .is-sub .main-info { text-decoration: line-through; opacity: 0.6; color: #fca5a5; }
         .note-red { color: #f87171; font-weight: 700; font-size: 0.8rem; text-transform: uppercase; }
@@ -264,7 +225,7 @@
         .is-new .main-info { color: #86efac; }
         .is-new .sub-line { color: #dcfce7; }
 
-        /* DYŻURY W PLANIE */
+        /* DYŻURY */
         .duty-section {
             background: var(--duty-bg); color: var(--duty-color);
             border-top: 1px dashed var(--duty-border); padding: 8px 10px; font-size: 0.85rem;
@@ -332,8 +293,8 @@
         xml: './plan.xml',
         dyzury: './dyzury.xlsx',
         zastepstwa: './zastepstwa.xlsx',
-        refreshInterval: 120000, // 2 minuty
-        idleTimeout: 30000       // 30 sekund
+        refreshInterval: 120000, 
+        idleTimeout: 30000       
     };
 
     const DB = {
@@ -379,8 +340,6 @@
         modeSel.value = mode;
         populateSelect(false);
         dataSel.value = id;
-        
-        // Ustawienie klasy na body dla specyficznych kolorów ramek (opcjonalne)
         document.body.className = `mode-${mode}`;
 
         document.getElementById('dashboard-view').style.display = 'none';
@@ -402,12 +361,9 @@
                 loadExcel(CONFIG.dyzury, 'dyzury').catch(() => {}),
                 loadExcel(CONFIG.zastepstwa, 'zastepstwa').catch(() => {})
             ]);
-            
             addMissingTeachers();
-            
             if(isDashboardActive) renderDashboard();
             else { populateSelect(false); render(); }
-            
             log(`Dane zaktualizowane: ${new Date().toLocaleTimeString()}`);
         } catch (e) {
             console.error(e);
@@ -445,7 +401,6 @@
         createSection("Oddziały", DB.classesList.sort().map(c => ({val: c, txt: c})), 'class', (id) => openSchedule('class', id));
     }
 
-    // === PARSOWANIE DANYCH ===
     async function fetchFresh(url) {
         const res = await fetch(url + "?t=" + new Date().getTime());
         if(!res.ok) throw new Error(`HTTP ${res.status}`);
@@ -470,12 +425,7 @@
     async function loadXML() {
         const txt = await fetchText(CONFIG.xml);
         const xml = new DOMParser().parseFromString(txt, "text/xml");
-
-        // Grupy
-        xml.querySelectorAll('groups group').forEach(g => {
-            DB.groups[g.getAttribute('id')] = g.getAttribute('name');
-        });
-
+        xml.querySelectorAll('groups group').forEach(g => { DB.groups[g.getAttribute('id')] = g.getAttribute('name'); });
         xml.querySelectorAll('teachers teacher').forEach(t => {
             const id = t.getAttribute('id');
             const name = (t.getAttribute('firstname')||'') + ' ' + (t.getAttribute('lastname')||t.getAttribute('name'));
@@ -506,8 +456,6 @@
             const roomId = c.getAttribute('classroomids');
             const classIds = lesson.getAttribute('classids').split(',');
             const classNames = classIds.map(cid => DB.classes[cid]).join(', ');
-            
-            // Pobranie nazwy grupy
             const groupIds = lesson.getAttribute('groupids');
             const groupName = groupIds ? groupIds.split(',').map(gid => DB.groups[gid]).join(',') : '';
 
@@ -526,7 +474,7 @@
         });
     }
 
-    function parseDuties(wb) { /* Logika dyżurów bez zmian */
+    function parseDuties(wb) {
         wb.SheetNames.forEach(sheetName => {
             const ws = wb.Sheets[sheetName];
             const data = XLSX.utils.sheet_to_json(ws, {header: 1});
@@ -598,7 +546,6 @@
         }
     }
 
-    // === UTILS ===
     function normalize(str) { return (str||"").toLowerCase().replace(/^(x\.|ks\.|p\.|pani|pan)\s+/g, '').replace(/[^a-złąceźżńóś\s]/g, '').trim().split(/\s+/).sort().join(' '); }
     function levenshtein(a, b) { const m = []; for(let i=0; i<=b.length; i++) m[i]=[i]; for(let j=0; j<=a.length; j++) m[0][j]=j; for(let i=1; i<=b.length; i++) for(let j=1; j<=a.length; j++) m[i][j] = b.charAt(i-1)===a.charAt(j-1) ? m[i-1][j-1] : Math.min(m[i-1][j-1]+1, Math.min(m[i][j-1]+1, m[i-1][j]+1)); return m[b.length][a.length]; }
     function findTeacherId(rawName) {
@@ -636,7 +583,6 @@
         if (mode === 'teacher') items = Object.entries(DB.teachers).sort((a,b) => a[1].name.localeCompare(b[1].name)).map(x => ({val: x[0], txt: x[1].name}));
         else if (mode === 'room') items = DB.rooms.sort().map(x => ({val: x, txt: x}));
         else if (mode === 'class') items = DB.classesList.sort().map(x => ({val: x, txt: x}));
-        
         items.forEach(i => {
             const opt = document.createElement('option'); opt.value = i.val; opt.innerText = i.txt; sel.appendChild(opt);
         });
@@ -658,7 +604,6 @@
         return res;
     }
 
-    // === RENDER PLANU (POPRAWIONA OBSŁUGA GRUP) ===
     function render() {
         const mode = document.getElementById('mode-select').value;
         const selectedId = document.getElementById('data-select').value;
@@ -675,7 +620,6 @@
             col.innerHTML = `<div class="day-header">${DAYS[dayNum]}<span class="day-date">${curDate.toLocaleDateString('pl-PL')}</span></div>`;
             const content = document.createElement('div'); content.className = 'day-content';
 
-            // Dyżury poranne (tylko dla nauczyciela)
             if (mode === 'teacher') {
                 getDutiesForTime(selectedId, dayNum, dateStr, 0, 480).forEach(d => {
                     const div = document.createElement('div'); div.className = 'card morning-duty'; 
@@ -688,28 +632,21 @@
 
             DB.periods.forEach(p => {
                 const wrapper = document.createElement('div'); wrapper.className = 'slot-wrapper';
-                
-                // 1. ZNAJDŹ WSZYSTKIE LEKCJE DLA TEGO SLOTU
                 let lessons = [];
                 if (mode === 'teacher') lessons = DB.lessons.filter(l => l.teacherId == selectedId && l.day == dayNum && l.period == p.nr);
                 else if (mode === 'room') lessons = DB.lessons.filter(l => l.room === selectedId && l.day == dayNum && l.period == p.nr);
                 else if (mode === 'class') lessons = DB.lessons.filter(l => l.classNames.includes(selectedId) && l.day == dayNum && l.period == p.nr);
-
-                // 2. ZNAJDŹ WSZYSTKIE ZASTĘPSTWA DLA TEGO SLOTU
+                
                 let subAdds = [];
                 if (mode === 'teacher') subAdds = DB.subs.filter(s => s.date == dateStr && s.sub == selectedId && s.periodRaw.startsWith(p.nr+','));
                 else if (mode === 'room') subAdds = DB.subs.filter(s => s.date == dateStr && s.room === selectedId && s.periodRaw.startsWith(p.nr+','));
                 else if (mode === 'class') subAdds = DB.subs.filter(s => s.date == dateStr && normalizeClass(s.branch).includes(normalizeClass(selectedId)) && s.periodRaw.startsWith(p.nr+','));
 
-                // Sortowanie lekcji (np. wg grupy)
                 lessons.sort((a,b) => (a.groupName||"").localeCompare(b.groupName||""));
 
-                // RENDEROWANIE KART LEKCJI
                 if(lessons.length > 0) {
                     lessons.forEach(lesson => {
                         const div = document.createElement('div');
-                        
-                        // Sprawdź czy TA KONKRETNA lekcja ma zastępstwo
                         const subAbs = DB.subs.find(s => s.date == dateStr && s.absent == lesson.teacherId && s.periodRaw.startsWith(p.nr+','));
 
                         if(subAbs) {
@@ -740,18 +677,13 @@
                     });
                 }
 
-                // RENDEROWANIE DODANYCH ZASTĘPSTW (NEW)
                 if(subAdds.length > 0) {
                     subAdds.forEach(sub => {
                         let subGroup = "";
-                        if(sub.branch && sub.branch.includes('|')) {
-                            subGroup = sub.branch.split('|')[1];
-                        }
-
+                        if(sub.branch && sub.branch.includes('|')) subGroup = sub.branch.split('|')[1];
                         const div = document.createElement('div');
                         div.className = 'card is-new';
                         let line = mode==='teacher' ? `s.${sub.room} / ${sub.branch}` : `${getTeacherName(sub.sub)}`;
-                        
                         div.innerHTML = `
                             <div class="meta">
                                 <span class="nr">${p.nr}</span> ${p.start}-${p.end}
@@ -764,7 +696,6 @@
                     });
                 }
 
-                // JEŚLI PUSTO
                 if(lessons.length === 0 && subAdds.length === 0) {
                      const div = document.createElement('div');
                      div.className = 'card empty'; 
@@ -772,7 +703,6 @@
                      wrapper.appendChild(div);
                 }
                 
-                // Dyżury na przerwie (tylko nauczyciel)
                 if(mode === 'teacher') {
                     const pEnd = timeToMin(p.end);
                     getDutiesForTime(selectedId, dayNum, dateStr, pEnd-5, pEnd+15).forEach(d => {
@@ -782,7 +712,6 @@
                         wrapper.appendChild(dDiv);
                     });
                 }
-                
                 content.appendChild(wrapper);
             });
             col.appendChild(content); grid.appendChild(col);
