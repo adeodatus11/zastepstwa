@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Plan Szkoły - Finalna Wersja</title>
+    <title>Szkolny Planer - Nauczyciele, Sale, Klasy, Dyżury</title>
     <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
     <style>
         :root {
@@ -12,9 +12,12 @@
             --text-main: #1f2937;
             
             --card-bg: #ffffff;
+            
+            /* Kolory pasków bocznych */
             --lesson-border: #3b82f6;      /* Niebieski - Nauczyciele */
             --room-border: #8b5cf6;        /* Fioletowy - Sale */
-            --loc-border: #f59e0b;         /* Pomarańczowy - Miejsca dyżurów */
+            --class-border: #ec4899;       /* Różowy - Klasy */
+            --loc-border: #f59e0b;         /* Pomarańczowy - Miejsca */
             
             /* Statusy */
             --sub-bg: #fee2e2; --sub-color: #991b1b; --sub-border: #f87171;
@@ -81,8 +84,10 @@
             display: flex; align-items: center; justify-content: center; font-style: italic; font-size: 0.85rem;
         }
         
+        /* Kolory pasków bocznych */
         .mode-room .card { border-left-color: var(--room-border); }
         .mode-loc .card { border-left-color: var(--loc-border); }
+        .mode-class .card { border-left-color: var(--class-border); }
 
         .meta { display: flex; justify-content: space-between; font-size: 0.75rem; color: #6b7280; margin-bottom: 2px; font-weight: 600; }
         .nr { background: #f3f4f6; padding: 1px 6px; border-radius: 4px; color: #374151; }
@@ -97,7 +102,7 @@
         .note-red { color: var(--sub-color); font-weight: 600; font-size: 0.8rem; }
         .is-new { background: var(--new-bg); border-left-color: var(--new-border) !important; }
 
-        /* Sekcja Dyżuru (pod lekcją) */
+        /* Dyżury */
         .duty-section {
             background: var(--duty-bg); color: var(--duty-color);
             border-top: 1px dashed var(--duty-border);
@@ -108,7 +113,6 @@
             border-top: 2px solid var(--duty-sub-border);
         }
         
-        /* Dyżur jako główny element (Tryb Miejsca) */
         .loc-duty-item {
             padding: 6px 0; border-bottom: 1px solid rgba(0,0,0,0.05);
             display: flex; justify-content: space-between; align-items: center;
@@ -117,7 +121,6 @@
         .teacher-name { font-weight: 600; }
         .badge { font-size: 0.7em; padding: 2px 5px; border-radius: 4px; font-weight: bold; text-transform: uppercase; }
 
-        /* Poranny dyżur nauczyciela */
         .morning-duty {
             background: var(--duty-bg); border-left: 4px solid #f59e0b;
             padding: 10px; border-radius: 8px; margin-bottom: 5px;
@@ -142,6 +145,7 @@
         
         <select id="mode-select" onchange="populateSelect()">
             <option value="teacher">Nauczyciel</option>
+            <option value="class">Oddział</option>
             <option value="room">Sala Lekcyjna</option>
             <option value="location">Miejsce Dyżuru</option>
         </select>
@@ -167,6 +171,8 @@
     const DB = {
         teachers: {},
         rooms: [],     
+        classes: {}, // Mapa id -> nazwa
+        classesList: [], // Lista nazw
         locations: [], 
         periods: [],
         lessons: [],
@@ -191,7 +197,7 @@
             
             populateSelect();
             
-            log(`Gotowe. Wczytano dane.`);
+            log(`Gotowe. Wybierz widok i kliknij Pokaż.`);
         } catch (e) {
             console.error(e);
             log("BŁĄD: " + e.message, true);
@@ -204,12 +210,11 @@
         if(important) el.style.fontWeight = "bold";
     }
 
-    // === INICJALIZACJA DANYCH ===
+    // === INICJALIZACJA ===
 
     function extractUniqueLocations() {
         const locs = new Set();
         DB.duties.forEach(d => { if(d.place) locs.add(d.place); });
-        // Dodaj miejsca z zastępstw, których nie ma w stałych dyżurach
         DB.dutyChanges.forEach(d => { if(d.place) locs.add(d.place); });
         DB.locations = Array.from(locs).sort();
     }
@@ -239,6 +244,14 @@
             });
             if(DB.rooms.length) sel.value = DB.rooms[0];
         }
+        else if (mode === 'class') {
+            DB.classesList.sort().forEach(c => {
+                const opt = document.createElement('option');
+                opt.value = c; opt.innerText = c;
+                sel.appendChild(opt);
+            });
+            if(DB.classesList.length) sel.value = DB.classesList[0];
+        }
         else if (mode === 'location') {
             DB.locations.forEach(l => {
                 const opt = document.createElement('option');
@@ -249,7 +262,7 @@
         }
     }
 
-    // === GŁÓWNA FUNKCJA RENDERUJĄCA ===
+    // === RENDEROWANIE ===
 
     function render() {
         const mode = document.getElementById('mode-select').value;
@@ -282,7 +295,7 @@
         }
     }
 
-    // --- LOGIKA RENDEROWANIA DLA NAUCZYCIELA I SALI ---
+    // --- RENDEROWANIE PLANÓW ---
     function renderScheduleMode(container, mode, id, day, dateStr) {
         
         // 1. Dyżur poranny (Tylko dla Nauczyciela)
@@ -318,43 +331,64 @@
                     if(abs) subAbs = abs; 
                 }
             }
+            else if (mode === 'class') {
+                // Szukamy lekcji gdzie classNames zawiera id (lub branch name)
+                lesson = DB.lessons.find(l => l.classNames.includes(id) && l.day == day && l.period == p.nr);
+                // Szukamy zastępstwa dla tego oddziału
+                // Normalizujemy nazwy klas (usuwamy spacje) bo w excelu może być "1 A", a w xml "1A"
+                subAdd = DB.subs.find(s => s.date == dateStr && normalizeClass(s.branch) === normalizeClass(id) && s.periodRaw.startsWith(p.nr+','));
+                
+                if(lesson) {
+                     const abs = DB.subs.find(s => s.date == dateStr && s.absent == lesson.teacherId && s.periodRaw.startsWith(p.nr+','));
+                     if(abs) subAbs = abs; // Nauczyciel nieobecny na lekcji klasy
+                }
+            }
 
+            // RENDER
             if(subAdd) {
+                // === ZASTĘPSTWO / NOWA LEKCJA ===
                 div.className = 'card is-new';
+                let subLine = "";
+                if(mode === 'teacher') subLine = `${subAdd.branch || '?'} / s.${subAdd.room} / ${subAdd.subject}`;
+                if(mode === 'room') subLine = `${subAdd.branch || '?'} / ${getTeacherName(subAdd.sub)} / ${subAdd.subject}`;
+                if(mode === 'class') subLine = `${getTeacherName(subAdd.sub)} / s.${subAdd.room || '?'} / ${subAdd.subject}`;
+
                 div.innerHTML = `
                     <div class="meta"><span class="nr">${p.nr}</span> ${p.start}-${p.end}</div>
                     <div class="main-info">ZASTĘPSTWO</div>
-                    <div class="sub-line">
-                         ${subAdd.branch || '?'} / ${mode==='room' ? getTeacherName(subAdd.sub) : ('s.' + subAdd.room)} / ${subAdd.subject}
-                    </div>
+                    <div class="sub-line">${subLine}</div>
                     <div class="details">Za: ${subAdd.rawAbs}</div>
                     ${subAdd.payInfo ? `<div class="pay-info">${subAdd.payInfo}</div>` : ''}
                 `;
             } else if(lesson) {
+                // === ZWYKŁA LEKCJA ===
                 if(subAbs) {
                     div.className = 'card is-sub';
                     div.innerHTML = `
                         <div class="meta"><span class="nr">${p.nr}</span> ${p.start}-${p.end}</div>
                         <div class="main-info">${lesson.subject}</div>
-                        <div class="sub-line">${lesson.branch || ''}</div>
                         <span class="note-red">
-                            ${mode==='room' ? 'Nauczyciel nieobecny' : 'Nieobecność'} 
+                            ${mode==='teacher' ? 'Nieobecność' : getTeacherName(lesson.teacherId)} 
                             (Zast: ${subAbs.rawSub})
                         </span>`;
                 } else {
                     div.className = 'card';
+                    let subLine = "";
+                    if(mode === 'teacher') subLine = `${lesson.classNames || ''} / s.${lesson.room}`;
+                    if(mode === 'room') subLine = `${lesson.classNames || ''} / ${getTeacherName(lesson.teacherId)}`;
+                    if(mode === 'class') subLine = `${getTeacherName(lesson.teacherId)} / s.${lesson.room}`;
+
                     div.innerHTML = `
                         <div class="meta"><span class="nr">${p.nr}</span> ${p.start}-${p.end}</div>
                         <div class="main-info">${lesson.subject}</div>
-                        <div class="sub-line">
-                            ${mode==='room' ? getTeacherName(lesson.teacherId) : ('Sala: ' + lesson.room)}
-                        </div>`;
+                        <div class="sub-line">${subLine}</div>`;
                 }
             } else {
                 div.className = 'card empty'; div.innerHTML = `${p.nr}. ${p.start}`;
             }
             wrapper.appendChild(div);
 
+            // 3. Dyżury (Tylko dla Nauczyciela)
             if (mode === 'teacher') {
                 const pEnd = timeToMin(p.end);
                 getDutiesForTime(id, day, dateStr, pEnd-5, pEnd+15).forEach(d => {
@@ -369,27 +403,18 @@
         });
     }
 
-    // --- LOGIKA RENDEROWANIA DLA MIEJSCA DYŻURU (POPRAWIONA) ---
+    // --- RENDEROWANIE MIEJSCA DYŻURU ---
     function renderLocationMode(container, placeName, day, dateStr) {
-        
-        // 1. Stałe dyżury w tym miejscu (matchLoc)
         const regular = DB.duties.filter(d => d.day == day && matchLoc(d.place, placeName)).map(d => ({
             ...d, status: 'ok', teacherName: getTeacherName(d.teacherId)
         }));
-
-        // 2. Oznaczamy odwołane
         regular.forEach(reg => {
             const canc = DB.dutyChanges.find(c => c.date == dateStr && c.time == reg.time && c.absent == reg.teacherId);
             if(canc) { reg.status = 'cancelled'; reg.subInfo = `Zast: ${canc.rawSub}`; }
         });
-
-        // 3. Dodajemy zastępstwa w tym miejscu (matchLoc)
         const added = DB.dutyChanges.filter(c => c.date == dateStr && matchLoc(c.place, placeName)).map(c => ({
-            time: c.time,
-            startMin: timeToMin(c.time.split('-')[0]),
-            teacherName: c.rawSub, 
-            status: 'added',
-            subInfo: `Za: ${DB.teachers[c.absent]?.name || '?'}`
+            time: c.time, startMin: timeToMin(c.time.split('-')[0]),
+            teacherName: c.rawSub, status: 'added', subInfo: `Za: ${DB.teachers[c.absent]?.name || '?'}`
         }));
 
         const allDuties = [...regular, ...added].sort((a,b) => a.startMin - b.startMin);
@@ -410,25 +435,15 @@
             const wrapper = document.createElement('div'); 
             wrapper.className = 'slot-wrapper';
             wrapper.innerHTML = `<div style="background:#fef3c7; padding:5px 10px; font-weight:bold; border-bottom:1px solid #eee; color:#92400e; font-size:0.9em">${time}</div>`;
-            
             const listDiv = document.createElement('div');
-            listDiv.style.padding = "5px 10px";
-            listDiv.style.backgroundColor = "#fff";
-
+            listDiv.style.padding = "5px 10px"; listDiv.style.backgroundColor = "#fff";
             group.forEach(d => {
-                const row = document.createElement('div');
-                row.className = 'loc-duty-item';
-                
+                const row = document.createElement('div'); row.className = 'loc-duty-item';
                 if (d.status === 'added') {
-                    row.style.background = "#ccff33"; // Jaskrawy
-                    row.style.padding = "5px";
-                    row.style.borderRadius = "4px";
-                    row.innerHTML = `
-                        <span><span class="teacher-name">${d.teacherName}</span> <small>(Zastępstwo)</small></span>
-                        <span class="badge" style="background:#a3d700;color:black">NEW</span>`;
+                    row.style.background = "#ccff33"; row.style.padding = "5px"; row.style.borderRadius = "4px";
+                    row.innerHTML = `<span><span class="teacher-name">${d.teacherName}</span> <small>(Zastępstwo)</small></span><span class="badge" style="background:#a3d700;color:black">NEW</span>`;
                 } else if (d.status === 'cancelled') {
-                    row.style.textDecoration = "line-through";
-                    row.style.opacity = "0.6";
+                    row.style.textDecoration = "line-through"; row.style.opacity = "0.6";
                     row.innerHTML = `<span class="teacher-name">${d.teacherName}</span> <small>${d.subInfo || ''}</small>`;
                 } else {
                     row.innerHTML = `<span class="teacher-name">${d.teacherName}</span>`;
@@ -440,15 +455,16 @@
         });
     }
 
-    // === POMOCNICZE ===
+    // === PARSOWANIE ===
 
     function matchLoc(a, b) {
         if(!a || !b) return false;
-        const nA = a.toLowerCase().trim();
-        const nB = b.toLowerCase().trim();
+        const nA = a.toLowerCase().trim(); const nB = b.toLowerCase().trim();
         return nA === nB || nA.includes(nB) || nB.includes(nA);
     }
-
+    function normalizeClass(c) {
+        return (c || "").replace(/\s/g, '').toLowerCase();
+    }
     function getTeacherName(id) {
         return DB.teachers[id] ? DB.teachers[id].name : id;
     }
@@ -458,9 +474,7 @@
         if(!res.ok) throw new Error("Brak: " + url);
         const blob = await res.blob();
         return new Promise(r => {
-            const reader = new FileReader();
-            reader.onload = () => r(reader.result);
-            reader.readAsText(blob, 'windows-1250'); 
+            const reader = new FileReader(); reader.onload = () => r(reader.result); reader.readAsText(blob, 'windows-1250'); 
         });
     }
 
@@ -474,21 +488,23 @@
             DB.teachers[id] = { name: name.trim(), normalized: normalize(name) };
         });
 
-        const roomSet = new Set();
+        // PARSOWANIE KLAS
+        xml.querySelectorAll('classes class').forEach(c => {
+            const id = c.getAttribute('id');
+            const name = c.getAttribute('name');
+            DB.classes[id] = name;
+            if(!DB.classesList.includes(name)) DB.classesList.push(name);
+        });
+
         const rooms = {};
+        const roomSet = new Set();
         xml.querySelectorAll('classrooms classroom').forEach(r => {
-            const name = r.getAttribute('name');
-            rooms[r.getAttribute('id')] = name;
-            roomSet.add(name);
+            const name = r.getAttribute('name'); rooms[r.getAttribute('id')] = name; roomSet.add(name);
         });
         DB.rooms = Array.from(roomSet);
 
         xml.querySelectorAll('periods period').forEach(p => {
-            DB.periods.push({
-                nr: parseInt(p.getAttribute('period')),
-                start: p.getAttribute('starttime'),
-                end: p.getAttribute('endtime')
-            });
+            DB.periods.push({ nr: parseInt(p.getAttribute('period')), start: p.getAttribute('starttime'), end: p.getAttribute('endtime') });
         });
         DB.periods.sort((a,b) => a.nr - b.nr);
 
@@ -503,14 +519,17 @@
             const dayIdx = days.indexOf('1') + 1;
             const roomId = c.getAttribute('classroomids');
             
+            // Pobieranie nazw klas dla tej lekcji
+            const classIds = lesson.getAttribute('classids').split(',');
+            const classNames = classIds.map(cid => DB.classes[cid]).join(', ');
+
             if(dayIdx > 0 && tids) {
                 tids.split(',').forEach(tid => {
                     DB.lessons.push({
-                        teacherId: tid.trim(),
-                        day: dayIdx,
-                        period: parseInt(c.getAttribute('period')),
+                        teacherId: tid.trim(), day: dayIdx, period: parseInt(c.getAttribute('period')),
                         subject: subjects[lesson.getAttribute('subjectid')] || 'Lekcja',
                         room: rooms[roomId] || '', 
+                        classNames: classNames, // Do wyświetlania
                         branch: '' 
                     });
                 });
@@ -584,8 +603,7 @@
         XLSX.utils.sheet_to_json(sh).forEach(r => {
             const d = parseDate(r['Dzień']);
             if(d) DB.subs.push({
-                date: d,
-                periodRaw: r['Lekcja'],
+                date: d, periodRaw: r['Lekcja'],
                 absent: findTeacherId(r['Nauczyciel/wakat']),
                 sub: findTeacherId(r['Zastępca']),
                 rawSub: r['Zastępca'], rawAbs: r['Nauczyciel/wakat'],
@@ -601,8 +619,7 @@
                     date: d, time: r['Godzina'],
                     absent: findTeacherId(r['Nauczyciel']),
                     sub: findTeacherId(r['Zastępca']),
-                    rawSub: r['Zastępca'],
-                    place: r['Miejsce dyżuru']
+                    rawSub: r['Zastępca'], place: r['Miejsce dyżuru']
                 });
             });
         }
@@ -612,9 +629,7 @@
         const checkAndAdd = (rawName, objRef, idField) => {
             if (rawName && !objRef[idField]) {
                 const newId = "EXT_" + normalize(rawName).replace(/\s+/g, '_');
-                if (!DB.teachers[newId]) {
-                    DB.teachers[newId] = { name: rawName.trim(), normalized: normalize(rawName) };
-                }
+                if (!DB.teachers[newId]) DB.teachers[newId] = { name: rawName.trim(), normalized: normalize(rawName) };
                 objRef[idField] = newId;
             }
         };
