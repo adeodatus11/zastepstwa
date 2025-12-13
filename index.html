@@ -7,196 +7,287 @@
     <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
     <style>
         :root {
-            --bg: #f3f4f6;
-            --header-bg: #111827;
-            --text-main: #1f2937;
-            --card-bg: #ffffff;
-            --accent: #2563eb;
+            /* --- PALETA CIEMNA (FOREST THEME) --- */
+            --bg: #020617;              /* Główne tło strony */
+            --text-main: #e2e8f0;       /* Główny kolor tekstu */
+            --card-bg: #111827;         /* Tło kart lekcji */
             
-            /* Kolory kafelków menu */
-            --tile-teacher: #e0f2fe; --tile-teacher-hover: #bae6fd; --tile-teacher-text: #0369a1;
-            --tile-room: #f3e8ff; --tile-room-hover: #e9d5ff; --tile-room-text: #7e22ce;
-            --tile-class: #fce7f3; --tile-class-hover: #fbcfe8; --tile-class-text: #be185d;
+            /* Kolory kafelków menu (Ciemne z poświatą) */
+            --tile-bg: #0f172a;
+            --tile-border: #1e293b;
+            
+            /* Akcenty kafelków */
+            --accent-teacher: #22c55e;  /* Zielony */
+            --accent-room: #fbbf24;     /* Bursztynowy */
+            --accent-class: #38bdf8;    /* Błękitny */
 
             /* Paski boczne planu */
-            --lesson-border: #3b82f6; 
-            --room-border: #8b5cf6;    
-            --class-border: #ec4899;   
-            --loc-border: #f59e0b;     
+            --lesson-border: #16a34a;   /* Zielony standardowy */
+            --room-border: #d97706;     
+            --class-border: #0284c7;    
             
-            /* Statusy */
-            --sub-bg: #fee2e2; --sub-color: #991b1b; --sub-border: #f87171; 
-            --new-bg: #dcfce7; --new-color: #14532d; --new-border: #22c55e; 
+            /* Statusy (Dostosowane do ciemnego tła) */
+            --sub-bg: #450a0a;          /* Ciemna czerwień tła */
+            --sub-color: #fca5a5;       /* Jasna czerwień tekstu */
+            --sub-border: #ef4444;      /* Czerwony pasek */
+            
+            --new-bg: #064e3b;          /* Ciemna zieleń tła */
+            --new-color: #4ade80;       /* Jasna zieleń tekstu */
+            --new-border: #22c55e;      /* Zielony pasek */
             
             /* Dyżury */
-            --duty-bg: #fef3c7; --duty-color: #92400e; --duty-border: #fcd34d;
-            --duty-sub-bg: #ccff33; --duty-sub-border: #a3d700; --duty-sub-color: #000;
+            --duty-bg: #3f2c06;         /* Ciemny żółty/brąz */
+            --duty-color: #fcd34d;      /* Jasny żółty tekst */
+            --duty-border: #f59e0b;
+            
+            --duty-sub-bg: #14532d; 
+            --duty-sub-border: #4ade80; 
+            --duty-sub-color: #dcfce7;
 
-            --empty: #f9fafb;
+            --empty: #1f2937;           /* Kolor pustego okienka */
+            --col-header: #064e3b;      /* Nagłówek dnia */
         }
 
         body { 
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
-            background: var(--bg); 
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg); 
             margin: 0; padding: 0; 
             color: var(--text-main);
             display: flex; flex-direction: column;
             min-height: 100vh;
         }
 
-        /* --- NAGŁÓWEK --- */
+        /* --- NAGŁÓWEK (Nowy styl gradientowy) --- */
         header { 
-            background: var(--header-bg); color: white; padding: 10px 20px; 
+            /* Gradient: Jasna zieleń po lewej dla logo, ciemny po prawej */
+            background: linear-gradient(
+                to right, 
+                #4dff88 0%, 
+                #33cc66 30%, 
+                #020617 100%
+            );
+            color: white; 
+            padding: 10px 30px; 
             position: sticky; top: 0; z-index: 1000; 
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.6);
             display: flex; justify-content: space-between; align-items: center;
-            min-height: 70px;
+            min-height: 100px; /* Nieco wyższy dla logo */
+            border-bottom: 4px solid #22c55e;
         }
 
-        .header-left { display: flex; align-items: center; gap: 15px; }
-        .logo { height: 55px; width: auto; }
-        .header-text h1 { margin: 0; font-size: 1.4rem; font-weight: 600; }
-        .clock { font-family: monospace; font-size: 1.1rem; color: #9ca3af; margin-top: 4px; }
+        .header-left { display: flex; align-items: center; gap: 20px; height: 100%; }
+        
+        /* LOGO Z WTAPIANIEM */
+        .logo { 
+            height: 85px; 
+            width: auto; 
+            mix-blend-mode: multiply; /* KLUCZOWE: Usuwa białe tło */
+            filter: contrast(1.1);
+        }
 
-        .controls { display: flex; gap: 10px; align-items: center; }
+        .header-text {
+            display: flex; flex-direction: column; justify-content: center;
+        }
+
+        .header-text h1 { 
+            margin: 0; 
+            font-size: 1.8rem; 
+            font-weight: 800; 
+            text-transform: uppercase; 
+            text-shadow: 0 2px 4px rgba(0,0,0,0.4);
+        }
+        
+        .clock { 
+            font-family: 'Consolas', monospace; 
+            font-size: 1.2rem; 
+            color: #f0fdf4; /* Bardzo jasna zieleń/biel */
+            margin-top: 4px; 
+            font-weight: 600;
+        }
+
+        .controls { display: flex; gap: 15px; align-items: center; }
+        
         button.back-btn {
-            background: #dc2626; color: white; border: none; padding: 10px 25px; 
-            border-radius: 8px; cursor: pointer; font-weight: 700; font-size: 1.1rem;
-            display: flex; align-items: center; gap: 8px;
+            background: #b91c1c; /* Ciemna czerwień */
+            color: white; border: 1px solid #ef4444; 
+            padding: 12px 30px; 
+            border-radius: 8px; cursor: pointer; 
+            font-weight: 700; font-size: 1rem;
+            display: flex; align-items: center; gap: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+            transition: all 0.2s;
+            text-transform: uppercase;
         }
-        button.back-btn:hover { background: #b91c1c; }
+        button.back-btn:hover { background: #dc2626; transform: translateY(-2px); box-shadow: 0 6px 12px rgba(0,0,0,0.5); }
 
         #debug-bar { 
-            background: #e5e7eb; font-size: 0.75rem; padding: 4px 20px; color: #4b5563; 
-            border-bottom: 1px solid #d1d5db; text-align: center;
+            background: #111827; font-size: 0.75rem; padding: 4px 20px; color: #64748b; 
+            border-bottom: 1px solid #1f2937; text-align: center;
+            letter-spacing: 1px;
         }
 
-        /* --- DASHBOARD (KAFELKI) --- */
-        #dashboard-view { padding: 30px; display: block; max-width: 1400px; margin: 0 auto; width: 100%; box-sizing: border-box; }
+        /* --- DASHBOARD (KAFELKI - CIEMNY STYL) --- */
+        #dashboard-view { padding: 40px; display: block; max-width: 1400px; margin: 0 auto; width: 100%; box-sizing: border-box; }
+        
         .section-title { 
-            font-size: 1.8rem; font-weight: 800; color: #374151; margin: 30px 0 15px 0; 
-            border-bottom: 2px solid #e5e7eb; padding-bottom: 10px;
+            font-size: 2rem; font-weight: 700; color: #f0fdf4; margin: 40px 0 20px 0; 
+            border-bottom: 2px solid #22c55e; padding-bottom: 10px;
+            text-transform: uppercase; letter-spacing: 1px;
+            text-shadow: 0 0 10px rgba(34, 197, 94, 0.3);
         }
         .section-title:first-child { margin-top: 0; }
 
         .tile-grid {
             display: grid; 
             grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); 
-            gap: 15px;
+            gap: 20px;
         }
 
         .tile {
-            padding: 20px 10px;
+            padding: 25px 15px;
             text-align: center;
             border-radius: 12px;
             cursor: pointer;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-            transition: transform 0.2s, box-shadow 0.2s;
-            font-size: 1.25rem; 
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+            transition: transform 0.2s, box-shadow 0.2s, background-color 0.2s;
+            font-size: 1.3rem; 
             font-weight: 600;
             display: flex; align-items: center; justify-content: center;
-            min-height: 80px;
-            border: 1px solid rgba(0,0,0,0.05);
+            min-height: 90px;
+            background-color: var(--tile-bg);
+            color: #e2e8f0;
+            border: 1px solid var(--tile-border);
+            position: relative;
+            overflow: hidden;
         }
-        .tile:hover { transform: translateY(-3px); box-shadow: 0 8px 15px rgba(0,0,0,0.1); }
-        .tile:active { transform: scale(0.98); }
+        
+        /* Efekt poświaty i ruchu */
+        .tile:hover { 
+            transform: translateY(-5px); 
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5); 
+            z-index: 2;
+        }
 
-        .tile.teacher { background: var(--tile-teacher); color: var(--tile-teacher-text); border-bottom: 4px solid var(--tile-teacher-text); }
-        .tile.teacher:hover { background: var(--tile-teacher-hover); }
+        /* Specyficzne kolory obramowań dolnych dla sekcji */
+        .tile.teacher { border-bottom: 4px solid var(--accent-teacher); }
+        .tile.teacher:hover { background-color: #064e3b; border-color: var(--accent-teacher); box-shadow: 0 0 20px rgba(34, 197, 94, 0.2); }
 
-        .tile.room { background: var(--tile-room); color: var(--tile-room-text); border-bottom: 4px solid var(--tile-room-text); }
-        .tile.room:hover { background: var(--tile-room-hover); }
+        .tile.room { border-bottom: 4px solid var(--accent-room); }
+        .tile.room:hover { background-color: #451a03; border-color: var(--accent-room); box-shadow: 0 0 20px rgba(251, 191, 36, 0.2); }
 
-        .tile.class { background: var(--tile-class); color: var(--tile-class-text); border-bottom: 4px solid var(--tile-class-text); }
-        .tile.class:hover { background: var(--tile-class-hover); }
+        .tile.class { border-bottom: 4px solid var(--accent-class); }
+        .tile.class:hover { background-color: #0c4a6e; border-color: var(--accent-class); box-shadow: 0 0 20px rgba(56, 189, 248, 0.2); }
 
 
         /* --- WIDOK PLANU --- */
-        #schedule-view { display: none; width: 100%; }
+        #schedule-view { display: none; width: 100%; padding-bottom: 40px; }
         
         .week-container {
             display: grid; grid-template-columns: repeat(5, 1fr); 
             gap: 15px; padding: 20px; align-items: start;
         }
+        
         .day-col {
-            background: #fff; border-radius: 10px; 
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            background: #1e293b; /* Ciemne tło kolumny */
+            border-radius: 10px; 
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
             display: flex; flex-direction: column;
+            border: 1px solid #334155;
+            overflow: hidden;
         }
+        
         .day-header {
-            background: #f3f4f6; color: #374151; padding: 12px; 
-            text-align: center; font-weight: 700; border-bottom: 1px solid #e5e7eb;
-            border-top-left-radius: 10px; border-top-right-radius: 10px;
-            position: sticky; top: 90px; z-index: 900;
+            background: linear-gradient(to bottom, #065f46, #064e3b); /* Gradient w nagłówku dnia */
+            color: #ecfdf5; 
+            padding: 15px; 
+            text-align: center; font-weight: 700; 
+            border-bottom: 1px solid #047857;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            position: sticky; top: 120px; z-index: 900; /* Adjusted sticky top */
         }
-        .day-date { font-weight: 400; font-size: 0.8em; color: #6b7280; display: block; margin-top: 2px; }
+        .day-date { font-weight: 400; font-size: 0.8em; color: #a7f3d0; display: block; margin-top: 4px; }
+        
         .day-content { padding: 10px; display: flex; flex-direction: column; gap: 8px; }
         
-        /* Slot wrapper może teraz zawierać wiele kart (grup) */
         .slot-wrapper { 
-            border: 1px solid #e5e7eb; border-radius: 8px; overflow: hidden; 
-            display: flex; flex-direction: column; gap: 0px; /* Karty pod sobą bez odstępu, oddzielone borderem */
+            border: 1px solid #334155; border-radius: 8px; overflow: hidden; 
+            display: flex; flex-direction: column; gap: 0px; 
+            background: #0f172a;
         }
 
         /* KAFELKI LEKCJI */
         .card {
-            background: var(--card-bg); border-left: 4px solid var(--lesson-border);
-            padding: 8px 10px; min-height: 45px; display: flex; flex-direction: column; gap: 2px;
-            border-bottom: 1px solid #e5e7eb;
+            background: var(--card-bg); 
+            border-left: 4px solid var(--lesson-border);
+            color: #e2e8f0;
+            padding: 10px 12px; min-height: 55px; display: flex; flex-direction: column; gap: 3px;
+            border-bottom: 1px solid #334155;
             position: relative;
         }
         .card:last-child { border-bottom: none; }
 
         .card.empty {
-            background: var(--empty); border-left-color: #d1d5db; color: #9ca3af;
+            background: var(--empty); border-left-color: #4b5563; color: #64748b;
             display: flex; align-items: center; justify-content: center; font-style: italic; font-size: 0.85rem;
             min-height: 40px;
         }
+        
         body.mode-room .card { border-left-color: var(--room-border); }
         body.mode-class .card { border-left-color: var(--class-border); }
 
-        .meta { display: flex; justify-content: space-between; font-size: 0.75rem; color: #6b7280; margin-bottom: 2px; font-weight: 600; }
-        .nr { background: #f3f4f6; padding: 1px 6px; border-radius: 4px; color: #374151; }
-        .main-info { font-weight: 700; font-size: 0.95rem; }
-        .sub-line { font-weight: 600; font-size: 0.85rem; color: #111827; }
+        .meta { display: flex; justify-content: space-between; font-size: 0.8rem; color: #94a3b8; margin-bottom: 2px; font-weight: 600; }
+        .nr { background: #334155; padding: 1px 6px; border-radius: 4px; color: #f1f5f9; }
+        .main-info { font-weight: 700; font-size: 1rem; color: #f8fafc; }
+        .sub-line { font-weight: 500; font-size: 0.9rem; color: #cbd5e1; margin-top: 2px; }
         
         /* Oznaczenie grupy */
         .group-badge {
             display: inline-block;
-            background: #e5e7eb;
-            color: #374151;
+            background: #334155;
+            color: #e2e8f0;
             font-size: 0.7rem;
-            padding: 1px 5px;
+            padding: 1px 6px;
             border-radius: 4px;
-            margin-left: 5px;
-            font-weight: normal;
+            margin-left: 6px;
+            font-weight: bold;
             vertical-align: middle;
-            border: 1px solid #d1d5db;
+            border: 1px solid #475569;
         }
 
+        /* Statusy - zmienione na ciemne tła */
         .is-sub { background: var(--sub-bg); border-left-color: var(--sub-border) !important; }
-        .is-sub .main-info { text-decoration: line-through; opacity: 0.7; }
-        .note-red { color: var(--sub-color); font-weight: 600; font-size: 0.8rem; }
+        .is-sub .main-info { text-decoration: line-through; opacity: 0.6; color: #fca5a5; }
+        .note-red { color: #f87171; font-weight: 700; font-size: 0.8rem; text-transform: uppercase; }
+        
         .is-new { background: var(--new-bg); border-left-color: var(--new-border) !important; }
+        .is-new .main-info { color: #86efac; }
+        .is-new .sub-line { color: #dcfce7; }
 
         /* DYŻURY W PLANIE */
         .duty-section {
             background: var(--duty-bg); color: var(--duty-color);
-            border-top: 1px dashed var(--duty-border); padding: 6px 10px; font-size: 0.8rem;
+            border-top: 1px dashed var(--duty-border); padding: 8px 10px; font-size: 0.85rem;
         }
         .morning-duty {
             background: var(--duty-bg); border-left: 4px solid #f59e0b;
-            padding: 10px; border-radius: 8px; margin-bottom: 5px;
-            color: var(--duty-color); font-size: 0.85rem;
+            padding: 12px; border-radius: 8px; margin-bottom: 8px;
+            color: var(--duty-color); font-size: 0.9rem; border: 1px solid #78350f;
+        }
+        .duty-sub {
+            background: var(--duty-sub-bg); border-left-color: var(--duty-sub-border);
+            color: var(--duty-sub-color); border-color: #14532d;
         }
 
         footer {
-            background: var(--header-bg); color: #9ca3af; text-align: center;
-            padding: 20px; font-size: 0.85rem; border-top: 1px solid #374151;
+            background: #064e3b; color: #a7f3d0; text-align: center;
+            padding: 15px; font-size: 0.9rem; border-top: 1px solid #047857;
             margin-top: auto;
         }
-        footer a { color: #d1d5db; text-decoration: none; font-weight: bold; }
+        footer a { color: #fff; text-decoration: none; font-weight: bold; }
+        footer a:hover { text-decoration: underline; }
 
+        @media (max-width: 1200px) { .week-container { grid-template-columns: repeat(3, 1fr); } }
         @media (max-width: 900px) { .week-container { grid-template-columns: 1fr; } }
     </style>
 </head>
@@ -242,7 +333,7 @@
         dyzury: './dyzury.xlsx',
         zastepstwa: './zastepstwa.xlsx',
         refreshInterval: 120000, // 2 minuty
-        idleTimeout: 20000       // 20 sekund
+        idleTimeout: 30000       // 30 sekund
     };
 
     const DB = {
@@ -289,6 +380,9 @@
         populateSelect(false);
         dataSel.value = id;
         
+        // Ustawienie klasy na body dla specyficznych kolorów ramek (opcjonalne)
+        document.body.className = `mode-${mode}`;
+
         document.getElementById('dashboard-view').style.display = 'none';
         document.getElementById('schedule-view').style.display = 'block';
         document.getElementById('nav-controls').style.display = 'flex';
@@ -425,14 +519,14 @@
                     teacherId: mainTeacherId, day: dayIdx, period: parseInt(c.getAttribute('period')),
                     subject: subjects[lesson.getAttribute('subjectid')] || 'Lekcja',
                     room: roomMap[roomId] || '', classNames: classNames, branch: '',
-                    groupName: groupName, // Dodajemy nazwę grupy
+                    groupName: groupName,
                     supportInfo: supportTeachers.length ? supportTeachers.join(', ') : null
                 });
             }
         });
     }
 
-    function parseDuties(wb) { /* Skrót - logika dyżurów bez zmian */
+    function parseDuties(wb) { /* Logika dyżurów bez zmian */
         wb.SheetNames.forEach(sheetName => {
             const ws = wb.Sheets[sheetName];
             const data = XLSX.utils.sheet_to_json(ws, {header: 1});
@@ -595,14 +689,13 @@
             DB.periods.forEach(p => {
                 const wrapper = document.createElement('div'); wrapper.className = 'slot-wrapper';
                 
-                // 1. ZNAJDŹ WSZYSTKIE LEKCJE DLA TEGO SLOTU (FILTER ZAMIAST FIND)
+                // 1. ZNAJDŹ WSZYSTKIE LEKCJE DLA TEGO SLOTU
                 let lessons = [];
                 if (mode === 'teacher') lessons = DB.lessons.filter(l => l.teacherId == selectedId && l.day == dayNum && l.period == p.nr);
                 else if (mode === 'room') lessons = DB.lessons.filter(l => l.room === selectedId && l.day == dayNum && l.period == p.nr);
                 else if (mode === 'class') lessons = DB.lessons.filter(l => l.classNames.includes(selectedId) && l.day == dayNum && l.period == p.nr);
 
                 // 2. ZNAJDŹ WSZYSTKIE ZASTĘPSTWA DLA TEGO SLOTU
-                // Szukamy zastępstw "nowych" (wstawionych w puste miejsce lub jako dodatkowa grupa)
                 let subAdds = [];
                 if (mode === 'teacher') subAdds = DB.subs.filter(s => s.date == dateStr && s.sub == selectedId && s.periodRaw.startsWith(p.nr+','));
                 else if (mode === 'room') subAdds = DB.subs.filter(s => s.date == dateStr && s.room === selectedId && s.periodRaw.startsWith(p.nr+','));
@@ -616,8 +709,7 @@
                     lessons.forEach(lesson => {
                         const div = document.createElement('div');
                         
-                        // Sprawdź czy TA KONKRETNA lekcja ma zastępstwo (nieobecność nauczyciela)
-                        // Próbujemy dopasować też grupę jeśli to możliwe (w uproszczeniu po nauczycielu)
+                        // Sprawdź czy TA KONKRETNA lekcja ma zastępstwo
                         const subAbs = DB.subs.find(s => s.date == dateStr && s.absent == lesson.teacherId && s.periodRaw.startsWith(p.nr+','));
 
                         if(subAbs) {
@@ -651,7 +743,6 @@
                 // RENDEROWANIE DODANYCH ZASTĘPSTW (NEW)
                 if(subAdds.length > 0) {
                     subAdds.forEach(sub => {
-                        // Spróbuj wyciągnąć grupę z nazwy oddziału w Excelu (np. "3K|DZ" -> "DZ")
                         let subGroup = "";
                         if(sub.branch && sub.branch.includes('|')) {
                             subGroup = sub.branch.split('|')[1];
@@ -668,7 +759,7 @@
                             </div>
                             <div class="main-info">ZASTĘPSTWO</div>
                             <div class="sub-line">${line} / ${sub.subject}</div>
-                            <div class="details">Za: ${sub.rawAbs}</div>`;
+                            <div class="details" style="font-size:0.75em; color:#a7f3d0">Za: ${sub.rawAbs}</div>`;
                         wrapper.appendChild(div);
                     });
                 }
@@ -705,7 +796,7 @@
         };
         update(); setInterval(update, 1000);
     }
-    function log(msg, err=false) { const el = document.getElementById('debug-bar'); el.innerText = msg; el.style.color = err ? 'red' : '#4b5563'; }
+    function log(msg, err=false) { const el = document.getElementById('debug-bar'); el.innerText = msg; el.style.color = err ? '#ef4444' : '#64748b'; }
 </script>
 </body>
 </html>
