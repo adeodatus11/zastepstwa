@@ -1,73 +1,458 @@
-<!DOCTYPE html>
 <html lang="pl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ZSZ5 - Pulpit nauczyciela</title>
-    <link rel="stylesheet" href="style.css">
+    <title>ZSZ nr 5 – fullpit nauczyciela</title>
     <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
+
+    <style>
+        :root { --primary: #2980b9; --bg: #ecf0f1; --white: #ffffff; --err: #c0392b; --ok: #27ae60; --dark: #2c3e50; }
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; background: var(--bg); margin: 0; padding: 20px; color: #333; }
+
+        /* NAGŁÓWEK I LOGO */
+        .top-bar {
+            display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 2px solid #bdc3c7; padding-bottom: 15px; margin-bottom: 20px;
+        }
+        h1 { margin: 0; color: var(--dark); font-weight: 400; font-size: 1.8rem; }
+        .logo-img { height: 60px; width: auto; object-fit: contain; }
+
+        /* STATUS BOX */
+        #status-box { 
+            padding: 15px; border-radius: 5px; margin-bottom: 20px; font-size: 0.9rem; 
+            display: none; border-left: 5px solid; 
+@@ -20,48 +26,70 @@
+        .status-error { background: #f8d7da; color: #721c24; border-color: #f5c6cb; }
+        .status-success { background: #d4edda; color: #155724; border-color: #c3e6cb; }
+
+        /* PANEL STEROWANIA */
+        .dashboard { 
+            background: var(--white); padding: 20px; border-radius: 8px; 
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05); display: flex; flex-wrap: wrap; gap: 15px; 
+            align-items: flex-end; margin-bottom: 20px; 
+        }
+
+        .input-group { display: flex; flex-direction: column; flex: 1; min-width: 200px; }
+        .input-group label { font-size: 0.75rem; font-weight: 700; color: #7f8c8d; margin-bottom: 5px; text-transform: uppercase; }
+        .input-group select, .input-group input { padding: 10px; border: 1px solid #bdc3c7; border-radius: 4px; width: 100%; box-sizing: border-box; }
+        .btn-refresh { padding: 10px; background: var(--primary); color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; }
+        .btn-refresh:hover { background: #1f618d; }
+
+        /* Ręczne wgrywanie (ukryte) */
+        .manual-upload { display: none; border-top: 1px dashed #ccc; padding-top: 15px; width: 100%; margin-top: 10px; }
+        .manual-upload.visible { display: flex; flex-wrap: wrap; gap: 15px; }
+
+        /* TABELA PLANU */
+        .timetable { display: grid; grid-template-columns: 70px repeat(5, 1fr); gap: 10px; padding-bottom: 50px; }
+        
+        /* HEADER (STICKY - TO JEST NOWOŚĆ) */
+        .header { 
+            background: var(--dark); color: white; padding: 12px; text-align: center; 
+            border-radius: 4px; font-weight: 600; 
+            /* Sticky logic */
+            position: sticky; top: 0; z-index: 100;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        
+        .time-col { background: #dfe6e9; padding: 5px; text-align: center; display: flex; flex-direction: column; justify-content: center; font-weight: bold; border-radius: 4px; font-size: 0.8rem; }
+        .day-col { display: flex; flex-direction: column; gap: 8px; }
+
+        /* KARTY LEKCJI */
+        .card { background: white; border-left: 5px solid var(--primary); padding: 10px; border-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); min-height: 80px; position: relative; font-size: 0.9rem; }
+        .card.empty { background: transparent; border: 2px dashed #dcdde1; box-shadow: none; border-left: none; }
+
+        .subject { font-weight: 700; color: var(--dark); }
+        .class-name { font-size: 0.85rem; color: #7f8c8d; font-weight: 600; margin-top: 2px; }
+        .room { position: absolute; top: 8px; right: 8px; background: #f1c40f; color: #fff; padding: 2px 6px; border-radius: 3px; font-size: 0.75rem; font-weight: 700; }
+
+        /* Zastępstwa */
+        .cancelled { background: #fff5f5; border-left-color: var(--err); opacity: 0.7; }
+        .cancelled .subject { text-decoration: line-through; color: var(--err); }
+        .added { background: #f0fdf4; border-left-color: var(--ok); }
+        .added .subject { color: var(--ok); }
+
+        .sub-info { display: block; font-size: 0.75rem; font-weight: bold; margin-top: 5px; padding-top: 5px; border-top: 1px dashed #ccc; }
+        .sub-alert { color: var(--err); } 
+        .sub-success { color: var(--ok); }
+
+        /* Dyżury */
+        .duty { margin-top: 5px; padding: 5px; background: #e1f5fe; border: 1px solid #81d4fa; color: #0277bd; border-radius: 3px; font-size: 0.75rem; display: flex; flex-direction: column; }
+        .duty-lbl { font-weight: 900; font-size: 0.65rem; text-transform: uppercase; margin-bottom: 2px; letter-spacing: 0.5px; }
+        .duty-row { display: flex; justify-content: space-between; }
+        .duty.cancelled { background: #ffebee; border-color: #ef9a9a; color: #c62828; text-decoration: line-through; opacity: 0.7; }
+        .duty.added { background: #e8f5e9; border-color: #a5d6a7; color: #2e7d32; }
+
+    </style>
 </head>
 <body>
 
-    <header>
-        <div class="header-content">
-            <h1>ZSZ5 - Pulpit nauczyciela</h1>
-            <div id="clock">--.--.---- --:--</div>
+    <div class="top-bar">
+        <h1>ZSZ nr 5 – fullpit nauczyciela</h1>
+        <img src="orzeł.png" alt="Logo Orzeł" class="logo-img" onerror="this.style.display='none'"> 
+    </div>
+
+    <div id="status-box"></div>
+
+@@ -76,7 +104,7 @@ <h1>📅 Pulpit Nauczyciela</h1>
         </div>
-    </header>
+        <div class="input-group" style="max-width: 120px;">
+            <label>&nbsp;</label>
+            <button onclick="initAutoLoad()" class="btn-refresh">Odśwież</button>
+        </div>
 
-    <main>
-        <section class="schedule-section">
-            <h2>Tygodniowy Plan i Dyżury</h2>
-            <div class="table-responsive">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Nr</th>
-                            <th>Godziny</th>
-                            <th>Poniedziałek</th>
-                            <th>Wtorek</th>
-                            <th>Środa</th>
-                            <th>Czwartek</th>
-                            <th>Piątek</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr class="lesson-zero" id="row-zero">
-                            <td>0</td>
-                            <td>07:55 - 08:00</td>
-                            <td data-day="Poniedziałek"></td>
-                            <td data-day="Wtorek"></td>
-                            <td data-day="Środa"></td>
-                            <td data-day="Czwartek"></td>
-                            <td data-day="Piątek"></td>
-                        </tr>
-                        <tr><td>1</td><td>08:00 - 08:45</td><td></td><td></td><td></td><td></td><td></td></tr>
-                        <tr><td>2</td><td>08:55 - 09:40</td><td></td><td></td><td></td><td></td><td></td></tr>
-                        <tr><td>3</td><td>09:50 - 10:35</td><td></td><td></td><td></td><td></td><td></td></tr>
-                    </tbody>
-                </table>
-            </div>
-        </section>
+        <div id="manual-section" class="manual-upload">
+@@ -91,25 +119,22 @@ <h1>📅 Pulpit Nauczyciela</h1>
 
-        <section class="duty-check-section">
-            <h2>Sprawdź dyżury w lokalizacji</h2>
-            <div class="search-box">
-                <label for="location-select">Wybierz miejsce:</label>
-                <select id="location-select">
-                    <option value="">-- wczytywanie lokalizacji... --</option>
-                </select>
-                <button onclick="displayDutiesForLocation()">Pokaż obsadę</button>
-            </div>
-            
-            <div id="location-result"></div>
-        </section>
-    </main>
+<script>
+    // ==========================================
+    // ⚙️ KONFIGURACJA PLIKÓW
 
-    <footer>
-        <p>autor: mn | <a href="https://www.zsz5.edupage.org" target="_blank">www.zsz5.edupage.org</a></p>
-    </footer>
+    // ==========================================
+    const CONFIG = {
+        xml: 'plan.xml',        // Plik XML
+        duties: 'dyzury.xlsx',  // Plik dyżurów stałych
+        subs: 'zastepstwa.xlsx' // Plik zastępstw
+    };
 
-    <script src="script.js"></script>
-</body>
-</html>
+    // --- Baza Danych ---
+    const DB = { teachers: {}, lessons: [], periods: [], permDuties: [], subLessons: [], subDuties: [] };
+
+    // --- Start ---
+    document.getElementById('datePicker').valueAsDate = new Date();
+
+
+    window.addEventListener('DOMContentLoaded', initAutoLoad);
+
+    // Listenery
+    document.getElementById('teacherSelect').addEventListener('change', render);
+    document.getElementById('datePicker').addEventListener('change', render);
+    document.getElementById('fileXml').addEventListener('change', (e) => loadFile(e.target.files[0], 'xml'));
+@@ -120,273 +145,232 @@ <h1>📅 Pulpit Nauczyciela</h1>
+    function setStatus(msg, type) {
+        const box = document.getElementById('status-box');
+        box.style.display = 'block';
+        box.className = `status-${type}`;
+        box.innerHTML = msg;
+    }
+
+    // ==========================================
+    // 1. AUTO LOAD (GitHub / Server)
+    // ==========================================
+    async function initAutoLoad() {
+        setStatus('🔄 Pobieranie plików z serwera...', 'loading');
+        document.getElementById('manual-section').classList.remove('visible');
+
+        const t = new Date().getTime(); // Anti-cache
+        const fetchList = [
+            { url: `${CONFIG.xml}?t=${t}`, type: 'xml', name: CONFIG.xml },
+            { url: `${CONFIG.duties}?t=${t}`, type: 'duty', name: CONFIG.duties },
+            { url: `${CONFIG.subs}?t=${t}`, type: 'subs', name: CONFIG.subs }
+        ];
+
+        try {
+            if (window.location.protocol === 'file:') throw new Error("Protokół file:// nieobsługiwany automatycznie. Użyj serwera (np. GitHub Pages) lub wgraj pliki ręcznie.");
+
+
+
+
+            const responses = await Promise.all(fetchList.map(f => fetch(f.url)));
+            for(let i=0; i<responses.length; i++) {
+                if(!responses[i].ok) throw new Error(`Brak pliku: <b>${fetchList[i].name}</b>`);
+
+
+            }
+
+            const blobs = await Promise.all(responses.map(r => r.blob()));
+            await loadFile(blobs[0], 'xml');
+            await loadFile(blobs[1], 'duty');
+            await loadFile(blobs[2], 'subs');
+
+
+
+
+
+
+
+            setStatus('✅ Dane załadowane pomyślnie.', 'success');
+        } catch (err) {
+            console.warn(err);
+            setStatus(`❌ <b>Błąd pobierania:</b> ${err.message}<br>Użyj panelu ręcznego poniżej.`, 'error');
+            document.getElementById('manual-section').classList.add('visible');
+            document.getElementById('teacherSelect').innerHTML = '<option>Wybierz pliki ręcznie</option>';
+
+
+        }
+    }
+
+    // ==========================================
+    // 2. FILE READER
+    // ==========================================
+    function loadFile(blob, type) {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            if(type === 'xml') reader.readAsText(blob, "windows-1250");
+            else reader.readAsArrayBuffer(blob);
+
+
+
+
+
+
+            reader.onload = (e) => {
+                try {
+                    if(type === 'xml') parseXml(e.target.result);
+                    if(type === 'duty') parseDuties(e.target.result);
+                    if(type === 'subs') parseSubs(e.target.result);
+                    resolve();
+                    render();
+                } catch (err) { reject(err); }
+
+
+
+            };
+        });
+    }
+
+    // ==========================================
+    // 3. PARSERS
+    // ==========================================
+    function parseXml(str) {
+        const xml = new DOMParser().parseFromString(str, "text/xml");
+        if(xml.querySelector("parsererror")) throw new Error("Błąd XML");
+
+        const sel = document.getElementById('teacherSelect');
+        const oldVal = sel.value;
+        sel.innerHTML = '<option value="">-- Wybierz Nauczyciela --</option>';
+
+
+
+
+
+
+
+        const tList = Array.from(xml.querySelectorAll('teachers teacher'));
+        tList.sort((a,b) => a.getAttribute('name').localeCompare(b.getAttribute('name')));
+        tList.forEach(t => {
+
+            const id = t.getAttribute('id');
+            const name = t.getAttribute('name');
+            DB.teachers[id] = { name };
+            sel.innerHTML += `<option value="${id}">${name}</option>`;
+        });
+        sel.disabled = false;
+        if(oldVal) sel.value = oldVal;
+
+        // Metadata
+        const classes = {}, subjs = {}, rooms = {};
+        xml.querySelectorAll('classes class').forEach(x => classes[x.getAttribute('id')] = x.getAttribute('name'));
+        xml.querySelectorAll('subjects subject').forEach(x => subjs[x.getAttribute('id')] = x.getAttribute('short') || x.getAttribute('name'));
+        xml.querySelectorAll('classrooms classroom').forEach(x => rooms[x.getAttribute('id')] = x.getAttribute('short') || x.getAttribute('name'));
+
+        DB.periods = Array.from(xml.querySelectorAll('periods period')).map(p => ({
+            id: p.getAttribute('period'), start: p.getAttribute('starttime'), end: p.getAttribute('endtime')
+        }));
+
+        // Lessons
+        const lDefs = {};
+        xml.querySelectorAll('lessons lesson').forEach(l => {
+            const cNames = l.getAttribute('classids').split(',').map(id => classes[id]).join(', ');
+            lDefs[l.getAttribute('id')] = {
+                subj: subjs[l.getAttribute('subjectid')]||'?',
+                teaIds: l.getAttribute('teacherids'),
+                cls: cNames
+            };
+        });
+
+        DB.lessons = [];
+        xml.querySelectorAll('cards card').forEach(c => {
+            const def = lDefs[c.getAttribute('lessonid')];
+            if(def) {
+                const dayIdx = c.getAttribute('days').indexOf('1') + 1;
+                if(dayIdx > 0) {
+                    DB.lessons.push({
+                        day: dayIdx, period: c.getAttribute('period'),
+                        teacherIds: def.teaIds, subject: def.subj, className: def.cls,
+                        room: rooms[c.getAttribute('classroomids')]||''
+                    });
+                }
+            }
+        });
+    }
+
+    function parseDuties(buf) {
+        const wb = XLSX.read(buf, {type: 'array'});
+
+        const ws = wb.Sheets[wb.SheetNames[0]];
+        const data = XLSX.utils.sheet_to_json(ws, {header:1, defval:""});
+        DB.permDuties = [];
+        let loc = "";
+        data.forEach(r => {
+            if(r.length<3) return;
+            if(r[0] && isNaN(parseInt(r[0][0]))) loc = r[0];
+            const t = (r[1]||"").toString();
+            if(t.match(/\d{1,2}:\d{2}-\d{1,2}:\d{2}/)) {
+                const [s,e] = t.split('-');
+
+
+                for(let d=0; d<5; d++) {
+                    const tn = (r[d+2]||"").trim();
+                    if(tn.length>2 && !tn.toLowerCase().includes('brak') && !tn.toLowerCase().includes('x.')) {
+                        DB.permDuties.push({ day: d+1, start: s.trim(), end: e.trim(), loc: loc, teacher: tn });
+                    }
+                }
+            }
+        });
+    }
+
+    function parseSubs(buf) {
+        const wb = XLSX.read(buf, {type: 'array'});
+        const sl = wb.SheetNames.find(n => n.toLowerCase().includes('oddział'));
+        if(sl) {
+            DB.subLessons = XLSX.utils.sheet_to_json(wb.Sheets[sl], {raw:false, dateNF:'dd.mm.yyyy'}).map(r => ({
+
+
+
+
+                date: r['Dzień'], period: (r['Lekcja']||'').split(',')[0].trim(),
+                absent: r['Nauczyciel/wakat'], sub: r['Zastępca'],
+                subject: r['Przedmiot'], room: r['Sala'], info: r['Oddział']
+            })).filter(x => x.date);
+        }
+        const sd = wb.SheetNames.find(n => n.toLowerCase().includes('dyżur'));
+        if(sd) {
+            DB.subDuties = XLSX.utils.sheet_to_json(wb.Sheets[sd], {raw:false}).map(r => ({
+
+
+
+                date: r['Dzień'], time: r['Godzina'],
+                absent: r['Nauczyciel'], sub: r['Zastępca'], loc: r['Miejsce dyżuru']
+            })).filter(x => x.date);
+        }
+    }
+
+    // ==========================================
+    // 4. LOGIC & RENDER
+    // ==========================================
+    function normalize(n) {
+        if(!n) return "";
+        return n.toLowerCase().replace(/x\./,'').replace(/[-.]/g,' ').split(/\s+/).filter(t=>t.length>1).sort().join('');
+
+
+
+
+
+    }
+    
+
+    function isSame(n1, n2) {
+        if(!n1 || !n2) return false;
+        const t1 = n1.toLowerCase().replace(/x\./,'').replace(/[-]/g,' ').split(' ').filter(x=>x.length>1);
+        const t2 = n2.toLowerCase().replace(/x\./,'').replace(/[-]/g,' ').split(' ').filter(x=>x.length>1);
+
+
+
+
+        let hits = 0;
+        t1.forEach(t => { if(t2.includes(t)) hits++; });
+        return hits >= 2;
+    }
+
+    function timeToMin(t) {
+        if(!t) return 0;
+        const [h,m] = t.split(':').map(Number);
+        return h*60+m;
+    }
+
+    function render() {
+        const tid = document.getElementById('teacherSelect').value;
+        if(!tid || !DB.teachers[tid]) return;
+        const tName = DB.teachers[tid].name;
+
+
+        const box = document.getElementById('timetable');
+        box.innerHTML = '';
+
+        // Dates
+        const dateInput = document.getElementById('datePicker').value;
+        const dObj = new Date(dateInput);
+        const dayNum = dObj.getDay();
+        const mon = new Date(dObj);
+        mon.setDate(dObj.getDate() - (dayNum===0?6:dayNum-1));
+
+        const week = [];
+
+        for(let i=0; i<5; i++) {
+            let d = new Date(mon); d.setDate(mon.getDate()+i);
+            week.push(d.toLocaleDateString('pl-PL'));
+        }
+
+        const headers = ['Godziny', 'Poniedziałek', 'Wtorek', 'Środa', 'Czwartek', 'Piątek'];
+        headers.forEach((h, i) => {
+            box.innerHTML += `<div class="header">${h}${i>0 ? '<br><small>'+week[i-1]+'</small>' : ''}</div>`;
+        });
+
+        const periods = (DB.periods.length) ? DB.periods : [1,2,3,4,5,6,7,8,9].map(i=>({id:i, start:'', end:''}));
+
+        periods.forEach(p => {
+            box.innerHTML += `<div class="time-col"><div>${p.id}</div><div>${p.start}<br>${p.end}</div></div>`;
+            const pStart = timeToMin(p.start);
+            const pEnd = timeToMin(p.end);
+
+            for(let d=1; d<=5; d++) {
+                const dateStr = week[d-1];
+                const cell = document.createElement('div');
+                cell.className = 'day-col';
+
+                // LEKCJE
+                const lXml = DB.lessons.find(l => l.day == d && l.period == p.id && l.teacherIds.includes(tid));
+                const subAbs = DB.subLessons.find(s => s.date == dateStr && s.period == p.id && isSame(s.absent, tName));
+                const subAdd = DB.subLessons.find(s => s.date == dateStr && s.period == p.id && isSame(s.sub, tName));
+
+                if(lXml || subAdd) {
+                    const card = document.createElement('div');
+@@ -400,7 +384,6 @@ <h1>📅 Pulpit Nauczyciela</h1>
+                            card.innerHTML = `<div class="subject">${lXml.subject}</div><div class="class-name">${lXml.className}</div><div class="room">${lXml.room}</div>`;
+                        }
+                    }
+
+                    if(subAdd) {
+                        const div = document.createElement('div');
+                        if(lXml) div.style.marginTop = "8px"; else card.classList.add('added');
+@@ -412,38 +395,32 @@ <h1>📅 Pulpit Nauczyciela</h1>
+                    cell.innerHTML += `<div class="card empty"></div>`;
+                }
+
+                // DYŻURY
+
+
+
+                const showDuty = (tRange) => {
+                    const ds = timeToMin(tRange.split('-')[0]);
+                    if(p.id == 1 && ds < pStart) return true; 
+                    if(Math.abs(ds - pEnd) <= 15) return true; 
+                    return false;
+                };
+
+                const printDuty = (t, loc, type, info) => {
+                    const el = document.createElement('div');
+                    el.className = `duty ${type}`;
+                    el.innerHTML = `<span class="duty-lbl">DYŻUR</span><div class="duty-row"><span>${t}</span> <span>${loc}</span></div>`;
+                    if(info) el.innerHTML += `<small>${info}</small>`;
+                    if(cell.lastElementChild) cell.lastElementChild.appendChild(el); else cell.appendChild(el);
+                };
+
+                DB.permDuties.filter(pd => pd.day == d && isSame(pd.teacher, tName)).forEach(pd => {
+
+                    const t = `${pd.start}-${pd.end}`;
+                    if(showDuty(t)) {
+                        const isCanc = DB.subDuties.find(s => s.date == dateStr && s.time.startsWith(pd.start) && isSame(s.absent, tName));
+                        if(isCanc) printDuty(t, pd.loc, 'cancelled', `Zast: ${isCanc.sub}`);
+                        else printDuty(t, pd.loc, '', '');
+                    }
+                });
+                DB.subDuties.filter(s => s.date == dateStr && isSame(s.sub, tName)).forEach(sd => {
+                    if(showDuty(sd.time)) printDuty(sd.time, sd.loc, 'added', `Za: ${sd.absent}`);
+
+
+                });
+
+                box.appendChild(cell);
