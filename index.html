@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Plan lekcji i dyżurów - ZSZ5</title>
+    <title>Plan lekcji - Panel Kiosk</title>
     <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
     <style>
         :root {
@@ -11,8 +11,14 @@
             --header-bg: #111827;
             --text-main: #1f2937;
             --card-bg: #ffffff;
+            --accent: #2563eb;
             
-            /* Paski boczne */
+            /* Kolory kafelków menu */
+            --tile-teacher: #e0f2fe; --tile-teacher-hover: #bae6fd; --tile-teacher-text: #0369a1;
+            --tile-room: #f3e8ff; --tile-room-hover: #e9d5ff; --tile-room-text: #7e22ce;
+            --tile-class: #fce7f3; --tile-class-hover: #fbcfe8; --tile-class-text: #be185d;
+
+            /* Paski boczne planu */
             --lesson-border: #3b82f6; 
             --room-border: #8b5cf6;    
             --class-border: #ec4899;   
@@ -32,89 +38,106 @@
         body { 
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
             background: var(--bg); 
-            margin: 0; 
-            padding: 0; 
+            margin: 0; padding: 0; 
             color: var(--text-main);
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh; /* Aby stopka była na dole przy małej ilości treści */
+            display: flex; flex-direction: column;
+            min-height: 100vh;
         }
 
-        /* --- NAGŁÓWEK GŁÓWNY --- */
+        /* --- NAGŁÓWEK --- */
         header { 
             background: var(--header-bg); color: white; padding: 10px 20px; 
             position: sticky; top: 0; z-index: 1000; 
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
-            display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 10px;
+            display: flex; justify-content: space-between; align-items: center;
             min-height: 70px;
         }
 
-        .header-left { 
-            display: flex; 
-            align-items: center; 
-            gap: 15px; /* Odstęp między logo a tekstem */
-        }
+        .header-left { display: flex; align-items: center; gap: 15px; }
+        .logo { height: 55px; width: auto; }
+        .header-text h1 { margin: 0; font-size: 1.4rem; font-weight: 600; }
+        .clock { font-family: monospace; font-size: 1.1rem; color: #9ca3af; margin-top: 4px; }
 
-        .logo {
-            height: 55px; /* Dopasowanie wysokości logo */
-            width: auto;
-        }
+        /* Ukryte kontrolki w trybie dashboard */
+        .controls { display: flex; gap: 10px; align-items: center; }
+        .controls.hidden { display: none; }
 
-        .header-text {
-            display: flex;
-            flex-direction: column;
+        button.back-btn {
+            background: #dc2626; color: white; border: none; padding: 10px 25px; 
+            border-radius: 8px; cursor: pointer; font-weight: 700; font-size: 1.1rem;
+            display: flex; align-items: center; gap: 8px;
         }
-
-        .header-text h1 { margin: 0; font-size: 1.2rem; font-weight: 600; line-height: 1.2; }
-        .clock { font-family: monospace; font-size: 0.9rem; color: #9ca3af; margin-top: 2px; }
-
-        .controls { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
-        select { padding: 8px 12px; border: 1px solid #4b5563; border-radius: 6px; font-size: 0.9rem; background: #374151; color: white; }
-        #mode-select { font-weight: bold; background: #2563eb; border-color: #1d4ed8; }
-        
-        button { 
-            background: #10b981; color: white; border: none; padding: 9px 18px; 
-            border-radius: 6px; cursor: pointer; font-weight: 600; transition: 0.2s;
-        }
-        button:hover { background: #059669; }
+        button.back-btn:hover { background: #b91c1c; }
 
         #debug-bar { 
             background: #e5e7eb; font-size: 0.75rem; padding: 4px 20px; color: #4b5563; 
-            border-bottom: 1px solid #d1d5db; 
-            transition: background-color 0.3s;
+            border-bottom: 1px solid #d1d5db; text-align: center;
         }
 
-        /* --- STREFA GŁÓWNA --- */
-        .content-wrapper {
-            flex: 1; /* Wypełnia przestrzeń między nagłówkiem a stopką */
+        /* --- DASHBOARD (KAFELKI) --- */
+        #dashboard-view { padding: 30px; display: block; max-width: 1400px; margin: 0 auto; width: 100%; box-sizing: border-box; }
+        .section-title { 
+            font-size: 1.8rem; font-weight: 800; color: #374151; margin: 30px 0 15px 0; 
+            border-bottom: 2px solid #e5e7eb; padding-bottom: 10px;
+        }
+        .section-title:first-child { margin-top: 0; }
+
+        .tile-grid {
+            display: grid; 
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); 
+            gap: 15px;
         }
 
-        /* SIATKA */
+        .tile {
+            padding: 20px 10px;
+            text-align: center;
+            border-radius: 12px;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            transition: transform 0.2s, box-shadow 0.2s;
+            font-size: 1.25rem; /* ~20px (Word 16pt) */
+            font-weight: 600;
+            display: flex; align-items: center; justify-content: center;
+            min-height: 80px;
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+        .tile:hover { transform: translateY(-3px); box-shadow: 0 8px 15px rgba(0,0,0,0.1); }
+        .tile:active { transform: scale(0.98); }
+
+        .tile.teacher { background: var(--tile-teacher); color: var(--tile-teacher-text); border-bottom: 4px solid var(--tile-teacher-text); }
+        .tile.teacher:hover { background: var(--tile-teacher-hover); }
+
+        .tile.room { background: var(--tile-room); color: var(--tile-room-text); border-bottom: 4px solid var(--tile-room-text); }
+        .tile.room:hover { background: var(--tile-room-hover); }
+
+        .tile.class { background: var(--tile-class); color: var(--tile-class-text); border-bottom: 4px solid var(--tile-class-text); }
+        .tile.class:hover { background: var(--tile-class-hover); }
+
+
+        /* --- WIDOK PLANU (SCHOWANY DOMYŚLNIE) --- */
+        #schedule-view { display: none; width: 100%; }
+        
+        /* SIATKA PLANU */
         .week-container {
             display: grid; grid-template-columns: repeat(5, 1fr); 
             gap: 15px; padding: 20px; align-items: start;
         }
-
         .day-col {
             background: #fff; border-radius: 10px; 
             box-shadow: 0 1px 3px rgba(0,0,0,0.1);
             display: flex; flex-direction: column;
         }
-
         .day-header {
             background: #f3f4f6; color: #374151; padding: 12px; 
             text-align: center; font-weight: 700; border-bottom: 1px solid #e5e7eb;
             border-top-left-radius: 10px; border-top-right-radius: 10px;
-            position: sticky; top: 90px; /* Dopasowane do wyższego nagłówka */
-            z-index: 900;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            position: sticky; top: 90px; z-index: 900;
         }
         .day-date { font-weight: 400; font-size: 0.8em; color: #6b7280; display: block; margin-top: 2px; }
-
         .day-content { padding: 10px; display: flex; flex-direction: column; gap: 8px; }
         .slot-wrapper { border: 1px solid #e5e7eb; border-radius: 8px; overflow: hidden; display: flex; flex-direction: column; }
 
-        /* KAFELKI */
+        /* KAFELKI LEKCJI */
         .card {
             background: var(--card-bg); border-left: 4px solid var(--lesson-border);
             padding: 10px; min-height: 50px; display: flex; flex-direction: column; gap: 2px;
@@ -123,67 +146,35 @@
             background: var(--empty); border-left-color: #d1d5db; color: #9ca3af;
             display: flex; align-items: center; justify-content: center; font-style: italic; font-size: 0.85rem;
         }
-
         body.mode-room .card { border-left-color: var(--room-border); }
-        body.mode-loc .card { border-left-color: var(--loc-border); }
         body.mode-class .card { border-left-color: var(--class-border); }
 
         .meta { display: flex; justify-content: space-between; font-size: 0.75rem; color: #6b7280; margin-bottom: 2px; font-weight: 600; }
         .nr { background: #f3f4f6; padding: 1px 6px; border-radius: 4px; color: #374151; }
-        
         .main-info { font-weight: 700; font-size: 0.95rem; }
-        .sub-line { font-weight: 600; font-size: 0.85rem; color: #111827; margin-top: 2px; }
-        .details { font-size: 0.8rem; color: #4b5563; }
-        .pay-info { font-weight: 800; color: #047857; font-size: 0.75rem; margin-top: 4px; text-transform: uppercase; }
-        .support-info { font-size: 0.75rem; color: #6b7280; font-style: italic; margin-top: 2px; }
-
+        .sub-line { font-weight: 600; font-size: 0.85rem; color: #111827; }
         .is-sub { background: var(--sub-bg); border-left-color: var(--sub-border) !important; }
         .is-sub .main-info { text-decoration: line-through; opacity: 0.7; }
         .note-red { color: var(--sub-color); font-weight: 600; font-size: 0.8rem; }
         .is-new { background: var(--new-bg); border-left-color: var(--new-border) !important; }
 
-        /* DYŻURY */
+        /* DYŻURY W PLANIE */
         .duty-section {
             background: var(--duty-bg); color: var(--duty-color);
-            border-top: 1px dashed var(--duty-border);
-            padding: 6px 10px; font-size: 0.8rem;
+            border-top: 1px dashed var(--duty-border); padding: 6px 10px; font-size: 0.8rem;
         }
-        .duty-sub {
-            background: var(--duty-sub-bg); color: var(--duty-sub-color);
-            border-top: 2px solid var(--duty-sub-border);
-        }
-        .loc-duty-item {
-            padding: 6px 0; border-bottom: 1px solid rgba(0,0,0,0.05);
-            display: flex; justify-content: space-between; align-items: center;
-        }
-        .loc-duty-item:last-child { border-bottom: none; }
-        .teacher-name { font-weight: 600; }
-        .badge { font-size: 0.7em; padding: 2px 5px; border-radius: 4px; font-weight: bold; text-transform: uppercase; }
-
         .morning-duty {
             background: var(--duty-bg); border-left: 4px solid #f59e0b;
             padding: 10px; border-radius: 8px; margin-bottom: 5px;
             color: var(--duty-color); font-size: 0.85rem;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
-        }
-        .morning-duty.duty-sub {
-            background: var(--duty-sub-bg); 
-            border-left: 4px solid var(--duty-sub-border);
-            color: var(--duty-sub-color);
         }
 
-        /* --- STOPKA --- */
         footer {
-            background: var(--header-bg);
-            color: #9ca3af;
-            text-align: center;
-            padding: 20px;
-            font-size: 0.85rem;
-            border-top: 1px solid #374151;
-            margin-top: auto; /* Dopycha stopkę do dołu */
+            background: var(--header-bg); color: #9ca3af; text-align: center;
+            padding: 20px; font-size: 0.85rem; border-top: 1px solid #374151;
+            margin-top: auto;
         }
         footer a { color: #d1d5db; text-decoration: none; font-weight: bold; }
-        footer a:hover { color: #fff; text-decoration: underline; }
 
         @media (max-width: 900px) { .week-container { grid-template-columns: 1fr; } }
     </style>
@@ -193,36 +184,38 @@
 <header>
     <div class="header-left">
         <img src="orzeł.png" alt="ZSZ5 Logo" class="logo" onerror="this.style.display='none'">
-        
         <div class="header-text">
-            <h1>Plan lekcji i dyżurów - ZSZ5</h1>
-            <div id="clock" class="clock">--.--.---- --:--</div>
+            <h1>Plan lekcji - ZSZ5</h1>
+            <div id="clock" class="clock">--:--</div>
         </div>
     </div>
     
-    <div class="controls">
-        <select id="mode-select" onchange="populateSelect()">
+    <div class="controls" id="nav-controls" style="display:none">
+        <select id="mode-select" style="display:none">
             <option value="teacher">Nauczyciel</option>
             <option value="class">Oddział</option>
-            <option value="room">Sala Lekcyjna</option>
-            <option value="location">Miejsce Dyżuru</option>
+            <option value="room">Sala</option>
         </select>
-
-        <select id="data-select" disabled>
-            <option>Wczytywanie...</option>
-        </select>
+        <select id="data-select" style="display:none"></select>
         
-        <button id="show-btn" onclick="render()">Pokaż</button>
+        <button class="back-btn" onclick="returnToDashboard()">
+            <span>&#8617;</span> MENU GŁÓWNE
+        </button>
     </div>
 </header>
 
-<div class="content-wrapper">
-    <div id="debug-bar">Inicjalizacja aplikacji...</div>
+<div id="debug-bar">Ładowanie systemu...</div>
+
+<div id="dashboard-view">
+    <div id="tiles-container">Wczytywanie kafelków...</div>
+</div>
+
+<div id="schedule-view">
     <div id="grid" class="week-container"></div>
 </div>
 
 <footer>
-    autor: mn / Wrocław 2025 / wszelkie prawa zastrzeżone / <a href="https://www.zsz5.edupage.org" target="_blank">www.zsz5.edupage.org</a>
+    <a href="https://www.zsz5.edupage.org" target="_blank">www.zsz5.edupage.org</a>
 </footer>
 
 <script>
@@ -231,108 +224,167 @@
         xml: './plan.xml',
         dyzury: './dyzury.xlsx',
         zastepstwa: './zastepstwa.xlsx',
-        refreshInterval: 10000 // 10 sekund
+        refreshInterval: 120000, // 2 minuty (120s)
+        idleTimeout: 20000       // 20 sekund bezczynności
     };
 
     const DB = {
-        teachers: {},
-        rooms: [],     
-        classes: {},
-        classesList: [],
-        locations: [], 
-        periods: [],
-        lessons: [],
-        duties: [],
-        subs: [],
-        dutyChanges: []
+        teachers: {}, rooms: [], classes: {}, classesList: [], 
+        locations: [], periods: [], lessons: [], duties: [], subs: [], dutyChanges: []
     };
 
     const DAYS = ["Niedziela", "Poniedziałek", "Wtorek", "Środa", "Czwartek", "Piątek", "Sobota"];
     let refreshTimer = null;
+    let idleTimer = null;
+    let isDashboardActive = true;
 
-    // === START APLIKACJI ===
+    // === START ===
     window.onload = () => {
         startClock();
-        // Pierwsze pobranie danych
-        refreshData();
-        // Ustawienie cyklicznego odświeżania
+        refreshData(); // Pierwsze pobranie
         refreshTimer = setInterval(refreshData, CONFIG.refreshInterval);
+        
+        // Eventy resetujące licznik bezczynności
+        document.addEventListener('mousemove', resetIdle);
+        document.addEventListener('click', resetIdle);
+        document.addEventListener('touchstart', resetIdle);
     };
 
-    // === GŁÓWNA FUNKCJA ODŚWIEŻANIA DANYCH ===
-    async function refreshData() {
-        const debugBar = document.getElementById('debug-bar');
-        debugBar.style.backgroundColor = "#fffbeb"; // Jasny żółty na czas ładowania
-        log("Pobieranie aktualnych danych...", false);
+    // === OBSŁUGA BEZCZYNNOŚCI ===
+    function resetIdle() {
+        if (isDashboardActive) return; // Na dashboardzie nie ma timeoutu
+        clearTimeout(idleTimer);
+        idleTimer = setTimeout(returnToDashboard, CONFIG.idleTimeout);
+    }
+
+    function returnToDashboard() {
+        isDashboardActive = true;
+        clearTimeout(idleTimer);
+        document.getElementById('dashboard-view').style.display = 'block';
+        document.getElementById('schedule-view').style.display = 'none';
+        document.getElementById('nav-controls').style.display = 'none';
+        document.body.className = ''; // Reset klas stylów
+        log("Menu Główne");
+    }
+
+    function openSchedule(mode, id) {
+        isDashboardActive = false;
         
-        // 1. Reset dynamicznych kontenerów DB (aby uniknąć duplikatów)
-        DB.lessons = [];
-        DB.periods = [];
-        DB.duties = [];
-        DB.subs = [];
-        DB.dutyChanges = [];
-        // Resetujemy też słowniki, które są nadpisywane przez XML, dla pewności spójności
-        DB.teachers = {}; 
-        DB.classes = {};
-        DB.classesList = [];
-        // DB.rooms jest tablicą z Set, też odświeżamy
-        DB.rooms = [];
+        // Ustawienie selectów (dla kompatybilności z funkcją render)
+        const modeSel = document.getElementById('mode-select');
+        const dataSel = document.getElementById('data-select');
+        
+        modeSel.value = mode;
+        populateSelect(false); // Wypełnij opcje w data-select
+        dataSel.value = id; // Wybierz odpowiednią
+        
+        // Zmiana widoku
+        document.getElementById('dashboard-view').style.display = 'none';
+        document.getElementById('schedule-view').style.display = 'block';
+        document.getElementById('nav-controls').style.display = 'flex';
+        
+        // Renderowanie planu
+        render();
+        resetIdle(); // Start licznika
+    }
+
+    // === GŁÓWNA FUNKCJA DANYCH ===
+    async function refreshData() {
+        log("Aktualizacja danych...", false);
+        
+        // Reset kontenerów
+        DB.lessons = []; DB.periods = []; DB.duties = []; DB.subs = []; DB.dutyChanges = [];
+        DB.teachers = {}; DB.classes = {}; DB.classesList = []; DB.rooms = [];
 
         try {
-            // 2. Plan XML (krytyczny)
             await loadXML();
-
-            // 3. Pliki Excel (opcjonalne)
             await Promise.all([
-                loadExcel(CONFIG.dyzury, 'dyzury').catch(e => {
-                    console.warn("Brak pliku dyżurów lub błąd: ", e);
-                }),
-                loadExcel(CONFIG.zastepstwa, 'zastepstwa').catch(e => {
-                    console.warn("Brak pliku zastępstw lub błąd: ", e);
-                })
+                loadExcel(CONFIG.dyzury, 'dyzury').catch(() => {}),
+                loadExcel(CONFIG.zastepstwa, 'zastepstwa').catch(() => {})
             ]);
             
             addMissingTeachers();
-            extractUniqueLocations();
             
-            // 4. Obsługa Selecta - zachowanie wyboru użytkownika
-            const selectEl = document.getElementById('data-select');
-            const currentSelection = selectEl.value; // Zapamiętaj co użytkownik ogląda
-            
-            populateSelect(); // Przebuduj listę (mogły dojść nowe nazwiska/sale)
-            
-            // Jeśli poprzednia wartość nadal istnieje na nowej liście, przywróć ją
-            if (currentSelection) {
-                const options = Array.from(selectEl.options);
-                if (options.some(opt => opt.value === currentSelection)) {
-                    selectEl.value = currentSelection;
-                }
+            // Po pobraniu odśwież widok
+            if(isDashboardActive) {
+                renderDashboard();
+            } else {
+                // Jeśli użytkownik ogląda plan, odśwież go w tle (chyba że dane zniknęły)
+                populateSelect(false);
+                render();
             }
             
-            // 5. Renderuj widok
-            render();
-            
             const now = new Date();
-            const timeStr = now.toLocaleTimeString('pl-PL');
-            debugBar.style.backgroundColor = "#e5e7eb"; // Powrót do szarego
-            log(`Ostatnia aktualizacja: ${timeStr} (Lekcje: ${DB.lessons.length}, Zastępstwa: ${DB.subs.length})`);
-            
+            log(`Dane zaktualizowane: ${now.toLocaleTimeString()}`);
         } catch (e) {
             console.error(e);
-            debugBar.style.backgroundColor = "#fee2e2"; // Czerwony przy błędzie
-            log("BŁĄD AKTUALIZACJI: " + e.message, true);
+            log("Błąd aktualizacji danych!", true);
         }
     }
 
-    // === FETCH Z CACHE BUSTING ===
-    async function fetchFresh(url) {
-        // Dodajemy parametr t=czas, aby przeglądarka nie brała plików z pamięci podręcznej
-        const bustUrl = url + "?t=" + new Date().getTime();
-        const res = await fetch(bustUrl);
-        if(!res.ok) throw new Error(`HTTP ${res.status} dla ${url}`);
-        return res;
+    // === RENDER DASHBOARD (KAFELKI) ===
+    function renderDashboard() {
+        const container = document.getElementById('tiles-container');
+        container.innerHTML = "";
+
+        // 1. Nauczyciele
+        const secTeachers = document.createElement('div');
+        secTeachers.innerHTML = `<div class="section-title">Nauczyciele</div>`;
+        const gridT = document.createElement('div'); gridT.className = 'tile-grid';
+        
+        const sortedTeachers = Object.entries(DB.teachers)
+            .sort((a,b) => a[1].name.localeCompare(b[1].name));
+
+        sortedTeachers.forEach(([id, t]) => {
+            // Pomiń wakaty i techniczne
+            if(t.name.toLowerCase().includes('wakat')) return;
+            
+            const tile = document.createElement('div');
+            tile.className = 'tile teacher';
+            tile.innerText = t.name;
+            tile.onclick = () => openSchedule('teacher', id);
+            gridT.appendChild(tile);
+        });
+        secTeachers.appendChild(gridT);
+        container.appendChild(secTeachers);
+
+        // 2. Sale
+        const secRooms = document.createElement('div');
+        secRooms.innerHTML = `<div class="section-title">Sale Lekcyjne</div>`;
+        const gridR = document.createElement('div'); gridR.className = 'tile-grid';
+        
+        DB.rooms.sort().forEach(r => {
+            const tile = document.createElement('div');
+            tile.className = 'tile room';
+            tile.innerText = r;
+            tile.onclick = () => openSchedule('room', r);
+            gridR.appendChild(tile);
+        });
+        secRooms.appendChild(gridR);
+        container.appendChild(secRooms);
+
+        // 3. Oddziały
+        const secClasses = document.createElement('div');
+        secClasses.innerHTML = `<div class="section-title">Oddziały</div>`;
+        const gridC = document.createElement('div'); gridC.className = 'tile-grid';
+        
+        DB.classesList.sort().forEach(c => {
+            const tile = document.createElement('div');
+            tile.className = 'tile class';
+            tile.innerText = c;
+            tile.onclick = () => openSchedule('class', c);
+            gridC.appendChild(tile);
+        });
+        secClasses.appendChild(gridC);
+        container.appendChild(secClasses);
     }
 
+    // === XML & PARSERS (Zachowane z poprzedniej wersji) ===
+    async function fetchFresh(url) {
+        const res = await fetch(url + "?t=" + new Date().getTime());
+        if(!res.ok) throw new Error(`HTTP ${res.status}`);
+        return res;
+    }
     async function fetchText(url) {
         const res = await fetchFresh(url);
         const blob = await res.blob();
@@ -342,7 +394,6 @@
             reader.readAsText(blob, 'windows-1250'); 
         });
     }
-
     async function loadExcel(url, type) {
         const res = await fetchFresh(url);
         const ab = await res.arrayBuffer();
@@ -350,101 +401,59 @@
         if(type === 'dyzury') parseDuties(wb);
         if(type === 'zastepstwa') parseSub(wb);
     }
-
-    // === ZEGAR ===
-    function startClock() {
-        const update = () => {
-            const now = new Date();
-            const str = now.toLocaleString('pl-PL', {
-                day: '2-digit', month: '2-digit', year: 'numeric',
-                hour: '2-digit', minute: '2-digit'
-            });
-            document.getElementById('clock').innerText = str;
-        };
-        update();
-        setInterval(update, 1000);
-    }
-
-    function log(msg, important=false) {
-        const el = document.getElementById('debug-bar');
-        el.innerText = msg;
-        if(important) el.style.fontWeight = "bold";
-        else el.style.fontWeight = "normal";
-    }
-
-    // === XML ===
     async function loadXML() {
         const txt = await fetchText(CONFIG.xml);
         const xml = new DOMParser().parseFromString(txt, "text/xml");
-
         xml.querySelectorAll('teachers teacher').forEach(t => {
             const id = t.getAttribute('id');
             const name = (t.getAttribute('firstname')||'') + ' ' + (t.getAttribute('lastname')||t.getAttribute('name'));
             DB.teachers[id] = { name: name.trim(), normalized: normalize(name) };
         });
-
         xml.querySelectorAll('classes class').forEach(c => {
-            const id = c.getAttribute('id');
-            const name = c.getAttribute('name');
-            DB.classes[id] = name;
-            if(!DB.classesList.includes(name)) DB.classesList.push(name);
+            const id = c.getAttribute('id'); const name = c.getAttribute('name');
+            DB.classes[id] = name; if(!DB.classesList.includes(name)) DB.classesList.push(name);
         });
-
-        const rooms = {};
         const roomSet = new Set();
+        const roomMap = {};
         xml.querySelectorAll('classrooms classroom').forEach(r => {
-            const name = r.getAttribute('name'); rooms[r.getAttribute('id')] = name; roomSet.add(name);
+            const name = r.getAttribute('name'); roomMap[r.getAttribute('id')] = name; roomSet.add(name);
         });
         DB.rooms = Array.from(roomSet);
-
         xml.querySelectorAll('periods period').forEach(p => {
             DB.periods.push({ nr: parseInt(p.getAttribute('period')), start: p.getAttribute('starttime'), end: p.getAttribute('endtime') });
         });
         DB.periods.sort((a,b) => a.nr - b.nr);
-
         const subjects = {};
         xml.querySelectorAll('subjects subject').forEach(s => subjects[s.getAttribute('id')] = s.getAttribute('name'));
-
         xml.querySelectorAll('cards card').forEach(c => {
             const lesson = xml.querySelector(`lessons lesson[id="${c.getAttribute('lessonid')}"]`);
             if(!lesson) return;
-            
             const tidsRaw = lesson.getAttribute('teacherids');
-            const days = c.getAttribute('days');
-            const dayIdx = days.indexOf('1') + 1;
+            const dayIdx = c.getAttribute('days').indexOf('1') + 1;
             const roomId = c.getAttribute('classroomids');
             const classIds = lesson.getAttribute('classids').split(',');
             const classNames = classIds.map(cid => DB.classes[cid]).join(', ');
-
             if(dayIdx > 0 && tidsRaw) {
                 const tidsArray = tidsRaw.split(',');
                 const mainTeacherId = tidsArray[0].trim();
-                const supportTeachers = tidsArray.slice(1).map(tid => getTeacherName(tid.trim()));
-                const supportInfoString = supportTeachers.length > 0 ? supportTeachers.join(', ') : null;
-
+                const supportTeachers = tidsArray.slice(1).map(tid => DB.teachers[tid.trim()]?.name || tid);
                 DB.lessons.push({
-                    teacherId: mainTeacherId, 
-                    day: dayIdx, 
-                    period: parseInt(c.getAttribute('period')),
+                    teacherId: mainTeacherId, day: dayIdx, period: parseInt(c.getAttribute('period')),
                     subject: subjects[lesson.getAttribute('subjectid')] || 'Lekcja',
-                    room: rooms[roomId] || '', 
-                    classNames: classNames, 
-                    branch: '',
-                    supportInfo: supportInfoString
+                    room: roomMap[roomId] || '', classNames: classNames, branch: '',
+                    supportInfo: supportTeachers.length ? supportTeachers.join(', ') : null
                 });
             }
         });
     }
 
-    // === PARSERY EXCEL ===
-    function parseDuties(wb) {
+    function parseDuties(wb) { /* ...Logika dyżurów bez zmian... */
         wb.SheetNames.forEach(sheetName => {
             const ws = wb.Sheets[sheetName];
             const data = XLSX.utils.sheet_to_json(ws, {header: 1});
             let currentDayMap = null;
             for(let i=0; i<data.length; i++) {
-                const row = data[i];
-                if(!row || row.length===0) continue;
+                const row = data[i]; if(!row || !row.length) continue;
                 const rowStr = row.map(c => String(c||"").toLowerCase());
                 if(rowStr.some(s => s.includes('poniedziałek'))) {
                     currentDayMap = {};
@@ -463,24 +472,19 @@
                     for(let c=0; c<5; c++) {
                         if(row[c] && /\d{1,2}:\d{2}\s*-\s*\d{1,2}:\d{2}/.test(String(row[c]))) {
                             timeVal = String(row[c]).trim();
-                            if(c>0 && row[c-1]) placeVal=row[c-1]; else if(row[0]) placeVal=row[0];
-                            break;
+                            if(c>0 && row[c-1]) placeVal=row[c-1]; else if(row[0]) placeVal=row[0]; break;
                         }
                     }
                     if(timeVal) {
                         for(const [colIdx, dayNum] of Object.entries(currentDayMap)) {
                             const rawTeacher = row[colIdx];
                             if(rawTeacher && String(rawTeacher).length>2) {
-                                const tName = String(rawTeacher).trim();
-                                if(/brak|wolne|dyżur|-/.test(tName.toLowerCase())) continue;
-                                const tId = findTeacherId(tName);
-                                if(tId) {
-                                    DB.duties.push({
-                                        teacherId: tId, day: dayNum, time: timeVal,
-                                        startMin: timeToMin(timeVal.split('-')[0]),
-                                        place: placeVal ? placeVal.trim() : "Dyżur"
-                                    });
-                                }
+                                const tId = findTeacherId(String(rawTeacher).trim());
+                                if(tId) DB.duties.push({
+                                    teacherId: tId, day: dayNum, time: timeVal,
+                                    startMin: timeToMin(timeVal.split('-')[0]),
+                                    place: placeVal ? placeVal.trim() : "Dyżur"
+                                });
                             }
                         }
                     }
@@ -508,26 +512,19 @@
                 const d = parseDate(r['Dzień']);
                 if(d) DB.dutyChanges.push({
                     date: d, time: r['Godzina'],
-                    absent: findTeacherId(r['Nauczyciel']),
-                    sub: findTeacherId(r['Zastępca']),
+                    absent: findTeacherId(r['Nauczyciel']), sub: findTeacherId(r['Zastępca']),
                     rawSub: r['Zastępca'], place: r['Miejsce dyżuru']
                 });
             });
         }
     }
 
-    // === NARZĘDZIA ===
+    // === UTILS ===
     function normalize(str) { return (str||"").toLowerCase().replace(/^(x\.|ks\.|p\.|pani|pan)\s+/g, '').replace(/[^a-złąceźżńóś\s]/g, '').trim().split(/\s+/).sort().join(' '); }
-    function levenshtein(a, b) {
-        const m = []; for(let i=0; i<=b.length; i++) m[i]=[i]; for(let j=0; j<=a.length; j++) m[0][j]=j;
-        for(let i=1; i<=b.length; i++) for(let j=1; j<=a.length; j++) m[i][j] = b.charAt(i-1)===a.charAt(j-1) ? m[i-1][j-1] : Math.min(m[i-1][j-1]+1, Math.min(m[i][j-1]+1, m[i-1][j]+1));
-        return m[b.length][a.length];
-    }
+    function levenshtein(a, b) { const m = []; for(let i=0; i<=b.length; i++) m[i]=[i]; for(let j=0; j<=a.length; j++) m[0][j]=j; for(let i=1; i<=b.length; i++) for(let j=1; j<=a.length; j++) m[i][j] = b.charAt(i-1)===a.charAt(j-1) ? m[i-1][j-1] : Math.min(m[i-1][j-1]+1, Math.min(m[i][j-1]+1, m[i-1][j]+1)); return m[b.length][a.length]; }
     function findTeacherId(rawName) {
-        if(!rawName || rawName.length<3) return null;
-        if(/wakat|brak|okienko/i.test(rawName)) return null;
-        const target = normalize(rawName);
-        let bestId = null, bestScore = 0;
+        if(!rawName || rawName.length<3) return null; if(/wakat|brak|okienko/i.test(rawName)) return null;
+        const target = normalize(rawName); let bestId = null, bestScore = 0;
         for(const [id, t] of Object.entries(DB.teachers)) {
             const source = t.normalized;
             if(source === target) return id;
@@ -544,63 +541,30 @@
         if(typeof val === 'string') { const p = val.trim().split('.'); if(p.length===3) return `${p[2]}-${p[1]}-${p[0]}`; }
         return null;
     }
-    function getMonday(d) {
-        d = new Date(d); const day = d.getDay(); const diff = d.getDate() - day + (day == 0 ? -6:1);
-        return new Date(d.setDate(diff));
-    }
-    function getTeacherName(id) {
-        return DB.teachers[id] ? DB.teachers[id].name : id;
-    }
-    function normalizeClass(c) {
-        return (c || "").replace(/\s/g, '').toLowerCase();
-    }
-    function matchLoc(a, b) {
-        if(!a || !b) return false;
-        const nA = a.toLowerCase().trim(); const nB = b.toLowerCase().trim();
-        return nA === nB || nA.includes(nB) || nB.includes(nA);
-    }
+    function getMonday(d) { d = new Date(d); const day = d.getDay(); const diff = d.getDate() - day + (day == 0 ? -6:1); return new Date(d.setDate(diff)); }
+    function getTeacherName(id) { return DB.teachers[id] ? DB.teachers[id].name : id; }
+    function normalizeClass(c) { return (c || "").replace(/\s/g, '').toLowerCase(); }
     function addMissingTeachers() {
-        const checkAndAdd = (rawName, objRef, idField) => {
-            if (rawName && !objRef[idField]) {
-                const newId = "EXT_" + normalize(rawName).replace(/\s+/g, '_');
-                if (!DB.teachers[newId]) DB.teachers[newId] = { name: rawName.trim(), normalized: normalize(rawName) };
-                objRef[idField] = newId;
-            }
-        };
-        DB.subs.forEach(s => { if (!s.sub && s.rawSub) checkAndAdd(s.rawSub, s, 'sub'); });
-        DB.dutyChanges.forEach(d => { if (!d.sub && d.rawSub) checkAndAdd(d.rawSub, d, 'sub'); });
+        const check = (raw, obj, f) => { if(raw && !obj[f]) { const nid="EXT_"+normalize(raw).replace(/\s/g,'_'); if(!DB.teachers[nid]) DB.teachers[nid]={name:raw.trim(),normalized:normalize(raw)}; obj[f]=nid; }};
+        DB.subs.forEach(s => check(s.rawSub, s, 'sub')); DB.dutyChanges.forEach(d => check(d.rawSub, d, 'sub'));
     }
-    function extractUniqueLocations() {
-        const locs = new Set();
-        DB.duties.forEach(d => { if(d.place) locs.add(d.place); });
-        DB.dutyChanges.forEach(d => { if(d.place) locs.add(d.place); });
-        DB.locations = Array.from(locs).sort();
-    }
-    function populateSelect() {
+
+    function populateSelect(renderIt=true) {
         const mode = document.getElementById('mode-select').value;
         const sel = document.getElementById('data-select');
-        
-        // Zapisujemy, co było wybrane, ale funkcja refreshData robi to lepiej globalnie
-        // Tutaj czyścimy opcje
-        sel.innerHTML = ""; 
-        sel.disabled = false;
+        sel.innerHTML = "";
         document.body.className = `mode-${mode}`;
-        
         let items = [];
         if (mode === 'teacher') items = Object.entries(DB.teachers).sort((a,b) => a[1].name.localeCompare(b[1].name)).map(x => ({val: x[0], txt: x[1].name}));
         else if (mode === 'room') items = DB.rooms.sort().map(x => ({val: x, txt: x}));
         else if (mode === 'class') items = DB.classesList.sort().map(x => ({val: x, txt: x}));
-        else if (mode === 'location') items = DB.locations.map(x => ({val: x, txt: x}));
-
-        items.forEach(i => {
-            const opt = document.createElement('option');
-            opt.value = i.val; opt.innerText = i.txt;
-            sel.appendChild(opt);
-        });
         
-        // Domyślny wybór (jeśli wywołane ręcznie, a nie przez refresh)
+        items.forEach(i => {
+            const opt = document.createElement('option'); opt.value = i.val; opt.innerText = i.txt; sel.appendChild(opt);
+        });
         if(items.length && !sel.value) sel.value = items[0].val;
     }
+
     function getDutiesForTime(tid, day, date, min, max) {
         const res = [];
         DB.duties.filter(d => d.teacherId==tid && d.day==day).forEach(d => {
@@ -616,15 +580,14 @@
         return res;
     }
 
-    // === RENDER ===
+    // === RENDER PLANU ===
     function render() {
         const mode = document.getElementById('mode-select').value;
         const selectedId = document.getElementById('data-select').value;
-        const today = new Date(); 
         const grid = document.getElementById('grid');
         grid.innerHTML = "";
         if(!selectedId) return;
-        const monday = getMonday(today);
+        const monday = getMonday(new Date());
 
         for(let i=0; i<5; i++) {
             const curDate = new Date(monday); curDate.setDate(monday.getDate() + i);
@@ -634,133 +597,75 @@
             col.innerHTML = `<div class="day-header">${DAYS[dayNum]}<span class="day-date">${curDate.toLocaleDateString('pl-PL')}</span></div>`;
             const content = document.createElement('div'); content.className = 'day-content';
 
-            if (mode === 'location') renderLocationMode(content, selectedId, dayNum, dateStr);
-            else renderScheduleMode(content, mode, selectedId, dayNum, dateStr);
-            
+            if (mode === 'teacher') {
+                getDutiesForTime(selectedId, dayNum, dateStr, 0, 480).forEach(d => {
+                    const div = document.createElement('div'); div.className = 'card morning-duty'; 
+                    if(d.status==='added') div.classList.add('duty-sub');
+                    if(d.status==='cancelled') div.style.textDecoration='line-through';
+                    div.innerHTML = `<div style="font-weight:700">${d.status==='added'?'ZASTĘPSTWO':'DYŻUR'} ${d.time}</div><div>${d.place}</div>`;
+                    content.appendChild(div);
+                });
+            }
+            DB.periods.forEach(p => {
+                const wrapper = document.createElement('div'); wrapper.className = 'slot-wrapper';
+                const div = document.createElement('div');
+                let lesson = null, subAbs = null, subAdd = null;
+
+                if (mode === 'teacher') {
+                    lesson = DB.lessons.find(l => l.teacherId == selectedId && l.day == dayNum && l.period == p.nr);
+                    subAbs = lesson ? DB.subs.find(s => s.date == dateStr && s.absent == selectedId && s.periodRaw.startsWith(p.nr+',')) : null;
+                    subAdd = DB.subs.find(s => s.date == dateStr && s.sub == selectedId && s.periodRaw.startsWith(p.nr+','));
+                } else if (mode === 'room') {
+                    lesson = DB.lessons.find(l => l.room === selectedId && l.day == dayNum && l.period == p.nr);
+                    subAdd = DB.subs.find(s => s.date == dateStr && s.room === selectedId && s.periodRaw.startsWith(p.nr+','));
+                    if(lesson) subAbs = DB.subs.find(s => s.date == dateStr && s.absent == lesson.teacherId && s.periodRaw.startsWith(p.nr+','));
+                } else if (mode === 'class') {
+                    lesson = DB.lessons.find(l => l.classNames.includes(selectedId) && l.day == dayNum && l.period == p.nr);
+                    subAdd = DB.subs.find(s => s.date == dateStr && normalizeClass(s.branch) === normalizeClass(selectedId) && s.periodRaw.startsWith(p.nr+','));
+                    if(lesson) subAbs = DB.subs.find(s => s.date == dateStr && s.absent == lesson.teacherId && s.periodRaw.startsWith(p.nr+','));
+                }
+
+                if(subAdd) {
+                    div.className = 'card is-new';
+                    let line = mode==='teacher' ? `s.${subAdd.room} / ${subAdd.branch}` : `${getTeacherName(subAdd.sub)}`;
+                    div.innerHTML = `<div class="meta"><span class="nr">${p.nr}</span> ${p.start}-${p.end}</div><div class="main-info">ZASTĘPSTWO</div><div class="sub-line">${line} / ${subAdd.subject}</div><div class="details">Za: ${subAdd.rawAbs}</div>`;
+                } else if(lesson) {
+                    if(subAbs) {
+                        div.className = 'card is-sub';
+                        div.innerHTML = `<div class="meta"><span class="nr">${p.nr}</span> ${p.start}-${p.end}</div><div class="main-info">${lesson.subject}</div><span class="note-red">Nieobecność</span>`;
+                    } else {
+                        div.className = 'card';
+                        let line = "";
+                        if(mode === 'teacher') line = `${lesson.classNames} / s.${lesson.room}`;
+                        else line = `${getTeacherName(lesson.teacherId)}`;
+                        div.innerHTML = `<div class="meta"><span class="nr">${p.nr}</span> ${p.start}-${p.end}</div><div class="main-info">${lesson.subject}</div><div class="sub-line">${line}</div>`;
+                    }
+                } else { div.className = 'card empty'; div.innerHTML = `${p.nr}. ${p.start}`; }
+                wrapper.appendChild(div);
+                
+                if(mode === 'teacher') {
+                    const pEnd = timeToMin(p.end);
+                    getDutiesForTime(selectedId, dayNum, dateStr, pEnd-5, pEnd+15).forEach(d => {
+                        const dDiv = document.createElement('div'); dDiv.className = 'duty-section';
+                        if(d.status === 'added') dDiv.classList.add('duty-sub');
+                        dDiv.innerHTML = `<b>${d.time}</b> ${d.place}`;
+                        wrapper.appendChild(dDiv);
+                    });
+                }
+                content.appendChild(wrapper);
+            });
             col.appendChild(content); grid.appendChild(col);
         }
     }
 
-    function renderScheduleMode(container, mode, id, day, dateStr) {
-        if (mode === 'teacher') {
-            getDutiesForTime(id, day, dateStr, 0, 480).forEach(d => {
-                const div = document.createElement('div'); div.className = 'card morning-duty'; 
-                if(d.status==='added') div.classList.add('duty-sub');
-                div.style.borderLeftColor = "#f59e0b";
-                if(d.status==='cancelled') div.style.textDecoration='line-through';
-                div.innerHTML = `<div style="font-weight:700">${d.status==='added'?'ZASTĘPSTWO!':'DYŻUR'} ${d.time}</div><div>${d.place}</div>`;
-                container.appendChild(div);
-            });
-        }
-        DB.periods.forEach(p => {
-            const wrapper = document.createElement('div'); wrapper.className = 'slot-wrapper';
-            const div = document.createElement('div');
-            let lesson = null, subAbs = null, subAdd = null;
-
-            if (mode === 'teacher') {
-                lesson = DB.lessons.find(l => l.teacherId == id && l.day == day && l.period == p.nr);
-                subAbs = lesson ? DB.subs.find(s => s.date == dateStr && s.absent == id && s.periodRaw.startsWith(p.nr+',')) : null;
-                subAdd = DB.subs.find(s => s.date == dateStr && s.sub == id && s.periodRaw.startsWith(p.nr+','));
-            } 
-            else if (mode === 'room') {
-                lesson = DB.lessons.find(l => l.room === id && l.day === day && l.period === p.nr);
-                subAdd = DB.subs.find(s => s.date == dateStr && s.room === id && s.periodRaw.startsWith(p.nr+','));
-                if(lesson) {
-                    const abs = DB.subs.find(s => s.date == dateStr && s.absent == lesson.teacherId && s.periodRaw.startsWith(p.nr+','));
-                    if(abs) subAbs = abs; 
-                }
-            }
-            else if (mode === 'class') {
-                lesson = DB.lessons.find(l => l.classNames.includes(id) && l.day == day && l.period == p.nr);
-                subAdd = DB.subs.find(s => s.date == dateStr && normalizeClass(s.branch) === normalizeClass(id) && s.periodRaw.startsWith(p.nr+','));
-                if(lesson) {
-                      const abs = DB.subs.find(s => s.date == dateStr && s.absent == lesson.teacherId && s.periodRaw.startsWith(p.nr+','));
-                      if(abs) subAbs = abs; 
-                }
-            }
-
-            if(subAdd) {
-                div.className = 'card is-new';
-                let subLine = "";
-                if(mode === 'teacher') subLine = `${subAdd.branch || '?'} / s.${subAdd.room} / ${subAdd.subject}`;
-                if(mode === 'room') subLine = `${subAdd.branch || '?'} / ${getTeacherName(subAdd.sub)} / ${subAdd.subject}`;
-                if(mode === 'class') subLine = `${getTeacherName(subAdd.sub)} / s.${subAdd.room || '?'} / ${subAdd.subject}`;
-                div.innerHTML = `
-                    <div class="meta"><span class="nr">${p.nr}</span> ${p.start}-${p.end}</div>
-                    <div class="main-info">ZASTĘPSTWO</div><div class="sub-line">${subLine}</div>
-                    <div class="details">Za: ${subAdd.rawAbs}</div>${subAdd.payInfo ? `<div class="pay-info">${subAdd.payInfo}</div>` : ''}`;
-            } else if(lesson) {
-                if(subAbs) {
-                    div.className = 'card is-sub';
-                    div.innerHTML = `
-                        <div class="meta"><span class="nr">${p.nr}</span> ${p.start}-${p.end}</div>
-                        <div class="main-info">${lesson.subject}</div>
-                        <span class="note-red">${mode==='teacher' ? 'Nieobecność' : getTeacherName(lesson.teacherId)} (Zast: ${subAbs.rawSub})</span>`;
-                } else {
-                    div.className = 'card';
-                    let subLine = "";
-                    if(mode === 'teacher') subLine = `${lesson.classNames || ''} / s.${lesson.room}`;
-                    if(mode === 'room') subLine = `${lesson.classNames || ''} / ${getTeacherName(lesson.teacherId)}`;
-                    if(mode === 'class') subLine = `${getTeacherName(lesson.teacherId)} / s.${lesson.room}`;
-                    let html = `<div class="meta"><span class="nr">${p.nr}</span> ${p.start}-${p.end}</div><div class="main-info">${lesson.subject}</div><div class="sub-line">${subLine}</div>`;
-                    if (lesson.supportInfo) html += `<div class="support-info">+ ${lesson.supportInfo}</div>`;
-                    div.innerHTML = html;
-                }
-            } else {
-                div.className = 'card empty'; div.innerHTML = `${p.nr}. ${p.start}`;
-            }
-            wrapper.appendChild(div);
-
-            if (mode === 'teacher') {
-                const pEnd = timeToMin(p.end);
-                getDutiesForTime(id, day, dateStr, pEnd-5, pEnd+15).forEach(d => {
-                    const dDiv = document.createElement('div'); dDiv.className = 'duty-section';
-                    if(d.status === 'added') dDiv.classList.add('duty-sub');
-                    if(d.status === 'cancelled') dDiv.style.textDecoration='line-through';
-                    dDiv.innerHTML = `<div style="font-weight:700">${d.status==='added'?'ZASTĘPSTWO!':'DYŻUR'} ${d.time}</div><div>${d.place}</div>`;
-                    wrapper.appendChild(dDiv);
-                });
-            }
-            container.appendChild(wrapper);
-        });
+    function startClock() {
+        const update = () => {
+            const now = new Date();
+            document.getElementById('clock').innerText = now.toLocaleString('pl-PL', { weekday:'short', day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
+        };
+        update(); setInterval(update, 1000);
     }
-
-    function renderLocationMode(container, placeName, day, dateStr) {
-        const regular = DB.duties.filter(d => d.day == day && matchLoc(d.place, placeName)).map(d => ({
-            ...d, status: 'ok', teacherName: getTeacherName(d.teacherId)
-        }));
-        regular.forEach(reg => {
-            const canc = DB.dutyChanges.find(c => c.date == dateStr && c.time == reg.time && c.absent == reg.teacherId);
-            if(canc) { reg.status = 'cancelled'; reg.subInfo = `Zast: ${canc.rawSub}`; }
-        });
-        const added = DB.dutyChanges.filter(c => c.date == dateStr && matchLoc(c.place, placeName)).map(c => ({
-            time: c.time, startMin: timeToMin(c.time.split('-')[0]), teacherName: c.rawSub, status: 'added', subInfo: `Za: ${DB.teachers[c.absent]?.name || '?'}`
-        }));
-        const allDuties = [...regular, ...added].sort((a,b) => a.startMin - b.startMin);
-
-        if (allDuties.length === 0) { container.innerHTML = '<div style="padding:20px; text-align:center; color:#999">Brak dyżurów</div>'; return; }
-        const grouped = {};
-        allDuties.forEach(d => { if(!grouped[d.time]) grouped[d.time] = []; grouped[d.time].push(d); });
-
-        Object.keys(grouped).forEach(time => {
-            const group = grouped[time];
-            const wrapper = document.createElement('div'); wrapper.className = 'slot-wrapper';
-            wrapper.innerHTML = `<div style="background:#fef3c7; padding:5px 10px; font-weight:bold; border-bottom:1px solid #eee; color:#92400e; font-size:0.9em">${time}</div>`;
-            const listDiv = document.createElement('div'); listDiv.style.padding = "5px 10px"; listDiv.style.backgroundColor = "#fff";
-            group.forEach(d => {
-                const row = document.createElement('div'); row.className = 'loc-duty-item';
-                if (d.status === 'added') {
-                    row.style.background = "#ccff33"; row.style.padding = "5px"; row.style.borderRadius = "4px";
-                    row.innerHTML = `<span><span class="teacher-name">${d.teacherName}</span> <small>(Zastępstwo)</small></span><span class="badge" style="background:#a3d700;color:black">NEW</span>`;
-                } else if (d.status === 'cancelled') {
-                    row.style.textDecoration = "line-through"; row.style.opacity = "0.6";
-                    row.innerHTML = `<span class="teacher-name">${d.teacherName}</span> <small>${d.subInfo || ''}</small>`;
-                } else row.innerHTML = `<span class="teacher-name">${d.teacherName}</span>`;
-                listDiv.appendChild(row);
-            });
-            wrapper.appendChild(listDiv); container.appendChild(wrapper);
-        });
-    }
+    function log(msg, err=false) { const el = document.getElementById('debug-bar'); el.innerText = msg; el.style.color = err ? 'red' : '#4b5563'; }
 </script>
 </body>
 </html>
