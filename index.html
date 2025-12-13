@@ -3,21 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Szkolny Planer - Nauczyciele, Sale, Klasy, Dyżury</title>
+    <title>Plan Lekcji i Dyżurów</title>
     <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
     <style>
         :root {
             --bg: #f3f4f6;
             --header-bg: #111827;
             --text-main: #1f2937;
-            
             --card-bg: #ffffff;
             
-            /* Kolory pasków bocznych */
-            --lesson-border: #3b82f6;      /* Niebieski - Nauczyciele */
-            --room-border: #8b5cf6;        /* Fioletowy - Sale */
-            --class-border: #ec4899;       /* Różowy - Klasy */
-            --loc-border: #f59e0b;         /* Pomarańczowy - Miejsca */
+            /* Paski boczne */
+            --lesson-border: #3b82f6; --room-border: #8b5cf6;
+            --class-border: #ec4899;  --loc-border: #f59e0b;
             
             /* Statusy */
             --sub-bg: #fee2e2; --sub-color: #991b1b; --sub-border: #f87171;
@@ -31,50 +28,65 @@
 
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: var(--bg); margin: 0; padding: 0; color: var(--text-main); }
 
+        /* --- NAGŁÓWEK GŁÓWNY (STICKY) --- */
         header { 
-            background: var(--header-bg); color: white; padding: 15px 20px; 
+            background: var(--header-bg); color: white; padding: 10px 20px; 
             position: sticky; top: 0; z-index: 1000; 
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-            display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 15px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
+            display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 10px;
+            min-height: 60px; /* Rezerwujemy miejsce */
         }
-        h1 { margin: 0; font-size: 1.25rem; font-weight: 600; }
-        
-        .controls { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
-        select, input { padding: 8px 12px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 0.9rem; }
-        
-        #mode-select { font-weight: bold; color: #1f2937; background: #e5e7eb; border-color: #9ca3af; }
 
+        .header-left h1 { margin: 0; font-size: 1.2rem; font-weight: 600; }
+        .clock { font-family: monospace; font-size: 0.95rem; color: #9ca3af; margin-top: 4px; }
+
+        .controls { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+        select { padding: 8px 12px; border: 1px solid #4b5563; border-radius: 6px; font-size: 0.9rem; background: #374151; color: white; }
+        #mode-select { font-weight: bold; background: #2563eb; border-color: #1d4ed8; }
+        
         button { 
-            background: #2563eb; color: white; border: none; padding: 9px 18px; 
+            background: #10b981; color: white; border: none; padding: 9px 18px; 
             border-radius: 6px; cursor: pointer; font-weight: 600; transition: 0.2s;
         }
-        button:hover { background: #1d4ed8; }
+        button:hover { background: #059669; }
 
         #debug-bar { 
             background: #e5e7eb; font-size: 0.75rem; padding: 4px 20px; color: #4b5563; 
-            border-bottom: 1px solid #d1d5db; display: flex; justify-content: space-between;
+            border-bottom: 1px solid #d1d5db; 
         }
 
+        /* --- SIATKA KALENDARZA --- */
         .week-container {
             display: grid; grid-template-columns: repeat(5, 1fr); 
             gap: 15px; padding: 20px; align-items: start;
         }
 
         .day-col {
-            background: #fff; border-radius: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-            overflow: hidden; display: flex; flex-direction: column;
+            background: #fff; border-radius: 10px; 
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            /* WAŻNE: Usunięto overflow: hidden, aby sticky header wewnątrz działał */
+            display: flex; flex-direction: column;
         }
 
+        /* --- NAGŁÓWEK DNIA (STICKY POD GŁÓWNYM PASKIEM) --- */
         .day-header {
             background: #f3f4f6; color: #374151; padding: 12px; 
             text-align: center; font-weight: 700; border-bottom: 1px solid #e5e7eb;
+            border-top-left-radius: 10px; border-top-right-radius: 10px;
+            
+            /* Sticky Magic */
+            position: sticky; 
+            top: 80px; /* Odstęp od góry (wysokość głównego nagłówka + margines) */
+            z-index: 900;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
         }
         .day-date { font-weight: 400; font-size: 0.8em; color: #6b7280; display: block; margin-top: 2px; }
 
         .day-content { padding: 10px; display: flex; flex-direction: column; gap: 8px; }
+
         .slot-wrapper { border: 1px solid #e5e7eb; border-radius: 8px; overflow: hidden; display: flex; flex-direction: column; }
 
-        /* KAFELEK DANYCH */
+        /* KAFELKI */
         .card {
             background: var(--card-bg); border-left: 4px solid var(--lesson-border);
             padding: 10px; min-height: 50px; display: flex; flex-direction: column; gap: 2px;
@@ -83,11 +95,11 @@
             background: var(--empty); border-left-color: #d1d5db; color: #9ca3af;
             display: flex; align-items: center; justify-content: center; font-style: italic; font-size: 0.85rem;
         }
-        
-        /* Kolory pasków bocznych */
-        .mode-room .card { border-left-color: var(--room-border); }
-        .mode-loc .card { border-left-color: var(--loc-border); }
-        .mode-class .card { border-left-color: var(--class-border); }
+
+        /* Tryby kolorystyczne */
+        body.mode-room .card { border-left-color: var(--room-border); }
+        body.mode-loc .card { border-left-color: var(--loc-border); }
+        body.mode-class .card { border-left-color: var(--class-border); }
 
         .meta { display: flex; justify-content: space-between; font-size: 0.75rem; color: #6b7280; margin-bottom: 2px; font-weight: 600; }
         .nr { background: #f3f4f6; padding: 1px 6px; border-radius: 4px; color: #374151; }
@@ -113,6 +125,7 @@
             border-top: 2px solid var(--duty-sub-border);
         }
         
+        /* Lista w widoku miejsca */
         .loc-duty-item {
             padding: 6px 0; border-bottom: 1px solid rgba(0,0,0,0.05);
             display: flex; justify-content: space-between; align-items: center;
@@ -121,6 +134,7 @@
         .teacher-name { font-weight: 600; }
         .badge { font-size: 0.7em; padding: 2px 5px; border-radius: 4px; font-weight: bold; text-transform: uppercase; }
 
+        /* Poranny dyżur nauczyciela */
         .morning-duty {
             background: var(--duty-bg); border-left: 4px solid #f59e0b;
             padding: 10px; border-radius: 8px; margin-bottom: 5px;
@@ -139,10 +153,12 @@
 <body>
 
 <header>
-    <h1>Plan Lekcji i Dyżurów</h1>
+    <div class="header-left">
+        <h1>Plan Lekcji i Dyżurów</h1>
+        <div id="clock" class="clock">--.--.---- --:--</div>
+    </div>
+    
     <div class="controls">
-        <input type="date" id="date-picker">
-        
         <select id="mode-select" onchange="populateSelect()">
             <option value="teacher">Nauczyciel</option>
             <option value="class">Oddział</option>
@@ -158,10 +174,11 @@
     </div>
 </header>
 
-<div id="debug-bar">Oczekiwanie na dane...</div>
+<div id="debug-bar">Inicjalizacja aplikacji...</div>
 <div id="grid" class="week-container"></div>
 
 <script>
+    // === KONFIGURACJA ===
     const CONFIG = {
         xml: './plan.xml',
         dyzury: './dyzury.xlsx',
@@ -171,8 +188,8 @@
     const DB = {
         teachers: {},
         rooms: [],     
-        classes: {}, // Mapa id -> nazwa
-        classesList: [], // Lista nazw
+        classes: {},
+        classesList: [],
         locations: [], 
         periods: [],
         lessons: [],
@@ -183,8 +200,9 @@
 
     const DAYS = ["Niedziela", "Poniedziałek", "Wtorek", "Środa", "Czwartek", "Piątek", "Sobota"];
 
+    // === START APLIKACJI ===
     window.onload = async () => {
-        document.getElementById('date-picker').valueAsDate = new Date();
+        startClock();
         log("Ładowanie plików...", true);
         
         try {
@@ -197,12 +215,26 @@
             
             populateSelect();
             
-            log(`Gotowe. Wybierz widok i kliknij Pokaż.`);
+            log(`Dane wczytane pomyślnie.`);
         } catch (e) {
             console.error(e);
             log("BŁĄD: " + e.message, true);
         }
     };
+
+    // === ZEGAR ===
+    function startClock() {
+        const update = () => {
+            const now = new Date();
+            const str = now.toLocaleString('pl-PL', {
+                day: '2-digit', month: '2-digit', year: 'numeric',
+                hour: '2-digit', minute: '2-digit'
+            });
+            document.getElementById('clock').innerText = str;
+        };
+        update();
+        setInterval(update, 1000);
+    }
 
     function log(msg, important=false) {
         const el = document.getElementById('debug-bar');
@@ -210,7 +242,7 @@
         if(important) el.style.fontWeight = "bold";
     }
 
-    // === INICJALIZACJA ===
+    // === INICJALIZACJA DANYCH ===
 
     function extractUniqueLocations() {
         const locs = new Set();
@@ -267,13 +299,14 @@
     function render() {
         const mode = document.getElementById('mode-select').value;
         const selectedId = document.getElementById('data-select').value;
-        const dateInput = document.getElementById('date-picker').value;
+        // Brak inputu daty - pobieramy bieżącą
+        const today = new Date(); 
         const grid = document.getElementById('grid');
         grid.innerHTML = "";
 
-        if(!selectedId || !dateInput) return;
+        if(!selectedId) return;
 
-        const monday = getMonday(dateInput);
+        const monday = getMonday(today);
 
         for(let i=0; i<5; i++) {
             const curDate = new Date(monday); curDate.setDate(monday.getDate() + i);
@@ -281,7 +314,10 @@
             const dayNum = i + 1;
 
             const col = document.createElement('div'); col.className = 'day-col';
-            col.innerHTML = `<div class="day-header">${DAYS[dayNum]}<span class="day-date">${dateStr}</span></div>`;
+            // Nagłówek dnia z datą
+            const displayDate = curDate.toLocaleDateString('pl-PL');
+            col.innerHTML = `<div class="day-header">${DAYS[dayNum]}<span class="day-date">${displayDate}</span></div>`;
+            
             const content = document.createElement('div'); content.className = 'day-content';
 
             if (mode === 'location') {
@@ -332,21 +368,16 @@
                 }
             }
             else if (mode === 'class') {
-                // Szukamy lekcji gdzie classNames zawiera id (lub branch name)
                 lesson = DB.lessons.find(l => l.classNames.includes(id) && l.day == day && l.period == p.nr);
-                // Szukamy zastępstwa dla tego oddziału
-                // Normalizujemy nazwy klas (usuwamy spacje) bo w excelu może być "1 A", a w xml "1A"
                 subAdd = DB.subs.find(s => s.date == dateStr && normalizeClass(s.branch) === normalizeClass(id) && s.periodRaw.startsWith(p.nr+','));
-                
                 if(lesson) {
                      const abs = DB.subs.find(s => s.date == dateStr && s.absent == lesson.teacherId && s.periodRaw.startsWith(p.nr+','));
-                     if(abs) subAbs = abs; // Nauczyciel nieobecny na lekcji klasy
+                     if(abs) subAbs = abs; 
                 }
             }
 
             // RENDER
             if(subAdd) {
-                // === ZASTĘPSTWO / NOWA LEKCJA ===
                 div.className = 'card is-new';
                 let subLine = "";
                 if(mode === 'teacher') subLine = `${subAdd.branch || '?'} / s.${subAdd.room} / ${subAdd.subject}`;
@@ -361,7 +392,6 @@
                     ${subAdd.payInfo ? `<div class="pay-info">${subAdd.payInfo}</div>` : ''}
                 `;
             } else if(lesson) {
-                // === ZWYKŁA LEKCJA ===
                 if(subAbs) {
                     div.className = 'card is-sub';
                     div.innerHTML = `
@@ -455,7 +485,7 @@
         });
     }
 
-    // === PARSOWANIE ===
+    // === PARSOWANIE I POMOCNICZE ===
 
     function matchLoc(a, b) {
         if(!a || !b) return false;
@@ -488,7 +518,6 @@
             DB.teachers[id] = { name: name.trim(), normalized: normalize(name) };
         });
 
-        // PARSOWANIE KLAS
         xml.querySelectorAll('classes class').forEach(c => {
             const id = c.getAttribute('id');
             const name = c.getAttribute('name');
@@ -519,7 +548,6 @@
             const dayIdx = days.indexOf('1') + 1;
             const roomId = c.getAttribute('classroomids');
             
-            // Pobieranie nazw klas dla tej lekcji
             const classIds = lesson.getAttribute('classids').split(',');
             const classNames = classIds.map(cid => DB.classes[cid]).join(', ');
 
@@ -529,7 +557,7 @@
                         teacherId: tid.trim(), day: dayIdx, period: parseInt(c.getAttribute('period')),
                         subject: subjects[lesson.getAttribute('subjectid')] || 'Lekcja',
                         room: rooms[roomId] || '', 
-                        classNames: classNames, // Do wyświetlania
+                        classNames: classNames, 
                         branch: '' 
                     });
                 });
@@ -683,5 +711,6 @@
         return res;
     }
 </script>
+
 </body>
 </html>
