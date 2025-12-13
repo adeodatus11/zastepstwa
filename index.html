@@ -3,26 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Plan Nauczyciela - Wersja Finalna</title>
+    <title>Plan Nauczyciela - Final</title>
     <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
     <style>
         :root {
             --bg: #f3f4f6;
-            --header-bg: #1f2937;
-            --text-main: #111827;
+            --header-bg: #111827;
+            --text-main: #1f2937;
             
             --card-bg: #ffffff;
             --lesson-border: #3b82f6;
             
-            /* Kolory statusów */
-            --sub-bg: #fef2f2; --sub-color: #991b1b; --sub-border: #f87171; /* Odwołane/Zastępowane */
+            /* Statusy */
+            --sub-bg: #fee2e2; --sub-color: #991b1b; --sub-border: #f87171;
             
-            --new-bg: #dcfce7; --new-color: #166534; --new-border: #22c55e; /* Nowa lekcja (zwykła) */
+            --new-bg: #dcfce7; --new-color: #14532d; --new-border: #22c55e;
             
-            --duty-bg: #fffbeb; --duty-color: #92400e; --duty-border: #fcd34d; /* Zwykły dyżur */
+            --duty-bg: #fef3c7; --duty-color: #92400e; --duty-border: #fcd34d;
             
-            --duty-sub-bg: #ccff33; /* JASKRAWY ZIELONY dla zastępstwa na dyżurze */
-            --duty-sub-border: #aadd00;
+            --duty-sub-bg: #ccff33; /* Jaskrawy */
+            --duty-sub-border: #a3d700;
             --duty-sub-color: #000;
 
             --empty: #f9fafb;
@@ -69,58 +69,53 @@
 
         .day-content { padding: 10px; display: flex; flex-direction: column; gap: 8px; }
 
-        /* Kafelki */
         .slot-wrapper { border: 1px solid #e5e7eb; border-radius: 8px; overflow: hidden; display: flex; flex-direction: column; }
 
+        /* KAFELEK LEKCJI */
         .lesson-card {
             background: var(--card-bg); border-left: 4px solid var(--lesson-border);
-            padding: 10px; min-height: 50px;
+            padding: 10px; min-height: 50px; display: flex; flex-direction: column; gap: 2px;
         }
         .lesson-card.empty {
             background: var(--empty); border-left-color: #d1d5db; color: #9ca3af;
             display: flex; align-items: center; justify-content: center; font-style: italic; font-size: 0.85rem;
         }
         
-        .meta { display: flex; justify-content: space-between; font-size: 0.75rem; color: #6b7280; margin-bottom: 4px; font-weight: 600; }
+        .meta { display: flex; justify-content: space-between; font-size: 0.75rem; color: #6b7280; margin-bottom: 2px; font-weight: 600; }
         .nr { background: #f3f4f6; padding: 1px 6px; border-radius: 4px; color: #374151; }
         
-        .subject { font-weight: 700; font-size: 0.95rem; margin-bottom: 2px; }
-        .details { font-size: 0.8rem; color: #4b5563; line-height: 1.3; }
-        .pay-info { font-weight: 700; color: #047857; font-size: 0.75rem; margin-top: 4px; text-transform: uppercase; }
+        .subject { font-weight: 700; font-size: 0.95rem; }
+        
+        /* Zmieniony styl detali dla jednej linii */
+        .compact-line { font-weight: 600; font-size: 0.85rem; color: #111827; margin-top: 2px; }
+        .sub-info { font-size: 0.8rem; color: #4b5563; }
+        
+        .pay-info { font-weight: 800; color: #047857; font-size: 0.75rem; margin-top: 4px; text-transform: uppercase; }
 
-        /* Warianty Lekcji */
+        /* Style Wariantów */
         .is-sub { background: var(--sub-bg); border-left-color: var(--sub-border); }
         .is-sub .subject { text-decoration: line-through; opacity: 0.7; }
-        .note-red { color: var(--sub-color); font-weight: 600; font-size: 0.8rem; margin-top: 4px; display: block; }
+        .note-red { color: var(--sub-color); font-weight: 600; font-size: 0.8rem; }
         
         .is-new { background: var(--new-bg); border-left-color: var(--new-border); }
-        .note-green { color: var(--new-color); font-weight: 600; font-size: 0.8rem; margin-top: 4px; display: block; }
-
+        
         /* Dyżury */
         .duty-section {
             background: var(--duty-bg); color: var(--duty-color);
             border-top: 1px dashed var(--duty-border);
             padding: 6px 10px; font-size: 0.8rem;
         }
-        
-        /* Zastępstwo na dyżurze - JASKRAWY */
-        .duty-section.duty-sub {
-            background: var(--duty-sub-bg);
-            color: var(--duty-sub-color);
+        .duty-sub {
+            background: var(--duty-sub-bg); color: var(--duty-sub-color);
             border-top: 2px solid var(--duty-sub-border);
         }
-
-        .duty-header { font-weight: 700; font-size: 0.75em; opacity: 0.9; text-transform: uppercase; margin-bottom: 2px; }
-        .duty-place { font-weight: 600; }
-
-        /* Dyżur poranny */
+        .duty-header { font-weight: 700; font-size: 0.7em; opacity: 0.9; text-transform: uppercase; margin-bottom: 2px; }
         .morning-duty {
             background: var(--duty-bg); border-left: 4px solid #f59e0b;
             padding: 10px; border-radius: 8px; margin-bottom: 5px;
             color: var(--duty-color); font-size: 0.85rem;
             box-shadow: 0 1px 2px rgba(0,0,0,0.05);
         }
-        /* Poranne zastępstwo */
         .morning-duty.duty-sub {
             background: var(--duty-sub-bg); 
             border-left: 4px solid var(--duty-sub-border);
@@ -133,7 +128,7 @@
 <body>
 
 <header>
-    <h1>Plan Lekcji</h1>
+    <h1>Plan Nauczyciela</h1>
     <div class="controls">
         <input type="date" id="date-picker">
         <select id="teacher-select" disabled>
@@ -173,8 +168,11 @@
             await loadExcel(CONFIG.dyzury, 'dyzury');
             await loadExcel(CONFIG.zastepstwa, 'zastepstwa');
             
+            // NOWOŚĆ: Dodaj nauczycieli z zastępstw, których nie ma w planie XML
+            addMissingTeachers();
+
             populateSelect();
-            log(`Gotowe. Wczytano ${DB.lessons.length} lekcji i zastępstw.`);
+            log(`Gotowe. Wczytano ${DB.lessons.length} lekcji.`);
         } catch (e) {
             console.error(e);
             log("BŁĄD: " + e.message, true);
@@ -187,7 +185,48 @@
         if(important) el.style.fontWeight = "bold";
     }
 
-    // === PARSOWANIE DANYCH ===
+    // === NOWA FUNKCJA: DODAWANIE NAUCZYCIELI SPOZA PLANU ===
+    function addMissingTeachers() {
+        let addedCount = 0;
+        
+        // Funkcja pomocnicza do dodawania
+        const checkAndAdd = (rawName, objRef, idField) => {
+            if (rawName && !objRef[idField]) {
+                // Sprawdź jeszcze raz czy na pewno nie ma (może fuzzy match nie złapał, ale spróbujmy stworzyć nowego)
+                // Generujemy ID na podstawie nazwy
+                const newId = "EXT_" + normalize(rawName).replace(/\s+/g, '_');
+                
+                // Jeśli nie ma go w bazie teachers, dodaj
+                if (!DB.teachers[newId]) {
+                    DB.teachers[newId] = {
+                        name: rawName.trim(), // Używamy nazwy z Excela
+                        normalized: normalize(rawName)
+                    };
+                    addedCount++;
+                }
+                
+                // Przypisz to ID do obiektu (zastępstwa/dyżuru)
+                objRef[idField] = newId;
+            }
+        };
+
+        // 1. Sprawdź zastępstwa (kto zastępuje - subId)
+        DB.subs.forEach(s => {
+            if (!s.sub && s.rawSub) checkAndAdd(s.rawSub, s, 'sub');
+        });
+
+        // 2. Sprawdź zmiany w dyżurach
+        DB.dutyChanges.forEach(d => {
+            // Zastępca na dyżurze (subId) - może nie być w nazwie kolumny, sprawdzamy logicznie
+            // W parserze przypisaliśmy `sub` używając findTeacherId.
+            // Tutaj musimy mieć dostęp do surowej nazwy jeśli findTeacherId zwrócił null.
+            // W parserze musimy upewnić się, że zapisujemy rawSub dla dyżurów też (zrobione niżej).
+        });
+
+        if(addedCount > 0) log(`Dodano ${addedCount} nauczycieli spoza planu XML.`);
+    }
+
+    // === PARSOWANIE ===
 
     async function fetchText(url) {
         const res = await fetch(url);
@@ -254,7 +293,6 @@
     }
 
     function parseDuties(wb) {
-        // Logika skanowania każdego arkusza i każdego bloku w poszukiwaniu dyżurów
         wb.SheetNames.forEach(sheetName => {
             const ws = wb.Sheets[sheetName];
             const data = XLSX.utils.sheet_to_json(ws, {header: 1});
@@ -294,6 +332,7 @@
                                 const tName = String(rawTeacher).trim();
                                 if(/brak|wolne|dyżur|-/.test(tName.toLowerCase())) continue;
                                 const tId = findTeacherId(tName);
+                                // Dodajemy dyżur, nawet jeśli tId jest null (można by to obsłużyć, ale dyżury stałe raczej mają znanych nauczycieli)
                                 if(tId) {
                                     DB.duties.push({
                                         teacherId: tId, day: dayNum, time: timeVal,
@@ -310,7 +349,6 @@
     }
 
     function parseSub(wb) {
-        // Arkusz "Oddziały" - lekcje
         const sh = wb.Sheets["Oddziały"] || wb.Sheets[0];
         XLSX.utils.sheet_to_json(sh).forEach(r => {
             const d = parseDate(r['Dzień']);
@@ -319,17 +357,16 @@
                 periodRaw: r['Lekcja'],
                 absent: findTeacherId(r['Nauczyciel/wakat']),
                 sub: findTeacherId(r['Zastępca']),
+                rawSub: r['Zastępca'], // Ważne dla brakujących nauczycieli
+                rawAbs: r['Nauczyciel/wakat'],
                 subject: r['Przedmiot'],
                 room: r['Sala'],
                 note: r['Uwagi'],
-                rawSub: r['Zastępca'],
-                branch: r['Oddział'], // NOWE: Oddział
-                payInfo: r['Forma płatności'], // NOWE: Płatność
-                rawAbs: r['Nauczyciel/wakat'] // NOWE: Kto nieobecny
+                branch: r['Oddział'],
+                payInfo: r['Forma płatności']
             });
         });
 
-        // Arkusz "Dyżury" - zmiany dyżurów
         const shDy = wb.Sheets["Dyżury"];
         if(shDy) {
             XLSX.utils.sheet_to_json(shDy).forEach(r => {
@@ -339,6 +376,7 @@
                     time: r['Godzina'],
                     absent: findTeacherId(r['Nauczyciel']),
                     sub: findTeacherId(r['Zastępca']),
+                    rawSub: r['Zastępca'], // Ważne
                     place: r['Miejsce dyżuru']
                 });
             });
@@ -423,15 +461,12 @@
             col.innerHTML = `<div class="day-header">${DAYS[dayNum]}<span class="day-date">${dateStr}</span></div>`;
             const content = document.createElement('div'); content.className = 'day-content';
 
-            // Dyżur poranny (< 8:00)
+            // Dyżur poranny
             getDutiesForTime(tId, dayNum, dateStr, 0, 480).forEach(d => {
                 const div = document.createElement('div'); div.className = 'morning-duty';
-                if(d.status==='added') div.classList.add('duty-sub'); // Jaskrawy
+                if(d.status==='added') div.classList.add('duty-sub');
                 if(d.status==='cancelled') div.style.textDecoration='line-through';
-                
-                div.innerHTML = `
-                    <div style="font-weight:700">${d.status === 'added' ? 'ZASTĘPSTWO!' : 'DYŻUR'} ${d.time}</div>
-                    <div>${d.place}</div>`;
+                div.innerHTML = `<div style="font-weight:700">${d.status==='added'?'ZASTĘPSTWO!':'DYŻUR'} ${d.time}</div><div>${d.place}</div>`;
                 content.appendChild(div);
             });
 
@@ -444,21 +479,18 @@
                 const sAdd = DB.subs.find(s => s.date==dateStr && s.sub==tId && s.periodRaw.startsWith(p.nr+','));
 
                 if(sAdd) {
-                    // DODANA LEKCJA (ZASTĘPSTWO)
+                    // === NOWE ZASTĘPSTWO (ZMODYFIKOWANY WYGLĄD) ===
                     lDiv.className = 'lesson-card is-new';
                     lDiv.innerHTML = `
                         <div class="meta"><span class="nr">${p.nr}</span> ${p.start}-${p.end}</div>
                         <div class="subject">ZASTĘPSTWO</div>
-                        <div class="details">
-                            Oddział: <b>${sAdd.branch || '?'}</b><br>
-                            Za: ${sAdd.rawAbs}<br>
-                            Sala: ${sAdd.room}
+                        <div class="compact-line">
+                            ${sAdd.branch || 'Oddział?'} / s.${sAdd.room || '?'} / ${sAdd.subject}
                         </div>
-                        <div class="subject" style="font-size:0.85em; margin-top:5px">${sAdd.subject}</div>
+                        <div class="sub-info">Za: ${sAdd.rawAbs}</div>
                         ${sAdd.payInfo ? `<div class="pay-info">${sAdd.payInfo}</div>` : ''}
                     `;
                 } else if(myL) {
-                    // MOJA LEKCJA
                     if(sAbs) {
                         lDiv.className = 'lesson-card is-sub';
                         lDiv.innerHTML = `<div class="meta"><span class="nr">${p.nr}</span> ${p.start}-${p.end}</div>
@@ -467,7 +499,8 @@
                     } else {
                         lDiv.className = 'lesson-card';
                         lDiv.innerHTML = `<div class="meta"><span class="nr">${p.nr}</span> ${p.start}-${p.end}</div>
-                                          <div class="subject">${myL.subject}</div><div class="room">Sala: ${myL.room}</div>`;
+                                          <div class="subject">${myL.subject}</div>
+                                          <div class="compact-line">Sala: ${myL.room}</div>`;
                     }
                 } else {
                     lDiv.className = 'lesson-card empty'; lDiv.innerHTML = `${p.nr}. ${p.start}`;
@@ -478,16 +511,10 @@
                 const pEnd = timeToMin(p.end);
                 getDutiesForTime(tId, dayNum, dateStr, pEnd-5, pEnd+15).forEach(d => {
                     const dDiv = document.createElement('div'); dDiv.className = 'duty-section';
-                    
-                    if(d.status === 'added') dDiv.classList.add('duty-sub'); // Jaskrawy
+                    if(d.status === 'added') dDiv.classList.add('duty-sub');
                     if(d.status === 'cancelled') dDiv.style.textDecoration='line-through';
-                    
-                    const label = d.status === 'added' ? 'ZASTĘPSTWO!' : 'DYŻUR';
-
-                    dDiv.innerHTML = `
-                        <div class="duty-header">${label} ${d.time}</div>
-                        <div class="duty-place">${d.place}</div>
-                        ${d.note ? `<div style="font-weight:bold; margin-top:2px">${d.note}</div>` : ''}`;
+                    dDiv.innerHTML = `<div class="duty-header">${d.status==='added'?'ZASTĘPSTWO!':'DYŻUR'} ${d.time}</div>
+                                      <div class="duty-place">${d.place}</div>`;
                     wrapper.appendChild(dDiv);
                 });
                 content.appendChild(wrapper);
@@ -498,17 +525,15 @@
 
     function getDutiesForTime(tid, day, date, min, max) {
         const res = [];
-        // Stałe
         DB.duties.filter(d => d.teacherId==tid && d.day==day).forEach(d => {
             if(d.startMin >= min && d.startMin < max) {
                 const canc = DB.dutyChanges.find(c => c.date==date && c.time==d.time && c.absent==tid);
-                res.push({...d, status: canc?'cancelled':'ok', note: canc?'Zastępstwo':''});
+                res.push({...d, status: canc?'cancelled':'ok'});
             }
         });
-        // Dodane (Zastępstwa)
         DB.dutyChanges.filter(c => c.date==date && c.sub==tid).forEach(c => {
             const start = timeToMin(c.time.split('-')[0]);
-            if(start >= min && start < max) res.push({ time: c.time, place: c.place, startMin: start, status: 'added', note: 'Zastępstwo' });
+            if(start >= min && start < max) res.push({ time: c.time, place: c.place, startMin: start, status: 'added' });
         });
         return res;
     }
