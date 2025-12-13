@@ -45,7 +45,6 @@
             --duty-sub-color: #dcfce7;
 
             --empty: #1f2937;
-            --col-header: #064e3b;
         }
 
         body { 
@@ -70,11 +69,13 @@
             position: sticky; top: 0; z-index: 1000; 
             box-shadow: 0 10px 30px rgba(0,0,0,0.6);
             display: flex; justify-content: space-between; align-items: center;
-            min-height: 110px; /* Nieco wyższy dla nawigatora */
+            min-height: 110px;
             border-bottom: 4px solid #22c55e;
+            /* Dodajemy wrap, żeby elementy mogły spaść niżej na małym ekranie */
+            flex-wrap: wrap; 
         }
 
-        .header-left { display: flex; align-items: center; gap: 20px; height: 100%; }
+        .header-left { display: flex; align-items: center; gap: 20px; }
         
         .logo { 
             height: 85px; 
@@ -93,64 +94,83 @@
             color: #f0fdf4; margin-top: 4px; font-weight: 600;
         }
 
-        /* --- NOWY NAWIGATOR TYGODNI --- */
+        /* --- NAWIGATOR TYGODNI --- */
         .week-nav {
             display: flex;
             align-items: center;
             gap: 20px;
             background: rgba(0, 0, 0, 0.25);
-            padding: 10px 20px;
+            padding: 8px 20px;
             border-radius: 12px;
             border: 1px solid rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(5px);
         }
 
         .week-nav-btn {
-            background: none;
-            border: none;
-            color: #4ade80;
-            font-size: 2rem;
-            cursor: pointer;
-            padding: 0 10px;
-            transition: transform 0.2s, color 0.2s;
-            line-height: 1;
+            background: none; border: none; color: #4ade80;
+            font-size: 2rem; cursor: pointer; padding: 0 10px;
+            transition: transform 0.2s, color 0.2s; line-height: 1;
         }
         .week-nav-btn:hover { color: #fff; transform: scale(1.2); }
 
-        .week-display {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            min-width: 200px;
-        }
-
-        .week-label {
-            font-size: 0.8rem;
-            text-transform: uppercase;
-            color: #a7f3d0;
-            letter-spacing: 1px;
-            margin-bottom: 2px;
-        }
-
-        .week-range {
-            font-family: 'Consolas', monospace;
-            font-size: 1.4rem;
-            font-weight: 700;
-            color: #fff;
-            text-shadow: 0 2px 5px rgba(0,0,0,0.5);
+        .week-display { display: flex; flex-direction: column; align-items: center; min-width: 180px; }
+        .week-label { font-size: 0.7rem; text-transform: uppercase; color: #a7f3d0; letter-spacing: 1px; }
+        .week-range { 
+            font-family: 'Consolas', monospace; font-size: 1.3rem; font-weight: 700; 
+            color: #fff; text-shadow: 0 2px 5px rgba(0,0,0,0.5); 
         }
 
         .controls { display: flex; gap: 15px; align-items: center; }
         
         button.back-btn {
             background: #b91c1c; color: white; border: 1px solid #ef4444; 
-            padding: 12px 30px; border-radius: 8px; cursor: pointer; 
-            font-weight: 700; font-size: 1rem;
+            padding: 10px 20px; border-radius: 8px; cursor: pointer; 
+            font-weight: 700; font-size: 0.9rem;
             display: flex; align-items: center; gap: 10px;
             box-shadow: 0 4px 6px rgba(0,0,0,0.3);
             transition: all 0.2s; text-transform: uppercase;
         }
         button.back-btn:hover { background: #dc2626; transform: translateY(-2px); box-shadow: 0 6px 12px rgba(0,0,0,0.5); }
+
+        /* --- RESPONSYWNOŚĆ (MOBILE) --- */
+        /* To jest kluczowa sekcja naprawiająca wygląd na telefonie */
+        @media (max-width: 900px) {
+            header {
+                flex-direction: column; /* Ustawienie pionowe */
+                height: auto;
+                padding: 15px 10px;
+                gap: 15px;
+                background: linear-gradient(to bottom, #4dff88 0%, #020617 80%); /* Gradient pionowy */
+            }
+
+            .header-left {
+                width: 100%;
+                justify-content: center; /* Wyśrodkowanie logo i tekstu */
+                margin-bottom: 5px;
+            }
+
+            .logo { height: 60px; } /* Mniejsze logo */
+            .header-text h1 { font-size: 1.3rem; text-align: center; }
+            .clock { font-size: 1rem; text-align: center; }
+
+            .week-nav {
+                width: 100%; /* Nawigator na całą szerokość */
+                justify-content: space-between;
+                box-sizing: border-box;
+                order: 2; /* Kolejność w pionie */
+            }
+            .week-display { min-width: auto; }
+            .week-range { font-size: 1.1rem; }
+
+            .controls {
+                width: 100%;
+                justify-content: center;
+                order: 3;
+            }
+            button.back-btn { width: 100%; justify-content: center; }
+            
+            .week-container { grid-template-columns: 1fr; } /* Jedna kolumna planu */
+        }
 
         #debug-bar { 
             background: #111827; font-size: 0.75rem; padding: 4px 20px; color: #64748b; 
@@ -181,14 +201,9 @@
             border: 1px solid var(--tile-border); position: relative; overflow: hidden;
         }
         .tile:hover { transform: translateY(-5px); box-shadow: 0 10px 25px rgba(0,0,0,0.5); z-index: 2; }
-
         .tile.teacher { border-bottom: 4px solid var(--accent-teacher); }
-        .tile.teacher:hover { background-color: #064e3b; border-color: var(--accent-teacher); box-shadow: 0 0 20px rgba(34, 197, 94, 0.2); }
         .tile.room { border-bottom: 4px solid var(--accent-room); }
-        .tile.room:hover { background-color: #451a03; border-color: var(--accent-room); box-shadow: 0 0 20px rgba(251, 191, 36, 0.2); }
         .tile.class { border-bottom: 4px solid var(--accent-class); }
-        .tile.class:hover { background-color: #0c4a6e; border-color: var(--accent-class); box-shadow: 0 0 20px rgba(56, 189, 248, 0.2); }
-
 
         /* --- WIDOK PLANU --- */
         #schedule-view { display: none; width: 100%; padding-bottom: 40px; }
@@ -215,21 +230,17 @@
             border-bottom: 1px solid #047857;
             text-transform: uppercase;
             letter-spacing: 1px;
-            position: relative; /* Naprawione: nie zasłania treści */
-            top: auto; 
+            position: relative;
             z-index: 10;
         }
         .day-date { font-weight: 400; font-size: 0.8em; color: #a7f3d0; display: block; margin-top: 4px; }
-        
         .day-content { padding: 10px; display: flex; flex-direction: column; gap: 8px; }
-        
         .slot-wrapper { 
             border: 1px solid #334155; border-radius: 8px; overflow: hidden; 
             display: flex; flex-direction: column; gap: 0px; 
             background: #0f172a;
         }
 
-        /* KAFELKI LEKCJI */
         .card {
             background: var(--card-bg); 
             border-left: 4px solid var(--lesson-border);
@@ -239,7 +250,6 @@
             position: relative;
         }
         .card:last-child { border-bottom: none; }
-
         .card.empty {
             background: var(--empty); border-left-color: #4b5563; color: #64748b;
             display: flex; align-items: center; justify-content: center; font-style: italic; font-size: 0.85rem;
@@ -264,12 +274,10 @@
         .is-sub { background: var(--sub-bg); border-left-color: var(--sub-border) !important; }
         .is-sub .main-info { text-decoration: line-through; opacity: 0.6; color: #fca5a5; }
         .note-red { color: #f87171; font-weight: 700; font-size: 0.8rem; text-transform: uppercase; }
-        
         .is-new { background: var(--new-bg); border-left-color: var(--new-border) !important; }
         .is-new .main-info { color: #86efac; }
         .is-new .sub-line { color: #dcfce7; }
 
-        /* DYŻURY */
         .duty-section {
             background: var(--duty-bg); color: var(--duty-color);
             border-top: 1px dashed var(--duty-border); padding: 8px 10px; font-size: 0.85rem;
@@ -290,10 +298,6 @@
             margin-top: auto;
         }
         footer a { color: #fff; text-decoration: none; font-weight: bold; }
-        footer a:hover { text-decoration: underline; }
-
-        @media (max-width: 1200px) { .week-container { grid-template-columns: repeat(3, 1fr); } }
-        @media (max-width: 900px) { .week-container { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
@@ -359,15 +363,12 @@
     let refreshTimer = null;
     let idleTimer = null;
     let isDashboardActive = true;
-    
-    // NOWA ZMIENNA DO NAWIGACJI
     let weekOffset = 0; 
 
     window.onload = () => {
         startClock();
         refreshData();
         refreshTimer = setInterval(refreshData, CONFIG.refreshInterval);
-        
         document.addEventListener('mousemove', resetIdle);
         document.addEventListener('click', resetIdle);
         document.addEventListener('touchstart', resetIdle);
@@ -381,20 +382,19 @@
 
     function returnToDashboard() {
         isDashboardActive = true;
-        weekOffset = 0; // Reset daty przy powrocie do menu
+        weekOffset = 0;
         clearTimeout(idleTimer);
         document.getElementById('dashboard-view').style.display = 'block';
         document.getElementById('schedule-view').style.display = 'none';
         document.getElementById('nav-controls').style.display = 'none';
-        document.getElementById('week-nav-container').style.display = 'none'; // Ukryj nawigator
+        document.getElementById('week-nav-container').style.display = 'none';
         document.body.className = '';
         log("Menu Główne");
     }
 
     function openSchedule(mode, id) {
         isDashboardActive = false;
-        weekOffset = 0; // Reset daty przy otwarciu
-        
+        weekOffset = 0;
         const modeSel = document.getElementById('mode-select');
         const dataSel = document.getElementById('data-select');
         modeSel.value = mode;
@@ -405,24 +405,21 @@
         document.getElementById('dashboard-view').style.display = 'none';
         document.getElementById('schedule-view').style.display = 'block';
         document.getElementById('nav-controls').style.display = 'flex';
-        document.getElementById('week-nav-container').style.display = 'flex'; // Pokaż nawigator
+        document.getElementById('week-nav-container').style.display = 'flex';
         
         render();
         resetIdle();
     }
 
-    // --- NOWA FUNKCJA ZMIANY TYGODNIA ---
     function changeWeek(direction) {
         weekOffset += direction;
-        render(); // Przeładuj widok z nową datą
+        render();
         resetIdle();
     }
 
-    // --- OBLICZANIE DATY PONIEDZIAŁKU ---
     function getStartOfWeek(date) {
         const d = new Date(date);
         const day = d.getDay();
-        // Poniedziałek = 1. Jeśli niedziela (0), cofamy o 6 dni.
         const diff = d.getDate() - day + (day == 0 ? -6 : 1);
         return new Date(d.setDate(diff));
     }
@@ -688,12 +685,10 @@
         grid.innerHTML = "";
         if(!selectedId) return;
         
-        // --- ZMIANA: POBIERZ PONIEDZIAŁEK Z UWZGLĘDNIENIEM OFFSETU ---
         const today = new Date();
         today.setDate(today.getDate() + (weekOffset * 7));
         const monday = getStartOfWeek(today);
 
-        // Zaktualizuj wyświetlacz tygodnia w nagłówku
         const friday = new Date(monday); friday.setDate(friday.getDate() + 4);
         document.getElementById('week-range-text').innerText = 
             `${formatDateShort(monday)} - ${formatDateShort(friday)}`;
@@ -724,7 +719,6 @@
                 else if (mode === 'class') lessons = DB.lessons.filter(l => l.classNames.includes(selectedId) && l.day == dayNum && l.period == p.nr);
                 
                 let subAdds = [];
-                // --- FILTROWANIE PO DACIE (działa dla przyszłych/przeszłych tygodni, o ile są w Excelu) ---
                 if (mode === 'teacher') subAdds = DB.subs.filter(s => s.date == dateStr && s.sub == selectedId && s.periodRaw.startsWith(p.nr+','));
                 else if (mode === 'room') subAdds = DB.subs.filter(s => s.date == dateStr && s.room === selectedId && s.periodRaw.startsWith(p.nr+','));
                 else if (mode === 'class') subAdds = DB.subs.filter(s => s.date == dateStr && normalizeClass(s.branch).includes(normalizeClass(selectedId)) && s.periodRaw.startsWith(p.nr+','));
