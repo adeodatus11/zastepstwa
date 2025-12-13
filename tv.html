@@ -23,10 +23,10 @@
         /* --- NAGŁÓWEK (NOWY DESIGN) --- */
         header {
             height: 170px;
-            /* Nowy gradient: Bardzo jasny zielony po lewej (dla czarnego logo), przechodzący w ciemny */
+            /* Gradient: Jasna zieleń po lewej (dla logo), przechodząca w ciemny */
             background: linear-gradient(
                 to right, 
-                #4dff88 0%,   /* Start: Jasna zieleń */
+                #4dff88 0%,   /* Start: Jasna zieleń pod orła */
                 #33cc66 30%,  /* Środek: Soczysta zieleń */
                 #020617 100%  /* Koniec: Ciemne tło pasujące do reszty strony */
             );
@@ -39,28 +39,30 @@
             z-index: 10;
         }
 
-        /* --- KONTENER LOGO (BEZ TŁA) --- */
+        /* --- KONTENER LOGO --- */
         .logo-container {
             margin-right: 40px;
-            flex-shrink: 0; /* Zapobiega ściskaniu logo */
+            flex-shrink: 0;
             display: flex;
             align-items: center;
             justify-content: center;
-            height: 130px;
-            width: 180px; /* Stała szerokość dla wektora */
+            height: 140px; 
+            width: auto;
         }
 
-        /* Stylizacja wektora SVG */
-        .logo-svg {
-            width: 100%;
+        /* --- LOGO Z EFEKTEM WTOPINENIA --- */
+        .logo {
             height: 100%;
-            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2)); /* Lekki cień pod orłem dla głębi */
-        }
-
-        /* Kolor elementów logo (czarny, żeby kontrastował z jasnym tłem) */
-        .logo-svg path,
-        .logo-svg text {
-            fill: #000000;
+            width: auto;
+            object-fit: contain;
+            
+            /* TO JEST KLUCZOWE: */
+            /* mix-blend-mode: multiply sprawia, że białe tło PNG staje się przezroczyste, */
+            /* a czarne elementy są "nadrukowywane" na zielone tło nagłówka. */
+            mix-blend-mode: multiply; 
+            
+            /* Opcjonalnie: zwiększenie kontrastu, żeby czerń była głęboka */
+            filter: contrast(1.1); 
         }
 
         .header-text {
@@ -74,7 +76,7 @@
             text-transform: uppercase; 
             letter-spacing: 2px; 
             margin: 0; 
-            color: #ffffff; /* Biały tekst na ciemniejszej części gradientu */
+            color: #ffffff;
             font-weight: 800;
             line-height: 1.1;
             text-shadow: 0 2px 4px rgba(0,0,0,0.5);
@@ -222,11 +224,7 @@
 
 <header>
     <div class="logo-container">
-        <svg class="logo-svg" viewBox="0 0 220 150" xmlns="http://www.w3.org/2000/svg">
-            <path d="M160 40 C 130 10, 80 10, 50 40 C 30 50, 20 70, 25 85 C 35 80, 60 75, 75 80 C 65 90, 70 105, 75 115 L 85 100 C 85 120, 90 135, 100 150 L 110 130 C 130 145, 160 120, 180 90 C 190 60, 180 50, 160 40 Z M 65 65 C 70 60, 85 60, 90 68 C 80 70, 70 70, 65 65 Z" />
-            <text x="105" y="115" font-family="Arial, sans-serif" font-weight="900" font-size="52" letter-spacing="-2">ZSZ5</text>
-            <text x="105" y="145" font-family="Arial, sans-serif" font-weight="bold" font-size="18">WE WROCŁAWIU</text>
-        </svg>
+        <img src="orzeł.png" alt="ZSZ5" class="logo" onerror="this.style.display='none'">
     </div>
     
     <div class="header-text">
