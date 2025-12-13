@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Plan Szkoły - Always Fresh</title>
+    <title>Plan lekcji i dyżurów - ZSZ5</title>
     <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
     <style>
         :root {
@@ -29,19 +29,44 @@
             --empty: #f9fafb;
         }
 
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: var(--bg); margin: 0; padding: 0; color: var(--text-main); }
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
+            background: var(--bg); 
+            margin: 0; 
+            padding: 0; 
+            color: var(--text-main);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh; /* Aby stopka była na dole przy małej ilości treści */
+        }
 
-        /* HEADER */
+        /* --- NAGŁÓWEK GŁÓWNY --- */
         header { 
             background: var(--header-bg); color: white; padding: 10px 20px; 
             position: sticky; top: 0; z-index: 1000; 
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
             display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 10px;
-            min-height: 60px;
+            min-height: 70px;
         }
 
-        .header-left h1 { margin: 0; font-size: 1.2rem; font-weight: 600; }
-        .clock { font-family: monospace; font-size: 0.95rem; color: #9ca3af; margin-top: 4px; }
+        .header-left { 
+            display: flex; 
+            align-items: center; 
+            gap: 15px; /* Odstęp między logo a tekstem */
+        }
+
+        .logo {
+            height: 55px; /* Dopasowanie wysokości logo */
+            width: auto;
+        }
+
+        .header-text {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header-text h1 { margin: 0; font-size: 1.2rem; font-weight: 600; line-height: 1.2; }
+        .clock { font-family: monospace; font-size: 0.9rem; color: #9ca3af; margin-top: 2px; }
 
         .controls { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
         select { padding: 8px 12px; border: 1px solid #4b5563; border-radius: 6px; font-size: 0.9rem; background: #374151; color: white; }
@@ -56,6 +81,11 @@
         #debug-bar { 
             background: #e5e7eb; font-size: 0.75rem; padding: 4px 20px; color: #4b5563; 
             border-bottom: 1px solid #d1d5db; 
+        }
+
+        /* --- STREFA GŁÓWNA --- */
+        .content-wrapper {
+            flex: 1; /* Wypełnia przestrzeń między nagłówkiem a stopką */
         }
 
         /* SIATKA */
@@ -74,7 +104,8 @@
             background: #f3f4f6; color: #374151; padding: 12px; 
             text-align: center; font-weight: 700; border-bottom: 1px solid #e5e7eb;
             border-top-left-radius: 10px; border-top-right-radius: 10px;
-            position: sticky; top: 80px; z-index: 900;
+            position: sticky; top: 90px; /* Dopasowane do wyższego nagłówka */
+            z-index: 900;
             box-shadow: 0 2px 5px rgba(0,0,0,0.05);
         }
         .day-date { font-weight: 400; font-size: 0.8em; color: #6b7280; display: block; margin-top: 2px; }
@@ -140,6 +171,19 @@
             color: var(--duty-sub-color);
         }
 
+        /* --- STOPKA --- */
+        footer {
+            background: var(--header-bg);
+            color: #9ca3af;
+            text-align: center;
+            padding: 20px;
+            font-size: 0.85rem;
+            border-top: 1px solid #374151;
+            margin-top: auto; /* Dopycha stopkę do dołu */
+        }
+        footer a { color: #d1d5db; text-decoration: none; font-weight: bold; }
+        footer a:hover { color: #fff; text-decoration: underline; }
+
         @media (max-width: 900px) { .week-container { grid-template-columns: 1fr; } }
     </style>
 </head>
@@ -147,8 +191,12 @@
 
 <header>
     <div class="header-left">
-        <h1>Planlekcji i dyżurów - ZSZ5</h1>
-        <div id="clock" class="clock">--.--.---- --:--</div>
+        <img src="orzeł.png" alt="ZSZ5 Logo" class="logo" onerror="this.style.display='none'">
+        
+        <div class="header-text">
+            <h1>Plan lekcji i dyżurów - ZSZ5</h1>
+            <div id="clock" class="clock">--.--.---- --:--</div>
+        </div>
     </div>
     
     <div class="controls">
@@ -167,8 +215,14 @@
     </div>
 </header>
 
-<div id="debug-bar">Inicjalizacja aplikacji...</div>
-<div id="grid" class="week-container"></div>
+<div class="content-wrapper">
+    <div id="debug-bar">Inicjalizacja aplikacji...</div>
+    <div id="grid" class="week-container"></div>
+</div>
+
+<footer>
+    autor: mn / Wrocław 2025 / wszelkie prawa zastrzeżone / <a href="https://www.zsz5.edupage.org" target="_blank">www.zsz5.edupage.org</a>
+</footer>
 
 <script>
     // === KONFIGURACJA ===
@@ -203,19 +257,15 @@
             await loadXML();
 
             // 2. Pliki Excel (opcjonalne)
-            // Używamy .catch() dla każdego z osobna, aby brak jednego nie blokował drugiego
             await Promise.all([
                 loadExcel(CONFIG.dyzury, 'dyzury').catch(e => {
                     console.warn("Brak pliku dyżurów lub błąd: ", e);
-                    // Nie robimy nic, tablica DB.duties pozostanie pusta
                 }),
                 loadExcel(CONFIG.zastepstwa, 'zastepstwa').catch(e => {
                     console.warn("Brak pliku zastępstw lub błąd: ", e);
-                    // Nie robimy nic, tablica DB.subs pozostanie pusta
                 })
             ]);
             
-            // Logika po wczytaniu (lub niewczytaniu) zastępstw
             addMissingTeachers();
             extractUniqueLocations();
             
@@ -229,7 +279,6 @@
     };
 
     // === FETCH Z CACHE BUSTING ===
-    // Dodaje ?t=TIMESTAMP do URL, aby wymusić pobranie nowej wersji
     async function fetchFresh(url) {
         const bustUrl = url + "?t=" + new Date().getTime();
         const res = await fetch(bustUrl);
