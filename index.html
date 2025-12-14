@@ -7,161 +7,338 @@
     <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
     <style>
         :root {
-            /* --- PALETA CIEMNA (FOREST THEME) --- */
+            /* --- PALETA KOLORÓW (DARK FOREST) --- */
             --bg: #020617;
             --text-main: #e2e8f0;
             --card-bg: #111827;
+            
+            /* Kafelki (Desktop) */
             --tile-bg: #0f172a;
             --tile-border: #1e293b;
             
-            /* Akcenty */
+            /* Akcenty kolorystyczne */
             --accent-teacher: #22c55e;
             --accent-room: #fbbf24;
             --accent-class: #38bdf8;
+
+            /* Kolory ramek lekcji */
             --lesson-border: #16a34a;
-            --room-border: #d97706;      
+            --room-border: #d97706;     
             --class-border: #0284c7;    
             
-            /* Statusy */
-            --sub-bg: #450a0a; --sub-color: #fca5a5; --sub-border: #ef4444;
-            --new-bg: #064e3b; --new-color: #4ade80; --new-border: #22c55e;
+            /* Statusy (Zastępstwa, Nowe lekcje) */
+            --sub-bg: #450a0a;
+            --sub-color: #fca5a5;
+            --sub-border: #ef4444;
+            
+            --new-bg: #064e3b;
+            --new-color: #4ade80;
+            --new-border: #22c55e;
             
             /* Dyżury */
-            --duty-bg: #3f2c06; --duty-color: #fcd34d; --duty-border: #f59e0b;
-            --duty-sub-bg: #14532d; --duty-sub-border: #4ade80; --duty-sub-color: #dcfce7;
+            --duty-bg: #3f2c06;
+            --duty-color: #fcd34d;
+            --duty-border: #f59e0b;
+            --duty-sub-bg: #14532d; 
+            --duty-sub-border: #4ade80; 
+            --duty-sub-color: #dcfce7;
+
             --empty: #1f2937;
 
+            /* Zmienne wysokości nagłówka do funkcji "sticky" */
             --header-height-desktop: 134px; 
-            --header-height-mobile: 155px;
+            --header-height-mobile: 155px; 
         }
 
         body { 
             font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background-color: var(--bg); margin: 0; padding: 0; 
-            color: var(--text-main); display: flex; flex-direction: column; min-height: 100vh;
+            background-color: var(--bg); 
+            margin: 0; padding: 0; 
+            color: var(--text-main);
+            display: flex; flex-direction: column;
+            min-height: 100vh;
         }
 
         /* --- NAGŁÓWEK --- */
         header { 
             background: linear-gradient(to right, #4dff88 0%, #33cc66 30%, #020617 100%);
-            color: white; padding: 10px 30px; position: sticky; top: 0; z-index: 1000; 
-            box-shadow: 0 10px 30px rgba(0,0,0,0.6); display: flex; justify-content: space-between; align-items: center;
-            min-height: 110px; border-bottom: 4px solid #22c55e; flex-wrap: wrap; box-sizing: border-box;
+            color: white; 
+            padding: 10px 30px; 
+            position: sticky; top: 0; z-index: 1000; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+            display: flex; justify-content: space-between; align-items: center;
+            min-height: 110px;
+            border-bottom: 4px solid #22c55e;
+            flex-wrap: wrap; 
+            box-sizing: border-box;
         }
-        .header-left { display: flex; align-items: center; gap: 20px; }
-        .logo { height: 85px; width: auto; mix-blend-mode: multiply; filter: contrast(1.1); }
-        .header-text { display: flex; flex-direction: column; justify-content: center; }
-        .header-text h1 { margin: 0; font-size: 1.6rem; font-weight: 800; text-transform: uppercase; text-shadow: 0 2px 4px rgba(0,0,0,0.4); }
-        .clock { font-family: 'Consolas', monospace; font-size: 1.1rem; color: #f0fdf4; margin-top: 4px; font-weight: 600; }
-        .selection-info { font-size: 1.4rem; font-weight: 700; color: #fbbf24; margin-top: 5px; text-shadow: 0 2px 4px rgba(0,0,0,0.8); display: none; text-transform: uppercase; letter-spacing: 0.5px; }
 
-        .week-nav { display: flex; align-items: center; gap: 20px; background: rgba(0, 0, 0, 0.25); padding: 8px 20px; border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.1); backdrop-filter: blur(5px); }
-        .week-nav-btn { background: none; border: none; color: #4ade80; font-size: 2rem; cursor: pointer; padding: 0 10px; transition: transform 0.2s, color 0.2s; line-height: 1; }
+        .header-left { display: flex; align-items: center; gap: 20px; }
+        
+        /* Stylizacja logo - usunięcie tła za pomocą mix-blend-mode */
+        .logo { 
+            height: 85px; width: auto; 
+            mix-blend-mode: multiply; filter: contrast(1.1);
+        }
+
+        .header-text { display: flex; flex-direction: column; justify-content: center; }
+        .header-text h1 { 
+            margin: 0; font-size: 1.6rem; font-weight: 800; 
+            text-transform: uppercase; text-shadow: 0 2px 4px rgba(0,0,0,0.4);
+        }
+        .clock { 
+            font-family: 'Consolas', monospace; font-size: 1.1rem; 
+            color: #f0fdf4; margin-top: 4px; font-weight: 600;
+        }
+        
+        /* Informacja o wybranym planie (np. Jan Kowalski) */
+        .selection-info {
+            font-size: 1.4rem; font-weight: 700; color: #fbbf24; margin-top: 5px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.8); display: none; 
+            text-transform: uppercase; letter-spacing: 0.5px;
+        }
+
+        /* Nawigator tygodni */
+        .week-nav {
+            display: flex; align-items: center; gap: 20px;
+            background: rgba(0, 0, 0, 0.25); padding: 8px 20px;
+            border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(5px);
+        }
+        .week-nav-btn {
+            background: none; border: none; color: #4ade80;
+            font-size: 2rem; cursor: pointer; padding: 0 10px;
+            transition: transform 0.2s, color 0.2s; line-height: 1;
+        }
         .week-nav-btn:hover { color: #fff; transform: scale(1.2); }
         .week-display { display: flex; flex-direction: column; align-items: center; min-width: 180px; }
         .week-label { font-size: 0.7rem; text-transform: uppercase; color: #a7f3d0; letter-spacing: 1px; }
         .week-range { font-family: 'Consolas', monospace; font-size: 1.3rem; font-weight: 700; color: #fff; text-shadow: 0 2px 5px rgba(0,0,0,0.5); }
 
         .controls { display: flex; gap: 15px; align-items: center; }
-        button.back-btn { background: #b91c1c; color: white; border: 1px solid #ef4444; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: 700; font-size: 0.9rem; display: flex; align-items: center; gap: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.3); transition: all 0.2s; text-transform: uppercase; }
+        
+        button.back-btn {
+            background: #b91c1c; color: white; border: 1px solid #ef4444; 
+            padding: 10px 20px; border-radius: 8px; cursor: pointer; 
+            font-weight: 700; font-size: 0.9rem;
+            display: flex; align-items: center; gap: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+            transition: all 0.2s; text-transform: uppercase;
+        }
         button.back-btn:hover { background: #dc2626; transform: translateY(-2px); box-shadow: 0 6px 12px rgba(0,0,0,0.5); }
 
-        /* --- DASHBOARD --- */
-        #tiles-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 25px; width: 100%; max-width: 1600px; margin: 0 auto; }
-        .dash-card { background: var(--card-bg); border: 1px solid var(--tile-border); border-radius: 16px; padding: 30px 20px; display: flex; flex-direction: column; align-items: center; text-align: center; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3); transition: transform 0.3s ease, box-shadow 0.3s ease; position: relative; overflow: hidden; }
-        .dash-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px; }
-        .dash-card.type-teacher::before { background: var(--accent-teacher); }
-        .dash-card.type-class::before { background: var(--accent-class); }     
-        .dash-card.type-room::before { background: var(--accent-room); }       
-        .dash-card.type-duty::before { background: #d946ef; }                  
-        .dash-card:hover { transform: translateY(-5px); box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.4); border-color: rgba(255,255,255,0.2); }
-        .dash-card.type-duty .dash-select:hover, .dash-card.type-duty .dash-select:focus { border-color: #d946ef; outline: none; }
-        .dash-icon { font-size: 2.5rem; margin-bottom: 15px; opacity: 0.8; }
-        .dash-title { font-size: 1.5rem; font-weight: 700; color: #f1f5f9; margin-bottom: 25px; text-transform: uppercase; letter-spacing: 1px; }
-        .dash-select-wrapper { width: 100%; position: relative; }
-        .dash-select { width: 100%; padding: 15px 20px; font-size: 1.1rem; background-color: #0f172a; color: #e2e8f0; border: 2px solid #334155; border-radius: 12px; cursor: pointer; appearance: none; -webkit-appearance: none; transition: all 0.2s; background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e"); background-repeat: no-repeat; background-position: right 15px center; background-size: 20px; }
-        .dash-card.type-teacher .dash-select:hover, .dash-card.type-teacher .dash-select:focus { border-color: var(--accent-teacher); outline: none; }
-        .dash-card.type-class .dash-select:hover, .dash-card.type-class .dash-select:focus { border-color: var(--accent-class); outline: none; }
-        .dash-card.type-room .dash-select:hover, .dash-card.type-room .dash-select:focus { border-color: var(--accent-room); outline: none; }
+        /* --- DASHBOARD (MENU GŁÓWNE) --- */
+        #dashboard-view { padding: 40px; display: block; max-width: 1400px; margin: 0 auto; width: 100%; box-sizing: border-box; }
+        .section-title { 
+            font-size: 2rem; font-weight: 700; color: #f0fdf4; margin: 40px 0 20px 0; 
+            border-bottom: 2px solid #22c55e; padding-bottom: 10px;
+            text-transform: uppercase; letter-spacing: 1px;
+            text-shadow: 0 0 10px rgba(34, 197, 94, 0.3);
+        }
+        .section-title:first-child { margin-top: 0; }
 
-        @media (max-width: 1000px) { #tiles-container { grid-template-columns: 1fr; gap: 20px; } .dash-card { padding: 20px; } }
+        /* Kafelki (tylko Desktop) */
+        .tile-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 20px; }
+        .tile {
+            padding: 25px 15px; text-align: center; border-radius: 12px; cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+            transition: transform 0.2s, box-shadow 0.2s, background-color 0.2s;
+            font-size: 1.3rem; font-weight: 600;
+            display: flex; align-items: center; justify-content: center;
+            min-height: 90px;
+            background-color: var(--tile-bg); color: #e2e8f0;
+            border: 1px solid var(--tile-border); position: relative; overflow: hidden;
+        }
+        .tile:hover { transform: translateY(-5px); box-shadow: 0 10px 25px rgba(0,0,0,0.5); z-index: 2; }
+        .tile.teacher { border-bottom: 4px solid var(--accent-teacher); }
+        .tile.room { border-bottom: 4px solid var(--accent-room); }
+        .tile.class { border-bottom: 4px solid var(--accent-class); }
+
+        /* Listy rozwijane (tylko Mobile) */
         .mobile-select-container { display: none; margin-bottom: 30px; }
-        .mobile-select { width: 100%; padding: 15px 20px; font-size: 1.2rem; background-color: #1e293b; color: #ffffff; border: 2px solid #334155; border-radius: 10px; appearance: none; -webkit-appearance: none; background-image: url("data:image/svg+xml;charset=windows-1250,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e"); background-repeat: no-repeat; background-position: right 15px center; background-size: 20px; }
+        .mobile-select {
+            width: 100%; padding: 15px 20px; font-size: 1.2rem;
+            background-color: #1e293b; color: #ffffff;
+            border: 2px solid #334155; border-radius: 10px;
+            appearance: none; -webkit-appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat; background-position: right 15px center; background-size: 20px;
+        }
+        .mobile-select.teacher { border-color: var(--accent-teacher); }
+        .mobile-select.room { border-color: var(--accent-room); }
+        .mobile-select.class { border-color: var(--accent-class); }
 
-        /* --- MOBILE --- */
+
+        /* --- OPTYMALIZACJA MOBILE (@media) --- */
         @media (max-width: 900px) {
-            header { flex-direction: row; flex-wrap: wrap; align-content: flex-start; height: auto; padding: 10px; background: linear-gradient(to bottom, #4dff88 0%, #020617 100%); }
-            .header-left { width: 100%; flex-direction: row; justify-content: flex-start; align-items: center; gap: 15px; margin-bottom: 8px; }
-            .logo { height: 50px; margin-right: 5px; }
-            .header-text { align-items: flex-start; text-align: left; flex: 1; }
+            header {
+                /* Ustawienie w rzędach z zawijaniem */
+                flex-direction: row; 
+                flex-wrap: wrap;
+                align-content: flex-start;
+                height: auto;
+                padding: 10px;
+                background: linear-gradient(to bottom, #4dff88 0%, #020617 100%);
+            }
+
+            /* LOGO I TYTUŁ */
+            .header-left { 
+                width: 100%; 
+                flex-direction: row; 
+                justify-content: flex-start; 
+                align-items: center;
+                gap: 15px;
+                margin-bottom: 8px;
+            }
+
+            .logo { height: 50px; margin-right: 5px; } /* Mniejsze logo */
+            
+            .header-text { 
+                align-items: flex-start; text-align: left; flex: 1; 
+            }
             .header-text h1 { font-size: 1.1rem; line-height: 1.1; margin-bottom: 2px; }
             .clock { font-size: 0.85rem; }
-            .selection-info { font-size: 1rem; color: #fbbf24; margin: 2px 0; background: rgba(0,0,0,0.4); padding: 2px 8px; border-radius: 4px; display: inline-block; }
-            .week-nav { order: 2; flex: 6; justify-content: space-between; margin-top: 0; padding: 4px 8px; gap: 5px; height: 42px; box-sizing: border-box; }
+            
+            .selection-info {
+                font-size: 1rem; color: #fbbf24; margin: 2px 0;
+                background: rgba(0,0,0,0.4); padding: 2px 8px;
+                border-radius: 4px;
+                display: inline-block;
+            }
+
+            /* STEROWANIE (Tydzień + Menu w jednej linii) */
+            .week-nav { 
+                order: 2;
+                flex: 6; /* 60% szerokości */
+                justify-content: space-between; 
+                margin-top: 0;
+                padding: 4px 8px; 
+                gap: 5px;
+                height: 42px; 
+                box-sizing: border-box;
+            }
             .week-display { min-width: auto; }
-            .week-label { display: none; }
+            .week-label { display: none; } /* Ukrywamy etykietę dla oszczędności */
             .week-range { font-size: 0.95rem; white-space: nowrap; }
             .week-nav-btn { font-size: 1.4rem; padding: 0 5px; }
-            .controls { order: 3; flex: 4; margin-top: 0; justify-content: flex-end; margin-left: 10px; }
-            button.back-btn { width: 100%; justify-content: center; padding: 0 10px; height: 42px; font-size: 0.8rem; white-space: nowrap; }
+
+            .controls { 
+                order: 3;
+                flex: 4; /* 40% szerokości */
+                margin-top: 0;
+                justify-content: flex-end;
+                margin-left: 10px;
+            }
+            
+            button.back-btn { 
+                width: 100%; 
+                justify-content: center; 
+                padding: 0 10px;
+                height: 42px;
+                font-size: 0.8rem;
+                white-space: nowrap;
+            }
+            
+            /* Zmiana widoków */
+            .tile-grid { display: none !important; }
             .mobile-select-container { display: block !important; }
+            
             .section-title { font-size: 1.5rem; margin: 20px 0 10px 0; }
             #dashboard-view { padding: 15px; }
+            
+            /* Plan w jednej kolumnie */
             .week-container { grid-template-columns: 1fr !important; }
+            /* Dopasowanie sticky nagłówka do mniejszego headera */
             .day-header { top: var(--header-height-mobile) !important; }
-            #tiles-container { grid-template-columns: 1fr; }
         }
 
-        #debug-bar { background: #111827; font-size: 0.75rem; padding: 4px 20px; color: #64748b; border-bottom: 1px solid #1f2937; text-align: center; letter-spacing: 1px; }
+        #debug-bar { 
+            background: #111827; font-size: 0.75rem; padding: 4px 20px; color: #64748b; 
+            border-bottom: 1px solid #1f2937; text-align: center; letter-spacing: 1px;
+        }
+
+        /* --- WIDOK PLANU --- */
         #schedule-view { display: none; width: 100%; padding-bottom: 40px; }
+        
         .week-container { display: grid; grid-template-columns: repeat(5, 1fr); gap: 15px; padding: 20px; align-items: start; }
-        .day-col { background: #1e293b; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.3); display: flex; flex-direction: column; border: 1px solid #334155; }
-        .day-header { background: linear-gradient(to bottom, #065f46, #064e3b); color: #ecfdf5; padding: 15px; text-align: center; font-weight: 700; border-bottom: 1px solid #047857; text-transform: uppercase; letter-spacing: 1px; position: sticky; top: var(--header-height-desktop); z-index: 900; border-top-left-radius: 10px; border-top-right-radius: 10px; }
+        
+        .day-col {
+            background: #1e293b; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+            display: flex; flex-direction: column; border: 1px solid #334155;
+        }
+        
+        /* Pływający nagłówek dnia */
+        .day-header {
+            background: linear-gradient(to bottom, #065f46, #064e3b); color: #ecfdf5; 
+            padding: 15px; text-align: center; font-weight: 700; 
+            border-bottom: 1px solid #047857; text-transform: uppercase; letter-spacing: 1px;
+            position: sticky; top: var(--header-height-desktop); z-index: 900;
+            border-top-left-radius: 10px; border-top-right-radius: 10px;
+        }
         .day-date { font-weight: 400; font-size: 0.8em; color: #a7f3d0; display: block; margin-top: 4px; }
         .day-content { padding: 10px; display: flex; flex-direction: column; gap: 8px; }
-        .slot-wrapper { border: 1px solid #334155; border-radius: 8px; overflow: hidden; display: flex; flex-direction: column; gap: 0px; background: #0f172a; }
         
-        .card { background: var(--card-bg); border-left: 4px solid var(--lesson-border); color: #e2e8f0; padding: 10px 12px; min-height: 55px; display: flex; flex-direction: column; gap: 3px; border-bottom: 1px solid #334155; position: relative; }
+        /* Karty lekcji */
+        .slot-wrapper { 
+            border: 1px solid #334155; border-radius: 8px; overflow: hidden; 
+            display: flex; flex-direction: column; gap: 0px; background: #0f172a;
+        }
+
+        .card {
+            background: var(--card-bg); border-left: 4px solid var(--lesson-border); color: #e2e8f0;
+            padding: 10px 12px; min-height: 55px; display: flex; flex-direction: column; gap: 3px;
+            border-bottom: 1px solid #334155; position: relative;
+        }
         .card:last-child { border-bottom: none; }
-        .card.empty { background: var(--empty); border-left-color: #4b5563; color: #64748b; display: flex; align-items: center; justify-content: center; font-style: italic; font-size: 0.85rem; min-height: 40px; }
+        .card.empty {
+            background: var(--empty); border-left-color: #4b5563; color: #64748b;
+            display: flex; align-items: center; justify-content: center; font-style: italic; font-size: 0.85rem;
+            min-height: 40px;
+        }
+        
         body.mode-room .card { border-left-color: var(--room-border); }
         body.mode-class .card { border-left-color: var(--class-border); }
+
         .meta { display: flex; justify-content: space-between; font-size: 0.8rem; color: #94a3b8; margin-bottom: 2px; font-weight: 600; }
         .nr { background: #334155; padding: 1px 6px; border-radius: 4px; color: #f1f5f9; }
         .main-info { font-weight: 700; font-size: 1rem; color: #f8fafc; }
         .sub-line { font-weight: 500; font-size: 0.9rem; color: #cbd5e1; margin-top: 2px; }
-        .group-badge { display: inline-block; background: #334155; color: #e2e8f0; font-size: 0.7rem; padding: 1px 6px; border-radius: 4px; margin-left: 6px; font-weight: bold; vertical-align: middle; border: 1px solid #475569; }
+        
+        .group-badge {
+            display: inline-block; background: #334155; color: #e2e8f0;
+            font-size: 0.7rem; padding: 1px 6px; border-radius: 4px;
+            margin-left: 6px; font-weight: bold; vertical-align: middle;
+            border: 1px solid #475569;
+        }
+
         .is-sub { background: var(--sub-bg); border-left-color: var(--sub-border) !important; }
         .is-sub .main-info { text-decoration: line-through; opacity: 0.6; color: #fca5a5; }
         .note-red { color: #f87171; font-weight: 700; font-size: 0.8rem; text-transform: uppercase; }
         .is-new { background: var(--new-bg); border-left-color: var(--new-border) !important; }
         .is-new .main-info { color: #86efac; }
         .is-new .sub-line { color: #dcfce7; }
-        
-        .duty-section { background: var(--duty-bg); color: var(--duty-color); border-top: 1px dashed var(--duty-border); padding: 8px 10px; font-size: 0.85rem; }
-        .morning-duty { background: var(--duty-bg); border-left: 4px solid #f59e0b; padding: 12px; border-radius: 8px; margin-bottom: 8px; color: var(--duty-color); font-size: 0.9rem; border: 1px solid #78350f; }
-        .duty-sub { background: var(--duty-sub-bg); border-left-color: var(--duty-sub-border); color: var(--duty-sub-color); border-color: #14532d; }
-        
-        /* SPECJALNA KLASA DLA KARTY DYŻURU W TRYBIE TABELI DYŻURÓW */
-        .duty-card-full {
-            background: #3f2c06;
-            border: 1px solid #f59e0b;
-            border-left: 6px solid #f59e0b;
-            border-radius: 8px;
-            padding: 15px;
-            margin-bottom: 10px;
-        }
-        .duty-card-full.is-sub {
-            background: #14532d;
-            border-color: #22c55e;
-            border-left-color: #22c55e;
-        }
-        .duty-time { font-size: 1.2rem; font-weight: 800; color: #fbbf24; margin-bottom: 4px; }
-        .duty-who { font-size: 1.1rem; color: white; font-weight: 600; }
-        .duty-sub .duty-time { color: #86efac; }
 
-        footer { background: #064e3b; color: #a7f3d0; text-align: center; padding: 15px; font-size: 0.9rem; border-top: 1px solid #047857; margin-top: auto; }
+        .duty-section {
+            background: var(--duty-bg); color: var(--duty-color);
+            border-top: 1px dashed var(--duty-border); padding: 8px 10px; font-size: 0.85rem;
+        }
+        .morning-duty {
+            background: var(--duty-bg); border-left: 4px solid #f59e0b;
+            padding: 12px; border-radius: 8px; margin-bottom: 8px;
+            color: var(--duty-color); font-size: 0.9rem; border: 1px solid #78350f;
+        }
+        .duty-sub {
+            background: var(--duty-sub-bg); border-left-color: var(--duty-sub-border);
+            color: var(--duty-sub-color); border-color: #14532d;
+        }
+
+        footer {
+            background: #064e3b; color: #a7f3d0; text-align: center;
+            padding: 15px; font-size: 0.9rem; border-top: 1px solid #047857;
+            margin-top: auto;
+        }
         footer a { color: #fff; text-decoration: none; font-weight: bold; }
+
         @media (max-width: 1200px) { .week-container { grid-template-columns: repeat(3, 1fr); } }
     </style>
 </head>
@@ -217,13 +394,12 @@
         dyzury: './dyzury.xlsx',
         zastepstwa: './zastepstwa.xlsx',
         refreshInterval: 120000, 
-        idleTimeout: 45000        
+        idleTimeout: 45000       
     };
 
     const DB = {
         teachers: {}, rooms: [], classes: {}, classesList: [], groups: {},
-        locations: [], periods: [], lessons: [], duties: [], subs: [], dutyChanges: [],
-        dutyPlaces: new Set()
+        locations: [], periods: [], lessons: [], duties: [], subs: [], dutyChanges: []
     };
 
     const DAYS = ["Niedziela", "Poniedziałek", "Wtorek", "Środa", "Czwartek", "Piątek", "Sobota"];
@@ -255,8 +431,11 @@
         document.getElementById('schedule-view').style.display = 'none';
         document.getElementById('nav-controls').style.display = 'none';
         document.getElementById('week-nav-container').style.display = 'none';
+        
+        // Ukryj info o wyborze
         document.getElementById('selection-info').style.display = 'none';
         document.getElementById('selection-info').innerText = '';
+
         document.body.className = '';
         log("Menu Główne");
     }
@@ -276,10 +455,9 @@
         if (mode === 'teacher' && DB.teachers[id]) displayName = DB.teachers[id].name;
         else if (mode === 'room') displayName = "Sala " + id;
         else if (mode === 'class') displayName = "Klasa " + id;
-        else if (mode === 'duty') displayName = "Dyżury: " + id;
         
         displayDiv.innerText = displayName;
-        displayDiv.style.display = 'block';
+        displayDiv.style.display = 'block'; // Na mobile CSS zrobi z tego inline-block
 
         document.getElementById('dashboard-view').style.display = 'none';
         document.getElementById('schedule-view').style.display = 'block';
@@ -309,10 +487,8 @@
 
     async function refreshData() {
         log("Aktualizacja danych...", false);
-        // Resetowanie baz danych
         DB.lessons = []; DB.periods = []; DB.duties = []; DB.subs = []; DB.dutyChanges = [];
         DB.teachers = {}; DB.classes = {}; DB.classesList = []; DB.rooms = []; DB.groups = {};
-        DB.dutyPlaces = new Set(); // Reset Miejsc!
 
         try {
             await loadXML();
@@ -334,49 +510,55 @@
         const container = document.getElementById('tiles-container');
         container.innerHTML = "";
         
-        const createCard = (title, icon, items, type, clickFn) => {
-            const card = document.createElement('div');
-            card.className = `dash-card type-${type}`;
-            card.innerHTML = `<div class="dash-icon">${icon}</div><div class="dash-title">${title}</div>`;
+        const createSection = (title, items, type, clickFn) => {
+            if(!items.length) return;
+            const div = document.createElement('div');
+            div.innerHTML = `<div class="section-title">${title}</div>`;
             
-            const wrapper = document.createElement('div');
-            wrapper.className = 'dash-select-wrapper';
-            const select = document.createElement('select');
-            select.className = 'dash-select';
-            
-            const defaultOpt = document.createElement('option');
-            defaultOpt.text = "Wybierz..."; defaultOpt.value = "";
-            defaultOpt.disabled = true; defaultOpt.selected = true;
-            select.add(defaultOpt);
+            // 1. Kafelki (Desktop)
+            const grid = document.createElement('div'); 
+            grid.className = 'tile-grid';
+            items.forEach(item => {
+                const tile = document.createElement('div');
+                tile.className = `tile ${type}`;
+                tile.innerText = item.txt;
+                tile.onclick = () => clickFn(item.val);
+                grid.appendChild(tile);
+            });
+            div.appendChild(grid);
 
+            // 2. Select (Mobile)
+            const selectContainer = document.createElement('div');
+            selectContainer.className = 'mobile-select-container';
+            const select = document.createElement('select');
+            select.className = `mobile-select ${type}`;
+            const defaultOpt = document.createElement('option');
+            defaultOpt.text = `Wybierz ${title.toLowerCase()}...`;
+            defaultOpt.value = "";
+            defaultOpt.disabled = true;
+            defaultOpt.selected = true;
+            select.add(defaultOpt);
             items.forEach(item => {
                 const opt = document.createElement('option');
-                opt.value = item.val; opt.text = item.txt; select.add(opt);
+                opt.value = item.val;
+                opt.text = item.txt;
+                select.add(opt);
             });
+            select.onchange = (e) => { if(e.target.value) clickFn(e.target.value); };
+            selectContainer.appendChild(select);
+            div.appendChild(selectContainer);
 
-            select.onchange = (e) => {
-                if(e.target.value) { clickFn(e.target.value); select.value = ""; }
-            };
-            wrapper.appendChild(select); card.appendChild(wrapper); container.appendChild(card);
+            container.appendChild(div);
         };
 
         const teachers = Object.entries(DB.teachers)
             .sort((a,b) => a[1].name.localeCompare(b[1].name))
             .filter(([id, t]) => !t.name.toLowerCase().includes('wakat'))
             .map(([id, t]) => ({val: id, txt: t.name}));
-
-        const classes = DB.classesList.sort().map(c => ({val: c, txt: c}));
-        const rooms = DB.rooms.sort().map(r => ({val: r, txt: r}));
-        const dutyPlacesList = Array.from(DB.dutyPlaces).sort().map(p => ({val: p, txt: p}));
-
-        // 1. Nauczyciele
-        createCard("Nauczyciele", "🎓", teachers, 'teacher', (id) => openSchedule('teacher', id));
-        // 2. Oddziały
-        createCard("Oddziały", "👥", classes, 'class', (id) => openSchedule('class', id));
-        // 3. Sale
-        createCard("Sale Lekcyjne", "🚪", rooms, 'room', (id) => openSchedule('room', id));
-        // 4. Miejsca Dyżurów
-        createCard("Miejsca Dyżurów", "👁️", dutyPlacesList, 'duty', (id) => openSchedule('duty', id));
+            
+        createSection("Nauczyciele", teachers, 'teacher', (id) => openSchedule('teacher', id));
+        createSection("Sale Lekcyjne", DB.rooms.sort().map(r => ({val: r, txt: r})), 'room', (id) => openSchedule('room', id));
+        createSection("Oddziały", DB.classesList.sort().map(c => ({val: c, txt: c})), 'class', (id) => openSchedule('class', id));
     }
 
     async function fetchFresh(url) {
@@ -390,7 +572,7 @@
         return new Promise(r => {
             const reader = new FileReader(); 
             reader.onload = () => r(reader.result); 
-            reader.readAsText(blob, 'UTF-8'); 
+            reader.readAsText(blob, 'windows-1250'); 
         });
     }
     async function loadExcel(url, type) {
@@ -452,18 +634,14 @@
         });
     }
 
-    // --- PARSER DYŻURÓW (POPRAWIONY) ---
     function parseDuties(wb) {
         wb.SheetNames.forEach(sheetName => {
             const ws = wb.Sheets[sheetName];
             const data = XLSX.utils.sheet_to_json(ws, {header: 1});
             let currentDayMap = null;
-            
             for(let i=0; i<data.length; i++) {
                 const row = data[i]; if(!row || !row.length) continue;
                 const rowStr = row.map(c => String(c||"").toLowerCase());
-                
-                // Wykrywanie dni tygodnia
                 if(rowStr.some(s => s.includes('poniedziałek'))) {
                     currentDayMap = {};
                     row.forEach((cell, idx) => {
@@ -476,34 +654,24 @@
                     });
                     continue;
                 }
-
                 if(currentDayMap) {
                     let timeVal=null, placeVal=null;
                     for(let c=0; c<5; c++) {
-                        // Regex łapiący godziny z kropkami i dwukropkami
-                        if(row[c] && /\d{1,2}[:.]\d{2}\s*-\s*\d{1,2}[:.]\d{2}/.test(String(row[c]))) {
-                            timeVal = String(row[c]).trim().replace(/\./g, ':'); // Ujednolicamy do dwukropków
-                            if(c>0 && row[c-1]) placeVal=row[c-1]; else if(row[0]) placeVal=row[0]; 
-                            break;
+                        if(row[c] && /\d{1,2}:\d{2}\s*-\s*\d{1,2}:\d{2}/.test(String(row[c]))) {
+                            timeVal = String(row[c]).trim();
+                            if(c>0 && row[c-1]) placeVal=row[c-1]; else if(row[0]) placeVal=row[0]; break;
                         }
                     }
-
                     if(timeVal) {
-                        const pName = placeVal ? String(placeVal).trim() : "Dyżur Ogólny";
-                        if(pName.length > 2) DB.dutyPlaces.add(pName);
-
                         for(const [colIdx, dayNum] of Object.entries(currentDayMap)) {
                             const rawTeacher = row[colIdx];
                             if(rawTeacher && String(rawTeacher).length>2) {
-                                // ensureTeacherId utworzy nauczyciela jeśli go nie ma
-                                const tId = ensureTeacherId(String(rawTeacher).trim());
-                                if(tId) {
-                                    DB.duties.push({
-                                        teacherId: tId, day: dayNum, time: timeVal,
-                                        startMin: timeToMin(timeVal.split('-')[0]),
-                                        place: pName
-                                    });
-                                }
+                                const tId = findTeacherId(String(rawTeacher).trim());
+                                if(tId) DB.duties.push({
+                                    teacherId: tId, day: dayNum, time: timeVal,
+                                    startMin: timeToMin(timeVal.split('-')[0]),
+                                    place: placeVal ? placeVal.trim() : "Dyżur"
+                                });
                             }
                         }
                     }
@@ -552,20 +720,7 @@
         }
         return bestId;
     }
-    
-    function ensureTeacherId(rawName) {
-        if(!rawName || /wakat|brak/i.test(rawName)) return null;
-        const existing = findTeacherId(rawName);
-        if(existing) return existing;
-        const nid = "EXT_" + normalize(rawName).replace(/\s+/g, "_");
-        if(!DB.teachers[nid]) DB.teachers[nid] = { name: rawName.trim(), normalized: normalize(rawName) };
-        return nid;
-    }
-    function timeToMin(str) { 
-        if(!str) return 0; 
-        const [h,m] = str.replace('.', ':').trim().split(':').map(Number); 
-        return h*60+m; 
-    }
+    function timeToMin(str) { if(!str) return 0; const [h,m] = str.trim().split(':').map(Number); return h*60+m; }
     function parseDate(val) {
         if(!val) return null;
         if(typeof val === 'number') { const d = XLSX.SSF.parse_date_code(val); return `${d.y}-${d.m<10?'0':''}${d.m}-${d.d<10?'0':''}${d.d}`; }
@@ -587,8 +742,6 @@
         if (mode === 'teacher') items = Object.entries(DB.teachers).sort((a,b) => a[1].name.localeCompare(b[1].name)).map(x => ({val: x[0], txt: x[1].name}));
         else if (mode === 'room') items = DB.rooms.sort().map(x => ({val: x, txt: x}));
         else if (mode === 'class') items = DB.classesList.sort().map(x => ({val: x, txt: x}));
-        else if (mode === 'duty') items = Array.from(DB.dutyPlaces).sort().map(p => ({val: p, txt: p}));
-
         items.forEach(i => {
             const opt = document.createElement('option'); opt.value = i.val; opt.innerText = i.txt; sel.appendChild(opt);
         });
@@ -629,86 +782,10 @@
             const curDate = new Date(monday); curDate.setDate(monday.getDate() + i);
             const dateStr = curDate.toISOString().split('T')[0];
             const dayNum = i + 1;
-            
             const col = document.createElement('div'); col.className = 'day-col';
             col.innerHTML = `<div class="day-header">${DAYS[dayNum]}<span class="day-date">${curDate.toLocaleDateString('pl-PL')}</span></div>`;
             const content = document.createElement('div'); content.className = 'day-content';
 
-            // --- TRYB 1: POKAZYWANIE SAMYCH DYŻURÓW (DLA LOKALIZACJI) ---
-            if (mode === 'duty') {
-                // 1. Pobierz wszystkie dyżury planowe dla tego miejsca i dnia
-                const planned = DB.duties.filter(d => d.place === selectedId && d.day === dayNum);
-                
-                // 2. Pobierz zmiany/zastępstwa dla tego miejsca i dnia (data z Excela)
-                // Uwaga: Zastępstwa w Excelu mają datę, więc porównujemy dateStr
-                const changes = DB.dutyChanges.filter(ch => ch.place === selectedId && ch.date === dateStr);
-                
-                // 3. Budujemy finalną listę do wyświetlenia
-                let displayList = [];
-
-                // Przetwarzamy planowe
-                planned.forEach(p => {
-                    // Sprawdź czy odwołany
-                    const isCancelled = DB.dutyChanges.some(ch => 
-                        ch.date === dateStr && ch.time === p.time && ch.absent === p.teacherId
-                    );
-                    
-                    displayList.push({
-                        time: p.time,
-                        teacher: getTeacherName(p.teacherId),
-                        startMin: p.startMin,
-                        status: isCancelled ? 'cancelled' : 'ok',
-                        type: 'planned'
-                    });
-                });
-
-                // Przetwarzamy dodane zastępstwa (które są w tym miejscu)
-                changes.forEach(ch => {
-                    // Dodajemy jako "added", chyba że to tylko anulacja (ale tu iterujemy po miejscu, więc to raczej nowa osoba)
-                    if(ch.sub) {
-                        displayList.push({
-                            time: ch.time,
-                            teacher: getTeacherName(ch.sub),
-                            startMin: timeToMin(ch.time.split('-')[0]),
-                            status: 'added',
-                            type: 'sub'
-                        });
-                    }
-                });
-
-                // Sortujemy chronologicznie
-                displayList.sort((a,b) => a.startMin - b.startMin);
-
-                if (displayList.length === 0) {
-                     const div = document.createElement('div'); div.className = 'card empty'; 
-                     div.innerHTML = `Brak dyżurów`; content.appendChild(div);
-                } else {
-                    displayList.forEach(item => {
-                        const div = document.createElement('div');
-                        div.className = 'duty-card-full';
-                        if(item.status === 'added') div.classList.add('duty-sub');
-                        
-                        let html = `<div class="duty-time">${item.time}</div>`;
-                        
-                        if (item.status === 'cancelled') {
-                             html += `<div class="duty-who" style="text-decoration:line-through; opacity:0.6">${item.teacher}</div>`;
-                        } else if (item.status === 'added') {
-                             html += `<div class="duty-who">${item.teacher} (Zastępstwo)</div>`;
-                        } else {
-                             html += `<div class="duty-who">${item.teacher}</div>`;
-                        }
-                        div.innerHTML = html;
-                        content.appendChild(div);
-                    });
-                }
-                
-                col.appendChild(content); grid.appendChild(col);
-                continue; // Przejdź do następnego dnia (pomiń logikę lekcji)
-            }
-
-            // --- TRYB 2: NORMALNY PLAN LEKCJI (NAUCZYCIEL/SALA/KLASA) ---
-            
-            // Dyżury poranne nauczyciela (przed lekcjami)
             if (mode === 'teacher') {
                 getDutiesForTime(selectedId, dayNum, dateStr, 0, 480).forEach(d => {
                     const div = document.createElement('div'); div.className = 'card morning-duty'; 
@@ -718,11 +795,10 @@
                     content.appendChild(div);
                 });
             }
-            
-            DB.periods.forEach((p, index) => {
+
+            DB.periods.forEach(p => {
                 const wrapper = document.createElement('div'); wrapper.className = 'slot-wrapper';
                 let lessons = [];
-                
                 if (mode === 'teacher') lessons = DB.lessons.filter(l => l.teacherId == selectedId && l.day == dayNum && l.period == p.nr);
                 else if (mode === 'room') lessons = DB.lessons.filter(l => l.room === selectedId && l.day == dayNum && l.period == p.nr);
                 else if (mode === 'class') lessons = DB.lessons.filter(l => l.classNames.includes(selectedId) && l.day == dayNum && l.period == p.nr);
