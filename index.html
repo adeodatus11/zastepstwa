@@ -266,6 +266,7 @@
             border: 1px solid #475569;
         }
 
+        /* STYLE DLA STATUSÓW ZAJĘĆ */
         .is-sub { background: var(--sub-bg); border-left-color: var(--sub-border) !important; }
         .is-sub .main-info { text-decoration: line-through; opacity: 0.6; color: #fca5a5; }
         .note-red { color: #f87171; font-weight: 700; font-size: 0.8rem; text-transform: uppercase; }
@@ -534,6 +535,7 @@
         return new Promise(r => {
             const reader = new FileReader(); 
             reader.onload = () => r(reader.result); 
+            // FIX: Jawne wskazanie kodowania Windows-1250 dla plików XML
             reader.readAsText(blob, 'windows-1250'); 
         });
     }
@@ -733,6 +735,7 @@
         if(!selectedId) return;
         
         const today = new Date();
+        if (today.getDay() === 6 || today.getDay() === 0) { today.setDate(today.getDate() + 2); }
         today.setDate(today.getDate() + (weekOffset * 7));
         const monday = getStartOfWeek(today);
 
@@ -812,7 +815,7 @@
                         const div = document.createElement('div');
                         div.className = 'card is-new';
                         
-                        // LOGIKA ZMIENIONA: Teraz dla klasy pokazuje też numer sali
+                        // ZMIANA: Dodano wyświetlanie sali dla oddziału
                         let line = "";
                         if (mode === 'teacher') line = `s.${sub.room} / ${sub.branch}`;
                         else if (mode === 'class') line = `${getTeacherName(sub.sub)} / s.${sub.room}`;
