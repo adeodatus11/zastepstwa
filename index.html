@@ -573,6 +573,7 @@
         if (mode === 'teacher' && DB.teachers[id]) displayName = DB.teachers[id].name;
         else if (mode === 'room') displayName = "Sala " + id;
         else if (mode === 'class') displayName = "Klasa " + id;
+        else if (mode === 'duty') displayName = "Dyżury: " + id; // <--- DODAJ TO
         
         displayDiv.innerText = displayName;
         displayDiv.style.display = 'block'; // Na mobile CSS zrobi z tego inline-block
@@ -628,57 +629,32 @@ function renderDashboard() {
         const container = document.getElementById('tiles-container');
         container.innerHTML = "";
         
-        // Funkcja pomocnicza do tworzenia karty z selectem
         const createCard = (title, icon, items, type, clickFn) => {
-            // Główny kontener karty
             const card = document.createElement('div');
             card.className = `dash-card type-${type}`;
+            card.innerHTML = `<div class="dash-icon">${icon}</div><div class="dash-title">${title}</div>`;
             
-            // Nagłówek i ikona
-            card.innerHTML = `
-                <div class="dash-icon">${icon}</div>
-                <div class="dash-title">${title}</div>
-            `;
-
-            // Wrapper dla selecta
             const wrapper = document.createElement('div');
             wrapper.className = 'dash-select-wrapper';
-
-            // Select
             const select = document.createElement('select');
             select.className = 'dash-select';
             
-            // Opcja domyślna (pusta)
             const defaultOpt = document.createElement('option');
-            defaultOpt.text = "Wybierz z listy...";
-            defaultOpt.value = "";
-            defaultOpt.disabled = true;
-            defaultOpt.selected = true;
+            defaultOpt.text = "Wybierz..."; defaultOpt.value = "";
+            defaultOpt.disabled = true; defaultOpt.selected = true;
             select.add(defaultOpt);
 
-            // Dodawanie opcji
             items.forEach(item => {
                 const opt = document.createElement('option');
-                opt.value = item.val;
-                opt.text = item.txt;
-                select.add(opt);
+                opt.value = item.val; opt.text = item.txt; select.add(opt);
             });
 
-            // Obsługa wyboru
             select.onchange = (e) => {
-                if(e.target.value) {
-                    clickFn(e.target.value);
-                    // Reset selecta po powrocie (opcjonalne, ale wygląda ładniej)
-                    select.value = ""; 
-                }
+                if(e.target.value) { clickFn(e.target.value); select.value = ""; }
             };
-
-            wrapper.appendChild(select);
-            card.appendChild(wrapper);
-            container.appendChild(card);
+            wrapper.appendChild(select); card.appendChild(wrapper); container.appendChild(card);
         };
 
-        // Przygotowanie danych
         const teachers = Object.entries(DB.teachers)
             .sort((a,b) => a[1].name.localeCompare(b[1].name))
             .filter(([id, t]) => !t.name.toLowerCase().includes('wakat'))
@@ -686,17 +662,18 @@ function renderDashboard() {
 
         const classes = DB.classesList.sort().map(c => ({val: c, txt: c}));
         const rooms = DB.rooms.sort().map(r => ({val: r, txt: r}));
-            
-        // --- GENEROWANIE KOLUMN (W odpowiedniej kolejności) ---
         
-        // 1. Nauczyciele (Ikona: Biret/Czapka profesorska)
+        // Konwersja Set na posortowaną tablicę dla miejsc dyżurów
+        const dutyPlacesList = Array.from(DB.dutyPlaces).sort().map(p => ({val: p, txt: p}));
+
+        // 1. Nauczyciele
         createCard("Nauczyciele", "🎓", teachers, 'teacher', (id) => openSchedule('teacher', id));
-
-        // 2. Oddziały (Ikona: Ludzie/Grupa)
+        // 2. Oddziały
         createCard("Oddziały", "👥", classes, 'class', (id) => openSchedule('class', id));
-
-        // 3. Sale (Ikona: Drzwi/Budynek)
+        // 3. Sale
         createCard("Sale Lekcyjne", "🚪", rooms, 'room', (id) => openSchedule('room', id));
+        // 4. Miejsca Dyżurów (NOWOŚĆ)
+        createCard("Miejsca Dyżurów", "👁️", dutyPlacesList, 'duty', (id) => openSchedule('duty', id));
     }
 
     async function fetchFresh(url) {
