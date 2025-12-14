@@ -142,13 +142,108 @@
         }
         
         /* Opcjonalnie: Mniejsze kafelki wewnątrz kolumn, żeby się mieściły */
-        .tile-grid {
-             grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); /* Zmniejszone z 220px na 140px */
-             gap: 10px;
+        /* --- NOWY DASHBOARD (3 KOLUMNY Z SELECTAMI) --- */
+        #tiles-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr); /* 3 równe kolumny */
+            gap: 30px;
+            width: 100%;
+            max-width: 1400px;
+            margin: 0 auto;
         }
-        .tile {
-            font-size: 1.1rem; /* Nieco mniejsza czcionka */
-            padding: 15px 10px;
+
+        /* Karta dla każdej sekcji */
+        .dash-card {
+            background: var(--card-bg);
+            border: 1px solid var(--tile-border);
+            border-radius: 16px;
+            padding: 30px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Subtelny pasek koloru na górze karty */
+        .dash-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 4px;
+        }
+        .dash-card.type-teacher::before { background: var(--accent-teacher); }
+        .dash-card.type-class::before { background: var(--accent-class); }
+        .dash-card.type-room::before { background: var(--accent-room); }
+
+        .dash-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.4);
+            border-color: rgba(255,255,255,0.1);
+        }
+
+        /* Ikona/Tytuł w karcie */
+        .dash-icon {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            opacity: 0.8;
+        }
+        .dash-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #f1f5f9;
+            margin-bottom: 25px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Nowoczesny Select */
+        .dash-select-wrapper {
+            width: 100%;
+            position: relative;
+        }
+        
+        .dash-select {
+            width: 100%;
+            padding: 15px 20px;
+            font-size: 1.1rem;
+            background-color: #0f172a;
+            color: #e2e8f0;
+            border: 2px solid #334155;
+            border-radius: 12px;
+            cursor: pointer;
+            appearance: none; /* Ukrywa domyślną strzałkę systemową */
+            -webkit-appearance: none;
+            transition: all 0.2s;
+            /* Własna strzałka SVG */
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 15px center;
+            background-size: 20px;
+        }
+
+        /* Kolorowanie ramek selecta przy fokusie/hoverze */
+        .dash-card.type-teacher .dash-select:hover, 
+        .dash-card.type-teacher .dash-select:focus { border-color: var(--accent-teacher); outline: none; }
+
+        .dash-card.type-class .dash-select:hover, 
+        .dash-card.type-class .dash-select:focus { border-color: var(--accent-class); outline: none; }
+
+        .dash-card.type-room .dash-select:hover, 
+        .dash-card.type-room .dash-select:focus { border-color: var(--accent-room); outline: none; }
+
+        /* --- RESPANSYWNOŚĆ (Mobile) --- */
+        @media (max-width: 1000px) {
+            #tiles-container {
+                grid-template-columns: 1fr; /* Jedna kolumna na mniejszych ekranach */
+                gap: 20px;
+            }
+            .dash-card {
+                padding: 20px;
+            }
         }
 
         .mobile-select-container { display: none; margin-bottom: 30px; }
@@ -494,64 +589,79 @@
         }
     }
 
-    function renderDashboard() {
+function renderDashboard() {
         const container = document.getElementById('tiles-container');
         container.innerHTML = "";
         
-        const createSection = (title, items, type, clickFn) => {
-            if(!items.length) return;
-            const div = document.createElement('div');
-            div.innerHTML = `<div class="section-title">${title}</div>`;
+        // Funkcja pomocnicza do tworzenia karty z selectem
+        const createCard = (title, icon, items, type, clickFn) => {
+            // Główny kontener karty
+            const card = document.createElement('div');
+            card.className = `dash-card type-${type}`;
             
-            // 1. Kafelki (Desktop)
-            const grid = document.createElement('div'); 
-            grid.className = 'tile-grid';
-            items.forEach(item => {
-                const tile = document.createElement('div');
-                tile.className = `tile ${type}`;
-                tile.innerText = item.txt;
-                tile.onclick = () => clickFn(item.val);
-                grid.appendChild(tile);
-            });
-            div.appendChild(grid);
+            // Nagłówek i ikona
+            card.innerHTML = `
+                <div class="dash-icon">${icon}</div>
+                <div class="dash-title">${title}</div>
+            `;
 
-            // 2. Select (Mobile)
-            const selectContainer = document.createElement('div');
-            selectContainer.className = 'mobile-select-container';
+            // Wrapper dla selecta
+            const wrapper = document.createElement('div');
+            wrapper.className = 'dash-select-wrapper';
+
+            // Select
             const select = document.createElement('select');
-            select.className = `mobile-select ${type}`;
+            select.className = 'dash-select';
+            
+            // Opcja domyślna (pusta)
             const defaultOpt = document.createElement('option');
-            defaultOpt.text = `Wybierz ${title.toLowerCase()}...`;
+            defaultOpt.text = "Wybierz z listy...";
             defaultOpt.value = "";
             defaultOpt.disabled = true;
             defaultOpt.selected = true;
             select.add(defaultOpt);
+
+            // Dodawanie opcji
             items.forEach(item => {
                 const opt = document.createElement('option');
                 opt.value = item.val;
                 opt.text = item.txt;
                 select.add(opt);
             });
-            select.onchange = (e) => { if(e.target.value) clickFn(e.target.value); };
-            selectContainer.appendChild(select);
-            div.appendChild(selectContainer);
 
-            container.appendChild(div);
+            // Obsługa wyboru
+            select.onchange = (e) => {
+                if(e.target.value) {
+                    clickFn(e.target.value);
+                    // Reset selecta po powrocie (opcjonalne, ale wygląda ładniej)
+                    select.value = ""; 
+                }
+            };
+
+            wrapper.appendChild(select);
+            card.appendChild(wrapper);
+            container.appendChild(card);
         };
 
+        // Przygotowanie danych
         const teachers = Object.entries(DB.teachers)
             .sort((a,b) => a[1].name.localeCompare(b[1].name))
             .filter(([id, t]) => !t.name.toLowerCase().includes('wakat'))
             .map(([id, t]) => ({val: id, txt: t.name}));
-            
-        // KOLUMNA 1
-        createSection("Nauczyciele", teachers, 'teacher', (id) => openSchedule('teacher', id));
-        
-        // KOLUMNA 2 (Teraz Oddziały są w środku)
-        createSection("Oddziały", DB.classesList.sort().map(c => ({val: c, txt: c})), 'class', (id) => openSchedule('class', id));
 
-        // KOLUMNA 3 (Sale na końcu)
-        createSection("Sale Lekcyjne", DB.rooms.sort().map(r => ({val: r, txt: r})), 'room', (id) => openSchedule('room', id));
+        const classes = DB.classesList.sort().map(c => ({val: c, txt: c}));
+        const rooms = DB.rooms.sort().map(r => ({val: r, txt: r}));
+            
+        // --- GENEROWANIE KOLUMN (W odpowiedniej kolejności) ---
+        
+        // 1. Nauczyciele (Ikona: Biret/Czapka profesorska)
+        createCard("Nauczyciele", "🎓", teachers, 'teacher', (id) => openSchedule('teacher', id));
+
+        // 2. Oddziały (Ikona: Ludzie/Grupa)
+        createCard("Oddziały", "👥", classes, 'class', (id) => openSchedule('class', id));
+
+        // 3. Sale (Ikona: Drzwi/Budynek)
+        createCard("Sale Lekcyjne", "🚪", rooms, 'room', (id) => openSchedule('room', id));
     }
 
     async function fetchFresh(url) {
