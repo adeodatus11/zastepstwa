@@ -7,26 +7,26 @@
     <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
     <style>
         :root {
-            /* --- PALETA KOLORÓW (DARK FOREST) --- */
+            /* --- PALETA CIEMNA (FOREST THEME) --- */
             --bg: #020617;
             --text-main: #e2e8f0;
             --card-bg: #111827;
             
-            /* Kafelki (Desktop) */
+            /* Kafelki */
             --tile-bg: #0f172a;
             --tile-border: #1e293b;
             
-            /* Akcenty kolorystyczne */
+            /* Akcenty */
             --accent-teacher: #22c55e;
             --accent-room: #fbbf24;
             --accent-class: #38bdf8;
 
-            /* Kolory ramek lekcji */
+            /* Paski boczne */
             --lesson-border: #16a34a;
             --room-border: #d97706;     
             --class-border: #0284c7;    
             
-            /* Statusy (Zastępstwa, Nowe lekcje) */
+            /* Statusy */
             --sub-bg: #450a0a;
             --sub-color: #fca5a5;
             --sub-border: #ef4444;
@@ -35,6 +35,11 @@
             --new-color: #4ade80;
             --new-border: #22c55e;
             
+            /* Płatności (Złoty kolor) */
+            --pay-bg: #451a03;
+            --pay-text: #fbbf24;
+            --pay-border: #f59e0b;
+
             /* Dyżury */
             --duty-bg: #3f2c06;
             --duty-color: #fcd34d;
@@ -45,7 +50,7 @@
 
             --empty: #1f2937;
 
-            /* Zmienne wysokości nagłówka do funkcji "sticky" */
+            /* Zmienne wysokości nagłówka */
             --header-height-desktop: 134px; 
             --header-height-mobile: 155px; 
         }
@@ -75,7 +80,6 @@
 
         .header-left { display: flex; align-items: center; gap: 20px; }
         
-        /* Stylizacja logo - usunięcie tła za pomocą mix-blend-mode */
         .logo { 
             height: 85px; width: auto; 
             mix-blend-mode: multiply; filter: contrast(1.1);
@@ -91,14 +95,12 @@
             color: #f0fdf4; margin-top: 4px; font-weight: 600;
         }
         
-        /* Informacja o wybranym planie (np. Jan Kowalski) */
         .selection-info {
             font-size: 1.4rem; font-weight: 700; color: #fbbf24; margin-top: 5px;
             text-shadow: 0 2px 4px rgba(0,0,0,0.8); display: none; 
             text-transform: uppercase; letter-spacing: 0.5px;
         }
 
-        /* Nawigator tygodni */
         .week-nav {
             display: flex; align-items: center; gap: 20px;
             background: rgba(0, 0, 0, 0.25); padding: 8px 20px;
@@ -127,7 +129,7 @@
         }
         button.back-btn:hover { background: #dc2626; transform: translateY(-2px); box-shadow: 0 6px 12px rgba(0,0,0,0.5); }
 
-        /* --- DASHBOARD (MENU GŁÓWNE) --- */
+        /* --- DASHBOARD --- */
         #dashboard-view { padding: 40px; display: block; max-width: 1400px; margin: 0 auto; width: 100%; box-sizing: border-box; }
         .section-title { 
             font-size: 2rem; font-weight: 700; color: #f0fdf4; margin: 40px 0 20px 0; 
@@ -137,7 +139,6 @@
         }
         .section-title:first-child { margin-top: 0; }
 
-        /* Kafelki (tylko Desktop) */
         .tile-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 20px; }
         .tile {
             padding: 25px 15px; text-align: center; border-radius: 12px; cursor: pointer;
@@ -154,7 +155,6 @@
         .tile.room { border-bottom: 4px solid var(--accent-room); }
         .tile.class { border-bottom: 4px solid var(--accent-class); }
 
-        /* Listy rozwijane (tylko Mobile) */
         .mobile-select-container { display: none; margin-bottom: 30px; }
         .mobile-select {
             width: 100%; padding: 15px 20px; font-size: 1.2rem;
@@ -168,87 +168,46 @@
         .mobile-select.room { border-color: var(--accent-room); }
         .mobile-select.class { border-color: var(--accent-class); }
 
-
-        /* --- OPTYMALIZACJA MOBILE (@media) --- */
+        /* --- MOBILE OPTIMIZATION --- */
         @media (max-width: 900px) {
             header {
-                /* Ustawienie w rzędach z zawijaniem */
-                flex-direction: row; 
-                flex-wrap: wrap;
-                align-content: flex-start;
-                height: auto;
-                padding: 10px;
+                flex-direction: row; flex-wrap: wrap; align-content: flex-start;
+                height: auto; padding: 10px;
                 background: linear-gradient(to bottom, #4dff88 0%, #020617 100%);
             }
-
-            /* LOGO I TYTUŁ */
             .header-left { 
-                width: 100%; 
-                flex-direction: row; 
-                justify-content: flex-start; 
-                align-items: center;
-                gap: 15px;
-                margin-bottom: 8px;
+                width: 100%; flex-direction: row; justify-content: flex-start; 
+                align-items: center; gap: 15px; margin-bottom: 8px;
             }
-
-            .logo { height: 50px; margin-right: 5px; } /* Mniejsze logo */
-            
-            .header-text { 
-                align-items: flex-start; text-align: left; flex: 1; 
-            }
+            .logo { height: 50px; margin-right: 5px; }
+            .header-text { alignItems: flex-start; text-align: left; flex: 1; }
             .header-text h1 { font-size: 1.1rem; line-height: 1.1; margin-bottom: 2px; }
             .clock { font-size: 0.85rem; }
             
             .selection-info {
                 font-size: 1rem; color: #fbbf24; margin: 2px 0;
                 background: rgba(0,0,0,0.4); padding: 2px 8px;
-                border-radius: 4px;
-                display: inline-block;
+                border-radius: 4px; display: inline-block;
             }
 
-            /* STEROWANIE (Tydzień + Menu w jednej linii) */
             .week-nav { 
-                order: 2;
-                flex: 6; /* 60% szerokości */
-                justify-content: space-between; 
-                margin-top: 0;
-                padding: 4px 8px; 
-                gap: 5px;
-                height: 42px; 
+                order: 2; flex: 6; justify-content: space-between; 
+                margin-top: 0; padding: 4px 8px; gap: 5px; height: 42px; 
                 box-sizing: border-box;
             }
             .week-display { min-width: auto; }
-            .week-label { display: none; } /* Ukrywamy etykietę dla oszczędności */
+            .week-label { display: none; }
             .week-range { font-size: 0.95rem; white-space: nowrap; }
             .week-nav-btn { font-size: 1.4rem; padding: 0 5px; }
 
-            .controls { 
-                order: 3;
-                flex: 4; /* 40% szerokości */
-                margin-top: 0;
-                justify-content: flex-end;
-                margin-left: 10px;
-            }
+            .controls { order: 3; flex: 4; margin-top: 0; justify-content: flex-end; margin-left: 10px; }
+            button.back-btn { width: 100%; justify-content: center; padding: 0 10px; height: 42px; font-size: 0.8rem; white-space: nowrap; }
             
-            button.back-btn { 
-                width: 100%; 
-                justify-content: center; 
-                padding: 0 10px;
-                height: 42px;
-                font-size: 0.8rem;
-                white-space: nowrap;
-            }
-            
-            /* Zmiana widoków */
             .tile-grid { display: none !important; }
             .mobile-select-container { display: block !important; }
-            
             .section-title { font-size: 1.5rem; margin: 20px 0 10px 0; }
             #dashboard-view { padding: 15px; }
-            
-            /* Plan w jednej kolumnie */
             .week-container { grid-template-columns: 1fr !important; }
-            /* Dopasowanie sticky nagłówka do mniejszego headera */
             .day-header { top: var(--header-height-mobile) !important; }
         }
 
@@ -257,9 +216,8 @@
             border-bottom: 1px solid #1f2937; text-align: center; letter-spacing: 1px;
         }
 
-        /* --- WIDOK PLANU --- */
+        /* --- PLAN LEKCJI --- */
         #schedule-view { display: none; width: 100%; padding-bottom: 40px; }
-        
         .week-container { display: grid; grid-template-columns: repeat(5, 1fr); gap: 15px; padding: 20px; align-items: start; }
         
         .day-col {
@@ -267,7 +225,6 @@
             display: flex; flex-direction: column; border: 1px solid #334155;
         }
         
-        /* Pływający nagłówek dnia */
         .day-header {
             background: linear-gradient(to bottom, #065f46, #064e3b); color: #ecfdf5; 
             padding: 15px; text-align: center; font-weight: 700; 
@@ -277,8 +234,6 @@
         }
         .day-date { font-weight: 400; font-size: 0.8em; color: #a7f3d0; display: block; margin-top: 4px; }
         .day-content { padding: 10px; display: flex; flex-direction: column; gap: 8px; }
-        
-        /* Karty lekcji */
         .slot-wrapper { 
             border: 1px solid #334155; border-radius: 8px; overflow: hidden; 
             display: flex; flex-direction: column; gap: 0px; background: #0f172a;
@@ -311,12 +266,25 @@
             border: 1px solid #475569;
         }
 
+        /* STYLE DLA STATUSÓW ZAJĘĆ */
         .is-sub { background: var(--sub-bg); border-left-color: var(--sub-border) !important; }
         .is-sub .main-info { text-decoration: line-through; opacity: 0.6; color: #fca5a5; }
         .note-red { color: #f87171; font-weight: 700; font-size: 0.8rem; text-transform: uppercase; }
+        
         .is-new { background: var(--new-bg); border-left-color: var(--new-border) !important; }
         .is-new .main-info { color: #86efac; }
         .is-new .sub-line { color: #dcfce7; }
+
+        /* ODZNAKA PŁATNOŚCI (DODANO) */
+        .pay-badge {
+            display: inline-block;
+            background: var(--pay-bg); color: var(--pay-text);
+            border: 1px solid var(--pay-border);
+            border-radius: 4px; padding: 2px 6px;
+            font-size: 0.75rem; font-weight: bold;
+            margin-top: 4px; text-transform: uppercase;
+            box-shadow: 0 0 5px rgba(251, 191, 36, 0.2);
+        }
 
         .duty-section {
             background: var(--duty-bg); color: var(--duty-color);
@@ -431,11 +399,8 @@
         document.getElementById('schedule-view').style.display = 'none';
         document.getElementById('nav-controls').style.display = 'none';
         document.getElementById('week-nav-container').style.display = 'none';
-        
-        // Ukryj info o wyborze
         document.getElementById('selection-info').style.display = 'none';
         document.getElementById('selection-info').innerText = '';
-
         document.body.className = '';
         log("Menu Główne");
     }
@@ -457,7 +422,7 @@
         else if (mode === 'class') displayName = "Klasa " + id;
         
         displayDiv.innerText = displayName;
-        displayDiv.style.display = 'block'; // Na mobile CSS zrobi z tego inline-block
+        displayDiv.style.display = 'block';
 
         document.getElementById('dashboard-view').style.display = 'none';
         document.getElementById('schedule-view').style.display = 'block';
@@ -515,7 +480,6 @@
             const div = document.createElement('div');
             div.innerHTML = `<div class="section-title">${title}</div>`;
             
-            // 1. Kafelki (Desktop)
             const grid = document.createElement('div'); 
             grid.className = 'tile-grid';
             items.forEach(item => {
@@ -527,7 +491,6 @@
             });
             div.appendChild(grid);
 
-            // 2. Select (Mobile)
             const selectContainer = document.createElement('div');
             selectContainer.className = 'mobile-select-container';
             const select = document.createElement('select');
@@ -572,6 +535,7 @@
         return new Promise(r => {
             const reader = new FileReader(); 
             reader.onload = () => r(reader.result); 
+            // FIX: Jawne wskazanie kodowania Windows-1250 dla plików XML
             reader.readAsText(blob, 'windows-1250'); 
         });
     }
@@ -850,6 +814,13 @@
                         const div = document.createElement('div');
                         div.className = 'card is-new';
                         let line = mode==='teacher' ? `s.${sub.room} / ${sub.branch}` : `${getTeacherName(sub.sub)}`;
+                        
+                        // FIX: DODANO WYŚWIETLANIE PŁATNOŚCI W PANELU NAUCZYCIELA
+                        let payBadge = "";
+                        if(mode === 'teacher' && sub.payInfo) {
+                            payBadge = `<span class="pay-badge">$ ${sub.payInfo}</span>`;
+                        }
+
                         div.innerHTML = `
                             <div class="meta">
                                 <span class="nr">${p.nr}</span> ${p.start}-${p.end}
@@ -857,7 +828,8 @@
                             </div>
                             <div class="main-info">ZASTĘPSTWO</div>
                             <div class="sub-line">${line} / ${sub.subject}</div>
-                            <div class="details" style="font-size:0.75em; color:#a7f3d0">Za: ${sub.rawAbs}</div>`;
+                            <div class="details" style="font-size:0.75em; color:#a7f3d0">Za: ${sub.rawAbs}</div>
+                            ${payBadge}`;
                         wrapper.appendChild(div);
                     });
                 }
