@@ -16,10 +16,11 @@
             --tile-bg: #0f172a;
             --tile-border: #1e293b;
             
-            /* Akcenty */
-            --accent-teacher: #22c55e;
-            --accent-room: #fbbf24;
-            --accent-class: #38bdf8;
+            /* Akcenty Kategorii */
+            --accent-teacher: #22c55e;  /* Zielony */
+            --accent-class: #38bdf8;    /* Niebieski */
+            --accent-room: #fbbf24;     /* Żółty */
+            --accent-duty: #f472b6;     /* Różowy (dla miejsc dyżurów) */
 
             /* Paski boczne */
             --lesson-border: #16a34a;
@@ -35,7 +36,7 @@
             --new-color: #4ade80;
             --new-border: #22c55e;
             
-            /* Płatności (Złoty kolor) */
+            /* Płatności */
             --pay-bg: #451a03;
             --pay-text: #fbbf24;
             --pay-border: #f59e0b;
@@ -151,9 +152,11 @@
             border: 1px solid var(--tile-border); position: relative; overflow: hidden;
         }
         .tile:hover { transform: translateY(-5px); box-shadow: 0 10px 25px rgba(0,0,0,0.5); z-index: 2; }
+        
         .tile.teacher { border-bottom: 4px solid var(--accent-teacher); }
-        .tile.room { border-bottom: 4px solid var(--accent-room); }
         .tile.class { border-bottom: 4px solid var(--accent-class); }
+        .tile.room { border-bottom: 4px solid var(--accent-room); }
+        .tile.duty { border-bottom: 4px solid var(--accent-duty); }
 
         .mobile-select-container { display: none; margin-bottom: 30px; }
         .mobile-select {
@@ -165,8 +168,9 @@
             background-repeat: no-repeat; background-position: right 15px center; background-size: 20px;
         }
         .mobile-select.teacher { border-color: var(--accent-teacher); }
-        .mobile-select.room { border-color: var(--accent-room); }
         .mobile-select.class { border-color: var(--accent-class); }
+        .mobile-select.room { border-color: var(--accent-room); }
+        .mobile-select.duty { border-color: var(--accent-duty); }
 
         /* --- MOBILE OPTIMIZATION --- */
         @media (max-width: 900px) {
@@ -253,6 +257,7 @@
         
         body.mode-room .card { border-left-color: var(--room-border); }
         body.mode-class .card { border-left-color: var(--class-border); }
+        body.mode-duty .card { border-left-color: var(--duty-border); }
 
         .meta { display: flex; justify-content: space-between; font-size: 0.8rem; color: #94a3b8; margin-bottom: 2px; font-weight: 600; }
         .nr { background: #334155; padding: 1px 6px; border-radius: 4px; color: #f1f5f9; }
@@ -332,7 +337,12 @@
     </div>
     
     <div class="controls" id="nav-controls" style="display:none">
-        <select id="mode-select" style="display:none"><option value="teacher">Nauczyciel</option><option value="class">Oddział</option><option value="room">Sala</option></select>
+        <select id="mode-select" style="display:none">
+            <option value="teacher">Nauczyciel</option>
+            <option value="class">Oddział</option>
+            <option value="room">Sala</option>
+            <option value="duty">Dyżur</option>
+        </select>
         <select id="data-select" style="display:none"></select>
         
         <button class="back-btn" onclick="returnToDashboard()">
@@ -420,6 +430,7 @@
         if (mode === 'teacher' && DB.teachers[id]) displayName = DB.teachers[id].name;
         else if (mode === 'room') displayName = "Sala " + id;
         else if (mode === 'class') displayName = "Klasa " + id;
+        else if (mode === 'duty') displayName = "Dyżur: " + id;
         
         displayDiv.innerText = displayName;
         displayDiv.style.display = 'block';
@@ -454,6 +465,7 @@
         log("Aktualizacja danych...", false);
         DB.lessons = []; DB.periods = []; DB.duties = []; DB.subs = []; DB.dutyChanges = [];
         DB.teachers = {}; DB.classes = {}; DB.classesList = []; DB.rooms = []; DB.groups = {};
+        DB.locations = []; // Reset locations
 
         try {
             await loadXML();
@@ -518,10 +530,16 @@
             .sort((a,b) => a[1].name.localeCompare(b[1].name))
             .filter(([id, t]) => !t.name.toLowerCase().includes('wakat'))
             .map(([id, t]) => ({val: id, txt: t.name}));
-            
+        
+        // ZBIERANIE MIEJSC DYŻURÓW
+        const dutyPlaces = [...new Set(
+            DB.duties.map(d => d.place).concat(DB.dutyChanges.map(d => d.place))
+        )].filter(p => p).sort().map(p => ({val: p, txt: p}));
+
         createSection("Nauczyciele", teachers, 'teacher', (id) => openSchedule('teacher', id));
-        createSection("Sale Lekcyjne", DB.rooms.sort().map(r => ({val: r, txt: r})), 'room', (id) => openSchedule('room', id));
         createSection("Oddziały", DB.classesList.sort().map(c => ({val: c, txt: c})), 'class', (id) => openSchedule('class', id));
+        createSection("Sale Lekcyjne", DB.rooms.sort().map(r => ({val: r, txt: r})), 'room', (id) => openSchedule('room', id));
+        createSection("Miejsca Dyżurów", dutyPlaces, 'duty', (id) => openSchedule('duty', id));
     }
 
     async function fetchFresh(url) {
@@ -533,9 +551,9 @@
         const res = await fetchFresh(url);
         const blob = await res.blob();
         return new Promise(r => {
+            // FIX: Jawne wskazanie kodowania Windows-1250 dla plików XML (rozwiązanie "krzaczków")
             const reader = new FileReader(); 
             reader.onload = () => r(reader.result); 
-            // FIX: Jawne wskazanie kodowania Windows-1250 dla plików XML
             reader.readAsText(blob, 'windows-1250'); 
         });
     }
@@ -706,6 +724,8 @@
         if (mode === 'teacher') items = Object.entries(DB.teachers).sort((a,b) => a[1].name.localeCompare(b[1].name)).map(x => ({val: x[0], txt: x[1].name}));
         else if (mode === 'room') items = DB.rooms.sort().map(x => ({val: x, txt: x}));
         else if (mode === 'class') items = DB.classesList.sort().map(x => ({val: x, txt: x}));
+        else if (mode === 'duty') items = [...new Set(DB.duties.map(d=>d.place).concat(DB.dutyChanges.map(d=>d.place)))].filter(p=>p).sort().map(x => ({val: x, txt: x}));
+        
         items.forEach(i => {
             const opt = document.createElement('option'); opt.value = i.val; opt.innerText = i.txt; sel.appendChild(opt);
         });
@@ -761,102 +781,140 @@
                 });
             }
 
-            DB.periods.forEach(p => {
-                const wrapper = document.createElement('div'); wrapper.className = 'slot-wrapper';
-                let lessons = [];
-                if (mode === 'teacher') lessons = DB.lessons.filter(l => l.teacherId == selectedId && l.day == dayNum && l.period == p.nr);
-                else if (mode === 'room') lessons = DB.lessons.filter(l => l.room === selectedId && l.day == dayNum && l.period == p.nr);
-                else if (mode === 'class') lessons = DB.lessons.filter(l => l.classNames.includes(selectedId) && l.day == dayNum && l.period == p.nr);
+            // WIDOK MIEJSCA DYŻURU (Nowy tryb)
+            if (mode === 'duty') {
+                const duties = DB.duties.filter(d => d.day == dayNum && d.place === selectedId);
+                const changes = DB.dutyChanges.filter(d => d.date == dateStr && d.place === selectedId);
                 
-                let subAdds = [];
-                if (mode === 'teacher') subAdds = DB.subs.filter(s => s.date == dateStr && s.sub == selectedId && s.periodRaw.startsWith(p.nr+','));
-                else if (mode === 'room') subAdds = DB.subs.filter(s => s.date == dateStr && s.room === selectedId && s.periodRaw.startsWith(p.nr+','));
-                else if (mode === 'class') subAdds = DB.subs.filter(s => s.date == dateStr && normalizeClass(s.branch).includes(normalizeClass(selectedId)) && s.periodRaw.startsWith(p.nr+','));
+                // Scalanie dyżurów i zmian
+                let allDuties = [];
+                duties.forEach(d => {
+                    // Czy odwołany?
+                    const cancelled = DB.dutyChanges.find(ch => ch.date == dateStr && ch.time == d.time && ch.absent == d.teacherId);
+                    if(cancelled) {
+                        allDuties.push({...d, type: 'cancelled', sub: cancelled.rawSub});
+                    } else {
+                        allDuties.push({...d, type: 'normal'});
+                    }
+                });
+                changes.forEach(ch => {
+                    // Dodane zastępstwo dyżuru
+                    allDuties.push({ time: ch.time, teacherId: ch.sub, type: 'added', startMin: timeToMin(ch.time.split('-')[0]) });
+                });
+                
+                allDuties.sort((a,b) => a.startMin - b.startMin);
 
-                lessons.sort((a,b) => (a.groupName||"").localeCompare(b.groupName||""));
+                allDuties.forEach(d => {
+                    const div = document.createElement('div'); div.className = 'card';
+                    if(d.type === 'cancelled') {
+                        div.classList.add('is-sub');
+                        div.innerHTML = `<div class="meta">${d.time}</div><div class="main-info" style="text-decoration:line-through">${getTeacherName(d.teacherId)}</div><div class="note-red">Zastępstwo</div>`;
+                    } else if(d.type === 'added') {
+                        div.classList.add('is-new');
+                        div.innerHTML = `<div class="meta">${d.time}</div><div class="main-info">${getTeacherName(d.teacherId)}</div><div class="sub-line">ZASTĘPSTWO</div>`;
+                    } else {
+                        div.innerHTML = `<div class="meta">${d.time}</div><div class="main-info">${getTeacherName(d.teacherId)}</div>`;
+                    }
+                    content.appendChild(div);
+                });
+            } else {
+                // STANDARDOWY WIDOK LEKCJI
+                DB.periods.forEach(p => {
+                    const wrapper = document.createElement('div'); wrapper.className = 'slot-wrapper';
+                    let lessons = [];
+                    if (mode === 'teacher') lessons = DB.lessons.filter(l => l.teacherId == selectedId && l.day == dayNum && l.period == p.nr);
+                    else if (mode === 'room') lessons = DB.lessons.filter(l => l.room === selectedId && l.day == dayNum && l.period == p.nr);
+                    else if (mode === 'class') lessons = DB.lessons.filter(l => l.classNames.includes(selectedId) && l.day == dayNum && l.period == p.nr);
+                    
+                    let subAdds = [];
+                    if (mode === 'teacher') subAdds = DB.subs.filter(s => s.date == dateStr && s.sub == selectedId && s.periodRaw.startsWith(p.nr+','));
+                    else if (mode === 'room') subAdds = DB.subs.filter(s => s.date == dateStr && s.room === selectedId && s.periodRaw.startsWith(p.nr+','));
+                    else if (mode === 'class') subAdds = DB.subs.filter(s => s.date == dateStr && normalizeClass(s.branch).includes(normalizeClass(selectedId)) && s.periodRaw.startsWith(p.nr+','));
 
-                if(lessons.length > 0) {
-                    lessons.forEach(lesson => {
-                        const div = document.createElement('div');
-                        const subAbs = DB.subs.find(s => s.date == dateStr && s.absent == lesson.teacherId && s.periodRaw.startsWith(p.nr+','));
+                    lessons.sort((a,b) => (a.groupName||"").localeCompare(b.groupName||""));
 
-                        if(subAbs) {
-                            div.className = 'card is-sub';
-                            div.innerHTML = `
-                                <div class="meta">
-                                    <span class="nr">${p.nr}</span> ${p.start}-${p.end}
-                                    ${lesson.groupName ? `<span class="group-badge">${lesson.groupName}</span>` : ''}
-                                </div>
-                                <div class="main-info">${lesson.subject}</div>
-                                <span class="note-red">Nieobecność</span>`;
-                        } else {
-                            div.className = 'card';
-                            let line = "";
-                            if(mode === 'teacher') line = `${lesson.classNames} / s.${lesson.room}`;
-                            else if(mode === 'room') line = `${lesson.classNames} / ${getTeacherName(lesson.teacherId)}`;
-                            else line = `${getTeacherName(lesson.teacherId)} / s.${lesson.room}`;
+                    if(lessons.length > 0) {
+                        lessons.forEach(lesson => {
+                            const div = document.createElement('div');
+                            const subAbs = DB.subs.find(s => s.date == dateStr && s.absent == lesson.teacherId && s.periodRaw.startsWith(p.nr+','));
+
+                            if(subAbs) {
+                                div.className = 'card is-sub';
+                                div.innerHTML = `
+                                    <div class="meta">
+                                        <span class="nr">${p.nr}</span> ${p.start}-${p.end}
+                                        ${lesson.groupName ? `<span class="group-badge">${lesson.groupName}</span>` : ''}
+                                    </div>
+                                    <div class="main-info">${lesson.subject}</div>
+                                    <span class="note-red">Nieobecność</span>`;
+                            } else {
+                                div.className = 'card';
+                                let line = "";
+                                if(mode === 'teacher') line = `${lesson.classNames} / s.${lesson.room}`;
+                                else if(mode === 'class') line = `${getTeacherName(lesson.teacherId)} / s.${lesson.room}`;
+                                else line = `${getTeacherName(lesson.teacherId)} / ${lesson.classNames}`;
+                                
+                                div.innerHTML = `
+                                    <div class="meta">
+                                        <span class="nr">${p.nr}</span> ${p.start}-${p.end}
+                                        ${lesson.groupName ? `<span class="group-badge">${lesson.groupName}</span>` : ''}
+                                    </div>
+                                    <div class="main-info">${lesson.subject}</div>
+                                    <div class="sub-line">${line}</div>`;
+                            }
+                            wrapper.appendChild(div);
+                        });
+                    }
+
+                    if(subAdds.length > 0) {
+                        subAdds.forEach(sub => {
+                            let subGroup = "";
+                            if(sub.branch && sub.branch.includes('|')) subGroup = sub.branch.split('|')[1];
+                            const div = document.createElement('div');
+                            div.className = 'card is-new';
                             
+                            let line = "";
+                            if (mode === 'teacher') line = `s.${sub.room} / ${sub.branch}`;
+                            else if (mode === 'class') line = `${getTeacherName(sub.sub)} / s.${sub.room}`;
+                            else line = `${getTeacherName(sub.sub)} / ${sub.branch}`;
+                            
+                            let payBadge = "";
+                            if(mode === 'teacher' && sub.payInfo) {
+                                payBadge = `<span class="pay-badge">$ ${sub.payInfo}</span>`;
+                            }
+
                             div.innerHTML = `
                                 <div class="meta">
                                     <span class="nr">${p.nr}</span> ${p.start}-${p.end}
-                                    ${lesson.groupName ? `<span class="group-badge">${lesson.groupName}</span>` : ''}
+                                    ${subGroup ? `<span class="group-badge">${subGroup}</span>` : ''}
                                 </div>
-                                <div class="main-info">${lesson.subject}</div>
-                                <div class="sub-line">${line}</div>`;
-                        }
-                        wrapper.appendChild(div);
-                    });
-                }
+                                <div class="main-info">ZASTĘPSTWO</div>
+                                <div class="sub-line">${line} / ${sub.subject}</div>
+                                <div class="details" style="font-size:0.75em; color:#a7f3d0">Za: ${sub.rawAbs}</div>
+                                ${payBadge}`;
+                            wrapper.appendChild(div);
+                        });
+                    }
 
-                if(subAdds.length > 0) {
-                    subAdds.forEach(sub => {
-                        let subGroup = "";
-                        if(sub.branch && sub.branch.includes('|')) subGroup = sub.branch.split('|')[1];
-                        const div = document.createElement('div');
-                        div.className = 'card is-new';
-                        
-                        // ZMIANA: Dodano wyświetlanie sali dla oddziału
-                        let line = "";
-                        if (mode === 'teacher') line = `s.${sub.room} / ${sub.branch}`;
-                        else if (mode === 'class') line = `${getTeacherName(sub.sub)} / s.${sub.room}`;
-                        else line = `${getTeacherName(sub.sub)} / ${sub.branch}`;
-                        
-                        let payBadge = "";
-                        if(mode === 'teacher' && sub.payInfo) {
-                            payBadge = `<span class="pay-badge">$ ${sub.payInfo}</span>`;
-                        }
-
-                        div.innerHTML = `
-                            <div class="meta">
-                                <span class="nr">${p.nr}</span> ${p.start}-${p.end}
-                                ${subGroup ? `<span class="group-badge">${subGroup}</span>` : ''}
-                            </div>
-                            <div class="main-info">ZASTĘPSTWO</div>
-                            <div class="sub-line">${line} / ${sub.subject}</div>
-                            <div class="details" style="font-size:0.75em; color:#a7f3d0">Za: ${sub.rawAbs}</div>
-                            ${payBadge}`;
-                        wrapper.appendChild(div);
-                    });
-                }
-
-                if(lessons.length === 0 && subAdds.length === 0) {
-                     const div = document.createElement('div');
-                     div.className = 'card empty'; 
-                     div.innerHTML = `${p.nr}. ${p.start}`;
-                     wrapper.appendChild(div);
-                }
-                
-                if(mode === 'teacher') {
-                    const pEnd = timeToMin(p.end);
-                    getDutiesForTime(selectedId, dayNum, dateStr, pEnd-5, pEnd+15).forEach(d => {
-                        const dDiv = document.createElement('div'); dDiv.className = 'duty-section';
-                        if(d.status === 'added') dDiv.classList.add('duty-sub');
-                        dDiv.innerHTML = `<b>${d.time}</b> ${d.place}`;
-                        wrapper.appendChild(dDiv);
-                    });
-                }
-                content.appendChild(wrapper);
-            });
+                    if(lessons.length === 0 && subAdds.length === 0) {
+                         const div = document.createElement('div');
+                         div.className = 'card empty'; 
+                         div.innerHTML = `${p.nr}. ${p.start}`;
+                         wrapper.appendChild(div);
+                    }
+                    
+                    if(mode === 'teacher') {
+                        const pEnd = timeToMin(p.end);
+                        getDutiesForTime(selectedId, dayNum, dateStr, pEnd-5, pEnd+15).forEach(d => {
+                            const dDiv = document.createElement('div'); dDiv.className = 'duty-section';
+                            if(d.status === 'added') dDiv.classList.add('duty-sub');
+                            dDiv.innerHTML = `<b>${d.time}</b> ${d.place}`;
+                            wrapper.appendChild(dDiv);
+                        });
+                    }
+                    content.appendChild(wrapper);
+                });
+            }
             col.appendChild(content); grid.appendChild(col);
         }
     }
