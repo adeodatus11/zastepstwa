@@ -606,8 +606,10 @@
 
     async function refreshData() {
         log("Aktualizacja danych...", false);
+        // Resetowanie wszystkich baz danych
         DB.lessons = []; DB.periods = []; DB.duties = []; DB.subs = []; DB.dutyChanges = [];
         DB.teachers = {}; DB.classes = {}; DB.classesList = []; DB.rooms = []; DB.groups = {};
+        DB.dutyPlaces = new Set(); // <--- TO JEST KLUCZOWE (Reset listy miejsc)
 
         try {
             await loadXML();
@@ -754,9 +756,12 @@ function renderDashboard() {
             const ws = wb.Sheets[sheetName];
             const data = XLSX.utils.sheet_to_json(ws, {header: 1});
             let currentDayMap = null;
+            
             for(let i=0; i<data.length; i++) {
                 const row = data[i]; if(!row || !row.length) continue;
                 const rowStr = row.map(c => String(c||"").toLowerCase());
+                
+                // Wykrywanie nagłówka dni tygodnia
                 if(rowStr.some(s => s.includes('poniedziałek'))) {
                     currentDayMap = {};
                     row.forEach((cell, idx) => {
@@ -769,28 +774,37 @@ function renderDashboard() {
                     });
                     continue;
                 }
+
                 if(currentDayMap) {
                     let timeVal=null, placeVal=null;
+                    // Szukamy komórki z godziną (format 00:00-00:00 lub 00.00-00.00)
                     for(let c=0; c<5; c++) {
-                        if(row[c] && /\d{1,2}:\d{2}\s*-\s*\d{1,2}:\d{2}/.test(String(row[c]))) {
+                        // Ulepszony REGEX: akceptuje kropki i dwukropki
+                        if(row[c] && /\d{1,2}[:.]\d{2}\s*-\s*\d{1,2}[:.]\d{2}/.test(String(row[c]))) {
                             timeVal = String(row[c]).trim();
-                            if(c>0 && row[c-1]) placeVal=row[c-1]; else if(row[0]) placeVal=row[0]; break;
+                            // Miejsce jest zazwyczaj w kolumnie przed godziną, albo w pierwszej kolumnie
+                            if(c>0 && row[c-1]) placeVal=row[c-1]; else if(row[0]) placeVal=row[0]; 
+                            break;
                         }
                     }
+
                     if(timeVal) {
+                        const pName = placeVal ? String(placeVal).trim() : "Dyżur Ogólny";
+                        
+                        // WAŻNE: Dodajemy miejsce do listy NAWET jeśli nie ma nauczyciela
+                        // Dzięki temu lista w menu zawsze się wypełni
+                        if(pName.length > 2) DB.dutyPlaces.add(pName);
+
                         for(const [colIdx, dayNum] of Object.entries(currentDayMap)) {
                             const rawTeacher = row[colIdx];
                             if(rawTeacher && String(rawTeacher).length>2) {
                                 const tId = findTeacherId(String(rawTeacher).trim());
-                                const pName = placeVal ? placeVal.trim() : "Dyżur Ogólny";
                                 if(tId) {
                                     DB.duties.push({
                                         teacherId: tId, day: dayNum, time: timeVal,
                                         startMin: timeToMin(timeVal.split('-')[0]),
                                         place: pName
                                     });
-                                    // Dodajemy miejsce do listy unikalnych miejsc
-                                    DB.dutyPlaces.add(pName); 
                                 }
                             }
                         }
@@ -840,7 +854,12 @@ function renderDashboard() {
         }
         return bestId;
     }
-    function timeToMin(str) { if(!str) return 0; const [h,m] = str.trim().split(':').map(Number); return h*60+m; }
+    function timeToMin(str) { 
+        if(!str) return 0; 
+        // Zamień kropki na dwukropki, usuń spacje i podziel
+        const [h,m] = str.replace('.', ':').trim().split(':').map(Number); 
+        return h*60+m; 
+    }
     function parseDate(val) {
         if(!val) return null;
         if(typeof val === 'number') { const d = XLSX.SSF.parse_date_code(val); return `${d.y}-${d.m<10?'0':''}${d.m}-${d.d<10?'0':''}${d.d}`; }
