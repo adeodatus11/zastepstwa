@@ -23,13 +23,7 @@
         /* --- NAGŁÓWEK --- */
         header {
             height: 170px;
-            /* Gradient: Jasna zieleń po lewej (dla logo), przechodząca w ciemny */
-            background: linear-gradient(
-                to right, 
-                #4dff88 0%,   /* Start: Jasna zieleń pod orła */
-                #33cc66 30%,  /* Środek: Soczysta zieleń */
-                #020617 100%  /* Koniec: Ciemne tło pasujące do reszty strony */
-            );
+            background: linear-gradient(to right, #4dff88 0%, #33cc66 30%, #020617 100%);
             display: flex;
             align-items: center;
             padding: 0 40px;
@@ -39,7 +33,6 @@
             z-index: 10;
         }
 
-        /* --- KONTENER LOGO --- */
         .logo-container {
             margin-right: 40px;
             flex-shrink: 0;
@@ -50,12 +43,10 @@
             width: auto;
         }
 
-        /* --- LOGO Z EFEKTEM WTOPINENIA --- */
         .logo {
             height: 100%;
             width: auto;
             object-fit: contain;
-            /* mix-blend-mode: multiply sprawia, że białe tło PNG staje się przezroczyste */
             mix-blend-mode: multiply; 
             filter: contrast(1.1); 
         }
@@ -77,17 +68,16 @@
             text-shadow: 0 2px 4px rgba(0,0,0,0.5);
         }
         
-        /* --- STYL DATY I GODZINY (POPRAWIONY NA BIAŁY) --- */
         .header-text h2 { 
             font-size: 1.4rem; 
-            color: #ffffff; /* ZMIANA: Czysta biel dla lepszego kontrastu */
+            color: #ffffff; 
             font-weight: 500; 
             margin-top: 8px;
             font-family: 'Consolas', monospace;
             display: flex;
             align-items: center;
             gap: 12px;
-            text-shadow: 0 1px 3px rgba(0,0,0,0.6); /* Lekki cień dla czytelności na jasnym tle */
+            text-shadow: 0 1px 3px rgba(0,0,0,0.6); 
         }
 
         .live-dot {
@@ -123,8 +113,8 @@
 
         .class-header {
             background: linear-gradient(90deg, #064e3b 0%, #065f46 100%);
-            padding: 15px 30px;
-            font-size: 2rem;
+            padding: 10px 30px;
+            font-size: 1.8rem;
             font-weight: 700;
             display: flex;
             justify-content: space-between;
@@ -133,7 +123,7 @@
         }
         .class-name { color: #d1fae5; text-shadow: 0 0 15px rgba(16, 185, 129, 0.3); }
 
-        /* --- TABELA LEKCJI --- */
+        /* --- TABELA LEKCJI (UPROSZCZONA) --- */
         .lesson-table {
             width: 100%;
             border-collapse: collapse;
@@ -141,56 +131,109 @@
             table-layout: fixed;
         }
         
-        .lesson-table th {
-            text-align: left;
-            padding: 8px 15px;
-            color: #94a3b8;
-            font-size: 0.85rem;
-            text-transform: uppercase;
-            border-bottom: 1px solid #374151;
-            background: #1f2937;
-            letter-spacing: 1px;
-        }
-
         .lesson-table td {
-            padding: 6px 15px;
-            border-bottom: 1px solid #1f2937;
+            padding: 4px 15px;
+            border-bottom: 1px solid #334155;
             vertical-align: middle;
-            height: 55px; 
+            height: 60px; 
         }
 
-        .col-nr { width: 55px; color: #64748b; font-weight: bold; text-align: center; font-size: 1.1em; }
-        .col-subj { width: 45%; font-weight: 600; color: #f1f5f9; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
-        .col-room { width: 15%; text-align: center; font-weight: bold; color: #fbbf24; }
-        .col-teach { width: 35%; font-size: 0.9em; color: #9ca3af; text-align: right; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
-
-        /* --- STYL ZASTĘPSTW I GRUP --- */
-        .multi-item {
+        /* KOLUMNY */
+        .col-nr { 
+            width: 60px; 
+            color: #94a3b8; 
+            font-weight: bold; 
+            text-align: center; 
+            font-size: 1.4rem; 
+            border-right: 1px solid #334155;
+        }
+        
+        .col-room { 
+            width: 100px; 
+            text-align: center; 
+            font-weight: 800; 
+            color: #fbbf24; /* Złoty kolor sali */
+            font-size: 1.6rem;
+        }
+        
+        .col-info { 
+            /* Reszta miejsca */
+            color: #f1f5f9; 
             display: flex;
             flex-direction: column;
             justify-content: center;
-            min-height: 100%;
-            gap: 2px;
+            line-height: 1.1;
         }
 
-        .item-row {
+        .info-subject {
+            font-size: 1.3rem;
+            font-weight: 600;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .info-teacher {
+            font-size: 0.95rem;
+            color: #cbd5e1;
+            font-style: italic;
+        }
+
+        /* --- STYLE ZASTĘPSTW I PRZENIESIEŃ --- */
+        .row-container {
             display: flex;
+            width: 100%;
+            height: 100%;
             align-items: center;
-            line-height: 1.2;
+        }
+
+        /* Zwykła lekcja */
+        .row-normal { }
+
+        /* Zastępstwo / Nowa lekcja */
+        .row-new {
+            background-color: rgba(22, 163, 74, 0.15); /* Zielone tło */
+            border-left: 4px solid #22c55e;
+        }
+        .row-new .col-room { color: #86efac; }
+        .row-new .info-subject { color: #dcfce7; }
+
+        /* Odwołana / Przeniesiona (Z) */
+        .row-sub {
+            background-color: rgba(153, 27, 27, 0.15); /* Czerwone tło */
+            border-left: 4px solid #ef4444;
+            opacity: 0.7;
+        }
+        .row-sub .col-room, .row-sub .info-subject { 
+            text-decoration: line-through; 
+            color: #fca5a5;
+        }
+
+        /* Przeniesienie (NA) - Niebieski */
+        .row-transfer {
+            background-color: rgba(8, 51, 68, 0.3); /* Niebieskie tło */
+            border-left: 4px solid #38bdf8;
+        }
+        .row-transfer .col-room { color: #7dd3fc; }
+        .row-transfer .info-subject { color: #bae6fd; }
+
+        .transfer-note {
+            font-size: 0.75rem;
+            color: #94a3b8;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin-top: 2px;
         }
         
-        .is-sub .item-text { color: #f87171; }
-        .is-sub .item-teach { color: #fca5a5; }
-        .is-new .item-text { color: #4ade80; }
-
-        .badge {
-            display: inline-block; padding: 1px 5px; border-radius: 4px; 
-            font-size: 0.6em; font-weight: bold; margin-right: 6px;
-            text-transform: uppercase; letter-spacing: 0.5px;
+        .group-badge {
+            display: inline-block;
+            font-size: 0.8rem;
+            background: #334155;
+            padding: 0 4px;
+            border-radius: 4px;
+            margin-right: 5px;
+            vertical-align: middle;
         }
-        .badge-sub { background: #991b1b; color: white; }
-        .badge-group { background: #374151; color: #e5e7eb; border: 1px solid #4b5563; }
-        .badge-new { background: #15803d; color: #dcfce7; box-shadow: 0 0 5px rgba(34, 197, 94, 0.4); }
 
         /* --- STOPKA --- */
         footer {
@@ -238,7 +281,7 @@
 </div>
 
 <footer>
-    <div>ZSZ5 Wrocław • Panel Informacyjny</div>
+    <div>ZSZ5 Wrocław • Panel Informacyjny TV</div>
     <div id="update-info">Odświeżanie: 2 min</div>
 </footer>
 
@@ -247,13 +290,14 @@
     const CONFIG = {
         xml: './plan.xml',
         zastepstwa: './zastepstwa.xlsx',
-        refreshInterval: 120000, // 2 minuty
-        slideDuration: 10000     // 10 sekund
+        przeniesienia: './InformacjeOPrzeniesieniach.xlsx',
+        refreshInterval: 120000, 
+        slideDuration: 10000     
     };
 
     const DB = {
         classes: {}, classesList: [], groups: {},
-        lessons: [], subs: []
+        lessons: [], subs: [], transfers: []
     };
 
     let groupedClasses = [];
@@ -270,7 +314,10 @@
     async function reloadData() {
         try {
             await loadXML();
-            await loadExcel(CONFIG.zastepstwa).catch(() => {});
+            await Promise.all([
+                loadExcel(CONFIG.zastepstwa, 'zastepstwa').catch(() => {}),
+                loadExcel(CONFIG.przeniesienia, 'przeniesienia').catch(() => {})
+            ]);
             initCarousel();
         } catch (e) {
             document.getElementById('slide-container').innerHTML = 
@@ -330,57 +377,98 @@
         classesToShow.forEach(clsName => {
             html += `<div class="class-card">`;
             html += `<div class="class-header"><span class="class-name">${clsName}</span></div>`;
-            html += `<table class="lesson-table">`;
-            html += `<tbody>`;
+            html += `<table class="lesson-table"><tbody>`;
 
             for(let i=1; i<=8; i++) {
+                // 1. LEKCJE Z XML
                 let lessons = DB.lessons.filter(l => l.day === dayOfWeek && normalize(l.className) === normalize(clsName) && l.period === i);
                 lessons.sort((a,b) => (a.groupName||"").localeCompare(b.groupName||""));
+                
+                // 2. ZASTĘPSTWA (DODANE/NOWE)
                 let subAdds = DB.subs.filter(s => s.date === dateStr && normalize(s.branch).includes(normalize(clsName)) && s.periodRaw.startsWith(i+','));
 
-                if(lessons.length === 0 && subAdds.length === 0) {
-                    html += `<tr><td class="col-nr">${i}</td><td></td><td></td><td></td></tr>`;
+                // 3. PRZENIESIENIA (WEJŚCIOWE I WYJŚCIOWE)
+                let transOut = DB.transfers.filter(t => t.type === 'out' && t.date === dateStr && t.period == i && normalize(t.class).includes(normalize(clsName)));
+                let transIn = DB.transfers.filter(t => t.type === 'in' && t.date === dateStr && t.period == i && normalize(t.class).includes(normalize(clsName)));
+
+                // JEŚLI SLOT PUSTY
+                if(lessons.length === 0 && subAdds.length === 0 && transIn.length === 0) {
+                    html += `<tr><td class="col-nr">${i}</td><td></td><td></td></tr>`;
                     continue; 
                 }
 
                 html += `<tr>`;
                 html += `<td class="col-nr">${i}</td>`;
-                
-                let subjHTML = `<div class="multi-item">`;
-                let roomHTML = `<div class="multi-item">`;
-                let teachHTML = `<div class="multi-item">`;
+                html += `<td style="padding:0;">`; // Kontener dla multi-itemów
 
+                // A. LEKCJE STANDARDOWE (LUB PRZEKREŚLONE PRZEZ ZAST/PRZEN)
                 lessons.forEach(l => {
                     const subAbs = DB.subs.find(s => s.date === dateStr && s.absentId === l.teacherIdRaw && s.periodRaw.startsWith(i+','));
-                    const groupBadge = l.groupName ? `<span class="badge badge-group">${l.groupName}</span>` : '';
-                    
-                    if(subAbs) {
-                        subjHTML += `<div class="item-row is-sub">${groupBadge}<span class="item-text">${l.subject}</span></div>`;
-                        roomHTML += `<div class="item-row">${l.room}</div>`;
-                        teachHTML += `<div class="item-row is-sub"><span class="badge badge-sub">ZAST</span> <span class="item-teach">${subAbs.rawSub}</span></div>`;
+                    const tOut = transOut.find(t => true); // Uproszczenie: jeśli jest jakikolwiek transfer out dla tej lekcji
+
+                    const groupBadge = l.groupName ? `<span class="group-badge">${l.groupName}</span>` : '';
+                    let rowClass = "row-normal";
+                    let infoHtml = "";
+
+                    if (subAbs) {
+                        rowClass = "row-sub"; // Przekreślone (Czerwone)
+                        infoHtml = `
+                            <div class="col-room">${l.room}</div>
+                            <div class="col-info">
+                                <div class="info-subject">${groupBadge}${l.subject}</div>
+                                <div class="info-teacher">Odwołane / Zastępstwo</div>
+                            </div>`;
+                    } else if (tOut) {
+                        rowClass = "row-sub"; // Przekreślone (Czerwone) - Transfer
+                        infoHtml = `
+                            <div class="col-room">${l.room}</div>
+                            <div class="col-info">
+                                <div class="info-subject">${groupBadge}${l.subject}</div>
+                                <div class="transfer-note">${tOut.targetInfo}</div>
+                            </div>`;
                     } else {
-                        subjHTML += `<div class="item-row">${groupBadge}<span class="item-text">${l.subject}</span></div>`;
-                        roomHTML += `<div class="item-row">${l.room}</div>`;
-                        teachHTML += `<div class="item-row"><span class="item-teach">${l.teacherName}</span></div>`;
+                        // Normalna lekcja
+                        infoHtml = `
+                            <div class="col-room">${l.room}</div>
+                            <div class="col-info">
+                                <div class="info-subject">${groupBadge}${l.subject}</div>
+                                <div class="info-teacher">${l.teacherName}</div>
+                            </div>`;
                     }
+
+                    html += `<div class="row-container ${rowClass}">${infoHtml}</div>`;
                 });
 
+                // B. PRZENIESIENIA PRZYCHODZĄCE (NIEBIESKIE)
+                transIn.forEach(t => {
+                    html += `
+                    <div class="row-container row-transfer">
+                        <div class="col-room">${t.room || '?'}</div>
+                        <div class="col-info">
+                            <div class="info-subject">${t.subject}</div>
+                            <div class="info-teacher">${t.teacherName}</div>
+                            <div class="transfer-note">${t.targetInfo}</div>
+                        </div>
+                    </div>`;
+                });
+
+                // C. ZASTĘPSTWA DODANE (ZIELONE)
                 subAdds.forEach(s => {
                     let gName = "";
                     if(s.branch && s.branch.includes('|')) gName = s.branch.split('|')[1];
-                    const groupBadge = gName ? `<span class="badge badge-group">${gName}</span>` : '';
+                    const groupBadge = gName ? `<span class="group-badge">${gName}</span>` : '';
 
-                    subjHTML += `<div class="item-row is-new">${groupBadge}<span class="badge badge-new">NOWA</span> <span class="item-text">${s.subject}</span></div>`;
-                    roomHTML += `<div class="item-row">${s.room || '?'}</div>`;
-                    teachHTML += `<div class="item-row"><span class="item-teach">${s.rawSub}</span></div>`;
+                    html += `
+                    <div class="row-container row-new">
+                        <div class="col-room">${s.room || '?'}</div>
+                        <div class="col-info">
+                            <div class="info-subject">${groupBadge}${s.subject}</div>
+                            <div class="info-teacher">${s.rawSub}</div>
+                        </div>
+                    </div>`;
                 });
 
-                subjHTML += `</div>`; roomHTML += `</div>`; teachHTML += `</div>`;
-
-                html += `<td class="col-subj">${subjHTML}</td>`;
-                html += `<td class="col-room">${roomHTML}</td>`;
-                html += `<td class="col-teach">${teachHTML}</td>`;
-                html += `</tr>`;
+                html += `</td></tr>`;
             }
 
             html += `</tbody></table></div>`;
@@ -389,14 +477,18 @@
         container.innerHTML = html;
     }
 
-    // === UTILS & PARSING ===
+    // === PARSOWANIE ===
     async function fetchFresh(url) { return fetch(url + "?t=" + new Date().getTime()); }
     function normalize(str) { return (str||"").toLowerCase().replace(/\s/g, ''); }
     function pad(n) { return n<10?'0'+n:n; }
 
+    async function fetchText(url) {
+        const res = await fetchFresh(url);
+        return await res.text(); // Domyślne UTF-8
+    }
+
     async function loadXML() {
-        const res = await fetchFresh(CONFIG.xml);
-        const txt = await res.text();
+        const txt = await fetchText(CONFIG.xml);
         const xml = new DOMParser().parseFromString(txt, "text/xml");
 
         xml.querySelectorAll('groups group').forEach(g => DB.groups[g.getAttribute('id')] = g.getAttribute('name'));
@@ -446,32 +538,65 @@
         });
     }
 
-    async function loadExcel(url) {
+    async function loadExcel(url, type) {
         const res = await fetchFresh(url);
         const ab = await res.arrayBuffer();
         const wb = XLSX.read(ab, {type: 'array'});
-        const sheet = wb.Sheets["Oddziały"] || wb.Sheets[0];
-        const data = XLSX.utils.sheet_to_json(sheet);
-        DB.subs = [];
-        data.forEach(r => {
-            const dStr = r['Dzień']; 
-            let isoDate = null;
-            if(typeof dStr === 'number') {
-                const d = XLSX.SSF.parse_date_code(dStr);
-                isoDate = `${d.y}-${pad(d.m)}-${pad(d.d)}`;
-            } else if (typeof dStr === 'string') {
-                const p = dStr.split('.');
-                if(p.length===3) isoDate = `${p[2]}-${p[1]}-${p[0]}`;
-            }
-            if(isoDate) {
-                DB.subs.push({
-                    date: isoDate, periodRaw: r['Lekcja'], branch: r['Oddział'],
-                    subject: r['Przedmiot'], room: r['Sala'],
-                    rawSub: r['Zastępca'], absentId: r['Nauczyciel/wakat'], 
-                    note: r['Uwagi']
-                });
-            }
-        });
+        
+        if (type === 'zastepstwa') {
+            const sheet = wb.Sheets["Oddziały"] || wb.Sheets[0];
+            const data = XLSX.utils.sheet_to_json(sheet);
+            DB.subs = [];
+            data.forEach(r => {
+                const dStr = r['Dzień']; 
+                let isoDate = null;
+                if(typeof dStr === 'number') {
+                    const d = XLSX.SSF.parse_date_code(dStr);
+                    isoDate = `${d.y}-${pad(d.m)}-${pad(d.d)}`;
+                } else if (typeof dStr === 'string') {
+                    const p = dStr.split('.');
+                    if(p.length===3) isoDate = `${p[2]}-${p[1]}-${p[0]}`;
+                }
+                if(isoDate) {
+                    DB.subs.push({
+                        date: isoDate, periodRaw: r['Lekcja'], branch: r['Oddział'],
+                        subject: r['Przedmiot'], room: r['Sala'],
+                        rawSub: r['Zastępca'], absentId: r['Nauczyciel/wakat'], 
+                        note: r['Uwagi']
+                    });
+                }
+            });
+        }
+
+        if (type === 'przeniesienia') {
+            const sheet = wb.Sheets["Oddziały"] || wb.Sheets[0];
+            const data = XLSX.utils.sheet_to_json(sheet);
+            DB.transfers = [];
+            data.forEach(r => {
+                const fromStr = r['Przeniesiono z']; const toStr = r['Przeniesiono na'];
+                const teacherRaw = r['Nauczyciel/wakat']; const classRaw = r['Oddział']; const subject = r['Przedmiot']; const note = r['Uwagi'];
+                if(fromStr && toStr) {
+                    const fromInfo = parseTransferString(fromStr); const toInfo = parseTransferString(toStr);
+                    if(fromInfo) {
+                        DB.transfers.push({ type: 'out', date: fromInfo.date, period: fromInfo.period, room: fromInfo.room, targetInfo: `Przeniesiono na: ${toInfo.date} lekcja ${toInfo.period}`, teacherName: teacherRaw, class: classRaw, subject: subject });
+                    }
+                    if(toInfo) {
+                        DB.transfers.push({ type: 'in', date: toInfo.date, period: toInfo.period, room: toInfo.room, targetInfo: `Przeniesiono z: ${fromInfo.date} lekcja ${fromInfo.period}`, teacherName: teacherRaw, class: classRaw, subject: subject });
+                    }
+                }
+            });
+        }
+    }
+
+    function parseTransferString(str) {
+        try {
+            const parts = str.split(','); if (parts.length < 2) return null;
+            const datePart = parts[0].trim(); const periodPart = parseInt(parts[1].trim());
+            const d = datePart.split('.'); const isoDate = `${d[2]}-${d[1]}-${d[0]}`;
+            let room = ""; const roomPart = parts.find(p => p.trim().includes('sala:'));
+            if(roomPart) room = roomPart.replace('sala:', '').trim();
+            return { date: isoDate, period: periodPart, room: room };
+        } catch(e) { return null; }
     }
 
     function startClock() {
