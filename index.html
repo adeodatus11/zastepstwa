@@ -126,13 +126,47 @@
         button.back-btn:hover { background: #dc2626; transform: translateY(-2px); box-shadow: 0 6px 12px rgba(0,0,0,0.5); }
 
         /* NOWY KOD - Układ 3-kolumnowy dla Dashboardu na desktopie */
+        /* --- UKŁAD DASHBOARDU (4 ELEMENTY) --- */
         #tiles-container {
             display: grid;
-            /* Tworzymy 3 równe kolumny */
-            grid-template-columns: 1fr 1fr 1fr; 
-            gap: 30px; /* Odstęp między kolumnami */
-            align-items: start; /* Żeby kolumny nie rozciągały się na siłę w dół */
+            /* Desktop: Automatyczne dopasowanie, minimum 280px szerokości.
+               Da to 4 kolumny na szerokim ekranie lub 2 rzędy po 2 kolumny na laptopie */
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            width: 100%;
+            max-width: 1600px; /* Zwiększona szerokość maksymalna */
+            margin: 0 auto;
         }
+
+        .dash-card {
+            background: var(--card-bg);
+            border: 1px solid var(--tile-border);
+            border-radius: 16px;
+            padding: 30px 20px;
+            display: flex; flex-direction: column; align-items: center; text-align: center;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative; overflow: hidden;
+        }
+
+        /* Paski kolorów na górze kart */
+        .dash-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px; }
+        .dash-card.type-teacher::before { background: var(--accent-teacher); } /* Zielony */
+        .dash-card.type-class::before { background: var(--accent-class); }     /* Niebieski */
+        .dash-card.type-room::before { background: var(--accent-room); }       /* Żółty */
+        .dash-card.type-duty::before { background: #d946ef; }                  /* Różowy/Fioletowy dla Dyżurów */
+
+        .dash-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.4);
+            border-color: rgba(255,255,255,0.2);
+        }
+        
+        /* Obsługa hovera dla selectów w nowej karcie */
+        .dash-card.type-duty .dash-select:hover, 
+        .dash-card.type-duty .dash-select:focus { border-color: #d946ef; outline: none; }
+
+        /* (Reszta CSS bez zmian: .dash-icon, .dash-title, .dash-select...) */
 
         /* Zabezpieczenie dla mniejszych ekranów - wracamy do jednej kolumny */
         @media (max-width: 1100px) {
@@ -485,7 +519,8 @@
 
     const DB = {
         teachers: {}, rooms: [], classes: {}, classesList: [], groups: {},
-        locations: [], periods: [], lessons: [], duties: [], subs: [], dutyChanges: []
+        locations: [], periods: [], lessons: [], duties: [], subs: [], dutyChanges: [],
+        dutyPlaces: new Set() // <--- DODANE
     };
 
     const DAYS = ["Niedziela", "Poniedziałek", "Wtorek", "Środa", "Czwartek", "Piątek", "Sobota"];
@@ -770,11 +805,16 @@ function renderDashboard() {
                             const rawTeacher = row[colIdx];
                             if(rawTeacher && String(rawTeacher).length>2) {
                                 const tId = findTeacherId(String(rawTeacher).trim());
-                                if(tId) DB.duties.push({
-                                    teacherId: tId, day: dayNum, time: timeVal,
-                                    startMin: timeToMin(timeVal.split('-')[0]),
-                                    place: placeVal ? placeVal.trim() : "Dyżur"
-                                });
+                                const pName = placeVal ? placeVal.trim() : "Dyżur Ogólny";
+                                if(tId) {
+                                    DB.duties.push({
+                                        teacherId: tId, day: dayNum, time: timeVal,
+                                        startMin: timeToMin(timeVal.split('-')[0]),
+                                        place: pName
+                                    });
+                                    // Dodajemy miejsce do listy unikalnych miejsc
+                                    DB.dutyPlaces.add(pName); 
+                                }
                             }
                         }
                     }
