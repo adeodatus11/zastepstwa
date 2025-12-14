@@ -266,7 +266,6 @@
             border: 1px solid #475569;
         }
 
-        /* STYLE DLA STATUSÓW ZAJĘĆ */
         .is-sub { background: var(--sub-bg); border-left-color: var(--sub-border) !important; }
         .is-sub .main-info { text-decoration: line-through; opacity: 0.6; color: #fca5a5; }
         .note-red { color: #f87171; font-weight: 700; font-size: 0.8rem; text-transform: uppercase; }
@@ -275,7 +274,7 @@
         .is-new .main-info { color: #86efac; }
         .is-new .sub-line { color: #dcfce7; }
 
-        /* ODZNAKA PŁATNOŚCI (DODANO) */
+        /* ODZNAKA PŁATNOŚCI */
         .pay-badge {
             display: inline-block;
             background: var(--pay-bg); color: var(--pay-text);
@@ -535,7 +534,6 @@
         return new Promise(r => {
             const reader = new FileReader(); 
             reader.onload = () => r(reader.result); 
-            // FIX: Jawne wskazanie kodowania Windows-1250 dla plików XML
             reader.readAsText(blob, 'windows-1250'); 
         });
     }
@@ -813,9 +811,13 @@
                         if(sub.branch && sub.branch.includes('|')) subGroup = sub.branch.split('|')[1];
                         const div = document.createElement('div');
                         div.className = 'card is-new';
-                        let line = mode==='teacher' ? `s.${sub.room} / ${sub.branch}` : `${getTeacherName(sub.sub)}`;
                         
-                        // FIX: DODANO WYŚWIETLANIE PŁATNOŚCI W PANELU NAUCZYCIELA
+                        // LOGIKA ZMIENIONA: Teraz dla klasy pokazuje też numer sali
+                        let line = "";
+                        if (mode === 'teacher') line = `s.${sub.room} / ${sub.branch}`;
+                        else if (mode === 'class') line = `${getTeacherName(sub.sub)} / s.${sub.room}`;
+                        else line = `${getTeacherName(sub.sub)} / ${sub.branch}`;
+                        
                         let payBadge = "";
                         if(mode === 'teacher' && sub.payInfo) {
                             payBadge = `<span class="pay-badge">$ ${sub.payInfo}</span>`;
