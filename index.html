@@ -23,7 +23,7 @@
 
             /* Paski boczne */
             --lesson-border: #16a34a;
-            --room-border: #d97706;     
+            --room-border: #d97706;      
             --class-border: #0284c7;    
             
             /* Statusy */
@@ -48,7 +48,7 @@
 
             /* Wysokości nagłówka do obliczania pozycji sticky */
             --header-height-desktop: 134px; 
-            --header-height-mobile: 155px; /* ZNACZNIE MNIEJ NIŻ WCZEŚNIEJ */
+            --header-height-mobile: 155px;
         }
 
         body { 
@@ -79,6 +79,7 @@
         .logo { 
             height: 85px; width: auto; 
             mix-blend-mode: multiply; filter: contrast(1.1);
+             onerror: "this.style.display='none'";
         }
 
         .header-text { display: flex; flex-direction: column; justify-content: center; }
@@ -125,16 +126,13 @@
         }
         button.back-btn:hover { background: #dc2626; transform: translateY(-2px); box-shadow: 0 6px 12px rgba(0,0,0,0.5); }
 
-        /* NOWY KOD - Układ 3-kolumnowy dla Dashboardu na desktopie */
         /* --- UKŁAD DASHBOARDU (4 ELEMENTY) --- */
         #tiles-container {
             display: grid;
-            /* Desktop: Automatyczne dopasowanie, minimum 280px szerokości.
-               Da to 4 kolumny na szerokim ekranie lub 2 rzędy po 2 kolumny na laptopie */
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 25px;
             width: 100%;
-            max-width: 1600px; /* Zwiększona szerokość maksymalna */
+            max-width: 1600px;
             margin: 0 auto;
         }
 
@@ -149,12 +147,11 @@
             position: relative; overflow: hidden;
         }
 
-        /* Paski kolorów na górze kart */
         .dash-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px; }
-        .dash-card.type-teacher::before { background: var(--accent-teacher); } /* Zielony */
-        .dash-card.type-class::before { background: var(--accent-class); }     /* Niebieski */
-        .dash-card.type-room::before { background: var(--accent-room); }       /* Żółty */
-        .dash-card.type-duty::before { background: #d946ef; }                  /* Różowy/Fioletowy dla Dyżurów */
+        .dash-card.type-teacher::before { background: var(--accent-teacher); }
+        .dash-card.type-class::before { background: var(--accent-class); }     
+        .dash-card.type-room::before { background: var(--accent-room); }       
+        .dash-card.type-duty::before { background: #d946ef; }                  
 
         .dash-card:hover {
             transform: translateY(-5px);
@@ -162,122 +159,36 @@
             border-color: rgba(255,255,255,0.2);
         }
         
-        /* Obsługa hovera dla selectów w nowej karcie */
         .dash-card.type-duty .dash-select:hover, 
         .dash-card.type-duty .dash-select:focus { border-color: #d946ef; outline: none; }
 
-        /* (Reszta CSS bez zmian: .dash-icon, .dash-title, .dash-select...) */
-
-        /* Zabezpieczenie dla mniejszych ekranów - wracamy do jednej kolumny */
-        @media (max-width: 1100px) {
-            #tiles-container {
-                grid-template-columns: 1fr;
-            }
-        }
-        
-        /* Opcjonalnie: Mniejsze kafelki wewnątrz kolumn, żeby się mieściły */
-        /* --- NOWY DASHBOARD (3 KOLUMNY Z SELECTAMI) --- */
-        #tiles-container {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr); /* 3 równe kolumny */
-            gap: 30px;
-            width: 100%;
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-
-        /* Karta dla każdej sekcji */
-        .dash-card {
-            background: var(--card-bg);
-            border: 1px solid var(--tile-border);
-            border-radius: 16px;
-            padding: 30px 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-
-        /* Subtelny pasek koloru na górze karty */
-        .dash-card::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; right: 0;
-            height: 4px;
-        }
-        .dash-card.type-teacher::before { background: var(--accent-teacher); }
-        .dash-card.type-class::before { background: var(--accent-class); }
-        .dash-card.type-room::before { background: var(--accent-room); }
-
-        .dash-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.4);
-            border-color: rgba(255,255,255,0.1);
-        }
-
-        /* Ikona/Tytuł w karcie */
         .dash-icon {
-            font-size: 2.5rem;
-            margin-bottom: 15px;
-            opacity: 0.8;
+            font-size: 2.5rem; margin-bottom: 15px; opacity: 0.8;
         }
         .dash-title {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: #f1f5f9;
-            margin-bottom: 25px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+            font-size: 1.5rem; font-weight: 700; color: #f1f5f9;
+            margin-bottom: 25px; text-transform: uppercase; letter-spacing: 1px;
         }
 
-        /* Nowoczesny Select */
-        .dash-select-wrapper {
-            width: 100%;
-            position: relative;
-        }
+        .dash-select-wrapper { width: 100%; position: relative; }
         
         .dash-select {
-            width: 100%;
-            padding: 15px 20px;
-            font-size: 1.1rem;
-            background-color: #0f172a;
-            color: #e2e8f0;
-            border: 2px solid #334155;
-            border-radius: 12px;
-            cursor: pointer;
-            appearance: none; /* Ukrywa domyślną strzałkę systemową */
-            -webkit-appearance: none;
+            width: 100%; padding: 15px 20px; font-size: 1.1rem;
+            background-color: #0f172a; color: #e2e8f0;
+            border: 2px solid #334155; border-radius: 12px;
+            cursor: pointer; appearance: none; -webkit-appearance: none;
             transition: all 0.2s;
-            /* Własna strzałka SVG */
             background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
-            background-repeat: no-repeat;
-            background-position: right 15px center;
-            background-size: 20px;
+            background-repeat: no-repeat; background-position: right 15px center; background-size: 20px;
         }
 
-        /* Kolorowanie ramek selecta przy fokusie/hoverze */
-        .dash-card.type-teacher .dash-select:hover, 
-        .dash-card.type-teacher .dash-select:focus { border-color: var(--accent-teacher); outline: none; }
+        .dash-card.type-teacher .dash-select:hover, .dash-card.type-teacher .dash-select:focus { border-color: var(--accent-teacher); outline: none; }
+        .dash-card.type-class .dash-select:hover, .dash-card.type-class .dash-select:focus { border-color: var(--accent-class); outline: none; }
+        .dash-card.type-room .dash-select:hover, .dash-card.type-room .dash-select:focus { border-color: var(--accent-room); outline: none; }
 
-        .dash-card.type-class .dash-select:hover, 
-        .dash-card.type-class .dash-select:focus { border-color: var(--accent-class); outline: none; }
-
-        .dash-card.type-room .dash-select:hover, 
-        .dash-card.type-room .dash-select:focus { border-color: var(--accent-room); outline: none; }
-
-        /* --- RESPANSYWNOŚĆ (Mobile) --- */
         @media (max-width: 1000px) {
-            #tiles-container {
-                grid-template-columns: 1fr; /* Jedna kolumna na mniejszych ekranach */
-                gap: 20px;
-            }
-            .dash-card {
-                padding: 20px;
-            }
+            #tiles-container { grid-template-columns: 1fr; gap: 20px; }
+            .dash-card { padding: 20px; }
         }
 
         .mobile-select-container { display: none; margin-bottom: 30px; }
@@ -289,176 +200,60 @@
             background-image: url("data:image/svg+xml;charset=windows-1250,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
             background-repeat: no-repeat; background-position: right 15px center; background-size: 20px;
         }
-        .mobile-select.teacher { border-color: var(--accent-teacher); }
-        .mobile-select.room { border-color: var(--accent-room); }
-        .mobile-select.class { border-color: var(--accent-class); }
 
-
-        /* --- OPTYMALIZACJA MOBILE (GRUNTOWNA PRZEBUDOWA) --- */
+        /* --- OPTYMALIZACJA MOBILE --- */
         @media (max-width: 900px) {
-            header {
-                /* Ustawienie elementów w rzędach, ale z zawijaniem */
-                flex-direction: row; 
-                flex-wrap: wrap;
-                align-content: flex-start;
-                height: auto;
-                padding: 10px;
-                background: linear-gradient(to bottom, #4dff88 0%, #020617 100%);
-            }
-
-            /* RZĄD 1: LOGO (LEWA) + INFO (PRAWA) */
-            .header-left { 
-                width: 100%; 
-                flex-direction: row; /* Logo obok tekstu */
-                justify-content: flex-start; /* Do lewej */
-                align-items: center;
-                gap: 15px;
-                margin-bottom: 8px; /* Odstęp od dolnego rzędu */
-            }
-
-            .logo { height: 50px; /* Mniejsze logo */ margin-right: 5px; }
-            
-            .header-text { 
-                align-items: flex-start; /* Tekst do lewej */
-                text-align: left; 
-                flex: 1; /* Zajmij resztę miejsca */
-            }
+            header { flex-direction: row; flex-wrap: wrap; align-content: flex-start; height: auto; padding: 10px; background: linear-gradient(to bottom, #4dff88 0%, #020617 100%); }
+            .header-left { width: 100%; flex-direction: row; justify-content: flex-start; align-items: center; gap: 15px; margin-bottom: 8px; }
+            .logo { height: 50px; margin-right: 5px; }
+            .header-text { align-items: flex-start; text-align: left; flex: 1; }
             .header-text h1 { font-size: 1.1rem; line-height: 1.1; margin-bottom: 2px; }
             .clock { font-size: 0.85rem; }
-            
-            .selection-info {
-                font-size: 1rem; color: #fbbf24; margin: 2px 0;
-                background: rgba(0,0,0,0.4); padding: 2px 8px;
-                border-radius: 4px;
-                display: inline-block; /* Żeby nie zajmował całej szerokości */
-            }
-
-            /* RZĄD 2: TYDZIEŃ + MENU (W JEDNEJ LINII) */
-            .week-nav { 
-                order: 2;
-                flex: 6; /* 60% szerokości */
-                justify-content: space-between; 
-                margin-top: 0;
-                padding: 4px 8px; /* Mniejszy padding */
-                gap: 5px;
-                height: 42px; /* Stała wysokość */
-                box-sizing: border-box;
-            }
+            .selection-info { font-size: 1rem; color: #fbbf24; margin: 2px 0; background: rgba(0,0,0,0.4); padding: 2px 8px; border-radius: 4px; display: inline-block; }
+            .week-nav { order: 2; flex: 6; justify-content: space-between; margin-top: 0; padding: 4px 8px; gap: 5px; height: 42px; box-sizing: border-box; }
             .week-display { min-width: auto; }
-            .week-label { display: none; /* Ukrywamy napis "Wybrany tydzień" dla oszczędności miejsca */ }
+            .week-label { display: none; }
             .week-range { font-size: 0.95rem; white-space: nowrap; }
             .week-nav-btn { font-size: 1.4rem; padding: 0 5px; }
-
-            .controls { 
-                order: 3;
-                flex: 4; /* 40% szerokości */
-                margin-top: 0;
-                justify-content: flex-end;
-                margin-left: 10px; /* Odstęp od nawigatora */
-            }
-            
-            button.back-btn { 
-                width: 100%; 
-                justify-content: center; 
-                padding: 0 10px;
-                height: 42px; /* Taka sama wysokość jak nawigator */
-                font-size: 0.8rem;
-                white-space: nowrap;
-            }
-            
-            /* RESZTA */
-            .tile-grid { display: none !important; }
+            .controls { order: 3; flex: 4; margin-top: 0; justify-content: flex-end; margin-left: 10px; }
+            button.back-btn { width: 100%; justify-content: center; padding: 0 10px; height: 42px; font-size: 0.8rem; white-space: nowrap; }
             .mobile-select-container { display: block !important; }
             .section-title { font-size: 1.5rem; margin: 20px 0 10px 0; }
             #dashboard-view { padding: 15px; }
             .week-container { grid-template-columns: 1fr !important; }
             .day-header { top: var(--header-height-mobile) !important; }
+            #tiles-container { grid-template-columns: 1fr; }
         }
 
-        #debug-bar { 
-            background: #111827; font-size: 0.75rem; padding: 4px 20px; color: #64748b; 
-            border-bottom: 1px solid #1f2937; text-align: center; letter-spacing: 1px;
-        }
-
-        /* --- WIDOK PLANU --- */
+        #debug-bar { background: #111827; font-size: 0.75rem; padding: 4px 20px; color: #64748b; border-bottom: 1px solid #1f2937; text-align: center; letter-spacing: 1px; }
         #schedule-view { display: none; width: 100%; padding-bottom: 40px; }
-        
         .week-container { display: grid; grid-template-columns: repeat(5, 1fr); gap: 15px; padding: 20px; align-items: start; }
-        
-        .day-col {
-            background: #1e293b; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.3);
-            display: flex; flex-direction: column; border: 1px solid #334155;
-        }
-        
-        .day-header {
-            background: linear-gradient(to bottom, #065f46, #064e3b); color: #ecfdf5; 
-            padding: 15px; text-align: center; font-weight: 700; 
-            border-bottom: 1px solid #047857; text-transform: uppercase; letter-spacing: 1px;
-            position: sticky; top: var(--header-height-desktop); z-index: 900;
-            border-top-left-radius: 10px; border-top-right-radius: 10px;
-        }
+        .day-col { background: #1e293b; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.3); display: flex; flex-direction: column; border: 1px solid #334155; }
+        .day-header { background: linear-gradient(to bottom, #065f46, #064e3b); color: #ecfdf5; padding: 15px; text-align: center; font-weight: 700; border-bottom: 1px solid #047857; text-transform: uppercase; letter-spacing: 1px; position: sticky; top: var(--header-height-desktop); z-index: 900; border-top-left-radius: 10px; border-top-right-radius: 10px; }
         .day-date { font-weight: 400; font-size: 0.8em; color: #a7f3d0; display: block; margin-top: 4px; }
         .day-content { padding: 10px; display: flex; flex-direction: column; gap: 8px; }
-        .slot-wrapper { 
-            border: 1px solid #334155; border-radius: 8px; overflow: hidden; 
-            display: flex; flex-direction: column; gap: 0px; background: #0f172a;
-        }
-
-        .card {
-            background: var(--card-bg); border-left: 4px solid var(--lesson-border); color: #e2e8f0;
-            padding: 10px 12px; min-height: 55px; display: flex; flex-direction: column; gap: 3px;
-            border-bottom: 1px solid #334155; position: relative;
-        }
+        .slot-wrapper { border: 1px solid #334155; border-radius: 8px; overflow: hidden; display: flex; flex-direction: column; gap: 0px; background: #0f172a; }
+        .card { background: var(--card-bg); border-left: 4px solid var(--lesson-border); color: #e2e8f0; padding: 10px 12px; min-height: 55px; display: flex; flex-direction: column; gap: 3px; border-bottom: 1px solid #334155; position: relative; }
         .card:last-child { border-bottom: none; }
-        .card.empty {
-            background: var(--empty); border-left-color: #4b5563; color: #64748b;
-            display: flex; align-items: center; justify-content: center; font-style: italic; font-size: 0.85rem;
-            min-height: 40px;
-        }
-        
+        .card.empty { background: var(--empty); border-left-color: #4b5563; color: #64748b; display: flex; align-items: center; justify-content: center; font-style: italic; font-size: 0.85rem; min-height: 40px; }
         body.mode-room .card { border-left-color: var(--room-border); }
         body.mode-class .card { border-left-color: var(--class-border); }
-
         .meta { display: flex; justify-content: space-between; font-size: 0.8rem; color: #94a3b8; margin-bottom: 2px; font-weight: 600; }
         .nr { background: #334155; padding: 1px 6px; border-radius: 4px; color: #f1f5f9; }
         .main-info { font-weight: 700; font-size: 1rem; color: #f8fafc; }
         .sub-line { font-weight: 500; font-size: 0.9rem; color: #cbd5e1; margin-top: 2px; }
-        
-        .group-badge {
-            display: inline-block; background: #334155; color: #e2e8f0;
-            font-size: 0.7rem; padding: 1px 6px; border-radius: 4px;
-            margin-left: 6px; font-weight: bold; vertical-align: middle;
-            border: 1px solid #475569;
-        }
-
+        .group-badge { display: inline-block; background: #334155; color: #e2e8f0; font-size: 0.7rem; padding: 1px 6px; border-radius: 4px; margin-left: 6px; font-weight: bold; vertical-align: middle; border: 1px solid #475569; }
         .is-sub { background: var(--sub-bg); border-left-color: var(--sub-border) !important; }
         .is-sub .main-info { text-decoration: line-through; opacity: 0.6; color: #fca5a5; }
         .note-red { color: #f87171; font-weight: 700; font-size: 0.8rem; text-transform: uppercase; }
         .is-new { background: var(--new-bg); border-left-color: var(--new-border) !important; }
         .is-new .main-info { color: #86efac; }
         .is-new .sub-line { color: #dcfce7; }
-
-        .duty-section {
-            background: var(--duty-bg); color: var(--duty-color);
-            border-top: 1px dashed var(--duty-border); padding: 8px 10px; font-size: 0.85rem;
-        }
-        .morning-duty {
-            background: var(--duty-bg); border-left: 4px solid #f59e0b;
-            padding: 12px; border-radius: 8px; margin-bottom: 8px;
-            color: var(--duty-color); font-size: 0.9rem; border: 1px solid #78350f;
-        }
-        .duty-sub {
-            background: var(--duty-sub-bg); border-left-color: var(--duty-sub-border);
-            color: var(--duty-sub-color); border-color: #14532d;
-        }
-
-        footer {
-            background: #064e3b; color: #a7f3d0; text-align: center;
-            padding: 15px; font-size: 0.9rem; border-top: 1px solid #047857;
-            margin-top: auto;
-        }
+        .duty-section { background: var(--duty-bg); color: var(--duty-color); border-top: 1px dashed var(--duty-border); padding: 8px 10px; font-size: 0.85rem; }
+        .morning-duty { background: var(--duty-bg); border-left: 4px solid #f59e0b; padding: 12px; border-radius: 8px; margin-bottom: 8px; color: var(--duty-color); font-size: 0.9rem; border: 1px solid #78350f; }
+        .duty-sub { background: var(--duty-sub-bg); border-left-color: var(--duty-sub-border); color: var(--duty-sub-color); border-color: #14532d; }
+        footer { background: #064e3b; color: #a7f3d0; text-align: center; padding: 15px; font-size: 0.9rem; border-top: 1px solid #047857; margin-top: auto; }
         footer a { color: #fff; text-decoration: none; font-weight: bold; }
-
         @media (max-width: 1200px) { .week-container { grid-template-columns: repeat(3, 1fr); } }
     </style>
 </head>
@@ -514,13 +309,13 @@
         dyzury: './dyzury.xlsx',
         zastepstwa: './zastepstwa.xlsx',
         refreshInterval: 120000, 
-        idleTimeout: 45000       
+        idleTimeout: 45000        
     };
 
     const DB = {
         teachers: {}, rooms: [], classes: {}, classesList: [], groups: {},
         locations: [], periods: [], lessons: [], duties: [], subs: [], dutyChanges: [],
-        dutyPlaces: new Set() // <--- DODANE
+        dutyPlaces: new Set()
     };
 
     const DAYS = ["Niedziela", "Poniedziałek", "Wtorek", "Środa", "Czwartek", "Piątek", "Sobota"];
@@ -573,10 +368,10 @@
         if (mode === 'teacher' && DB.teachers[id]) displayName = DB.teachers[id].name;
         else if (mode === 'room') displayName = "Sala " + id;
         else if (mode === 'class') displayName = "Klasa " + id;
-        else if (mode === 'duty') displayName = "Dyżury: " + id; // <--- DODAJ TO
+        else if (mode === 'duty') displayName = "Dyżury: " + id;
         
         displayDiv.innerText = displayName;
-        displayDiv.style.display = 'block'; // Na mobile CSS zrobi z tego inline-block
+        displayDiv.style.display = 'block';
 
         document.getElementById('dashboard-view').style.display = 'none';
         document.getElementById('schedule-view').style.display = 'block';
@@ -606,10 +401,10 @@
 
     async function refreshData() {
         log("Aktualizacja danych...", false);
-        // Resetowanie wszystkich baz danych
+        // Resetowanie baz danych
         DB.lessons = []; DB.periods = []; DB.duties = []; DB.subs = []; DB.dutyChanges = [];
         DB.teachers = {}; DB.classes = {}; DB.classesList = []; DB.rooms = []; DB.groups = {};
-        DB.dutyPlaces = new Set(); // <--- TO JEST KLUCZOWE (Reset listy miejsc)
+        DB.dutyPlaces = new Set(); // Reset Miejsc!
 
         try {
             await loadXML();
@@ -627,7 +422,7 @@
         }
     }
 
-function renderDashboard() {
+    function renderDashboard() {
         const container = document.getElementById('tiles-container');
         container.innerHTML = "";
         
@@ -664,8 +459,6 @@ function renderDashboard() {
 
         const classes = DB.classesList.sort().map(c => ({val: c, txt: c}));
         const rooms = DB.rooms.sort().map(r => ({val: r, txt: r}));
-        
-        // Konwersja Set na posortowaną tablicę dla miejsc dyżurów
         const dutyPlacesList = Array.from(DB.dutyPlaces).sort().map(p => ({val: p, txt: p}));
 
         // 1. Nauczyciele
@@ -674,7 +467,7 @@ function renderDashboard() {
         createCard("Oddziały", "👥", classes, 'class', (id) => openSchedule('class', id));
         // 3. Sale
         createCard("Sale Lekcyjne", "🚪", rooms, 'room', (id) => openSchedule('room', id));
-        // 4. Miejsca Dyżurów (NOWOŚĆ)
+        // 4. Miejsca Dyżurów
         createCard("Miejsca Dyżurów", "👁️", dutyPlacesList, 'duty', (id) => openSchedule('duty', id));
     }
 
@@ -761,7 +554,6 @@ function renderDashboard() {
                 const row = data[i]; if(!row || !row.length) continue;
                 const rowStr = row.map(c => String(c||"").toLowerCase());
                 
-                // Wykrywanie nagłówka dni tygodnia
                 if(rowStr.some(s => s.includes('poniedziałek'))) {
                     currentDayMap = {};
                     row.forEach((cell, idx) => {
@@ -777,12 +569,10 @@ function renderDashboard() {
 
                 if(currentDayMap) {
                     let timeVal=null, placeVal=null;
-                    // Szukamy komórki z godziną (format 00:00-00:00 lub 00.00-00.00)
                     for(let c=0; c<5; c++) {
-                        // Ulepszony REGEX: akceptuje kropki i dwukropki
+                        // Obsługa kropek i dwukropków w godzinach
                         if(row[c] && /\d{1,2}[:.]\d{2}\s*-\s*\d{1,2}[:.]\d{2}/.test(String(row[c]))) {
                             timeVal = String(row[c]).trim();
-                            // Miejsce jest zazwyczaj w kolumnie przed godziną, albo w pierwszej kolumnie
                             if(c>0 && row[c-1]) placeVal=row[c-1]; else if(row[0]) placeVal=row[0]; 
                             break;
                         }
@@ -790,9 +580,7 @@ function renderDashboard() {
 
                     if(timeVal) {
                         const pName = placeVal ? String(placeVal).trim() : "Dyżur Ogólny";
-                        
-                        // WAŻNE: Dodajemy miejsce do listy NAWET jeśli nie ma nauczyciela
-                        // Dzięki temu lista w menu zawsze się wypełni
+                        // Dodajemy miejsce do listy nawet jeśli nie znajdziemy nauczyciela
                         if(pName.length > 2) DB.dutyPlaces.add(pName);
 
                         for(const [colIdx, dayNum] of Object.entries(currentDayMap)) {
@@ -854,6 +642,7 @@ function renderDashboard() {
         }
         return bestId;
     }
+    // Gwarantuje zwrócenie ID, nawet jeśli nauczyciel nie istnieje w XML (tworzy wpis tymczasowy)
     function ensureTeacherId(rawName) {
         if(!rawName || /wakat|brak/i.test(rawName)) return null;
         const existing = findTeacherId(rawName);
@@ -864,7 +653,6 @@ function renderDashboard() {
     }
     function timeToMin(str) { 
         if(!str) return 0; 
-        // Zamień kropki na dwukropki, usuń spacje i podziel
         const [h,m] = str.replace('.', ':').trim().split(':').map(Number); 
         return h*60+m; 
     }
@@ -889,6 +677,8 @@ function renderDashboard() {
         if (mode === 'teacher') items = Object.entries(DB.teachers).sort((a,b) => a[1].name.localeCompare(b[1].name)).map(x => ({val: x[0], txt: x[1].name}));
         else if (mode === 'room') items = DB.rooms.sort().map(x => ({val: x, txt: x}));
         else if (mode === 'class') items = DB.classesList.sort().map(x => ({val: x, txt: x}));
+        else if (mode === 'duty') items = Array.from(DB.dutyPlaces).sort().map(p => ({val: p, txt: p}));
+
         items.forEach(i => {
             const opt = document.createElement('option'); opt.value = i.val; opt.innerText = i.txt; sel.appendChild(opt);
         });
@@ -943,51 +733,53 @@ function renderDashboard() {
                 });
             }
             
-            DB.periods.forEach(p => {
+            DB.periods.forEach((p, index) => {
                 const wrapper = document.createElement('div'); wrapper.className = 'slot-wrapper';
                 
-                // --- NOWA LOGIKA DLA DYŻURÓW ---
+                // --- LOGIKA DLA DYŻURÓW (POPRAWIONA) ---
                 if (mode === 'duty') {
-                    // Znajdź dyżury w tym miejscu, w ten dzień, które pokrywają się z tą godziną lekcyjną
                     const pStart = timeToMin(p.start);
                     const pEnd = timeToMin(p.end);
                     
-                    // Szukamy dyżurów, które zaczynają się w okolicach tej lekcji (margines +/- 15 min)
-                    // Dzięki temu dyżur "po 3 lekcji" wyświetli się w bloku 3 lub 4 lekcji.
+                    // Szukamy dyżurów w okolicach tej lekcji.
+                    // Zakres: od końca poprzedniej lekcji (lub początku tej, jeśli 1.) do końca przerwy.
+                    // Dla pierwszej lekcji sprawdzamy też czas przed nią (dyżury poranne).
+                    let lookStart = pEnd - 15; // Domyślnie: koniec lekcji - margines
+                    let lookEnd = pEnd + 25;   // Domyślnie: koniec lekcji + długa przerwa
+                    
+                    if (index === 0) { // Jeśli to pierwsza lekcja
+                        lookStart = pStart - 45; // Patrzymy też przed lekcją
+                    }
+
                     const dutiesHere = DB.duties.filter(d => 
                         d.place === selectedId && 
                         d.day === dayNum && 
-                        d.startMin >= (pEnd - 10) && d.startMin <= (pEnd + 20)
-                        // Logika: Dyżury są zwykle na przerwach. 
-                        // Wyświetlamy dyżur w bloku lekcji, PO KTÓREJ on następuje (przerwa).
+                        d.startMin >= lookStart && d.startMin <= lookEnd
                     );
 
                     if (dutiesHere.length > 0) {
                         dutiesHere.forEach(d => {
                             const tName = getTeacherName(d.teacherId);
                             const div = document.createElement('div');
-                            // Używamy stylu 'morning-duty' żeby wyglądało jak dyżur, ale wewnątrz siatki
                             div.className = 'card morning-duty'; 
-                            div.style.marginBottom = '0'; // Reset marginesu
+                            div.style.marginBottom = '0'; 
                             div.innerHTML = `
                                 <div class="meta">${d.time}</div>
-                                <div class="main-info" style="font-size:0.9rem">${tName}</div>
+                                <div class="main-info" style="font-size:0.95rem; color:#fff">${tName}</div>
                             `;
                             wrapper.appendChild(div);
                         });
                     } else {
-                        // Pusta karta, żeby zachować układ tabeli
-                        // Opcjonalnie: można zostawić puste, jeśli wolisz
                          const div = document.createElement('div');
                          div.className = 'card empty';
                          div.innerHTML = `-`;
                          wrapper.appendChild(div);
                     }
-                    
-                    // Nie wykonujemy reszty logiki (lekcji) dla tego trybu
                     content.appendChild(wrapper);
                     return; 
-    }
+                }
+                // --- KONIEC LOGIKI DYŻURÓW ---
+
                 let lessons = [];
                 if (mode === 'teacher') lessons = DB.lessons.filter(l => l.teacherId == selectedId && l.day == dayNum && l.period == p.nr);
                 else if (mode === 'room') lessons = DB.lessons.filter(l => l.room === selectedId && l.day == dayNum && l.period == p.nr);
