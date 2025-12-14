@@ -798,7 +798,7 @@ function renderDashboard() {
                         for(const [colIdx, dayNum] of Object.entries(currentDayMap)) {
                             const rawTeacher = row[colIdx];
                             if(rawTeacher && String(rawTeacher).length>2) {
-                                const tId = findTeacherId(String(rawTeacher).trim());
+                                const tId = ensureTeacherId(String(rawTeacher).trim());
                                 if(tId) {
                                     DB.duties.push({
                                         teacherId: tId, day: dayNum, time: timeVal,
@@ -853,6 +853,14 @@ function renderDashboard() {
             if(dist <= 2 && source.length>4 && bestScore<80) { bestScore=80; bestId=id; }
         }
         return bestId;
+    }
+    function ensureTeacherId(rawName) {
+        if(!rawName || /wakat|brak/i.test(rawName)) return null;
+        const existing = findTeacherId(rawName);
+        if(existing) return existing;
+        const nid = "EXT_" + normalize(rawName).replace(/\s+/g, "_");
+        if(!DB.teachers[nid]) DB.teachers[nid] = { name: rawName.trim(), normalized: normalize(rawName) };
+        return nid;
     }
     function timeToMin(str) { 
         if(!str) return 0; 
