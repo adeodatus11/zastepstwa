@@ -16,17 +16,18 @@
             --tile-bg: #0f172a;
             --tile-border: #1e293b;
             
-            /* Akcenty Kategorii */
-            --accent-teacher: #22c55e;  /* Zielony */
-            --accent-class: #38bdf8;    /* Niebieski */
-            --accent-room: #fbbf24;     /* Żółty */
-            --accent-duty: #f472b6;     /* Różowy (dla miejsc dyżurów) */
+            /* Akcenty */
+            --accent-teacher: #22c55e;
+            --accent-room: #fbbf24;
+            --accent-class: #38bdf8;
+            --accent-duty: #f472b6;
 
             /* Paski boczne */
             --lesson-border: #16a34a;
             --room-border: #d97706;     
             --class-border: #0284c7;    
-            
+            --duty-border: #f59e0b;
+
             /* Statusy */
             --sub-bg: #450a0a;
             --sub-color: #fca5a5;
@@ -53,7 +54,7 @@
 
             /* Zmienne wysokości nagłówka */
             --header-height-desktop: 134px; 
-            --header-height-mobile: 155px; 
+            --header-height-mobile: 160px; 
         }
 
         body { 
@@ -152,10 +153,9 @@
             border: 1px solid var(--tile-border); position: relative; overflow: hidden;
         }
         .tile:hover { transform: translateY(-5px); box-shadow: 0 10px 25px rgba(0,0,0,0.5); z-index: 2; }
-        
         .tile.teacher { border-bottom: 4px solid var(--accent-teacher); }
-        .tile.class { border-bottom: 4px solid var(--accent-class); }
         .tile.room { border-bottom: 4px solid var(--accent-room); }
+        .tile.class { border-bottom: 4px solid var(--accent-class); }
         .tile.duty { border-bottom: 4px solid var(--accent-duty); }
 
         .mobile-select-container { display: none; margin-bottom: 30px; }
@@ -168,50 +168,78 @@
             background-repeat: no-repeat; background-position: right 15px center; background-size: 20px;
         }
         .mobile-select.teacher { border-color: var(--accent-teacher); }
-        .mobile-select.class { border-color: var(--accent-class); }
         .mobile-select.room { border-color: var(--accent-room); }
+        .mobile-select.class { border-color: var(--accent-class); }
         .mobile-select.duty { border-color: var(--accent-duty); }
 
-        /* --- MOBILE OPTIMIZATION --- */
+        /* --- MOBILE OPTIMIZATION (POPRAWIONE) --- */
         @media (max-width: 900px) {
             header {
-                flex-direction: row; flex-wrap: wrap; align-content: flex-start;
-                height: auto; padding: 10px;
+                /* Ustawienie pionowe, ale z kontrolą */
+                flex-direction: row; 
+                flex-wrap: wrap;
+                align-content: flex-start;
+                height: auto; 
+                padding: 10px;
                 background: linear-gradient(to bottom, #4dff88 0%, #020617 100%);
             }
+
+            /* RZĄD 1: LOGO + NAZWA (Wyśrodkowane) */
             .header-left { 
-                width: 100%; flex-direction: row; justify-content: flex-start; 
-                align-items: center; gap: 15px; margin-bottom: 8px;
+                width: 100%; 
+                justify-content: center; /* Wyśrodkowanie */
+                align-items: center; 
+                gap: 10px; 
+                margin-bottom: 10px;
             }
-            .logo { height: 50px; margin-right: 5px; }
-            .header-text { alignItems: flex-start; text-align: left; flex: 1; }
-            .header-text h1 { font-size: 1.1rem; line-height: 1.1; margin-bottom: 2px; }
-            .clock { font-size: 0.85rem; }
+            .logo { height: 60px; margin-right: 0; }
+            .header-text { 
+                align-items: center; text-align: center; /* Tekst też wyśrodkowany */
+                flex: initial;
+            }
+            .header-text h1 { font-size: 1.3rem; line-height: 1.1; margin-bottom: 2px; }
+            .clock { font-size: 0.9rem; }
             
             .selection-info {
-                font-size: 1rem; color: #fbbf24; margin: 2px 0;
-                background: rgba(0,0,0,0.4); padding: 2px 8px;
-                border-radius: 4px; display: inline-block;
+                font-size: 1.1rem; color: #fbbf24; margin: 4px 0;
+                background: rgba(0,0,0,0.4); padding: 2px 10px;
+                border-radius: 6px; display: inline-block;
             }
 
+            /* RZĄD 2: TYDZIEŃ (65%) + MENU (35%) */
             .week-nav { 
-                order: 2; flex: 6; justify-content: space-between; 
-                margin-top: 0; padding: 4px 8px; gap: 5px; height: 42px; 
+                order: 2; 
+                flex: 0 0 63%; /* Szerokość na sztywno */
+                justify-content: space-between; 
+                margin-top: 0; padding: 4px 5px; 
+                gap: 2px; height: 44px; 
                 box-sizing: border-box;
             }
             .week-display { min-width: auto; }
             .week-label { display: none; }
-            .week-range { font-size: 0.95rem; white-space: nowrap; }
+            .week-range { font-size: 0.9rem; white-space: nowrap; }
             .week-nav-btn { font-size: 1.4rem; padding: 0 5px; }
 
-            .controls { order: 3; flex: 4; margin-top: 0; justify-content: flex-end; margin-left: 10px; }
-            button.back-btn { width: 100%; justify-content: center; padding: 0 10px; height: 42px; font-size: 0.8rem; white-space: nowrap; }
+            .controls { 
+                order: 3; 
+                flex: 0 0 35%; /* Reszta szerokości */
+                margin-top: 0; 
+                justify-content: flex-end; 
+                margin-left: 2%;
+            }
+            button.back-btn { 
+                width: 100%; justify-content: center; padding: 0 5px; 
+                height: 44px; font-size: 0.75rem; white-space: nowrap; 
+                gap: 5px;
+            }
             
             .tile-grid { display: none !important; }
             .mobile-select-container { display: block !important; }
             .section-title { font-size: 1.5rem; margin: 20px 0 10px 0; }
             #dashboard-view { padding: 15px; }
             .week-container { grid-template-columns: 1fr !important; }
+            
+            /* Dopasowanie sticky */
             .day-header { top: var(--header-height-mobile) !important; }
         }
 
@@ -465,7 +493,7 @@
         log("Aktualizacja danych...", false);
         DB.lessons = []; DB.periods = []; DB.duties = []; DB.subs = []; DB.dutyChanges = [];
         DB.teachers = {}; DB.classes = {}; DB.classesList = []; DB.rooms = []; DB.groups = {};
-        DB.locations = []; // Reset locations
+        DB.locations = [];
 
         try {
             await loadXML();
@@ -531,7 +559,6 @@
             .filter(([id, t]) => !t.name.toLowerCase().includes('wakat'))
             .map(([id, t]) => ({val: id, txt: t.name}));
         
-        // ZBIERANIE MIEJSC DYŻURÓW
         const dutyPlaces = [...new Set(
             DB.duties.map(d => d.place).concat(DB.dutyChanges.map(d => d.place))
         )].filter(p => p).sort().map(p => ({val: p, txt: p}));
@@ -551,10 +578,10 @@
         const res = await fetchFresh(url);
         const blob = await res.blob();
         return new Promise(r => {
-            // FIX: Jawne wskazanie kodowania Windows-1250 dla plików XML (rozwiązanie "krzaczków")
             const reader = new FileReader(); 
             reader.onload = () => r(reader.result); 
-            reader.readAsText(blob, 'windows-1250'); 
+            // FIX: Zmieniono 'windows-1250' na 'utf-8' aby poprawnie czytać plik XML
+            reader.readAsText(blob, 'utf-8'); 
         });
     }
     async function loadExcel(url, type) {
@@ -755,6 +782,7 @@
         if(!selectedId) return;
         
         const today = new Date();
+        // LOGIKA TYGODNI: W weekend pokazuj przyszły tydzień
         if (today.getDay() === 6 || today.getDay() === 0) { today.setDate(today.getDate() + 2); }
         today.setDate(today.getDate() + (weekOffset * 7));
         const monday = getStartOfWeek(today);
