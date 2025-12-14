@@ -98,14 +98,14 @@
         }
         button.back-btn:hover { background: #dc2626; transform: translateY(-2px); }
 
-        /* --- DASHBOARD: SELECT CARDS --- */
+        /* --- DASHBOARD --- */
         #dashboard-view { 
             padding: 40px; display: block; max-width: 1600px; margin: 0 auto; width: 100%; box-sizing: border-box; 
         }
 
         .selection-grid {
             display: grid;
-            grid-template-columns: repeat(4, 1fr); /* 4 kolumny na PC */
+            grid-template-columns: repeat(4, 1fr); 
             gap: 30px;
             margin-bottom: 40px;
         }
@@ -118,12 +118,11 @@
             flex-direction: column;
             align-items: center;
             box-shadow: 0 10px 25px rgba(0,0,0,0.3);
-            border-top: 6px solid #475569; /* Default border */
+            border-top: 6px solid #475569;
             transition: transform 0.3s;
         }
         .selection-card:hover { transform: translateY(-5px); }
 
-        /* Kolory kart */
         .selection-card.teacher { border-top-color: var(--accent-teacher); background: linear-gradient(180deg, #1e293b 0%, #064e3b 100%); }
         .selection-card.class { border-top-color: var(--accent-class); background: linear-gradient(180deg, #1e293b 0%, #0c4a6e 100%); }
         .selection-card.room { border-top-color: var(--accent-room); background: linear-gradient(180deg, #1e293b 0%, #451a03 100%); }
@@ -147,11 +146,8 @@
         /* --- OGŁOSZENIA --- */
         #announcements-container {
             background: rgba(15, 23, 42, 0.8);
-            border-radius: 16px;
-            border: 1px solid #334155;
-            padding: 30px;
-            text-align: center;
-            min-height: 200px;
+            border-radius: 16px; border: 1px solid #334155;
+            padding: 30px; text-align: center; min-height: 200px;
             display: flex; flex-direction: column; justify-content: center; align-items: center;
             box-shadow: 0 4px 20px rgba(0,0,0,0.4);
         }
@@ -184,7 +180,6 @@
             .controls { order: 3; flex: 4; margin-top: 0; justify-content: flex-end; margin-left: 10px; }
             button.back-btn { width: 100%; justify-content: center; padding: 0 10px; height: 42px; font-size: 0.8rem; white-space: nowrap; }
             
-            /* ZMIANA UKŁADU NA MOBILE - 4 KARTY POD SOBĄ */
             .selection-grid { grid-template-columns: 1fr; gap: 15px; }
             .selection-card { flex-direction: row; justify-content: space-between; padding: 15px; align-items: center; }
             .card-icon { font-size: 2rem; margin-bottom: 0; margin-right: 15px; }
@@ -235,6 +230,7 @@
         .is-new .main-info { color: #86efac; }
         .is-new .sub-line { color: #dcfce7; }
         .pay-badge { display: inline-block; background: var(--pay-bg); color: var(--pay-text); border: 1px solid var(--pay-border); border-radius: 4px; padding: 2px 6px; font-size: 0.75rem; font-weight: bold; margin-top: 4px; text-transform: uppercase; box-shadow: 0 0 5px rgba(251, 191, 36, 0.2); }
+        .transfer-note { font-size: 0.75em; color: #cbd5e1; font-style: italic; margin-top: 2px; line-height: 1.2; border-top: 1px dotted #475569; padding-top: 2px; }
 
         .duty-section { background: var(--duty-bg); color: var(--duty-color); border-top: 1px dashed var(--duty-border); padding: 8px 10px; font-size: 0.85rem; }
         .morning-duty { background: var(--duty-bg); border-left: 4px solid #f59e0b; padding: 12px; border-radius: 8px; margin-bottom: 8px; color: var(--duty-color); font-size: 0.9rem; border: 1px solid #78350f; }
@@ -281,8 +277,7 @@
 <div id="debug-bar">Ładowanie systemu...</div>
 
 <div id="dashboard-view">
-    <div id="selection-grid" class="selection-grid">
-        </div>
+    <div id="selection-grid" class="selection-grid"></div>
 
     <div id="announcements-container">
         <div class="anno-title">Ogłoszenia</div>
@@ -299,8 +294,8 @@
 </footer>
 
 <script>
-    const CONFIG = { xml: './plan.xml', dyzury: './dyzury.xlsx', zastepstwa: './zastepstwa.xlsx', refreshInterval: 120000, idleTimeout: 45000 };
-    const DB = { teachers: {}, rooms: [], classes: {}, classesList: [], groups: {}, locations: [], periods: [], lessons: [], duties: [], subs: [], dutyChanges: [] };
+    const CONFIG = { xml: './plan.xml', dyzury: './dyzury.xlsx', zastepstwa: './zastepstwa.xlsx', przeniesienia: './InformacjeOPrzeniesieniach.xlsx', refreshInterval: 120000, idleTimeout: 45000 };
+    const DB = { teachers: {}, rooms: [], classes: {}, classesList: [], groups: {}, locations: [], periods: [], lessons: [], duties: [], subs: [], dutyChanges: [], transfers: [] };
     const DAYS = ["Niedziela", "Poniedziałek", "Wtorek", "Środa", "Czwartek", "Piątek", "Sobota"];
     let refreshTimer = null; let idleTimer = null; let isDashboardActive = true; let weekOffset = 0; 
     let countdownInterval = null;
@@ -400,60 +395,35 @@
 
     async function refreshData() {
         log("Aktualizacja danych...", false);
-        DB.lessons = []; DB.periods = []; DB.duties = []; DB.subs = []; DB.dutyChanges = [];
+        DB.lessons = []; DB.periods = []; DB.duties = []; DB.subs = []; DB.dutyChanges = []; DB.transfers = [];
         DB.teachers = {}; DB.classes = {}; DB.classesList = []; DB.rooms = []; DB.groups = {}; DB.locations = [];
 
         try {
             await loadXML();
-            await Promise.all([ loadExcel(CONFIG.dyzury, 'dyzury').catch(() => {}), loadExcel(CONFIG.zastepstwa, 'zastepstwa').catch(() => {}) ]);
+            await Promise.all([ 
+                loadExcel(CONFIG.dyzury, 'dyzury').catch(() => {}), 
+                loadExcel(CONFIG.zastepstwa, 'zastepstwa').catch(() => {}),
+                loadExcel(CONFIG.przeniesienia, 'przeniesienia').catch(() => {})
+            ]);
             addMissingTeachers();
             if(isDashboardActive) renderDashboard(); else { populateSelect(false); render(); }
             log(`Dane zaktualizowane: ${new Date().toLocaleTimeString()}`);
         } catch (e) { console.error(e); log("Błąd aktualizacji danych!", true); }
     }
 
-    // --- NOWY RENDER DASHBOARDU (4 KARTY Z SELECTAMI) ---
+    // --- RENDER DASHBOARDU ---
     function renderDashboard() {
-        const container = document.getElementById('selection-grid');
-        container.innerHTML = "";
+        const container = document.getElementById('selection-grid'); container.innerHTML = "";
         
         const createCard = (title, items, type, icon, clickFn) => {
-            const card = document.createElement('div');
-            card.className = `selection-card ${type}`;
-            
-            const ico = document.createElement('div');
-            ico.className = 'card-icon';
-            ico.innerText = icon;
-            
-            const tit = document.createElement('div');
-            tit.className = 'card-title';
-            tit.innerText = title;
-            
-            const select = document.createElement('select');
-            select.className = 'main-select';
-            
-            const def = document.createElement('option');
-            def.text = "Wybierz...";
-            def.value = "";
-            def.disabled = true;
-            def.selected = true;
-            select.add(def);
-            
-            items.forEach(i => {
-                const opt = document.createElement('option');
-                opt.value = i.val;
-                opt.text = i.txt;
-                select.add(opt);
-            });
-            
-            select.onchange = (e) => {
-                if(e.target.value) clickFn(e.target.value);
-                select.value = ""; // Reset po wyborze
-            };
-            
-            card.appendChild(ico);
-            card.appendChild(tit);
-            card.appendChild(select);
+            const card = document.createElement('div'); card.className = `selection-card ${type}`;
+            const ico = document.createElement('div'); ico.className = 'card-icon'; ico.innerText = icon;
+            const tit = document.createElement('div'); tit.className = 'card-title'; tit.innerText = title;
+            const select = document.createElement('select'); select.className = 'main-select';
+            const def = document.createElement('option'); def.text = "Wybierz..."; def.value = ""; def.disabled = true; def.selected = true; select.add(def);
+            items.forEach(i => { const opt = document.createElement('option'); opt.value = i.val; opt.text = i.txt; select.add(opt); });
+            select.onchange = (e) => { if(e.target.value) clickFn(e.target.value); select.value = ""; };
+            card.appendChild(ico); card.appendChild(tit); card.appendChild(select);
             container.appendChild(card);
         };
 
@@ -469,7 +439,6 @@
     async function fetchFresh(url) {
         const res = await fetch(url + "?t=" + new Date().getTime()); if(!res.ok) throw new Error(`HTTP ${res.status}`); return res;
     }
-    // PRZYWRÓCONE STANDARDOWE PARSOWANIE (UTF-8 DOMYŚLNE)
     async function fetchText(url) {
         const res = await fetchFresh(url);
         return await res.text(); 
@@ -477,7 +446,9 @@
     async function loadExcel(url, type) {
         const res = await fetchFresh(url); const ab = await res.arrayBuffer();
         const wb = XLSX.read(ab, {type: 'array'});
-        if(type === 'dyzury') parseDuties(wb); if(type === 'zastepstwa') parseSub(wb);
+        if(type === 'dyzury') parseDuties(wb); 
+        if(type === 'zastepstwa') parseSub(wb);
+        if(type === 'przeniesienia') parseTransfers(wb);
     }
     async function loadXML() {
         const txt = await fetchText(CONFIG.xml); const xml = new DOMParser().parseFromString(txt, "text/xml");
@@ -515,6 +486,84 @@
                     room: roomMap[roomId] || '', classNames: classNames, branch: '', groupName: groupName,
                     supportInfo: supportTeachers.length ? supportTeachers.join(', ') : null
                 });
+            }
+        });
+    }
+
+    // --- PARSOWANIE PRZENIESIEŃ ---
+    function parseTransferString(str) {
+        // Format: "15.12.2025, 5, 11:25-12:10, sala: 32"
+        try {
+            const parts = str.split(',');
+            if (parts.length < 2) return null;
+            
+            const datePart = parts[0].trim(); // "15.12.2025"
+            const periodPart = parseInt(parts[1].trim()); // 5
+            
+            // Konwersja daty z DD.MM.YYYY na YYYY-MM-DD
+            const d = datePart.split('.');
+            const isoDate = `${d[2]}-${d[1]}-${d[0]}`;
+            
+            // Szukanie sali
+            let room = "";
+            const roomPart = parts.find(p => p.trim().includes('sala:'));
+            if(roomPart) {
+                room = roomPart.replace('sala:', '').trim();
+            }
+
+            return { date: isoDate, period: periodPart, room: room };
+        } catch(e) { return null; }
+    }
+
+    function parseTransfers(wb) {
+        const sh = wb.Sheets["Oddziały"] || wb.Sheets[0];
+        const data = XLSX.utils.sheet_to_json(sh);
+        
+        data.forEach(r => {
+            const fromStr = r['Przeniesiono z'];
+            const toStr = r['Przeniesiono na'];
+            const teacherRaw = r['Nauczyciel/wakat'];
+            const classRaw = r['Oddział'];
+            const subject = r['Przedmiot'];
+            const note = r['Uwagi'];
+
+            if(fromStr && toStr) {
+                const fromInfo = parseTransferString(fromStr);
+                const toInfo = parseTransferString(toStr);
+                
+                const teacherId = findTeacherId(teacherRaw);
+
+                if(fromInfo) {
+                    // REKORD WYJŚCIA (Z)
+                    DB.transfers.push({
+                        type: 'out',
+                        date: fromInfo.date,
+                        period: fromInfo.period,
+                        room: fromInfo.room,
+                        targetInfo: `Przeniesiono na: ${toInfo.date} lekcja ${toInfo.period}`,
+                        teacherId: teacherId,
+                        teacherName: teacherRaw,
+                        class: classRaw,
+                        subject: subject,
+                        note: note
+                    });
+                }
+
+                if(toInfo) {
+                    // REKORD WEJŚCIA (NA)
+                    DB.transfers.push({
+                        type: 'in',
+                        date: toInfo.date,
+                        period: toInfo.period,
+                        room: toInfo.room,
+                        targetInfo: `Przeniesiono z: ${fromInfo.date} lekcja ${fromInfo.period}`,
+                        teacherId: teacherId,
+                        teacherName: teacherRaw,
+                        class: classRaw,
+                        subject: subject,
+                        note: note
+                    });
+                }
             }
         });
     }
@@ -584,7 +633,6 @@
     }
 
     function normalize(str) { return (str||"").toLowerCase().replace(/^(x\.|ks\.|p\.|pani|pan)\s+/g, '').replace(/[^a-złąceźżńóś\s]/g, '').trim().split(/\s+/).sort().join(' '); }
-    function levenshtein(a, b) { const m = []; for(let i=0; i<=b.length; i++) m[i]=[i]; for(let j=0; j<=a.length; j++) m[0][j]=j; for(let i=1; i<=b.length; i++) for(let j=1; j<=a.length; j++) m[i][j] = b.charAt(i-1)===a.charAt(j-1) ? m[i-1][j-1] : Math.min(m[i-1][j-1]+1, Math.min(m[i][j-1]+1, m[i-1][j]+1)); return m[b.length][a.length]; }
     function findTeacherId(rawName) {
         if(!rawName || rawName.length<3) return null; if(/wakat|brak|okienko/i.test(rawName)) return null;
         const target = normalize(rawName); let bestId = null, bestScore = 0;
@@ -592,8 +640,6 @@
             const source = t.normalized;
             if(source === target) return id;
             if(source.includes(target) || target.includes(source)) { if(bestScore<50) { bestScore=50; bestId=id; } }
-            const dist = levenshtein(source, target);
-            if(dist <= 2 && source.length>4 && bestScore<80) { bestScore=80; bestId=id; }
         } return bestId;
     }
     function timeToMin(str) { if(!str) return 0; const [h,m] = str.trim().split(':').map(Number); return h*60+m; }
@@ -653,6 +699,7 @@
             }
 
             if (mode === 'duty') {
+                // Logika dla miejsc dyżurów
                 const duties = DB.duties.filter(d => d.day == dayNum && d.place === selectedId);
                 const changes = DB.dutyChanges.filter(d => d.date == dateStr && d.place === selectedId);
                 let allDuties = [];
@@ -673,23 +720,43 @@
             } else {
                 DB.periods.forEach(p => {
                     const wrapper = document.createElement('div'); wrapper.className = 'slot-wrapper';
-                    let lessons = [], subAdds = [];
+                    let lessons = [], subAdds = [], transferOut = [], transferIn = [];
+                    
+                    // FILTROWANIE LEKCJI XML
                     if (mode === 'teacher') lessons = DB.lessons.filter(l => l.teacherId == selectedId && l.day == dayNum && l.period == p.nr);
                     else if (mode === 'room') lessons = DB.lessons.filter(l => l.room === selectedId && l.day == dayNum && l.period == p.nr);
                     else if (mode === 'class') lessons = DB.lessons.filter(l => l.classNames.includes(selectedId) && l.day == dayNum && l.period == p.nr);
                     
+                    // FILTROWANIE ZASTĘPSTW
                     if (mode === 'teacher') subAdds = DB.subs.filter(s => s.date == dateStr && s.sub == selectedId && s.periodRaw.startsWith(p.nr+','));
                     else if (mode === 'room') subAdds = DB.subs.filter(s => s.date == dateStr && s.room === selectedId && s.periodRaw.startsWith(p.nr+','));
                     else if (mode === 'class') subAdds = DB.subs.filter(s => s.date == dateStr && normalizeClass(s.branch).includes(normalizeClass(selectedId)) && s.periodRaw.startsWith(p.nr+','));
 
+                    // FILTROWANIE PRZENIESIEŃ (NOWOŚĆ)
+                    if (mode === 'teacher') {
+                        transferOut = DB.transfers.filter(t => t.type === 'out' && t.date === dateStr && t.period == p.nr && t.teacherId == selectedId);
+                        transferIn = DB.transfers.filter(t => t.type === 'in' && t.date === dateStr && t.period == p.nr && t.teacherId == selectedId);
+                    } else if (mode === 'class') {
+                        transferOut = DB.transfers.filter(t => t.type === 'out' && t.date === dateStr && t.period == p.nr && normalizeClass(t.class).includes(normalizeClass(selectedId)));
+                        transferIn = DB.transfers.filter(t => t.type === 'in' && t.date === dateStr && t.period == p.nr && normalizeClass(t.class).includes(normalizeClass(selectedId)));
+                    } else if (mode === 'room') {
+                        transferOut = DB.transfers.filter(t => t.type === 'out' && t.date === dateStr && t.period == p.nr && t.room == selectedId);
+                        transferIn = DB.transfers.filter(t => t.type === 'in' && t.date === dateStr && t.period == p.nr && t.room == selectedId);
+                    }
+
                     lessons.sort((a,b) => (a.groupName||"").localeCompare(b.groupName||""));
 
+                    // RENDEROWANIE ZWYKŁYCH LEKCJI (LUB SKREŚLONYCH PRZEZ ZASTĘPSTWO / PRZENIESIENIE)
                     if(lessons.length > 0) {
                         lessons.forEach(lesson => {
                             const div = document.createElement('div');
                             const subAbs = DB.subs.find(s => s.date == dateStr && s.absent == lesson.teacherId && s.periodRaw.startsWith(p.nr+','));
+                            const transOut = transferOut.find(t => t.period == p.nr); // Uproszczone
+
                             if(subAbs) {
                                 div.className = 'card is-sub'; div.innerHTML = `<div class="meta"><span class="nr">${p.nr}</span> ${p.start}-${p.end} ${lesson.groupName ? `<span class="group-badge">${lesson.groupName}</span>` : ''}</div><div class="main-info">${lesson.subject}</div><span class="note-red">Nieobecność</span>`;
+                            } else if (transOut) {
+                                div.className = 'card is-sub'; div.innerHTML = `<div class="meta"><span class="nr">${p.nr}</span> ${p.start}-${p.end}</div><div class="main-info">${lesson.subject}</div><span class="note-red">Przeniesiono</span><div class="transfer-note">${transOut.targetInfo}</div>`;
                             } else {
                                 div.className = 'card'; let line = "";
                                 if(mode === 'teacher') line = `${lesson.classNames} / s.${lesson.room}`; else if(mode === 'class') line = `${getTeacherName(lesson.teacherId)} / s.${lesson.room}`; else line = `${getTeacherName(lesson.teacherId)} / ${lesson.classNames}`;
@@ -698,6 +765,17 @@
                             wrapper.appendChild(div);
                         });
                     }
+
+                    // RENDEROWANIE PRZENIESIEŃ PRZYCHODZĄCYCH (IN)
+                    if(transferIn.length > 0) {
+                        transferIn.forEach(t => {
+                            const div = document.createElement('div'); div.className = 'card is-new';
+                            div.innerHTML = `<div class="meta"><span class="nr">${p.nr}</span> ${p.start}-${p.end}</div><div class="main-info">${t.subject}</div><div class="sub-line">${t.teacherName} / s.${t.room}</div><div class="transfer-note">${t.targetInfo}<br>${t.note || ''}</div>`;
+                            wrapper.appendChild(div);
+                        });
+                    }
+
+                    // RENDEROWANIE ZASTĘPSTW (DODANE)
                     if(subAdds.length > 0) {
                         subAdds.forEach(sub => {
                             let subGroup = ""; if(sub.branch && sub.branch.includes('|')) subGroup = sub.branch.split('|')[1];
@@ -708,7 +786,8 @@
                             wrapper.appendChild(div);
                         });
                     }
-                    if(lessons.length === 0 && subAdds.length === 0) { const div = document.createElement('div'); div.className = 'card empty'; div.innerHTML = `${p.nr}. ${p.start}`; wrapper.appendChild(div); }
+
+                    if(lessons.length === 0 && subAdds.length === 0 && transferIn.length === 0) { const div = document.createElement('div'); div.className = 'card empty'; div.innerHTML = `${p.nr}. ${p.start}`; wrapper.appendChild(div); }
                     
                     if(mode === 'teacher') {
                         const pEnd = timeToMin(p.end);
