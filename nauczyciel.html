@@ -552,7 +552,9 @@
                     for(let c=0; c<5; c++) {
                         if(row[c] && /\d{1,2}:\d{2}\s*-\s*\d{1,2}:\d{2}/.test(String(row[c]))) {
                             timeVal = String(row[c]).trim();
-                            if(c>0 && row[c-1]) placeVal=row[c-1]; else if(row[0]) placeVal=row[0]; break;
+                            if(c>0 && row[c-1]) placeVal = unifyPlaceName(row[c-1]); 
+                                else if(row[0]) placeVal = unifyPlaceName(row[0]); 
+                                break;
                         }
                     }
                     if(timeVal) {
@@ -588,13 +590,42 @@
                 const d = parseDate(r['Dzień']);
                 if(d) DB.dutyChanges.push({
                     date: d, time: r['Godzina'], absent: findTeacherId(r['Nauczyciel']), sub: findTeacherId(r['Zastępca']),
-                    rawSub: r['Zastępca'], place: r['Miejsce dyżuru']
+                    rawSub: r['Zastępca'], place: unifyPlaceName(r['Miejsce dyżuru']) // <-- TU ZMIANA
                 });
             });
         }
     }
 
     function normalize(str) { return (str||"").toLowerCase().replace(/^(x\.|ks\.|p\.|pani|pan)\s+/g, '').replace(/[^a-złąceźżńóś\s]/g, '').trim().split(/\s+/).sort().join(' '); }
+    // --- NOWA FUNKCJA DO UJEDNOLICANIA NAZW MIEJSC ---
+    function unifyPlaceName(raw) {
+        if (!raw) return "";
+        let str = raw.trim();
+        let lower = str.toLowerCase();
+
+        // 1. Obsługa boiska (łapie "boisko", "boisko szkolne", "boisko/dziedziniec" itp.)
+        if (lower.includes('boisko')) return 'boisko - dziedziniec wejściowy';
+
+        // 2. Obsługa bramki
+        if (lower.includes('bramka')) return 'bramka wejściowa';
+
+        // 3. Obsługa stołówki (opcjonalnie, jeśli występuje)
+        if (lower.includes('stołówka') || lower.includes('stolowka')) return 'stołówka';
+
+        // 4. Obsługa biblioteki/czytelni
+        if (lower.includes('biblioteka') || lower.includes('czytelnia')) return 'biblioteka';
+
+        // 5. Ujednolicenie pięter (zamiana "1 piętro", "I p.", "Pietro 1" -> "piętro_1")
+        if (lower.includes('parter')) return 'parter';
+        
+        // Sprawdzamy cyfry 1, 2, 3 w połączeniu ze słowem piętro lub skrótem p
+        if ((lower.includes('1') || lower.includes('i ')) && (lower.includes('p') || lower.includes('piętro'))) return 'piętro_1';
+        if ((lower.includes('2') || lower.includes('ii ')) && (lower.includes('p') || lower.includes('piętro'))) return 'piętro_2';
+        if ((lower.includes('3') || lower.includes('iii ')) && (lower.includes('p') || lower.includes('piętro'))) return 'piętro_3';
+
+        // Jeśli nic nie pasuje, zwracamy oryginał (ewentualnie usuwamy dziwne znaki)
+        return str;
+    }
     function findTeacherId(rawName) {
         if(!rawName || rawName.length<3) return null; if(/wakat|brak|okienko/i.test(rawName)) return null;
         const target = normalize(rawName); let bestId = null, bestScore = 0;
