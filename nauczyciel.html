@@ -695,13 +695,22 @@
                 const duties = DB.duties.filter(d => d.day == dayNum && d.place === selectedId);
                 const changes = DB.dutyChanges.filter(d => d.date == dateStr && d.place === selectedId);
                 let allDuties = [];
+                
+                // --- ZMIANA TUTAJ ---
                 duties.forEach(d => {
                     const cancelled = DB.dutyChanges.find(ch => ch.date == dateStr && ch.time == d.time && ch.absent == d.teacherId);
-                    if(cancelled) { allDuties.push({...d, type: 'cancelled', sub: cancelled.rawSub}); } else { allDuties.push({...d, type: 'normal'}); }
+                    
+                    // Jeśli dyżur ma zastępstwo (cancelled istnieje), po prostu GO POMIJAMY.
+                    // Nie dodajemy go do listy 'allDuties', więc nie wyświetli się czerwony pasek.
+                    // Zastępstwo i tak wejdzie z listy 'changes' (poniżej) jako zielony pasek.
+                    if (!cancelled) { 
+                        allDuties.push({...d, type: 'normal'}); 
+                    }
                 });
+                // --------------------
+
                 changes.forEach(ch => { allDuties.push({ time: ch.time, teacherId: ch.sub, type: 'added', startMin: timeToMin(ch.time.split('-')[0]) }); });
                 allDuties.sort((a,b) => a.startMin - b.startMin);
-
                 allDuties.forEach(d => {
                     const div = document.createElement('div'); div.className = 'card';
                     if(d.type === 'cancelled') { 
