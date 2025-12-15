@@ -6,7 +6,7 @@
     <title>ZSZ5 TV - Plan Lekcji</title>
     <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
     <style>
-        /* --- BAZA I MOTYW ZIELONY (FOREST THEME) --- */
+        /* --- BAZA I MOTYW ZIELONY --- */
         * { box-sizing: border-box; margin: 0; padding: 0; }
         
         body {
@@ -42,249 +42,181 @@
         }
 
         .logo {
-            height: 100%;
-            width: auto;
+            height: 100%; width: auto;
             object-fit: contain;
             mix-blend-mode: multiply; 
             filter: contrast(1.1); 
         }
 
         .header-text {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            flex: 1;
+            display: flex; flex-direction: column; justify-content: center; flex: 1;
         }
 
         .header-text h1 { 
-            font-size: 2.8rem; 
-            text-transform: uppercase; 
-            letter-spacing: 3px; 
-            margin: 0; 
-            color: #ffffff;
-            font-weight: 800;
-            line-height: 1;
+            font-size: 2.8rem; font-weight: 800;
+            text-transform: uppercase; letter-spacing: 3px; 
+            margin: 0; color: #ffffff; line-height: 1;
             text-shadow: 0 2px 5px rgba(0,0,0,0.6);
         }
         
         .header-info-row {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-top: 15px;
-            width: 100%;
+            display: flex; align-items: center; justify-content: space-between;
+            margin-top: 15px; width: 100%;
         }
 
         .datetime { 
-            font-size: 1.5rem; 
-            color: #ffffff; 
-            font-weight: 600; 
+            font-size: 1.6rem; font-weight: 600; color: #ffffff; 
             font-family: 'Consolas', monospace;
             display: flex; align-items: center; gap: 15px;
             text-shadow: 0 2px 4px rgba(0,0,0,0.8); 
         }
 
-        /* STATUS LEKCJI */
         .lesson-status-box {
             background: rgba(0, 0, 0, 0.5);
-            padding: 8px 25px;
-            border-radius: 10px;
-            font-size: 1.4rem;
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+            padding: 10px 25px; border-radius: 10px;
+            font-size: 1.6rem; font-weight: 800;
+            text-transform: uppercase; letter-spacing: 1px;
             box-shadow: 0 5px 15px rgba(0,0,0,0.4);
-            border: 3px solid transparent;
-            text-align: center;
+            border: 3px solid transparent; text-align: center;
         }
         .status-active { color: #4ade80; border-color: #22c55e; background: rgba(6, 78, 59, 0.8); } 
         .status-break { color: #fcd34d; border-color: #fbbf24; background: rgba(69, 26, 3, 0.8); }  
         .status-idle { color: #94a3b8; border-color: #475569; }
 
         .live-dot {
-            height: 16px; width: 16px;
-            background-color: #22c55e; 
-            border-radius: 50%;
-            display: inline-block;
-            box-shadow: 0 0 15px #22c55e;
+            height: 16px; width: 16px; background-color: #22c55e; 
+            border-radius: 50%; display: inline-block; box-shadow: 0 0 15px #22c55e;
         }
 
         /* --- KONTENER GŁÓWNY --- */
         #slide-container {
             flex: 1; 
-            padding: 20px 40px; 
-            display: flex;
-            flex-direction: column;
-            gap: 30px; 
+            padding: 30px 40px; 
+            display: flex; flex-direction: column;
+            gap: 40px; /* Odstęp między klasami */
             background: radial-gradient(circle at center, #064e3b 0%, #020617 100%);
             overflow: hidden;
         }
 
         /* --- KARTA KLASY --- */
         .class-card {
-            flex: 1; 
+            flex: 1; /* Rozciągnij, aby wypełnić dostępną wysokość */
             background-color: #111827; 
             border-radius: 16px;
             overflow: hidden;
-            display: flex;
-            flex-direction: column;
+            display: flex; flex-direction: column;
             border-left: 12px solid #16a34a; 
             box-shadow: 0 15px 40px rgba(0,0,0,0.6);
             border: 1px solid #1f2937;
-            min-height: 0; 
+            min-height: 0;
         }
 
         .class-header {
             background: linear-gradient(90deg, #064e3b 0%, #065f46 100%);
-            padding: 12px 30px;
-            font-size: 2.2rem;
-            font-weight: 700;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            padding: 10px 30px;
+            font-size: 2.2rem; font-weight: 700;
+            display: flex; justify-content: space-between; align-items: center;
             border-bottom: 3px solid #047857;
             flex-shrink: 0;
         }
         .class-name { color: #d1fae5; text-shadow: 0 0 15px rgba(16, 185, 129, 0.3); }
 
-        /* --- GRID LEKCJI --- */
+        /* --- UKŁAD LEKCJI --- */
         .grid-container {
-            display: flex;
-            flex-direction: column;
-            flex: 1; 
-            height: 100%;
+            display: flex; flex-direction: column;
+            flex: 1; height: 100%;
+            overflow-y: auto; /* Zabezpieczenie */
         }
 
         .grid-row {
             display: grid;
-            grid-template-columns: 80px 180px 1fr; 
+            /* Nr+Czas | Sala | Info */
+            grid-template-columns: 140px 160px 1fr; 
             border-bottom: 1px solid #334155;
-            flex: 1; 
-            align-items: center;
-            min-height: 0; 
+            flex: 1; /* Rozciągnij wiersze */
+            align-items: stretch;
+            min-height: 70px;
         }
-        
         .grid-row:last-child { border-bottom: none; }
 
-        /* KOMÓRKI GRIDU */
+        /* KOMÓRKI */
         .cell-nr { 
-            font-weight: bold; 
-            color: #94a3b8; 
-            text-align: center; 
-            font-size: 1.8rem; 
-            border-right: 1px solid #334155;
-            height: 100%;
-            display: flex; align-items: center; justify-content: center;
             background: rgba(0,0,0,0.2);
-        }
-        
-        .cell-room { 
-            font-weight: 800; 
-            color: #fbbf24; /* Złoty */
-            font-size: 1.6rem;
-            text-align: center;
-            padding: 0 10px;
-            word-wrap: break-word; 
-            line-height: 1.1;
-            height: 100%;
-            display: flex; align-items: center; justify-content: center;
             border-right: 1px solid #334155;
+            display: flex; flex-direction: column;
+            justify-content: center; align-items: center;
+            padding: 5px;
+        }
+        .nr-big { font-size: 2rem; font-weight: 800; color: #94a3b8; line-height: 1; }
+        .nr-time { font-size: 0.9rem; color: #64748b; font-family: 'Consolas', monospace; margin-top: 4px; }
+
+        .cell-room { 
+            color: #fbbf24; /* Złoty */
+            border-right: 1px solid #334155;
+            display: flex; align-items: center; justify-content: center;
+            text-align: center;
+            padding: 5px 10px;
+            font-weight: 800;
+            line-height: 1.1;
+            word-break: break-word; /* Łamanie długich nazw */
         }
         
         .cell-info { 
-            padding: 0 25px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            color: #f1f5f9; 
-            height: 100%;
+            padding: 5px 25px;
+            display: flex; align-items: center;
+            justify-content: space-between; /* Przedmiot po lewej, Nauczyciel po prawej */
+            color: #f1f5f9;
         }
 
         .info-subject {
-            font-size: 1.7rem;
-            font-weight: 700;
-            line-height: 1.2;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
+            font-size: 1.8rem; font-weight: 700;
+            line-height: 1.1;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+            max-width: 60%; /* Ograniczenie szerokości przedmiotu */
         }
 
         .info-teacher {
-            font-size: 1.2rem;
-            color: #cbd5e1;
-            font-style: italic;
-            margin-top: 4px;
+            font-size: 1.3rem; color: #cbd5e1;
+            font-style: italic; text-align: right;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+            max-width: 40%;
         }
 
-        /* --- STYLE STATUSÓW --- */
-        
-        /* Zastępstwo / Nowa (Zielony) */
+        /* --- KOLORY WIERSZY --- */
+        /* Zastępstwo (Zielony) */
         .row-new {
-            background-color: rgba(22, 163, 74, 0.2); 
-            border-left: 10px solid #22c55e;
+            background-color: rgba(22, 163, 74, 0.15); 
+            border-left: 8px solid #22c55e;
         }
         .row-new .cell-room { color: #86efac; }
         .row-new .info-subject { color: #dcfce7; }
 
-        /* Transfer NA (Niebieski) */
-        .row-transfer-in {
-            background-color: rgba(8, 51, 68, 0.4);
-            border-left: 10px solid #38bdf8;
+        /* Transfer IN (Niebieski) */
+        .row-transfer {
+            background-color: rgba(8, 51, 68, 0.3);
+            border-left: 8px solid #38bdf8;
         }
-        .row-transfer-in .cell-room { color: #7dd3fc; }
-        .row-transfer-in .info-subject { color: #bae6fd; }
+        .row-transfer .cell-room { color: #7dd3fc; }
+        .row-transfer .info-subject { color: #bae6fd; }
 
-        .subtle-note {
-            font-size: 1rem;
-            color: #4ade80;
-            font-weight: bold;
-            text-transform: uppercase;
-            margin-top: 4px;
-            letter-spacing: 1px;
-        }
-
-        .transfer-note {
-            font-size: 1rem;
-            color: #7dd3fc;
-            font-style: italic;
-            margin-top: 4px;
-        }
-        
         .group-badge {
-            display: inline-block;
-            font-size: 1rem;
-            background: #334155;
-            padding: 2px 8px;
-            border-radius: 6px;
-            margin-right: 10px;
-            vertical-align: middle;
-            transform: translateY(-4px);
+            display: inline-block; font-size: 1rem;
+            background: #334155; padding: 2px 8px; border-radius: 6px;
+            margin-right: 10px; vertical-align: middle; transform: translateY(-3px);
             color: #e2e8f0;
         }
 
         /* --- STOPKA --- */
         footer {
-            height: 60px;
-            background-color: #064e3b;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0 40px;
-            font-size: 1.1rem;
-            color: #a7f3d0;
-            border-top: 2px solid #047857;
-            flex-shrink: 0;
+            height: 60px; background-color: #064e3b;
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 0 40px; font-size: 1.1rem; color: #a7f3d0;
+            border-top: 2px solid #047857; flex-shrink: 0;
         }
 
         .fullscreen-msg {
-            height: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 4rem;
-            color: #4b5563;
-            flex-direction: column;
-            text-align: center;
+            height: 100%; display: flex; justify-content: center; align-items: center;
+            font-size: 4rem; color: #4b5563; flex-direction: column; text-align: center;
         }
     </style>
 </head>
@@ -413,8 +345,11 @@
             html += `<div class="class-header"><span class="class-name">${clsName}</span></div>`;
             html += `<div class="grid-container">`; 
 
-            for(let i=1; i<=8; i++) {
-                // 1. DANE PODSTAWOWE
+            // Zbieramy aktywne lekcje dla tej klasy na ten dzień (bez pustych slotów)
+            let activeSlots = [];
+
+            for(let i=1; i<=15; i++) { // Sprawdzamy do 15 lekcji
+                // 1. LEKCJE Z XML
                 let lessons = DB.lessons.filter(l => l.day === dayOfWeek && normalize(l.className) === normalize(clsName) && l.period === i);
                 lessons.sort((a,b) => (a.groupName||"").localeCompare(b.groupName||""));
                 
@@ -425,35 +360,41 @@
                 let transOut = DB.transfers.filter(t => t.type === 'out' && t.date === dateStr && t.period == i && normalize(t.class).includes(normalize(clsName)));
                 let transIn = DB.transfers.filter(t => t.type === 'in' && t.date === dateStr && t.period == i && normalize(t.class).includes(normalize(clsName)));
 
-                // PUSTY SLOT
+                // JEŚLI NIE MA NIC DLA TEJ GODZINY, POMIŃ PĘTLĘ
                 if(lessons.length === 0 && subAdds.length === 0 && transIn.length === 0) {
-                    html += `<div class="grid-row"><div class="cell-nr">${i}</div><div class="cell-room"></div><div class="cell-info"></div></div>`;
-                    continue; 
+                    continue;
                 }
 
-                // A. LEKCJE ZWYKŁE (FILTROWANIE)
-                // Sprawdzamy, czy dla danej lekcji jest zastępstwo LUB przeniesienie.
-                // Jeśli tak -> NIE renderujemy starej lekcji w ogóle.
+                // PRZYGOTOWANIE WIERSZA (HTML)
+                let rowHtml = "";
+                let hasContent = false;
+
+                // A. LEKCJE (Oryginalne - TYLKO JEŚLI FAKTYCZNIE SIĘ ODBYWAJĄ)
                 lessons.forEach(l => {
-                    // Sprawdź czy jest zastępstwo pasujące do tej grupy (lub całej klasy)
-                    const hasSub = subAdds.some(s => {
-                        let subGrp = (s.branch && s.branch.includes('|')) ? s.branch.split('|')[1] : '';
-                        // Jeśli zastępstwo jest na całą klasę, albo grupy się zgadzają -> nadpisz
-                        return !subGrp || normalize(subGrp) === normalize(l.groupName);
-                    });
+                    const subAbs = DB.subs.find(s => s.date === dateStr && s.absentId === l.teacherIdRaw && s.periodRaw.startsWith(i+','));
+                    const tOut = transOut.find(t => true);
 
-                    // Sprawdź czy jest transfer OUT
-                    const hasTransferOut = transOut.length > 0;
+                    // JEŚLI JEST ZASTĘPSTWO LUB TRANSFER OUT -> NIE POKAZUJ TEJ LEKCJI
+                    // (Pokażemy nową lekcję w blokach B lub C, albo nic jeśli odwołana bez zastępstwa)
+                    if (subAbs || tOut) return; 
 
-                    // JEŚLI JEST ZMIANA -> POMIŃ ORYGINAŁ
-                    if (hasSub || hasTransferOut) return;
-
-                    // JEŚLI NIE MA ZMIANY -> RENDERUJ ORYGINAŁ
+                    hasContent = true;
                     const groupBadge = l.groupName ? `<span class="group-badge">${l.groupName}</span>` : '';
-                    html += `
+                    const periodInfo = DB.periods.find(p => p.nr == i);
+                    const timeRange = periodInfo ? `${periodInfo.start}-${periodInfo.end}` : '';
+                    
+                    // DYNAMICZNA WIELKOŚĆ SALI
+                    let roomSize = "1.8rem";
+                    if(l.room.length > 5) roomSize = "1.2rem";
+                    if(l.room.length > 10) roomSize = "1rem";
+
+                    rowHtml += `
                     <div class="grid-row">
-                        <div class="cell-nr">${i}</div>
-                        <div class="cell-room">${l.room}</div>
+                        <div class="cell-nr">
+                            <span class="nr-big">${i}</span>
+                            <span class="nr-time">${timeRange}</span>
+                        </div>
+                        <div class="cell-room" style="font-size:${roomSize}">${l.room}</div>
                         <div class="cell-info">
                             <div class="info-subject">${groupBadge}${l.subject}</div>
                             <div class="info-teacher">${l.teacherName}</div>
@@ -463,38 +404,59 @@
 
                 // B. PRZENIESIENIA PRZYCHODZĄCE (NIEBIESKIE)
                 transIn.forEach(t => {
-                    html += `
-                    <div class="grid-row row-transfer-in">
-                        <div class="cell-nr">${i}</div>
-                        <div class="cell-room">${t.room || '?'}</div>
+                    hasContent = true;
+                    const periodInfo = DB.periods.find(p => p.nr == i);
+                    const timeRange = periodInfo ? `${periodInfo.start}-${periodInfo.end}` : '';
+                    
+                    let roomSize = "1.8rem";
+                    if((t.room||"").length > 5) roomSize = "1.2rem";
+
+                    rowHtml += `
+                    <div class="grid-row row-transfer">
+                        <div class="cell-nr">
+                            <span class="nr-big">${i}</span>
+                            <span class="nr-time">${timeRange}</span>
+                        </div>
+                        <div class="cell-room" style="font-size:${roomSize}">${t.room || '?'}</div>
                         <div class="cell-info">
                             <div class="info-subject">${t.subject}</div>
                             <div class="info-teacher">${t.teacherName}</div>
-                            <div class="transfer-note">${t.targetInfo}</div>
                         </div>
                     </div>`;
                 });
 
-                // C. ZASTĘPSTWA DODANE (ZIELONE) - Nowa lekcja
+                // C. ZASTĘPSTWA DODANE (ZIELONE)
                 subAdds.forEach(s => {
+                    hasContent = true;
                     let gName = "";
                     if(s.branch && s.branch.includes('|')) gName = s.branch.split('|')[1];
                     const groupBadge = gName ? `<span class="group-badge">${gName}</span>` : '';
+                    const periodInfo = DB.periods.find(p => p.nr == i);
+                    const timeRange = periodInfo ? `${periodInfo.start}-${periodInfo.end}` : '';
 
-                    html += `
+                    let roomSize = "1.8rem";
+                    if((s.room||"").length > 5) roomSize = "1.2rem";
+
+                    rowHtml += `
                     <div class="grid-row row-new">
-                        <div class="cell-nr">${i}</div>
-                        <div class="cell-room">${s.room || '?'}</div>
+                        <div class="cell-nr">
+                            <span class="nr-big">${i}</span>
+                            <span class="nr-time">${timeRange}</span>
+                        </div>
+                        <div class="cell-room" style="font-size:${roomSize}">${s.room || '?'}</div>
                         <div class="cell-info">
                             <div class="info-subject">${groupBadge}${s.subject}</div>
                             <div class="info-teacher">${s.rawSub}</div>
-                            <div class="subtle-note">Zastępstwo</div>
                         </div>
                     </div>`;
                 });
+
+                if(hasContent) {
+                    html += rowHtml;
+                }
             }
 
-            html += `</div></div>`;
+            html += `</div></div>`; // End card
         });
 
         container.innerHTML = html;
