@@ -22,7 +22,7 @@
 
         /* --- NAGŁÓWEK --- */
         header {
-            height: 170px;
+            height: 200px; /* Nieco wyższy dla statusu lekcji */
             background: linear-gradient(to right, #4dff88 0%, #33cc66 30%, #020617 100%);
             display: flex;
             align-items: center;
@@ -36,11 +36,9 @@
         .logo-container {
             margin-right: 40px;
             flex-shrink: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            height: 140px; 
+            height: 160px; 
             width: auto;
+            display: flex; align-items: center;
         }
 
         .logo {
@@ -55,10 +53,11 @@
             display: flex;
             flex-direction: column;
             justify-content: center;
+            flex: 1;
         }
 
         .header-text h1 { 
-            font-size: 2.3rem; 
+            font-size: 2.5rem; 
             text-transform: uppercase; 
             letter-spacing: 2px; 
             margin: 0; 
@@ -68,17 +67,38 @@
             text-shadow: 0 2px 4px rgba(0,0,0,0.5);
         }
         
-        .header-text h2 { 
-            font-size: 1.4rem; 
-            color: #ffffff; 
-            font-weight: 500; 
-            margin-top: 8px;
-            font-family: 'Consolas', monospace;
+        .header-info-row {
             display: flex;
             align-items: center;
-            gap: 12px;
+            justify-content: space-between;
+            margin-top: 10px;
+            width: 100%;
+        }
+
+        .datetime { 
+            font-size: 1.3rem; 
+            color: #ffffff; 
+            font-weight: 600; 
+            font-family: 'Consolas', monospace;
+            display: flex; align-items: center; gap: 10px;
             text-shadow: 0 1px 3px rgba(0,0,0,0.6); 
         }
+
+        /* NOWY ELEMENT: STATUS LEKCJI */
+        .lesson-status-box {
+            background: rgba(0, 0, 0, 0.4);
+            padding: 8px 20px;
+            border-radius: 8px;
+            font-size: 1.4rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            border: 2px solid transparent;
+        }
+        .status-active { color: #4ade80; border-color: #22c55e; } /* Zielony - lekcja trwa */
+        .status-break { color: #fcd34d; border-color: #fbbf24; }  /* Żółty - przerwa */
+        .status-idle { color: #94a3b8; border-color: #475569; }   /* Szary - po lekcjach */
 
         .live-dot {
             height: 12px; width: 12px;
@@ -91,10 +111,10 @@
         /* --- KONTENER GŁÓWNY --- */
         #slide-container {
             flex: 1; 
-            padding: 30px; 
+            padding: 20px 30px; 
             display: flex;
             flex-direction: column;
-            gap: 30px;
+            gap: 25px;
             background: radial-gradient(circle at center, #064e3b 0%, #020617 100%);
         }
 
@@ -123,102 +143,97 @@
         }
         .class-name { color: #d1fae5; text-shadow: 0 0 15px rgba(16, 185, 129, 0.3); }
 
-        /* --- TABELA LEKCJI (UPROSZCZONA) --- */
-        .lesson-table {
+        /* --- NOWY UKŁAD TABELI (CSS GRID) - ROZWIĄZANIE PROBLEMU ROZJEŻDŻANIA --- */
+        .grid-container {
+            display: flex;
+            flex-direction: column;
             width: 100%;
-            border-collapse: collapse;
-            font-size: 1.3rem; 
-            table-layout: fixed;
-        }
-        
-        .lesson-table td {
-            padding: 4px 15px;
-            border-bottom: 1px solid #334155;
-            vertical-align: middle;
-            height: 60px; 
         }
 
-        /* KOLUMNY */
-        .col-nr { 
-            width: 60px; 
-            color: #94a3b8; 
+        .grid-row {
+            display: grid;
+            /* 1: Nr lekcji (stały), 2: Sala (stały ale szerszy), 3: Reszta */
+            grid-template-columns: 70px 160px 1fr; 
+            border-bottom: 1px solid #334155;
+            min-height: 65px; /* Minimalna wysokość */
+            align-items: center;
+        }
+        
+        /* KOMÓRKI GRIDU */
+        .cell-nr { 
             font-weight: bold; 
+            color: #94a3b8; 
             text-align: center; 
-            font-size: 1.4rem; 
+            font-size: 1.5rem;
             border-right: 1px solid #334155;
+            height: 100%;
+            display: flex; align-items: center; justify-content: center;
         }
         
-        .col-room { 
-            width: 100px; 
-            text-align: center; 
+        .cell-room { 
             font-weight: 800; 
-            color: #fbbf24; /* Złoty kolor sali */
-            font-size: 1.6rem;
+            color: #fbbf24; /* Złoty */
+            font-size: 1.4rem; /* Nieco mniejszy font dla długich nazw */
+            text-align: center;
+            padding: 5px 10px;
+            word-wrap: break-word; /* KLUCZOWE: Zawijanie długich nazw */
+            line-height: 1.1;
+            height: 100%;
+            display: flex; align-items: center; justify-content: center;
         }
         
-        .col-info { 
-            /* Reszta miejsca */
-            color: #f1f5f9; 
+        .cell-info { 
+            padding: 5px 15px;
             display: flex;
             flex-direction: column;
             justify-content: center;
-            line-height: 1.1;
+            color: #f1f5f9; 
         }
 
         .info-subject {
-            font-size: 1.3rem;
+            font-size: 1.4rem;
             font-weight: 600;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
+            line-height: 1.2;
         }
 
         .info-teacher {
-            font-size: 0.95rem;
+            font-size: 1rem;
             color: #cbd5e1;
             font-style: italic;
+            margin-top: 2px;
         }
 
-        /* --- STYLE ZASTĘPSTW I PRZENIESIEŃ --- */
-        .row-container {
-            display: flex;
-            width: 100%;
-            height: 100%;
-            align-items: center;
-        }
-
-        /* Zwykła lekcja */
-        .row-normal { }
-
-        /* Zastępstwo / Nowa lekcja */
+        /* --- STYLE STATUSÓW --- */
+        
+        /* Zastępstwo / Nowa (Zielony) */
         .row-new {
-            background-color: rgba(22, 163, 74, 0.15); /* Zielone tło */
-            border-left: 4px solid #22c55e;
+            background-color: rgba(22, 163, 74, 0.15); 
+            border-left: 6px solid #22c55e;
         }
-        .row-new .col-room { color: #86efac; }
+        .row-new .cell-room { color: #86efac; }
         .row-new .info-subject { color: #dcfce7; }
 
-        /* Odwołana / Przeniesiona (Z) */
+        /* Odwołana (Czerwony) */
         .row-sub {
-            background-color: rgba(153, 27, 27, 0.15); /* Czerwone tło */
-            border-left: 4px solid #ef4444;
+            background-color: rgba(153, 27, 27, 0.15); 
+            border-left: 6px solid #ef4444;
             opacity: 0.7;
         }
-        .row-sub .col-room, .row-sub .info-subject { 
+        .row-sub .cell-room, .row-sub .info-subject { 
             text-decoration: line-through; 
             color: #fca5a5;
         }
 
-        /* Przeniesienie (NA) - Niebieski */
+        /* Transfer (Niebieski) */
         .row-transfer {
-            background-color: rgba(8, 51, 68, 0.3); /* Niebieskie tło */
-            border-left: 4px solid #38bdf8;
+            background-color: rgba(8, 51, 68, 0.3);
+            border-left: 6px solid #38bdf8;
         }
-        .row-transfer .col-room { color: #7dd3fc; }
+        .row-transfer .cell-room { color: #7dd3fc; }
         .row-transfer .info-subject { color: #bae6fd; }
 
         .transfer-note {
-            font-size: 0.75rem;
+            font-size: 0.85rem;
             color: #94a3b8;
             font-weight: bold;
             text-transform: uppercase;
@@ -229,10 +244,11 @@
             display: inline-block;
             font-size: 0.8rem;
             background: #334155;
-            padding: 0 4px;
+            padding: 2px 6px;
             border-radius: 4px;
-            margin-right: 5px;
+            margin-right: 8px;
             vertical-align: middle;
+            transform: translateY(-2px);
         }
 
         /* --- STOPKA --- */
@@ -269,7 +285,12 @@
     
     <div class="header-text">
         <h1>PLAN LEKCJI KLAS</h1>
-        <h2 id="header-datetime"><span class="live-dot"></span> ...</h2>
+        <div class="header-info-row">
+            <div id="header-datetime" class="datetime">
+                <span class="live-dot"></span> ...
+            </div>
+            <div id="lesson-status" class="lesson-status-box status-idle">...</div>
+        </div>
     </div>
 </header>
 
@@ -297,7 +318,7 @@
 
     const DB = {
         classes: {}, classesList: [], groups: {},
-        lessons: [], subs: [], transfers: []
+        lessons: [], subs: [], transfers: [], periods: []
     };
 
     let groupedClasses = [];
@@ -306,7 +327,7 @@
     const DAYS_PL = ["niedziela", "poniedziałek", "wtorek", "środa", "czwartek", "piątek", "sobota"];
 
     window.onload = async () => {
-        startClock();
+        startClock(); // Startuje zegar i aktualizator statusu lekcji
         await reloadData();
         setInterval(() => window.location.reload(), CONFIG.refreshInterval);
     };
@@ -319,6 +340,7 @@
                 loadExcel(CONFIG.przeniesienia, 'przeniesienia').catch(() => {})
             ]);
             initCarousel();
+            updateLessonStatus(); // Pierwsze wywołanie statusu
         } catch (e) {
             document.getElementById('slide-container').innerHTML = 
                 `<div class="fullscreen-msg" style="color:#ef5350">
@@ -377,74 +399,65 @@
         classesToShow.forEach(clsName => {
             html += `<div class="class-card">`;
             html += `<div class="class-header"><span class="class-name">${clsName}</span></div>`;
-            html += `<table class="lesson-table"><tbody>`;
+            html += `<div class="grid-container">`; // Nowy kontener GRID
 
             for(let i=1; i<=8; i++) {
                 // 1. LEKCJE Z XML
                 let lessons = DB.lessons.filter(l => l.day === dayOfWeek && normalize(l.className) === normalize(clsName) && l.period === i);
                 lessons.sort((a,b) => (a.groupName||"").localeCompare(b.groupName||""));
                 
-                // 2. ZASTĘPSTWA (DODANE/NOWE)
+                // 2. ZASTĘPSTWA
                 let subAdds = DB.subs.filter(s => s.date === dateStr && normalize(s.branch).includes(normalize(clsName)) && s.periodRaw.startsWith(i+','));
 
-                // 3. PRZENIESIENIA (WEJŚCIOWE I WYJŚCIOWE)
+                // 3. PRZENIESIENIA
                 let transOut = DB.transfers.filter(t => t.type === 'out' && t.date === dateStr && t.period == i && normalize(t.class).includes(normalize(clsName)));
                 let transIn = DB.transfers.filter(t => t.type === 'in' && t.date === dateStr && t.period == i && normalize(t.class).includes(normalize(clsName)));
 
-                // JEŚLI SLOT PUSTY
+                // PUSTY SLOT
                 if(lessons.length === 0 && subAdds.length === 0 && transIn.length === 0) {
-                    html += `<tr><td class="col-nr">${i}</td><td></td><td></td></tr>`;
+                    html += `<div class="grid-row"><div class="cell-nr">${i}</div><div class="cell-room"></div><div class="cell-info"></div></div>`;
                     continue; 
                 }
 
-                html += `<tr>`;
-                html += `<td class="col-nr">${i}</td>`;
-                html += `<td style="padding:0;">`; // Kontener dla multi-itemów
-
-                // A. LEKCJE STANDARDOWE (LUB PRZEKREŚLONE PRZEZ ZAST/PRZEN)
+                // A. LEKCJE
                 lessons.forEach(l => {
                     const subAbs = DB.subs.find(s => s.date === dateStr && s.absentId === l.teacherIdRaw && s.periodRaw.startsWith(i+','));
-                    const tOut = transOut.find(t => true); // Uproszczenie: jeśli jest jakikolwiek transfer out dla tej lekcji
+                    const tOut = transOut.find(t => true); 
 
                     const groupBadge = l.groupName ? `<span class="group-badge">${l.groupName}</span>` : '';
-                    let rowClass = "row-normal";
-                    let infoHtml = "";
+                    let rowClass = "";
+                    let roomContent = l.room;
+                    let subjContent = `${groupBadge}${l.subject}`;
+                    let teachContent = l.teacherName;
+                    let extraInfo = "";
 
                     if (subAbs) {
-                        rowClass = "row-sub"; // Przekreślone (Czerwone)
-                        infoHtml = `
-                            <div class="col-room">${l.room}</div>
-                            <div class="col-info">
-                                <div class="info-subject">${groupBadge}${l.subject}</div>
-                                <div class="info-teacher">Odwołane / Zastępstwo</div>
-                            </div>`;
+                        rowClass = "row-sub";
+                        teachContent = "Odwołane / Zastępstwo";
                     } else if (tOut) {
-                        rowClass = "row-sub"; // Przekreślone (Czerwone) - Transfer
-                        infoHtml = `
-                            <div class="col-room">${l.room}</div>
-                            <div class="col-info">
-                                <div class="info-subject">${groupBadge}${l.subject}</div>
-                                <div class="transfer-note">${tOut.targetInfo}</div>
-                            </div>`;
-                    } else {
-                        // Normalna lekcja
-                        infoHtml = `
-                            <div class="col-room">${l.room}</div>
-                            <div class="col-info">
-                                <div class="info-subject">${groupBadge}${l.subject}</div>
-                                <div class="info-teacher">${l.teacherName}</div>
-                            </div>`;
+                        rowClass = "row-sub"; // Przekreślenie
+                        extraInfo = `<div class="transfer-note">${tOut.targetInfo}</div>`;
                     }
 
-                    html += `<div class="row-container ${rowClass}">${infoHtml}</div>`;
+                    html += `
+                    <div class="grid-row ${rowClass}">
+                        <div class="cell-nr">${i}</div>
+                        <div class="cell-room">${roomContent}</div>
+                        <div class="cell-info">
+                            <div class="info-subject">${subjContent}</div>
+                            <div class="info-teacher">${teachContent}</div>
+                            ${extraInfo}
+                        </div>
+                    </div>`;
                 });
 
-                // B. PRZENIESIENIA PRZYCHODZĄCE (NIEBIESKIE)
+                // B. PRZENIESIENIA PRZYCHODZĄCE
                 transIn.forEach(t => {
                     html += `
-                    <div class="row-container row-transfer">
-                        <div class="col-room">${t.room || '?'}</div>
-                        <div class="col-info">
+                    <div class="grid-row row-transfer">
+                        <div class="cell-nr">${i}</div>
+                        <div class="cell-room">${t.room || '?'}</div>
+                        <div class="cell-info">
                             <div class="info-subject">${t.subject}</div>
                             <div class="info-teacher">${t.teacherName}</div>
                             <div class="transfer-note">${t.targetInfo}</div>
@@ -452,39 +465,45 @@
                     </div>`;
                 });
 
-                // C. ZASTĘPSTWA DODANE (ZIELONE)
+                // C. ZASTĘPSTWA DODANE
                 subAdds.forEach(s => {
                     let gName = "";
                     if(s.branch && s.branch.includes('|')) gName = s.branch.split('|')[1];
                     const groupBadge = gName ? `<span class="group-badge">${gName}</span>` : '';
 
                     html += `
-                    <div class="row-container row-new">
-                        <div class="col-room">${s.room || '?'}</div>
-                        <div class="col-info">
+                    <div class="grid-row row-new">
+                        <div class="cell-nr">${i}</div>
+                        <div class="cell-room">${s.room || '?'}</div>
+                        <div class="cell-info">
                             <div class="info-subject">${groupBadge}${s.subject}</div>
                             <div class="info-teacher">${s.rawSub}</div>
                         </div>
                     </div>`;
                 });
-
-                html += `</td></tr>`;
             }
 
-            html += `</tbody></table></div>`;
+            html += `</div></div>`; // Zamknięcie grid-container i class-card
         });
 
         container.innerHTML = html;
     }
 
-    // === PARSOWANIE ===
+    // === UTILS ===
+    function timeToMin(str) { 
+        if(!str) return 0;
+        const [h, m] = str.trim().split(':').map(Number);
+        return h * 60 + m;
+    }
+
+    // === PARSOWANIE DANYCH ===
     async function fetchFresh(url) { return fetch(url + "?t=" + new Date().getTime()); }
     function normalize(str) { return (str||"").toLowerCase().replace(/\s/g, ''); }
     function pad(n) { return n<10?'0'+n:n; }
 
     async function fetchText(url) {
         const res = await fetchFresh(url);
-        return await res.text(); // Domyślne UTF-8
+        return await res.text(); 
     }
 
     async function loadXML() {
@@ -493,6 +512,17 @@
 
         xml.querySelectorAll('groups group').forEach(g => DB.groups[g.getAttribute('id')] = g.getAttribute('name'));
         
+        // POBIERANIE GODZIN LEKCYJNYCH (Do statusu)
+        DB.periods = [];
+        xml.querySelectorAll('periods period').forEach(p => {
+            DB.periods.push({
+                nr: parseInt(p.getAttribute('period')),
+                start: p.getAttribute('starttime'),
+                end: p.getAttribute('endtime')
+            });
+        });
+        DB.periods.sort((a,b) => a.nr - b.nr);
+
         const teachers = {};
         xml.querySelectorAll('teachers teacher').forEach(t => {
             const n = (t.getAttribute('firstname')||'') + ' ' + (t.getAttribute('lastname')||t.getAttribute('name'));
@@ -599,6 +629,42 @@
         } catch(e) { return null; }
     }
 
+    // --- LOGIKA STATUSU LEKCJI ---
+    function updateLessonStatus() {
+        const statusDiv = document.getElementById('lesson-status');
+        if(!DB.periods || DB.periods.length === 0) return;
+
+        const now = new Date();
+        const currentMin = now.getHours() * 60 + now.getMinutes();
+        
+        let found = false;
+
+        for (let i = 0; i < DB.periods.length; i++) {
+            const p = DB.periods[i];
+            const pStart = timeToMin(p.start);
+            const pEnd = timeToMin(p.end);
+
+            if (currentMin >= pStart && currentMin <= pEnd) {
+                // TRWA LEKCJA
+                statusDiv.innerText = `TRWA LEKCJA ${p.nr} (${p.start} - ${p.end})`;
+                statusDiv.className = 'lesson-status-box status-active';
+                found = true;
+                break;
+            } else if (currentMin < pStart) {
+                // PRZED TĄ LEKCJĄ (CZYLI PRZERWA)
+                statusDiv.innerText = `PRZERWA. ZA CHWILĘ: LEKCJA ${p.nr} (${p.start})`;
+                statusDiv.className = 'lesson-status-box status-break';
+                found = true;
+                break;
+            }
+        }
+
+        if (!found) {
+            statusDiv.innerText = "PO LEKCJACH";
+            statusDiv.className = 'lesson-status-box status-idle';
+        }
+    }
+
     function startClock() {
         const update = () => {
             const now = new Date();
@@ -607,6 +673,8 @@
             const timeStr = now.toLocaleTimeString('pl-PL', {hour:'2-digit', minute:'2-digit', second:'2-digit'});
             document.getElementById('header-datetime').innerHTML = 
                 `<span class="live-dot"></span> NA DZIEŃ ${dayName.toUpperCase()}, ${dateStr} ${timeStr}`;
+            
+            updateLessonStatus(); // Sprawdzamy status co sekundę
         };
         update(); setInterval(update, 1000);
     }
