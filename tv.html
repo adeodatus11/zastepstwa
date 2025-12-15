@@ -6,7 +6,7 @@
     <title>ZSZ5 TV - Plan Lekcji</title>
     <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
     <style>
-        /* --- BAZA I MOTYW ZIELONY --- */
+        /* --- BAZA --- */
         * { box-sizing: border-box; margin: 0; padding: 0; }
         
         body {
@@ -22,22 +22,20 @@
 
         /* --- NAGŁÓWEK --- */
         header {
-            height: 200px;
+            height: 180px;
             background: linear-gradient(to right, #4dff88 0%, #33cc66 30%, #020617 100%);
             display: flex;
             align-items: center;
             padding: 0 40px;
             border-bottom: 6px solid #22c55e; 
             box-shadow: 0 10px 40px rgba(0,0,0,0.6);
-            position: relative;
-            z-index: 10;
             flex-shrink: 0;
+            z-index: 10;
         }
 
         .logo-container {
-            margin-right: 50px;
-            flex-shrink: 0;
-            height: 160px; 
+            margin-right: 40px;
+            height: 140px; 
             display: flex; align-items: center;
         }
 
@@ -53,19 +51,19 @@
         }
 
         .header-text h1 { 
-            font-size: 2.8rem; font-weight: 800;
-            text-transform: uppercase; letter-spacing: 3px; 
+            font-size: 2.6rem; font-weight: 800;
+            text-transform: uppercase; letter-spacing: 2px; 
             margin: 0; color: #ffffff; line-height: 1;
             text-shadow: 0 2px 5px rgba(0,0,0,0.6);
         }
         
         .header-info-row {
             display: flex; align-items: center; justify-content: space-between;
-            margin-top: 15px; width: 100%;
+            margin-top: 10px; width: 100%;
         }
 
         .datetime { 
-            font-size: 1.6rem; font-weight: 600; color: #ffffff; 
+            font-size: 1.5rem; font-weight: 600; color: #ffffff; 
             font-family: 'Consolas', monospace;
             display: flex; align-items: center; gap: 15px;
             text-shadow: 0 2px 4px rgba(0,0,0,0.8); 
@@ -73,8 +71,8 @@
 
         .lesson-status-box {
             background: rgba(0, 0, 0, 0.5);
-            padding: 10px 25px; border-radius: 10px;
-            font-size: 1.6rem; font-weight: 800;
+            padding: 8px 20px; border-radius: 10px;
+            font-size: 1.4rem; font-weight: 800;
             text-transform: uppercase; letter-spacing: 1px;
             box-shadow: 0 5px 15px rgba(0,0,0,0.4);
             border: 3px solid transparent; text-align: center;
@@ -91,16 +89,16 @@
         /* --- KONTENER GŁÓWNY --- */
         #slide-container {
             flex: 1; 
-            padding: 30px 40px; 
+            padding: 20px 40px; 
             display: flex; flex-direction: column;
-            gap: 40px; /* Odstęp między klasami */
+            gap: 30px; 
             background: radial-gradient(circle at center, #064e3b 0%, #020617 100%);
-            overflow: hidden;
+            overflow: hidden; /* Ukryj nadmiar, żeby nie psuć layoutu */
         }
 
         /* --- KARTA KLASY --- */
         .class-card {
-            flex: 1; /* Rozciągnij, aby wypełnić dostępną wysokość */
+            flex: 1; /* Równe podział wysokości */
             background-color: #111827; 
             border-radius: 16px;
             overflow: hidden;
@@ -108,7 +106,7 @@
             border-left: 12px solid #16a34a; 
             box-shadow: 0 15px 40px rgba(0,0,0,0.6);
             border: 1px solid #1f2937;
-            min-height: 0;
+            min-height: 0; /* Ważne dla flexbox */
         }
 
         .class-header {
@@ -121,21 +119,20 @@
         }
         .class-name { color: #d1fae5; text-shadow: 0 0 15px rgba(16, 185, 129, 0.3); }
 
-        /* --- UKŁAD LEKCJI --- */
+        /* --- GRID LEKCJI --- */
         .grid-container {
             display: flex; flex-direction: column;
             flex: 1; height: 100%;
-            overflow-y: auto; /* Zabezpieczenie */
         }
 
         .grid-row {
             display: grid;
-            /* Nr+Czas | Sala | Info */
-            grid-template-columns: 140px 160px 1fr; 
+            /* Nr (12%) | Sala (18%) | Reszta (70%) */
+            grid-template-columns: 120px 180px 1fr; 
             border-bottom: 1px solid #334155;
-            flex: 1; /* Rozciągnij wiersze */
-            align-items: stretch;
-            min-height: 70px;
+            flex: 1; /* Rozciągaj wiersze równomiernie */
+            align-items: center;
+            min-height: 0;
         }
         .grid-row:last-child { border-bottom: none; }
 
@@ -145,78 +142,72 @@
             border-right: 1px solid #334155;
             display: flex; flex-direction: column;
             justify-content: center; align-items: center;
-            padding: 5px;
+            height: 100%; padding: 0 5px;
         }
-        .nr-big { font-size: 2rem; font-weight: 800; color: #94a3b8; line-height: 1; }
-        .nr-time { font-size: 0.9rem; color: #64748b; font-family: 'Consolas', monospace; margin-top: 4px; }
+        .nr-big { font-size: 1.8rem; font-weight: 800; color: #94a3b8; line-height: 1; }
+        .nr-time { font-size: 0.85rem; color: #64748b; font-family: 'Consolas', monospace; margin-top: 2px; text-align: center; }
 
         .cell-room { 
-            color: #fbbf24; /* Złoty */
+            color: #fbbf24; 
             border-right: 1px solid #334155;
             display: flex; align-items: center; justify-content: center;
             text-align: center;
-            padding: 5px 10px;
+            padding: 0 10px;
             font-weight: 800;
             line-height: 1.1;
-            word-break: break-word; /* Łamanie długich nazw */
+            height: 100%;
+            overflow: hidden; /* Ucięcie nadmiaru */
         }
         
         .cell-info { 
-            padding: 5px 25px;
+            padding: 0 25px;
             display: flex; align-items: center;
-            justify-content: space-between; /* Przedmiot po lewej, Nauczyciel po prawej */
+            justify-content: space-between; 
             color: #f1f5f9;
+            height: 100%;
+            overflow: hidden;
         }
 
         .info-subject {
-            font-size: 1.8rem; font-weight: 700;
+            font-weight: 700;
             line-height: 1.1;
-            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-            max-width: 60%; /* Ograniczenie szerokości przedmiotu */
+            /* Reszta stylu nadawana dynamicznie JS */
         }
 
         .info-teacher {
-            font-size: 1.3rem; color: #cbd5e1;
+            color: #cbd5e1;
             font-style: italic; text-align: right;
             white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-            max-width: 40%;
+            min-width: 30%; max-width: 40%;
+            font-size: 1.1rem;
         }
 
-        /* --- KOLORY WIERSZY --- */
-        /* Zastępstwo (Zielony) */
-        .row-new {
-            background-color: rgba(22, 163, 74, 0.15); 
-            border-left: 8px solid #22c55e;
-        }
+        /* --- STATUSY --- */
+        .row-new { background-color: rgba(22, 163, 74, 0.15); border-left: 8px solid #22c55e; }
         .row-new .cell-room { color: #86efac; }
         .row-new .info-subject { color: #dcfce7; }
 
-        /* Transfer IN (Niebieski) */
-        .row-transfer {
-            background-color: rgba(8, 51, 68, 0.3);
-            border-left: 8px solid #38bdf8;
-        }
-        .row-transfer .cell-room { color: #7dd3fc; }
-        .row-transfer .info-subject { color: #bae6fd; }
+        .row-transfer-in { background-color: rgba(8, 51, 68, 0.4); border-left: 8px solid #38bdf8; }
+        .row-transfer-in .cell-room { color: #7dd3fc; }
+        .row-transfer-in .info-subject { color: #bae6fd; }
 
         .group-badge {
-            display: inline-block; font-size: 1rem;
-            background: #334155; padding: 2px 8px; border-radius: 6px;
-            margin-right: 10px; vertical-align: middle; transform: translateY(-3px);
+            display: inline-block; font-size: 0.9rem;
+            background: #334155; padding: 2px 6px; border-radius: 4px;
+            margin-right: 8px; vertical-align: middle; transform: translateY(-2px);
             color: #e2e8f0;
         }
 
-        /* --- STOPKA --- */
         footer {
-            height: 60px; background-color: #064e3b;
+            height: 50px; background-color: #064e3b;
             display: flex; justify-content: space-between; align-items: center;
-            padding: 0 40px; font-size: 1.1rem; color: #a7f3d0;
+            padding: 0 40px; font-size: 1rem; color: #a7f3d0;
             border-top: 2px solid #047857; flex-shrink: 0;
         }
 
         .fullscreen-msg {
             height: 100%; display: flex; justify-content: center; align-items: center;
-            font-size: 4rem; color: #4b5563; flex-direction: column; text-align: center;
+            font-size: 3rem; color: #4b5563; flex-direction: column; text-align: center;
         }
     </style>
 </head>
@@ -230,24 +221,19 @@
     <div class="header-text">
         <h1>PLAN LEKCJI KLAS</h1>
         <div class="header-info-row">
-            <div id="header-datetime" class="datetime">
-                <span class="live-dot"></span> ...
-            </div>
+            <div id="header-datetime" class="datetime"><span class="live-dot"></span> ...</div>
             <div id="lesson-status" class="lesson-status-box status-idle">...</div>
         </div>
     </div>
 </header>
 
 <div id="slide-container">
-    <div class="fullscreen-msg">
-        <div style="font-weight:300; color:#d1fae5">Wczytywanie systemu</div>
-        <div style="font-size:1.5rem; margin-top:20px; color:#6ee7b7; font-family:monospace">INITIALIZING...</div>
-    </div>
+    <div class="fullscreen-msg">Ładowanie...</div>
 </div>
 
 <footer>
-    <div>ZSZ5 Wrocław • Panel Informacyjny TV</div>
-    <div id="update-info">Odświeżanie: 2 min</div>
+    <div>ZSZ5 Wrocław • TV</div>
+    <div id="update-info">Aktualizacja: 2 min</div>
 </footer>
 
 <script>
@@ -271,8 +257,7 @@
     const DAYS_PL = ["niedziela", "poniedziałek", "wtorek", "środa", "czwartek", "piątek", "sobota"];
 
     window.onload = async () => {
-        startClock(); 
-        await reloadData();
+        startClock(); await reloadData();
         setInterval(() => window.location.reload(), CONFIG.refreshInterval);
     };
 
@@ -286,20 +271,15 @@
             initCarousel();
             updateLessonStatus();
         } catch (e) {
-            document.getElementById('slide-container').innerHTML = 
-                `<div class="fullscreen-msg" style="color:#ef5350">
-                    BŁĄD DANYCH<br><span style="font-size:2rem">${e.message}</span>
-                 </div>`;
+            document.getElementById('slide-container').innerHTML = `<div class="fullscreen-msg" style="color:#ef5350">BŁĄD DANYCH<br><span style="font-size:2rem">${e.message}</span></div>`;
         }
     }
 
     function initCarousel() {
         const today = new Date();
         const dayOfWeek = today.getDay(); 
-
         if(dayOfWeek === 0 || dayOfWeek === 6) {
-            document.getElementById('slide-container').innerHTML = 
-                `<div class="fullscreen-msg">WEEKEND<br><span style="font-size:3rem;color:#64748b">Szkoła zamknięta</span></div>`;
+            document.getElementById('slide-container').innerHTML = `<div class="fullscreen-msg">WEEKEND<br><span style="font-size:3rem;color:#64748b">Szkoła zamknięta</span></div>`;
             return;
         }
 
@@ -310,8 +290,7 @@
         });
 
         if(activeClasses.length === 0) {
-            document.getElementById('slide-container').innerHTML = 
-                `<div class="fullscreen-msg">BRAK ZAJĘĆ<br><span style="font-size:3rem;color:#64748b">W dniu dzisiejszym</span></div>`;
+            document.getElementById('slide-container').innerHTML = `<div class="fullscreen-msg">BRAK ZAJĘĆ<br><span style="font-size:3rem;color:#64748b">W dniu dzisiejszym</span></div>`;
             return;
         }
 
@@ -331,6 +310,22 @@
         }, CONFIG.slideDuration);
     }
 
+    // --- FUNKCJE DYNAMICZNEGO DOPASOWANIA CZCIONKI ---
+    function getRoomStyle(name) {
+        const len = (name || "").length;
+        if(len <= 3) return 'font-size: 2rem;';
+        if(len <= 6) return 'font-size: 1.6rem;';
+        if(len <= 10) return 'font-size: 1.3rem; line-height:1;';
+        return 'font-size: 1.0rem; line-height:1; word-break:break-word;';
+    }
+
+    function getSubjectStyle(name) {
+        const len = (name || "").length;
+        if(len <= 20) return 'font-size: 1.6rem;';
+        if(len <= 35) return 'font-size: 1.3rem;';
+        return 'font-size: 1.1rem; line-height:1.1; white-space:normal;';
+    }
+
     function renderSlide() {
         const container = document.getElementById('slide-container');
         const classesToShow = groupedClasses[currentSlideIndex];
@@ -345,87 +340,76 @@
             html += `<div class="class-header"><span class="class-name">${clsName}</span></div>`;
             html += `<div class="grid-container">`; 
 
-            // Zbieramy aktywne lekcje dla tej klasy na ten dzień (bez pustych slotów)
-            let activeSlots = [];
-
-            for(let i=1; i<=15; i++) { // Sprawdzamy do 15 lekcji
-                // 1. LEKCJE Z XML
+            for(let i=1; i<=8; i++) {
                 let lessons = DB.lessons.filter(l => l.day === dayOfWeek && normalize(l.className) === normalize(clsName) && l.period === i);
                 lessons.sort((a,b) => (a.groupName||"").localeCompare(b.groupName||""));
                 
-                // 2. ZASTĘPSTWA
                 let subAdds = DB.subs.filter(s => s.date === dateStr && normalize(s.branch).includes(normalize(clsName)) && s.periodRaw.startsWith(i+','));
-
-                // 3. PRZENIESIENIA
                 let transOut = DB.transfers.filter(t => t.type === 'out' && t.date === dateStr && t.period == i && normalize(t.class).includes(normalize(clsName)));
                 let transIn = DB.transfers.filter(t => t.type === 'in' && t.date === dateStr && t.period == i && normalize(t.class).includes(normalize(clsName)));
 
-                // JEŚLI NIE MA NIC DLA TEJ GODZINY, POMIŃ PĘTLĘ
                 if(lessons.length === 0 && subAdds.length === 0 && transIn.length === 0) {
-                    continue;
+                    continue; // Ukryj pusty wiersz
                 }
 
-                // PRZYGOTOWANIE WIERSZA (HTML)
                 let rowHtml = "";
                 let hasContent = false;
 
-                // A. LEKCJE (Oryginalne - TYLKO JEŚLI FAKTYCZNIE SIĘ ODBYWAJĄ)
+                // A. LEKCJE (Ukrywamy jeśli jest zmiana)
                 lessons.forEach(l => {
                     const subAbs = DB.subs.find(s => s.date === dateStr && s.absentId === l.teacherIdRaw && s.periodRaw.startsWith(i+','));
-                    const tOut = transOut.find(t => true);
+                    const isTransferredOut = transOut.find(t => true);
+                    
+                    // FILTRACJA ZASTĘPSTW DLA GRUP
+                    // Jeśli zastępstwo jest dla innej grupy, nie ukrywaj tej lekcji
+                    const subForThisGroup = subAdds.find(s => {
+                        let g = (s.branch && s.branch.includes('|')) ? s.branch.split('|')[1] : '';
+                        return !g || normalize(g) === normalize(l.groupName);
+                    });
 
-                    // JEŚLI JEST ZASTĘPSTWO LUB TRANSFER OUT -> NIE POKAZUJ TEJ LEKCJI
-                    // (Pokażemy nową lekcję w blokach B lub C, albo nic jeśli odwołana bez zastępstwa)
-                    if (subAbs || tOut) return; 
+                    // Jeśli lekcja jest odwołana (subAbs), przeniesiona (isTransferredOut) lub ma pokrywające zastępstwo -> UKRYJ
+                    if (subAbs || isTransferredOut || subForThisGroup) return;
 
                     hasContent = true;
                     const groupBadge = l.groupName ? `<span class="group-badge">${l.groupName}</span>` : '';
                     const periodInfo = DB.periods.find(p => p.nr == i);
                     const timeRange = periodInfo ? `${periodInfo.start}-${periodInfo.end}` : '';
                     
-                    // DYNAMICZNA WIELKOŚĆ SALI
-                    let roomSize = "1.8rem";
-                    if(l.room.length > 5) roomSize = "1.2rem";
-                    if(l.room.length > 10) roomSize = "1rem";
-
                     rowHtml += `
                     <div class="grid-row">
                         <div class="cell-nr">
                             <span class="nr-big">${i}</span>
                             <span class="nr-time">${timeRange}</span>
                         </div>
-                        <div class="cell-room" style="font-size:${roomSize}">${l.room}</div>
+                        <div class="cell-room" style="${getRoomStyle(l.room)}">${l.room}</div>
                         <div class="cell-info">
-                            <div class="info-subject">${groupBadge}${l.subject}</div>
+                            <div class="info-subject" style="${getSubjectStyle(l.subject)}">${groupBadge}${l.subject}</div>
                             <div class="info-teacher">${l.teacherName}</div>
                         </div>
                     </div>`;
                 });
 
-                // B. PRZENIESIENIA PRZYCHODZĄCE (NIEBIESKIE)
+                // B. TRANSFER IN
                 transIn.forEach(t => {
                     hasContent = true;
                     const periodInfo = DB.periods.find(p => p.nr == i);
                     const timeRange = periodInfo ? `${periodInfo.start}-${periodInfo.end}` : '';
                     
-                    let roomSize = "1.8rem";
-                    if((t.room||"").length > 5) roomSize = "1.2rem";
-
                     rowHtml += `
-                    <div class="grid-row row-transfer">
+                    <div class="grid-row row-transfer-in">
                         <div class="cell-nr">
                             <span class="nr-big">${i}</span>
                             <span class="nr-time">${timeRange}</span>
                         </div>
-                        <div class="cell-room" style="font-size:${roomSize}">${t.room || '?'}</div>
+                        <div class="cell-room" style="${getRoomStyle(t.room)}">${t.room || '?'}</div>
                         <div class="cell-info">
-                            <div class="info-subject">${t.subject}</div>
+                            <div class="info-subject" style="${getSubjectStyle(t.subject)}">${t.subject}</div>
                             <div class="info-teacher">${t.teacherName}</div>
                         </div>
                     </div>`;
                 });
 
-                // C. ZASTĘPSTWA DODANE (ZIELONE)
+                // C. ZASTĘPSTWA
                 subAdds.forEach(s => {
                     hasContent = true;
                     let gName = "";
@@ -434,85 +418,63 @@
                     const periodInfo = DB.periods.find(p => p.nr == i);
                     const timeRange = periodInfo ? `${periodInfo.start}-${periodInfo.end}` : '';
 
-                    let roomSize = "1.8rem";
-                    if((s.room||"").length > 5) roomSize = "1.2rem";
-
                     rowHtml += `
                     <div class="grid-row row-new">
                         <div class="cell-nr">
                             <span class="nr-big">${i}</span>
                             <span class="nr-time">${timeRange}</span>
                         </div>
-                        <div class="cell-room" style="font-size:${roomSize}">${s.room || '?'}</div>
+                        <div class="cell-room" style="${getRoomStyle(s.room)}">${s.room || '?'}</div>
                         <div class="cell-info">
-                            <div class="info-subject">${groupBadge}${s.subject}</div>
+                            <div class="info-subject" style="${getSubjectStyle(s.subject)}">${groupBadge}${s.subject}</div>
                             <div class="info-teacher">${s.rawSub}</div>
                         </div>
                     </div>`;
                 });
 
-                if(hasContent) {
-                    html += rowHtml;
-                }
+                if(hasContent) html += rowHtml;
             }
-
-            html += `</div></div>`; // End card
+            html += `</div></div>`;
         });
-
         container.innerHTML = html;
     }
 
-    // === UTILS & PARSING ===
+    // === UTILS ===
     function timeToMin(str) { 
         if(!str) return 0;
         const [h, m] = str.trim().split(':').map(Number);
         return h * 60 + m;
     }
-
     async function fetchFresh(url) { return fetch(url + "?t=" + new Date().getTime()); }
     function normalize(str) { return (str||"").toLowerCase().replace(/\s/g, ''); }
     function pad(n) { return n<10?'0'+n:n; }
 
-    async function fetchText(url) {
-        const res = await fetchFresh(url);
-        return await res.text(); 
-    }
+    async function fetchText(url) { const res = await fetchFresh(url); return await res.text(); }
 
     async function loadXML() {
         const txt = await fetchText(CONFIG.xml);
         const xml = new DOMParser().parseFromString(txt, "text/xml");
-
         xml.querySelectorAll('groups group').forEach(g => DB.groups[g.getAttribute('id')] = g.getAttribute('name'));
-        
         DB.periods = [];
         xml.querySelectorAll('periods period').forEach(p => {
-            DB.periods.push({
-                nr: parseInt(p.getAttribute('period')),
-                start: p.getAttribute('starttime'),
-                end: p.getAttribute('endtime')
-            });
+            DB.periods.push({ nr: parseInt(p.getAttribute('period')), start: p.getAttribute('starttime'), end: p.getAttribute('endtime') });
         });
         DB.periods.sort((a,b) => a.nr - b.nr);
-
         const teachers = {};
         xml.querySelectorAll('teachers teacher').forEach(t => {
             const n = (t.getAttribute('firstname')||'') + ' ' + (t.getAttribute('lastname')||t.getAttribute('name'));
             teachers[t.getAttribute('id')] = n.trim();
         });
-
         const rooms = {};
         xml.querySelectorAll('classrooms classroom').forEach(r => rooms[r.getAttribute('id')] = r.getAttribute('name'));
-
         const subjects = {};
         xml.querySelectorAll('subjects subject').forEach(s => subjects[s.getAttribute('id')] = s.getAttribute('name'));
-
         DB.classes = {}; DB.classesList = [];
         xml.querySelectorAll('classes class').forEach(c => {
             const n = c.getAttribute('name');
             DB.classes[c.getAttribute('id')] = n;
             DB.classesList.push(n);
         });
-
         DB.lessons = [];
         xml.querySelectorAll('cards card').forEach(c => {
             const lesson = xml.querySelector(`lessons lesson[id="${c.getAttribute('lessonid')}"]`);
@@ -525,7 +487,6 @@
             const room = rooms[c.getAttribute('classroomids')] || '';
             const dayIdx = c.getAttribute('days').indexOf('1') + 1;
             const period = parseInt(c.getAttribute('period'));
-
             classIds.forEach(cid => {
                 const className = DB.classes[cid];
                 if(dayIdx > 0 && className) {
@@ -543,47 +504,34 @@
         const res = await fetchFresh(url);
         const ab = await res.arrayBuffer();
         const wb = XLSX.read(ab, {type: 'array'});
-        
         if (type === 'zastepstwa') {
             const sheet = wb.Sheets["Oddziały"] || wb.Sheets[0];
             const data = XLSX.utils.sheet_to_json(sheet);
             DB.subs = [];
             data.forEach(r => {
-                const dStr = r['Dzień']; 
-                let isoDate = null;
-                if(typeof dStr === 'number') {
-                    const d = XLSX.SSF.parse_date_code(dStr);
-                    isoDate = `${d.y}-${pad(d.m)}-${pad(d.d)}`;
-                } else if (typeof dStr === 'string') {
-                    const p = dStr.split('.');
-                    if(p.length===3) isoDate = `${p[2]}-${p[1]}-${p[0]}`;
-                }
+                const dStr = r['Dzień']; let isoDate = null;
+                if(typeof dStr === 'number') { const d = XLSX.SSF.parse_date_code(dStr); isoDate = `${d.y}-${pad(d.m)}-${pad(d.d)}`; } 
+                else if (typeof dStr === 'string') { const p = dStr.split('.'); if(p.length===3) isoDate = `${p[2]}-${p[1]}-${p[0]}`; }
                 if(isoDate) {
                     DB.subs.push({
                         date: isoDate, periodRaw: r['Lekcja'], branch: r['Oddział'],
                         subject: r['Przedmiot'], room: r['Sala'],
-                        rawSub: r['Zastępca'], absentId: r['Nauczyciel/wakat'], 
-                        note: r['Uwagi']
+                        rawSub: r['Zastępca'], absentId: r['Nauczyciel/wakat']
                     });
                 }
             });
         }
-
         if (type === 'przeniesienia') {
             const sheet = wb.Sheets["Oddziały"] || wb.Sheets[0];
             const data = XLSX.utils.sheet_to_json(sheet);
             DB.transfers = [];
             data.forEach(r => {
                 const fromStr = r['Przeniesiono z']; const toStr = r['Przeniesiono na'];
-                const teacherRaw = r['Nauczyciel/wakat']; const classRaw = r['Oddział']; const subject = r['Przedmiot']; const note = r['Uwagi'];
+                const teacherRaw = r['Nauczyciel/wakat']; const classRaw = r['Oddział']; const subject = r['Przedmiot'];
                 if(fromStr && toStr) {
                     const fromInfo = parseTransferString(fromStr); const toInfo = parseTransferString(toStr);
-                    if(fromInfo) {
-                        DB.transfers.push({ type: 'out', date: fromInfo.date, period: fromInfo.period, room: fromInfo.room, targetInfo: `Przeniesiono na: ${toInfo.date} lekcja ${toInfo.period}`, teacherName: teacherRaw, class: classRaw, subject: subject });
-                    }
-                    if(toInfo) {
-                        DB.transfers.push({ type: 'in', date: toInfo.date, period: toInfo.period, room: toInfo.room, targetInfo: `Przeniesiono z: ${fromInfo.date} lekcja ${fromInfo.period}`, teacherName: teacherRaw, class: classRaw, subject: subject, note: note });
-                    }
+                    if(fromInfo) DB.transfers.push({ type: 'out', date: fromInfo.date, period: fromInfo.period, room: fromInfo.room, targetInfo: `Przeniesiono na: ${toInfo.date} lekcja ${toInfo.period}`, teacherName: teacherRaw, class: classRaw, subject: subject });
+                    if(toInfo) DB.transfers.push({ type: 'in', date: toInfo.date, period: toInfo.period, room: toInfo.room, targetInfo: `Przeniesiono z: ${fromInfo.date} lekcja ${fromInfo.period}`, teacherName: teacherRaw, class: classRaw, subject: subject });
                 }
             });
         }
@@ -603,16 +551,13 @@
     function updateLessonStatus() {
         const statusDiv = document.getElementById('lesson-status');
         if(!DB.periods || DB.periods.length === 0) return;
-
         const now = new Date();
         const currentMin = now.getHours() * 60 + now.getMinutes();
         let found = false;
-
         for (let i = 0; i < DB.periods.length; i++) {
             const p = DB.periods[i];
             const pStart = timeToMin(p.start);
             const pEnd = timeToMin(p.end);
-
             if (currentMin >= pStart && currentMin <= pEnd) {
                 statusDiv.innerText = `TRWA LEKCJA ${p.nr} (${p.start} - ${p.end})`;
                 statusDiv.className = 'lesson-status-box status-active';
@@ -623,11 +568,7 @@
                 found = true; break;
             }
         }
-
-        if (!found) {
-            statusDiv.innerText = "PO LEKCJACH";
-            statusDiv.className = 'lesson-status-box status-idle';
-        }
+        if (!found) { statusDiv.innerText = "PO LEKCJACH"; statusDiv.className = 'lesson-status-box status-idle'; }
     }
 
     function startClock() {
