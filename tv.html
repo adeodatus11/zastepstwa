@@ -78,9 +78,9 @@
             border: 3px solid transparent; text-align: center;
         }
         
-        /* ZMIANA KOLORU NA POMARAŃCZOWY */
+        /* STATUSY KOLORY */
         .status-active { 
-            color: #fbbf24; /* Jasny bursztyn/pomarańcz */
+            color: #fbbf24; /* Pomarańczowy */
             border-color: #d97706; 
             background: rgba(120, 53, 15, 0.6); 
             text-shadow: 0 0 10px rgba(251, 191, 36, 0.5);
@@ -93,13 +93,13 @@
             border-radius: 50%; display: inline-block; box-shadow: 0 0 15px #22c55e;
         }
 
-        /* --- KONTENER GŁÓWNY (UKŁAD 2x2) --- */
+        /* --- KONTENER GŁÓWNY (2x2) --- */
         #slide-container {
             flex: 1; 
             padding: 20px; 
             display: grid;
-            grid-template-columns: 1fr 1fr; /* 2 kolumny */
-            grid-template-rows: 1fr 1fr;    /* 2 wiersze */
+            grid-template-columns: 1fr 1fr; 
+            grid-template-rows: 1fr 1fr;
             gap: 20px; 
             background: radial-gradient(circle at center, #064e3b 0%, #020617 100%);
             overflow: hidden;
@@ -120,14 +120,18 @@
         .class-header {
             background: linear-gradient(90deg, #064e3b 0%, #065f46 100%);
             padding: 8px 20px;
-            font-size: 1.8rem; font-weight: 700;
-            display: flex; justify-content: space-between; align-items: center;
+            font-size: 2rem; font-weight: 800;
+            display: flex; 
+            justify-content: center; /* WYŚRODKOWANIE NAZWY ODDZIAŁU */
+            align-items: center;
             border-bottom: 2px solid #047857;
             flex-shrink: 0;
+            text-transform: uppercase;
+            letter-spacing: 2px;
         }
-        .class-name { color: #d1fae5; text-shadow: 0 0 15px rgba(16, 185, 129, 0.3); }
+        .class-name { color: #d1fae5; text-shadow: 0 0 15px rgba(16, 185, 129, 0.5); }
 
-        /* --- GRID LEKCJI (DOPASOWANY DO WĘŻSZYCH KART) --- */
+        /* --- GRID LEKCJI --- */
         .grid-container {
             display: flex; flex-direction: column;
             flex: 1; height: 100%;
@@ -135,7 +139,6 @@
 
         .grid-row {
             display: grid;
-            /* Zmniejszone kolumny dla układu 2x2 */
             grid-template-columns: 60px 130px 1fr; 
             border-bottom: 1px solid #334155;
             flex: 1; 
@@ -168,38 +171,53 @@
         }
         
         .cell-info { 
-            padding: 0 15px;
-            display: flex; align-items: center;
-            justify-content: space-between; 
+            padding: 2px 15px;
+            display: flex; 
+            flex-direction: column; /* Zmiana na column dla układu góra-dół */
+            justify-content: center; 
             color: #f1f5f9;
             height: 100%;
             overflow: hidden;
+            position: relative;
         }
 
         .info-subject {
             font-weight: 700;
             line-height: 1.1;
             white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-            max-width: 65%;
+            width: 100%;
         }
 
+        /* Styl Nauczyciela - Indeks dolny, po prawej */
         .info-teacher {
-            color: #cbd5e1;
-            font-style: italic; text-align: right;
-            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-            max-width: 35%;
-            font-size: 0.95rem; /* Mniejsza czcionka nauczyciela */
+            font-size: 0.9rem; /* Zmniejszona czcionka */
+            color: #94a3b8;
+            font-style: italic; 
+            text-align: right;
+            margin-top: 2px;
+            align-self: flex-end; /* Do prawej */
+            opacity: 0.8;
         }
 
         /* --- STATUSY --- */
         .row-new { background-color: rgba(22, 163, 74, 0.15); border-left: 6px solid #22c55e; }
         .row-new .cell-room { color: #86efac; }
         .row-new .info-subject { color: #dcfce7; }
+        .row-new .info-teacher { color: #86efac; }
 
         .row-transfer-in { background-color: rgba(8, 51, 68, 0.4); border-left: 6px solid #38bdf8; }
         .row-transfer-in .cell-room { color: #7dd3fc; }
         .row-transfer-in .info-subject { color: #bae6fd; }
 
+        .subtle-note {
+            font-size: 0.75rem; color: #4ade80; font-weight: bold; text-transform: uppercase;
+            align-self: flex-start; margin-top: 2px;
+        }
+
+        .transfer-note {
+            font-size: 0.75rem; color: #7dd3fc; font-style: italic; margin-top: 2px; align-self: flex-start;
+        }
+        
         .group-badge {
             display: inline-block; font-size: 0.8rem;
             background: #334155; padding: 1px 5px; border-radius: 4px;
@@ -295,11 +313,13 @@
             return;
         }
 
-        const activeClasses = [];
-        DB.classesList.sort().forEach(className => {
-            const hasLessons = DB.lessons.some(l => l.day === dayOfWeek && normalize(l.className) === normalize(className));
-            if(hasLessons) activeClasses.push(className);
+        // Pobieranie unikalnych klas (z normalizacją)
+        let uniqueClasses = new Set();
+        DB.lessons.forEach(l => {
+            if (l.day === dayOfWeek) uniqueClasses.add(l.className);
         });
+        
+        const activeClasses = Array.from(uniqueClasses).sort();
 
         if(activeClasses.length === 0) {
             document.getElementById('slide-container').innerHTML = `<div class="fullscreen-msg">BRAK ZAJĘĆ<br><span style="font-size:3rem;color:#64748b">W dniu dzisiejszym</span></div>`;
@@ -322,7 +342,15 @@
         }, CONFIG.slideDuration);
     }
 
-    // --- DYNAMICZNE CZCIONKI (Dopasowane do węższych kolumn) ---
+    // --- NORMALIZACJA KLAS (1B = 2B) ---
+    function resolveClassName(name) {
+        if (!name) return "";
+        let n = name.toUpperCase().replace(/\s/g, '');
+        if (n === '1B') return '2B'; // FIX: 1B to to samo co 2B
+        return name; // Zwracamy oryginalną formę (z wielkością liter), ale po mapowaniu
+    }
+
+    // --- DYNAMICZNE CZCIONKI ---
     function getRoomStyle(name) {
         const len = (name || "").length;
         if(len <= 3) return 'font-size: 1.6rem;';
@@ -352,11 +380,15 @@
             html += `<div class="class-header"><span class="class-name">${clsName}</span></div>`;
             html += `<div class="grid-container">`; 
 
-            for(let i=1; i<=15; i++) { // Max lessons
+            for(let i=1; i<=15; i++) {
+                // 1. LEKCJE Z XML (filtrowanie po znormalizowanej nazwie)
                 let lessons = DB.lessons.filter(l => l.day === dayOfWeek && normalize(l.className) === normalize(clsName) && l.period === i);
                 lessons.sort((a,b) => (a.groupName||"").localeCompare(b.groupName||""));
                 
+                // 2. ZASTĘPSTWA
                 let subAdds = DB.subs.filter(s => s.date === dateStr && normalize(s.branch).includes(normalize(clsName)) && s.periodRaw.startsWith(i+','));
+
+                // 3. PRZENIESIENIA
                 let transOut = DB.transfers.filter(t => t.type === 'out' && t.date === dateStr && t.period == i && normalize(t.class).includes(normalize(clsName)));
                 let transIn = DB.transfers.filter(t => t.type === 'in' && t.date === dateStr && t.period == i && normalize(t.class).includes(normalize(clsName)));
 
@@ -375,19 +407,21 @@
                         return !g || normalize(g) === normalize(l.groupName);
                     });
 
-                    // Ukryj jeśli zmiana
+                    // UKRYWAMY JEŚLI JEST ZMIANA
                     if (subAbs || isTransferredOut || subForThisGroup) return;
 
                     hasContent = true;
-                    const groupBadge = l.groupName ? `<span class="group-badge">${l.groupName}</span>` : '';
-                    const periodInfo = DB.periods.find(p => p.nr == i);
-                    const timeRange = periodInfo ? `${periodInfo.start}-${periodInfo.end}` : '';
+                    // FIX: Ukryj badge "Cała klasa"
+                    let groupBadge = "";
+                    if (l.groupName && l.groupName.toLowerCase() !== "cała klasa") {
+                        groupBadge = `<span class="group-badge">${l.groupName}</span>`;
+                    }
                     
                     rowHtml += `
                     <div class="grid-row">
                         <div class="cell-nr">
                             <span class="nr-big">${i}</span>
-                            <span class="nr-time">${timeRange}</span>
+                            <span class="nr-time">${getPeriodTime(i)}</span>
                         </div>
                         <div class="cell-room" style="${getRoomStyle(l.room)}">${l.room}</div>
                         <div class="cell-info">
@@ -400,18 +434,16 @@
                 // B. TRANSFER IN
                 transIn.forEach(t => {
                     hasContent = true;
-                    const periodInfo = DB.periods.find(p => p.nr == i);
-                    const timeRange = periodInfo ? `${periodInfo.start}-${periodInfo.end}` : '';
-                    
                     rowHtml += `
                     <div class="grid-row row-transfer-in">
                         <div class="cell-nr">
                             <span class="nr-big">${i}</span>
-                            <span class="nr-time">${timeRange}</span>
+                            <span class="nr-time">${getPeriodTime(i)}</span>
                         </div>
                         <div class="cell-room" style="${getRoomStyle(t.room)}">${t.room || '?'}</div>
                         <div class="cell-info">
                             <div class="info-subject" style="${getSubjectStyle(t.subject)}">${t.subject}</div>
+                            <div class="transfer-note">${t.targetInfo}</div>
                             <div class="info-teacher">${t.teacherName}</div>
                         </div>
                     </div>`;
@@ -422,19 +454,19 @@
                     hasContent = true;
                     let gName = "";
                     if(s.branch && s.branch.includes('|')) gName = s.branch.split('|')[1];
-                    const groupBadge = gName ? `<span class="group-badge">${gName}</span>` : '';
-                    const periodInfo = DB.periods.find(p => p.nr == i);
-                    const timeRange = periodInfo ? `${periodInfo.start}-${periodInfo.end}` : '';
+                    // Ukryj "Cała klasa" w zastępstwach też
+                    const groupBadge = (gName && gName.toLowerCase() !== "cała klasa") ? `<span class="group-badge">${gName}</span>` : '';
 
                     rowHtml += `
                     <div class="grid-row row-new">
                         <div class="cell-nr">
                             <span class="nr-big">${i}</span>
-                            <span class="nr-time">${timeRange}</span>
+                            <span class="nr-time">${getPeriodTime(i)}</span>
                         </div>
                         <div class="cell-room" style="${getRoomStyle(s.room)}">${s.room || '?'}</div>
                         <div class="cell-info">
                             <div class="info-subject" style="${getSubjectStyle(s.subject)}">${groupBadge}${s.subject}</div>
+                            <div class="subtle-note">Zastępstwo</div>
                             <div class="info-teacher">${s.rawSub}</div>
                         </div>
                     </div>`;
@@ -448,13 +480,22 @@
     }
 
     // === UTILS ===
+    function getPeriodTime(nr) {
+        const p = DB.periods.find(per => per.nr == nr);
+        return p ? `${p.start}-${p.end}` : '';
+    }
     function timeToMin(str) { 
         if(!str) return 0;
         const [h, m] = str.trim().split(':').map(Number);
         return h * 60 + m;
     }
     async function fetchFresh(url) { return fetch(url + "?t=" + new Date().getTime()); }
-    function normalize(str) { return (str||"").toLowerCase().replace(/\s/g, ''); }
+    function normalize(str) { 
+        let s = (str||"").toLowerCase().replace(/\s/g, ''); 
+        // FIX: Normalizacja 1B -> 2B również tutaj
+        if (s === '1b') return '2b';
+        return s;
+    }
     function pad(n) { return n<10?'0'+n:n; }
 
     async function fetchText(url) { const res = await fetchFresh(url); return await res.text(); }
@@ -462,27 +503,34 @@
     async function loadXML() {
         const txt = await fetchText(CONFIG.xml);
         const xml = new DOMParser().parseFromString(txt, "text/xml");
+
         xml.querySelectorAll('groups group').forEach(g => DB.groups[g.getAttribute('id')] = g.getAttribute('name'));
+        
         DB.periods = [];
         xml.querySelectorAll('periods period').forEach(p => {
             DB.periods.push({ nr: parseInt(p.getAttribute('period')), start: p.getAttribute('starttime'), end: p.getAttribute('endtime') });
         });
         DB.periods.sort((a,b) => a.nr - b.nr);
+
         const teachers = {};
         xml.querySelectorAll('teachers teacher').forEach(t => {
             const n = (t.getAttribute('firstname')||'') + ' ' + (t.getAttribute('lastname')||t.getAttribute('name'));
             teachers[t.getAttribute('id')] = n.trim();
         });
+
         const rooms = {};
         xml.querySelectorAll('classrooms classroom').forEach(r => rooms[r.getAttribute('id')] = r.getAttribute('name'));
         const subjects = {};
         xml.querySelectorAll('subjects subject').forEach(s => subjects[s.getAttribute('id')] = s.getAttribute('name'));
+
         DB.classes = {}; DB.classesList = [];
         xml.querySelectorAll('classes class').forEach(c => {
-            const n = c.getAttribute('name');
+            // FIX: Zastosowanie mapowania nazwy przy wczytywaniu
+            let n = resolveClassName(c.getAttribute('name'));
             DB.classes[c.getAttribute('id')] = n;
-            DB.classesList.push(n);
+            if(!DB.classesList.includes(n)) DB.classesList.push(n);
         });
+
         DB.lessons = [];
         xml.querySelectorAll('cards card').forEach(c => {
             const lesson = xml.querySelector(`lessons lesson[id="${c.getAttribute('lessonid')}"]`);
@@ -495,8 +543,9 @@
             const room = rooms[c.getAttribute('classroomids')] || '';
             const dayIdx = c.getAttribute('days').indexOf('1') + 1;
             const period = parseInt(c.getAttribute('period'));
+
             classIds.forEach(cid => {
-                const className = DB.classes[cid];
+                const className = DB.classes[cid]; // To już jest zmapowana nazwa (np. 2B)
                 if(dayIdx > 0 && className) {
                     DB.lessons.push({
                         day: dayIdx, period: period, className: className,
@@ -512,6 +561,7 @@
         const res = await fetchFresh(url);
         const ab = await res.arrayBuffer();
         const wb = XLSX.read(ab, {type: 'array'});
+        
         if (type === 'zastepstwa') {
             const sheet = wb.Sheets["Oddziały"] || wb.Sheets[0];
             const data = XLSX.utils.sheet_to_json(sheet);
@@ -521,8 +571,10 @@
                 if(typeof dStr === 'number') { const d = XLSX.SSF.parse_date_code(dStr); isoDate = `${d.y}-${pad(d.m)}-${pad(d.d)}`; } 
                 else if (typeof dStr === 'string') { const p = dStr.split('.'); if(p.length===3) isoDate = `${p[2]}-${p[1]}-${p[0]}`; }
                 if(isoDate) {
+                    // FIX: Mapowanie oddziału w zastępstwach
+                    let branch = resolveClassName(r['Oddział']);
                     DB.subs.push({
-                        date: isoDate, periodRaw: r['Lekcja'], branch: r['Oddział'],
+                        date: isoDate, periodRaw: r['Lekcja'], branch: branch,
                         subject: r['Przedmiot'], room: r['Sala'],
                         rawSub: r['Zastępca'], absentId: r['Nauczyciel/wakat']
                     });
@@ -535,7 +587,10 @@
             DB.transfers = [];
             data.forEach(r => {
                 const fromStr = r['Przeniesiono z']; const toStr = r['Przeniesiono na'];
-                const teacherRaw = r['Nauczyciel/wakat']; const classRaw = r['Oddział']; const subject = r['Przedmiot'];
+                const teacherRaw = r['Nauczyciel/wakat']; 
+                // FIX: Mapowanie oddziału w przeniesieniach
+                const classRaw = resolveClassName(r['Oddział']); 
+                const subject = r['Przedmiot'];
                 if(fromStr && toStr) {
                     const fromInfo = parseTransferString(fromStr); const toInfo = parseTransferString(toStr);
                     if(fromInfo) DB.transfers.push({ type: 'out', date: fromInfo.date, period: fromInfo.period, room: fromInfo.room, targetInfo: `Przeniesiono na: ${toInfo.date} lekcja ${toInfo.period}`, teacherName: teacherRaw, class: classRaw, subject: subject });
