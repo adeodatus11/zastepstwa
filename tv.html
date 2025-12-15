@@ -78,10 +78,8 @@
             border: 3px solid transparent; text-align: center;
         }
         
-        /* STATUSY KOLORY */
         .status-active { 
-            color: #fbbf24; /* Pomarańczowy */
-            border-color: #d97706; 
+            color: #fbbf24; border-color: #d97706; 
             background: rgba(120, 53, 15, 0.6); 
             text-shadow: 0 0 10px rgba(251, 191, 36, 0.5);
         } 
@@ -121,8 +119,7 @@
             background: linear-gradient(90deg, #064e3b 0%, #065f46 100%);
             padding: 8px 20px;
             font-size: 2rem; font-weight: 800;
-            display: flex; 
-            justify-content: center; /* WYŚRODKOWANIE NAZWY ODDZIAŁU */
+            display: flex; justify-content: center;
             align-items: center;
             border-bottom: 2px solid #047857;
             flex-shrink: 0;
@@ -172,8 +169,7 @@
         
         .cell-info { 
             padding: 2px 15px;
-            display: flex; 
-            flex-direction: column; /* Zmiana na column dla układu góra-dół */
+            display: flex; flex-direction: column;
             justify-content: center; 
             color: #f1f5f9;
             height: 100%;
@@ -188,15 +184,16 @@
             width: 100%;
         }
 
-        /* Styl Nauczyciela - Indeks dolny, po prawej */
         .info-teacher {
-            font-size: 0.9rem; /* Zmniejszona czcionka */
+            font-size: 0.9rem;
             color: #94a3b8;
             font-style: italic; 
             text-align: right;
             margin-top: 2px;
-            align-self: flex-end; /* Do prawej */
+            align-self: flex-end;
             opacity: 0.8;
+            width: 100%;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
         }
 
         /* --- STATUSY --- */
@@ -266,14 +263,13 @@
 </footer>
 
 <script>
-    // === KONFIGURACJA TV ===
     const CONFIG = {
         xml: './plan.xml',
         zastepstwa: './zastepstwa.xlsx',
         przeniesienia: './InformacjeOPrzeniesieniach.xlsx',
         refreshInterval: 120000, 
         slideDuration: 10000,
-        classesPerSlide: 4 // UKŁAD 2x2
+        classesPerSlide: 4
     };
 
     const DB = {
@@ -313,12 +309,11 @@
             return;
         }
 
-        // Pobieranie unikalnych klas (z normalizacją)
+        // Pobieranie unikalnych klas
         let uniqueClasses = new Set();
         DB.lessons.forEach(l => {
             if (l.day === dayOfWeek) uniqueClasses.add(l.className);
         });
-        
         const activeClasses = Array.from(uniqueClasses).sort();
 
         if(activeClasses.length === 0) {
@@ -346,11 +341,10 @@
     function resolveClassName(name) {
         if (!name) return "";
         let n = name.toUpperCase().replace(/\s/g, '');
-        if (n === '1B') return '2B'; // FIX: 1B to to samo co 2B
-        return name; // Zwracamy oryginalną formę (z wielkością liter), ale po mapowaniu
+        if (n === '1B') return '2B'; 
+        return name; 
     }
 
-    // --- DYNAMICZNE CZCIONKI ---
     function getRoomStyle(name) {
         const len = (name || "").length;
         if(len <= 3) return 'font-size: 1.6rem;';
@@ -381,98 +375,117 @@
             html += `<div class="grid-container">`; 
 
             for(let i=1; i<=15; i++) {
-                // 1. LEKCJE Z XML (filtrowanie po znormalizowanej nazwie)
                 let lessons = DB.lessons.filter(l => l.day === dayOfWeek && normalize(l.className) === normalize(clsName) && l.period === i);
-                lessons.sort((a,b) => (a.groupName||"").localeCompare(b.groupName||""));
                 
-                // 2. ZASTĘPSTWA
                 let subAdds = DB.subs.filter(s => s.date === dateStr && normalize(s.branch).includes(normalize(clsName)) && s.periodRaw.startsWith(i+','));
-
-                // 3. PRZENIESIENIA
                 let transOut = DB.transfers.filter(t => t.type === 'out' && t.date === dateStr && t.period == i && normalize(t.class).includes(normalize(clsName)));
                 let transIn = DB.transfers.filter(t => t.type === 'in' && t.date === dateStr && t.period == i && normalize(t.class).includes(normalize(clsName)));
 
+                // PUSTY SLOT
                 if(lessons.length === 0 && subAdds.length === 0 && transIn.length === 0) continue;
 
-                let rowHtml = "";
-                let hasContent = false;
+                // --- ZBIERANIE ELEMENTÓW DO WYŚWIETLENIA ---
+                let rowItems = [];
 
-                // A. LEKCJE
+                // 1. LEKCJE STANDARDOWE (jeśli nie odwołane)
                 lessons.forEach(l => {
                     const subAbs = DB.subs.find(s => s.date === dateStr && s.absentId === l.teacherIdRaw && s.periodRaw.startsWith(i+','));
                     const isTransferredOut = transOut.find(t => true);
-                    
                     const subForThisGroup = subAdds.find(s => {
                         let g = (s.branch && s.branch.includes('|')) ? s.branch.split('|')[1] : '';
                         return !g || normalize(g) === normalize(l.groupName);
                     });
 
-                    // UKRYWAMY JEŚLI JEST ZMIANA
-                    if (subAbs || isTransferredOut || subForThisGroup) return;
+                    if (subAbs || isTransferredOut || subForThisGroup) return; // UKRYJ
 
-                    hasContent = true;
-                    // FIX: Ukryj badge "Cała klasa"
-                    let groupBadge = "";
-                    if (l.groupName && l.groupName.toLowerCase() !== "cała klasa") {
-                        groupBadge = `<span class="group-badge">${l.groupName}</span>`;
-                    }
-                    
-                    rowHtml += `
-                    <div class="grid-row">
-                        <div class="cell-nr">
-                            <span class="nr-big">${i}</span>
-                            <span class="nr-time">${getPeriodTime(i)}</span>
-                        </div>
-                        <div class="cell-room" style="${getRoomStyle(l.room)}">${l.room}</div>
-                        <div class="cell-info">
-                            <div class="info-subject" style="${getSubjectStyle(l.subject)}">${groupBadge}${l.subject}</div>
-                            <div class="info-teacher">${l.teacherName}</div>
-                        </div>
-                    </div>`;
+                    rowItems.push({
+                        type: 'std',
+                        subject: l.subject,
+                        room: l.room,
+                        teacher: l.teacherName,
+                        group: (l.groupName && l.groupName.toLowerCase() !== "cała klasa") ? l.groupName : ""
+                    });
                 });
 
-                // B. TRANSFER IN
+                // 2. TRANSFER IN
                 transIn.forEach(t => {
-                    hasContent = true;
-                    rowHtml += `
-                    <div class="grid-row row-transfer-in">
-                        <div class="cell-nr">
-                            <span class="nr-big">${i}</span>
-                            <span class="nr-time">${getPeriodTime(i)}</span>
-                        </div>
-                        <div class="cell-room" style="${getRoomStyle(t.room)}">${t.room || '?'}</div>
-                        <div class="cell-info">
-                            <div class="info-subject" style="${getSubjectStyle(t.subject)}">${t.subject}</div>
-                            <div class="transfer-note">${t.targetInfo}</div>
-                            <div class="info-teacher">${t.teacherName}</div>
-                        </div>
-                    </div>`;
+                    rowItems.push({
+                        type: 'trans',
+                        subject: t.subject,
+                        room: t.room || '?',
+                        teacher: t.teacherName,
+                        group: "",
+                        note: t.targetInfo
+                    });
                 });
 
-                // C. ZASTĘPSTWA
+                // 3. ZASTĘPSTWA
                 subAdds.forEach(s => {
-                    hasContent = true;
                     let gName = "";
                     if(s.branch && s.branch.includes('|')) gName = s.branch.split('|')[1];
-                    // Ukryj "Cała klasa" w zastępstwach też
-                    const groupBadge = (gName && gName.toLowerCase() !== "cała klasa") ? `<span class="group-badge">${gName}</span>` : '';
+                    let g = (gName && gName.toLowerCase() !== "cała klasa") ? gName : "";
+                    
+                    rowItems.push({
+                        type: 'sub',
+                        subject: s.subject,
+                        room: s.room || '?',
+                        teacher: s.rawSub,
+                        group: g
+                    });
+                });
 
-                    rowHtml += `
-                    <div class="grid-row row-new">
+                if(rowItems.length === 0) continue;
+
+                // --- GRUPOWANIE I RENDEROWANIE ---
+                // Grupujemy po (Subject + Type) aby połączyć grupy (np. WF 1/2 i 2/2) w jeden wiersz
+                let groupedItems = {};
+                rowItems.forEach(item => {
+                    let key = item.subject + "|" + item.type;
+                    if(!groupedItems[key]) groupedItems[key] = [];
+                    groupedItems[key].push(item);
+                });
+
+                // Generowanie HTML dla grup
+                for(let key in groupedItems) {
+                    let group = groupedItems[key];
+                    let first = group[0];
+                    let typeClass = "";
+                    let extraHtml = "";
+
+                    if(first.type === 'sub') {
+                        typeClass = "row-new";
+                        extraHtml = `<div class="subtle-note">Zastępstwo</div>`;
+                    } else if (first.type === 'trans') {
+                        typeClass = "row-transfer-in";
+                        extraHtml = `<div class="transfer-note">${first.note || ''}</div>`;
+                    }
+
+                    // Łączenie danych (Sala, Nauczyciel, Grupa)
+                    let rooms = [...new Set(group.map(i => i.room))].join(" / ");
+                    let teachers = [...new Set(group.map(i => i.teacher))].join(" / ");
+                    
+                    // Badge grup (tylko jeśli są różne i niepuste)
+                    let badgesHtml = "";
+                    let groups = group.map(i => i.group).filter(g => g);
+                    if(groups.length > 0) {
+                        // Jeśli są grupy, wyświetl je
+                        badgesHtml = groups.map(g => `<span class="group-badge">${g}</span>`).join("");
+                    }
+
+                    html += `
+                    <div class="grid-row ${typeClass}">
                         <div class="cell-nr">
                             <span class="nr-big">${i}</span>
                             <span class="nr-time">${getPeriodTime(i)}</span>
                         </div>
-                        <div class="cell-room" style="${getRoomStyle(s.room)}">${s.room || '?'}</div>
+                        <div class="cell-room" style="${getRoomStyle(rooms)}">${rooms}</div>
                         <div class="cell-info">
-                            <div class="info-subject" style="${getSubjectStyle(s.subject)}">${groupBadge}${s.subject}</div>
-                            <div class="subtle-note">Zastępstwo</div>
-                            <div class="info-teacher">${s.rawSub}</div>
+                            <div class="info-subject" style="${getSubjectStyle(first.subject)}">${badgesHtml}${first.subject}</div>
+                            ${extraHtml}
+                            <div class="info-teacher">${teachers}</div>
                         </div>
                     </div>`;
-                });
-
-                if(hasContent) html += rowHtml;
+                }
             }
             html += `</div></div>`;
         });
@@ -492,7 +505,6 @@
     async function fetchFresh(url) { return fetch(url + "?t=" + new Date().getTime()); }
     function normalize(str) { 
         let s = (str||"").toLowerCase().replace(/\s/g, ''); 
-        // FIX: Normalizacja 1B -> 2B również tutaj
         if (s === '1b') return '2b';
         return s;
     }
@@ -525,7 +537,6 @@
 
         DB.classes = {}; DB.classesList = [];
         xml.querySelectorAll('classes class').forEach(c => {
-            // FIX: Zastosowanie mapowania nazwy przy wczytywaniu
             let n = resolveClassName(c.getAttribute('name'));
             DB.classes[c.getAttribute('id')] = n;
             if(!DB.classesList.includes(n)) DB.classesList.push(n);
@@ -545,7 +556,7 @@
             const period = parseInt(c.getAttribute('period'));
 
             classIds.forEach(cid => {
-                const className = DB.classes[cid]; // To już jest zmapowana nazwa (np. 2B)
+                const className = DB.classes[cid];
                 if(dayIdx > 0 && className) {
                     DB.lessons.push({
                         day: dayIdx, period: period, className: className,
@@ -571,7 +582,6 @@
                 if(typeof dStr === 'number') { const d = XLSX.SSF.parse_date_code(dStr); isoDate = `${d.y}-${pad(d.m)}-${pad(d.d)}`; } 
                 else if (typeof dStr === 'string') { const p = dStr.split('.'); if(p.length===3) isoDate = `${p[2]}-${p[1]}-${p[0]}`; }
                 if(isoDate) {
-                    // FIX: Mapowanie oddziału w zastępstwach
                     let branch = resolveClassName(r['Oddział']);
                     DB.subs.push({
                         date: isoDate, periodRaw: r['Lekcja'], branch: branch,
@@ -588,7 +598,6 @@
             data.forEach(r => {
                 const fromStr = r['Przeniesiono z']; const toStr = r['Przeniesiono na'];
                 const teacherRaw = r['Nauczyciel/wakat']; 
-                // FIX: Mapowanie oddziału w przeniesieniach
                 const classRaw = resolveClassName(r['Oddział']); 
                 const subject = r['Przedmiot'];
                 if(fromStr && toStr) {
