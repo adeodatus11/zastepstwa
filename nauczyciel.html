@@ -319,12 +319,27 @@
     window.onload = () => {
         startClock(); refreshData(); loadAnnouncements();
         refreshTimer = setInterval(() => { refreshData(); loadAnnouncements(); }, CONFIG.refreshInterval);
-        document.addEventListener('mousemove', resetIdle); document.addEventListener('click', resetIdle); document.addEventListener('touchstart', resetIdle);
+        // Dodano 'scroll' i 'keydown' dla pewności
+        ['mousemove', 'click', 'touchstart', 'scroll', 'keydown'].forEach(evt => 
+            document.addEventListener(evt, resetIdle)
+        );
     };
 
     function resetIdle() {
+        // Jeśli jesteśmy na panelu głównym (Dashboard), nie musimy odliczać
         if (isDashboardActive) return;
-        clearTimeout(idleTimer); idleTimer = setTimeout(returnToDashboard, CONFIG.idleTimeout);
+        
+        clearTimeout(idleTimer);
+
+        // Sprawdzamy szerokość okna (900px to granica mobilna w Twoim CSS)
+        const isMobile = window.innerWidth <= 900;
+
+        // Czas w milisekundach:
+        // Mobile: 10 minut * 60 sekund * 1000 = 600000 ms
+        // Desktop: 30 sekund * 1000 = 30000 ms
+        const timeLimit = isMobile ? 600000 : 30000;
+
+        idleTimer = setTimeout(returnToDashboard, timeLimit);
     }
 
     function returnToDashboard() {
