@@ -10,14 +10,26 @@
         * { box-sizing: border-box; margin: 0; padding: 0; }
         
         body {
-            background-color: #020617; 
-            color: #e2e8f0;
+            background-color: #000000; /* CZARNA RAMKA (SPAD) */
             font-family: 'Segoe UI', 'Roboto', Helvetica, Arial, sans-serif;
             width: 1080px;
             height: 1920px;
             overflow: hidden;
+            /* To tworzy margines bezpieczeństwa 60px z każdej strony */
+            padding: 60px; 
+        }
+
+        /* --- GŁÓWNY KONTENER TREŚCI (WŁAŚCIWA STRONA) --- */
+        #layout-wrapper {
+            background-color: #020617; /* Właściwe tło aplikacji */
+            width: 100%;
+            height: 100%;
             display: flex;
             flex-direction: column;
+            color: #e2e8f0;
+            box-shadow: 0 0 50px rgba(0,0,0,0.8); /* Cień oddzielający od ramki */
+            border-radius: 8px; /* Lekkie zaokrąglenie rogów ekranu */
+            overflow: hidden;
         }
 
         /* --- NAGŁÓWEK --- */
@@ -51,7 +63,7 @@
         }
 
         .header-text h1 { 
-            font-size: 2.4rem; font-weight: 800;
+            font-size: 2.2rem; font-weight: 800;
             text-transform: uppercase; letter-spacing: 2px; 
             margin: 0; color: #ffffff; line-height: 1;
             text-shadow: 0 2px 5px rgba(0,0,0,0.6);
@@ -63,7 +75,7 @@
         }
 
         .datetime { 
-            font-size: 1.4rem; font-weight: 600; color: #ffffff; 
+            font-size: 1.3rem; font-weight: 600; color: #ffffff; 
             font-family: 'Consolas', monospace;
             display: flex; align-items: center; gap: 15px;
             text-shadow: 0 2px 4px rgba(0,0,0,0.8); 
@@ -71,11 +83,12 @@
 
         .lesson-status-box {
             background: rgba(0, 0, 0, 0.6);
-            padding: 8px 20px; border-radius: 8px;
-            font-size: 1.4rem; font-weight: 800;
+            padding: 5px 20px; border-radius: 8px;
+            font-size: 1.3rem; font-weight: 800;
             text-transform: uppercase; letter-spacing: 1px;
             box-shadow: 0 5px 15px rgba(0,0,0,0.4);
             border: 3px solid transparent; text-align: center;
+            line-height: 1.2; /* Dla dwuwierszowego tekstu */
         }
         
         .status-active { 
@@ -123,8 +136,7 @@
             align-items: center;
             border-bottom: 2px solid #047857;
             flex-shrink: 0;
-            text-transform: uppercase;
-            letter-spacing: 2px;
+            text-transform: uppercase; letter-spacing: 2px;
         }
         .class-name { color: #d1fae5; text-shadow: 0 0 15px rgba(16, 185, 129, 0.5); }
 
@@ -237,30 +249,32 @@
 </head>
 <body>
 
-<header>
-    <div class="logo-container">
-        <img src="orzeł.png" alt="ZSZ5" class="logo" onerror="this.style.display='none'">
-    </div>
-    
-    <div class="header-text">
-        <h1>PLAN LEKCJI KLAS</h1>
-        <div class="header-info-row">
-            <div id="header-datetime" class="datetime">
-                <span class="live-dot"></span> ...
-            </div>
-            <div id="lesson-status" class="lesson-status-box status-idle">...</div>
+<div id="layout-wrapper">
+    <header>
+        <div class="logo-container">
+            <img src="orzeł.png" alt="ZSZ5" class="logo" onerror="this.style.display='none'">
         </div>
+        
+        <div class="header-text">
+            <h1>PLAN LEKCJI KLAS</h1>
+            <div class="header-info-row">
+                <div id="header-datetime" class="datetime">
+                    <span class="live-dot"></span> ...
+                </div>
+                <div id="lesson-status" class="lesson-status-box status-idle">...</div>
+            </div>
+        </div>
+    </header>
+
+    <div id="slide-container">
+        <div class="fullscreen-msg">Ładowanie...</div>
     </div>
-</header>
 
-<div id="slide-container">
-    <div class="fullscreen-msg">Ładowanie...</div>
+    <footer>
+        <div>ZSZ5 Wrocław • Panel Informacyjny TV</div>
+        <div id="update-info">Aktualizacja: 2 min</div>
+    </footer>
 </div>
-
-<footer>
-    <div>ZSZ5 Wrocław • Panel Informacyjny TV</div>
-    <div id="update-info">Aktualizacja: 2 min</div>
-</footer>
 
 <script>
     const CONFIG = {
@@ -309,11 +323,8 @@
             return;
         }
 
-        // Pobieranie unikalnych klas
         let uniqueClasses = new Set();
-        DB.lessons.forEach(l => {
-            if (l.day === dayOfWeek) uniqueClasses.add(l.className);
-        });
+        DB.lessons.forEach(l => { if (l.day === dayOfWeek) uniqueClasses.add(l.className); });
         const activeClasses = Array.from(uniqueClasses).sort();
 
         if(activeClasses.length === 0) {
@@ -337,7 +348,6 @@
         }, CONFIG.slideDuration);
     }
 
-    // --- NORMALIZACJA KLAS (1B = 2B) ---
     function resolveClassName(name) {
         if (!name) return "";
         let n = name.toUpperCase().replace(/\s/g, '');
@@ -376,18 +386,16 @@
 
             for(let i=1; i<=15; i++) {
                 let lessons = DB.lessons.filter(l => l.day === dayOfWeek && normalize(l.className) === normalize(clsName) && l.period === i);
-                
                 let subAdds = DB.subs.filter(s => s.date === dateStr && normalize(s.branch).includes(normalize(clsName)) && s.periodRaw.startsWith(i+','));
                 let transOut = DB.transfers.filter(t => t.type === 'out' && t.date === dateStr && t.period == i && normalize(t.class).includes(normalize(clsName)));
                 let transIn = DB.transfers.filter(t => t.type === 'in' && t.date === dateStr && t.period == i && normalize(t.class).includes(normalize(clsName)));
 
-                // PUSTY SLOT
                 if(lessons.length === 0 && subAdds.length === 0 && transIn.length === 0) continue;
 
                 // --- ZBIERANIE ELEMENTÓW DO WYŚWIETLENIA ---
                 let rowItems = [];
 
-                // 1. LEKCJE STANDARDOWE (jeśli nie odwołane)
+                // 1. LEKCJE STANDARDOWE
                 lessons.forEach(l => {
                     const subAbs = DB.subs.find(s => s.date === dateStr && s.absentId === l.teacherIdRaw && s.periodRaw.startsWith(i+','));
                     const isTransferredOut = transOut.find(t => true);
@@ -424,7 +432,6 @@
                     let gName = "";
                     if(s.branch && s.branch.includes('|')) gName = s.branch.split('|')[1];
                     let g = (gName && gName.toLowerCase() !== "cała klasa") ? gName : "";
-                    
                     rowItems.push({
                         type: 'sub',
                         subject: s.subject,
@@ -436,8 +443,7 @@
 
                 if(rowItems.length === 0) continue;
 
-                // --- GRUPOWANIE I RENDEROWANIE ---
-                // Grupujemy po (Subject + Type) aby połączyć grupy (np. WF 1/2 i 2/2) w jeden wiersz
+                // --- GRUPOWANIE (MERGE) ---
                 let groupedItems = {};
                 rowItems.forEach(item => {
                     let key = item.subject + "|" + item.type;
@@ -445,7 +451,6 @@
                     groupedItems[key].push(item);
                 });
 
-                // Generowanie HTML dla grup
                 for(let key in groupedItems) {
                     let group = groupedItems[key];
                     let first = group[0];
@@ -460,16 +465,13 @@
                         extraHtml = `<div class="transfer-note">${first.note || ''}</div>`;
                     }
 
-                    // Łączenie danych (Sala, Nauczyciel, Grupa)
                     let rooms = [...new Set(group.map(i => i.room))].join(" / ");
                     let teachers = [...new Set(group.map(i => i.teacher))].join(" / ");
                     
-                    // Badge grup (tylko jeśli są różne i niepuste)
                     let badgesHtml = "";
-                    let groups = group.map(i => i.group).filter(g => g);
-                    if(groups.length > 0) {
-                        // Jeśli są grupy, wyświetl je
-                        badgesHtml = groups.map(g => `<span class="group-badge">${g}</span>`).join("");
+                    let groupNames = group.map(i => i.group).filter(g => g);
+                    if(groupNames.length > 0) {
+                        badgesHtml = groupNames.map(g => `<span class="group-badge">${g}</span>`).join("");
                     }
 
                     html += `
@@ -631,11 +633,11 @@
             const pStart = timeToMin(p.start);
             const pEnd = timeToMin(p.end);
             if (currentMin >= pStart && currentMin <= pEnd) {
-                statusDiv.innerHTML = `TRWA LEKCJA ${p.nr}<br>(${p.start} - ${p.end})`;
+                statusDiv.innerHTML = `TRWA LEKCJA ${p.nr}<br><span style="font-size:0.7em">(${p.start} - ${p.end})</span>`;
                 statusDiv.className = 'lesson-status-box status-active';
                 found = true; break;
             } else if (currentMin < pStart) {
-                statusDiv.innerText = `PRZERWA. ZA CHWILĘ: LEKCJA ${p.nr} (${p.start})`;
+                statusDiv.innerHTML = `PRZERWA. ZA CHWILĘ: LEKCJA ${p.nr}<br><span style="font-size:0.7em">(${p.start})</span>`;
                 statusDiv.className = 'lesson-status-box status-break';
                 found = true; break;
             }
