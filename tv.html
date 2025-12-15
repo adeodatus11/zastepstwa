@@ -631,7 +631,7 @@
             const pStart = timeToMin(p.start);
             const pEnd = timeToMin(p.end);
             if (currentMin >= pStart && currentMin <= pEnd) {
-                statusDiv.innerText = `TRWA LEKCJA ${p.nr} (${p.start} - ${p.end})`;
+                statusDiv.innerHTML = `TRWA LEKCJA ${p.nr}<br>(${p.start} - ${p.end})`;
                 statusDiv.className = 'lesson-status-box status-active';
                 found = true; break;
             } else if (currentMin < pStart) {
