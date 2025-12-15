@@ -615,32 +615,39 @@
     // --- NOWA FUNKCJA DO UJEDNOLICANIA NAZW MIEJSC ---
     function unifyPlaceName(raw) {
         if (!raw) return "";
-        let str = raw.trim();
+        let str = String(raw).trim();
         let lower = str.toLowerCase();
 
-        // 1. Obsługa boiska (łapie "boisko", "boisko szkolne", "boisko/dziedziniec" itp.)
+        // --- 1. SEKCJA WF (Nowa) ---
+        // Lista kodów, które mają być wyświetlane jako ogólny WF
+        const wfCodes = [
+            'edb+wf', 
+            'sp1', 'sp2', 
+            'ag2', 'aq1', 
+            'sg1', 'sg2', 'sg3', 'sg4', 'sg5'
+        ];
+
+        // Jeśli nazwa zawiera którykolwiek z kodów WF (np. "sg3/39" zawiera "sg3"), podmień nazwę
+        if (wfCodes.some(code => lower.includes(code))) {
+            return 'WF - według grafiku tygodniowego';
+        }
+
+        // --- 2. RESZTA UJEDNOLICEŃ (Poprzednie) ---
         if (lower.includes('boisko')) return 'boisko - dziedziniec wejściowy';
-
-        // 2. Obsługa bramki
         if (lower.includes('bramka')) return 'bramka wejściowa';
-
-        // 3. Obsługa stołówki (opcjonalnie, jeśli występuje)
         if (lower.includes('stołówka') || lower.includes('stolowka')) return 'stołówka';
-
-        // 4. Obsługa biblioteki/czytelni
         if (lower.includes('biblioteka') || lower.includes('czytelnia')) return 'biblioteka';
-
-        // 5. Ujednolicenie pięter (zamiana "1 piętro", "I p.", "Pietro 1" -> "piętro_1")
         if (lower.includes('parter')) return 'parter';
-        
-        // Sprawdzamy cyfry 1, 2, 3 w połączeniu ze słowem piętro lub skrótem p
-        if ((lower.includes('1') || lower.includes('i ')) && (lower.includes('p') || lower.includes('piętro'))) return 'piętro_1';
-        if ((lower.includes('2') || lower.includes('ii ')) && (lower.includes('p') || lower.includes('piętro'))) return 'piętro_2';
-        if ((lower.includes('3') || lower.includes('iii ')) && (lower.includes('p') || lower.includes('piętro'))) return 'piętro_3';
 
-        // Jeśli nic nie pasuje, zwracamy oryginał (ewentualnie usuwamy dziwne znaki)
+        // Piętra
+        if (lower.includes('1') && (lower.includes('p') || lower.includes('piętro'))) return 'piętro_1';
+        if (lower.includes('2') && (lower.includes('p') || lower.includes('piętro'))) return 'piętro_2';
+        if (lower.includes('3') && (lower.includes('p') || lower.includes('piętro'))) return 'piętro_3';
+
+        // Jeśli nic nie pasuje, zwróć oryginał
         return str;
     }
+    
     function findTeacherId(rawName) {
         if(!rawName || rawName.length<3) return null; if(/wakat|brak|okienko/i.test(rawName)) return null;
         const target = normalize(rawName); let bestId = null, bestScore = 0;
