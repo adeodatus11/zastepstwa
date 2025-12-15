@@ -22,7 +22,7 @@
 
         /* --- NAGŁÓWEK --- */
         header {
-            height: 220px; /* Wyższy nagłówek dla czytelności na TV */
+            height: 220px;
             background: linear-gradient(to right, #4dff88 0%, #33cc66 30%, #020617 100%);
             display: flex;
             align-items: center;
@@ -31,6 +31,7 @@
             box-shadow: 0 10px 40px rgba(0,0,0,0.6);
             position: relative;
             z-index: 10;
+            flex-shrink: 0; /* Nie kurcz nagłówka */
         }
 
         .logo-container {
@@ -111,17 +112,17 @@
         /* --- KONTENER GŁÓWNY --- */
         #slide-container {
             flex: 1; 
-            padding: 30px 40px; 
+            padding: 20px 40px; 
             display: flex;
             flex-direction: column;
-            justify-content: flex-start;
-            gap: 35px; /* Odstęp między klasami */
+            gap: 30px; /* Odstęp między kartami klas */
             background: radial-gradient(circle at center, #064e3b 0%, #020617 100%);
+            overflow: hidden;
         }
 
         /* --- KARTA KLASY --- */
         .class-card {
-            /* flex: 1; usuwamy to, żeby karty nie rozciągały się na siłę, lepiej stała wysokość */
+            flex: 1; /* Karta zajmuje dostępną wysokość */
             background-color: #111827; 
             border-radius: 16px;
             overflow: hidden;
@@ -130,17 +131,19 @@
             border-left: 12px solid #16a34a; 
             box-shadow: 0 15px 40px rgba(0,0,0,0.6);
             border: 1px solid #1f2937;
+            min-height: 0; /* Ważne dla flexboxa wewnątrz containera */
         }
 
         .class-header {
             background: linear-gradient(90deg, #064e3b 0%, #065f46 100%);
-            padding: 12px 30px;
+            padding: 10px 30px;
             font-size: 2.2rem;
             font-weight: 700;
             display: flex;
             justify-content: space-between;
             align-items: center;
             border-bottom: 3px solid #047857;
+            flex-shrink: 0; /* Header ma stałą wysokość */
         }
         .class-name { color: #d1fae5; text-shadow: 0 0 15px rgba(16, 185, 129, 0.3); }
 
@@ -148,24 +151,27 @@
         .grid-container {
             display: flex;
             flex-direction: column;
-            width: 100%;
+            flex: 1; /* Wypełnij resztę karty */
+            height: 100%;
         }
 
         .grid-row {
             display: grid;
-            /* Układ: Nr (80px) | Sala (180px) | Info (Reszta) */
-            grid-template-columns: 80px 180px 1fr; 
+            grid-template-columns: 90px 200px 1fr; 
             border-bottom: 1px solid #334155;
-            min-height: 75px; /* Większe wiersze dla TV */
+            flex: 1; /* Każdy wiersz rozciąga się równomiernie */
             align-items: center;
+            min-height: 0; /* Pozwala na ściskanie */
         }
         
+        .grid-row:last-child { border-bottom: none; }
+
         /* KOMÓRKI GRIDU */
         .cell-nr { 
             font-weight: bold; 
             color: #94a3b8; 
             text-align: center; 
-            font-size: 1.8rem; 
+            font-size: 2rem; 
             border-right: 1px solid #334155;
             height: 100%;
             display: flex; align-items: center; justify-content: center;
@@ -175,9 +181,9 @@
         .cell-room { 
             font-weight: 800; 
             color: #fbbf24; /* Złoty */
-            font-size: 1.6rem;
+            font-size: 1.8rem;
             text-align: center;
-            padding: 5px 10px;
+            padding: 0 15px;
             word-wrap: break-word; 
             line-height: 1.1;
             height: 100%;
@@ -186,15 +192,16 @@
         }
         
         .cell-info { 
-            padding: 5px 25px;
+            padding: 0 30px;
             display: flex;
             flex-direction: column;
             justify-content: center;
             color: #f1f5f9; 
+            height: 100%;
         }
 
         .info-subject {
-            font-size: 1.6rem;
+            font-size: 1.9rem;
             font-weight: 700;
             line-height: 1.2;
             white-space: nowrap;
@@ -203,10 +210,10 @@
         }
 
         .info-teacher {
-            font-size: 1.2rem;
+            font-size: 1.3rem;
             color: #cbd5e1;
             font-style: italic;
-            margin-top: 4px;
+            margin-top: 5px;
         }
 
         /* --- STYLE STATUSÓW --- */
@@ -214,55 +221,44 @@
         /* Zastępstwo / Nowa (Zielony) */
         .row-new {
             background-color: rgba(22, 163, 74, 0.2); 
-            border-left: 8px solid #22c55e;
+            border-left: 10px solid #22c55e;
         }
         .row-new .cell-room { color: #86efac; }
         .row-new .info-subject { color: #dcfce7; }
 
-        /* Odwołana (Czerwony) */
-        .row-sub {
-            background-color: rgba(153, 27, 27, 0.2); 
-            border-left: 8px solid #ef4444;
-            opacity: 0.6;
-        }
-        .row-sub .cell-room, .row-sub .info-subject { 
-            text-decoration: line-through; 
-            color: #fca5a5;
-        }
-
-        /* Transfer (Niebieski) */
-        .row-transfer {
+        /* Transfer NA (Niebieski) */
+        .row-transfer-in {
             background-color: rgba(8, 51, 68, 0.4);
-            border-left: 8px solid #38bdf8;
+            border-left: 10px solid #38bdf8;
         }
-        .row-transfer .cell-room { color: #7dd3fc; }
-        .row-transfer .info-subject { color: #bae6fd; }
+        .row-transfer-in .cell-room { color: #7dd3fc; }
+        .row-transfer-in .info-subject { color: #bae6fd; }
 
         .subtle-note {
-            font-size: 0.9rem;
+            font-size: 1rem;
             color: #4ade80;
             font-weight: bold;
             text-transform: uppercase;
-            margin-top: 2px;
+            margin-top: 4px;
             letter-spacing: 1px;
         }
 
         .transfer-note {
-            font-size: 0.9rem;
+            font-size: 1rem;
             color: #7dd3fc;
             font-style: italic;
-            margin-top: 2px;
+            margin-top: 4px;
         }
         
         .group-badge {
             display: inline-block;
-            font-size: 1rem;
+            font-size: 1.1rem;
             background: #334155;
-            padding: 2px 8px;
+            padding: 2px 10px;
             border-radius: 6px;
-            margin-right: 10px;
+            margin-right: 12px;
             vertical-align: middle;
-            transform: translateY(-3px);
+            transform: translateY(-4px);
             color: #e2e8f0;
         }
 
@@ -277,6 +273,7 @@
             font-size: 1.1rem;
             color: #a7f3d0;
             border-top: 2px solid #047857;
+            flex-shrink: 0;
         }
 
         .fullscreen-msg {
@@ -328,8 +325,8 @@
         zastepstwa: './zastepstwa.xlsx',
         przeniesienia: './InformacjeOPrzeniesieniach.xlsx',
         refreshInterval: 120000, 
-        slideDuration: 10000,     // Czas wyświetlania jednej grupy klas (10s)
-        classesPerSlide: 3        // Ilość klas na ekranie (3 optymalnie na 1920px)
+        slideDuration: 10000,     // 10s na slajd
+        classesPerSlide: 2        // 2 klasy na ekran (Aby wypełnić pionowo)
     };
 
     const DB = {
@@ -435,33 +432,23 @@
                     continue; 
                 }
 
-                // A. LEKCJE (Oryginalne)
+                // A. LEKCJE (Oryginalne - TYLKO JEŚLI NIE MA ZASTĘPSTWA ANI PRZENIESIENIA)
                 lessons.forEach(l => {
                     const subAbs = DB.subs.find(s => s.date === dateStr && s.absentId === l.teacherIdRaw && s.periodRaw.startsWith(i+','));
                     const tOut = transOut.find(t => true); 
 
-                    // JEŚLI JEST ZASTĘPSTWO -> UKRYWAMY ORYGINALNĄ LEKCJĘ (Bo pokażemy nową w bloku C)
-                    if (subAbs) return; 
+                    // UKRYWAMY STARE LEKCJE JEŚLI JEST ZMIANA
+                    if (subAbs || tOut) return; 
 
                     const groupBadge = l.groupName ? `<span class="group-badge">${l.groupName}</span>` : '';
-                    let rowClass = "";
-                    let roomContent = l.room;
-                    let extraInfo = "";
-
-                    // Jeśli transfer wychodzący -> Przekreślamy
-                    if (tOut) {
-                        rowClass = "row-sub"; 
-                        extraInfo = `<div class="transfer-note">${tOut.targetInfo}</div>`;
-                    }
-
+                    
                     html += `
-                    <div class="grid-row ${rowClass}">
+                    <div class="grid-row">
                         <div class="cell-nr">${i}</div>
-                        <div class="cell-room">${roomContent}</div>
+                        <div class="cell-room">${l.room}</div>
                         <div class="cell-info">
                             <div class="info-subject">${groupBadge}${l.subject}</div>
                             <div class="info-teacher">${l.teacherName}</div>
-                            ${extraInfo}
                         </div>
                     </div>`;
                 });
@@ -469,7 +456,7 @@
                 // B. PRZENIESIENIA PRZYCHODZĄCE (NIEBIESKIE)
                 transIn.forEach(t => {
                     html += `
-                    <div class="grid-row row-transfer">
+                    <div class="grid-row row-transfer-in">
                         <div class="cell-nr">${i}</div>
                         <div class="cell-room">${t.room || '?'}</div>
                         <div class="cell-info">
@@ -505,14 +492,13 @@
         container.innerHTML = html;
     }
 
-    // === UTILS ===
+    // === UTILS & PARSING ===
     function timeToMin(str) { 
         if(!str) return 0;
         const [h, m] = str.trim().split(':').map(Number);
         return h * 60 + m;
     }
 
-    // === PARSOWANIE DANYCH ===
     async function fetchFresh(url) { return fetch(url + "?t=" + new Date().getTime()); }
     function normalize(str) { return (str||"").toLowerCase().replace(/\s/g, ''); }
     function pad(n) { return n<10?'0'+n:n; }
@@ -528,7 +514,6 @@
 
         xml.querySelectorAll('groups group').forEach(g => DB.groups[g.getAttribute('id')] = g.getAttribute('name'));
         
-        // POBIERANIE GODZIN LEKCYJNYCH (Do statusu)
         DB.periods = [];
         xml.querySelectorAll('periods period').forEach(p => {
             DB.periods.push({
@@ -627,7 +612,7 @@
                         DB.transfers.push({ type: 'out', date: fromInfo.date, period: fromInfo.period, room: fromInfo.room, targetInfo: `Przeniesiono na: ${toInfo.date} lekcja ${toInfo.period}`, teacherName: teacherRaw, class: classRaw, subject: subject });
                     }
                     if(toInfo) {
-                        DB.transfers.push({ type: 'in', date: toInfo.date, period: toInfo.period, room: toInfo.room, targetInfo: `Przeniesiono z: ${fromInfo.date} lekcja ${fromInfo.period}`, teacherName: teacherRaw, class: classRaw, subject: subject });
+                        DB.transfers.push({ type: 'in', date: toInfo.date, period: toInfo.period, room: toInfo.room, targetInfo: `Przeniesiono z: ${fromInfo.date} lekcja ${fromInfo.period}`, teacherName: teacherRaw, class: classRaw, subject: subject, note: note });
                     }
                 }
             });
@@ -645,14 +630,12 @@
         } catch(e) { return null; }
     }
 
-    // --- LOGIKA STATUSU LEKCJI ---
     function updateLessonStatus() {
         const statusDiv = document.getElementById('lesson-status');
         if(!DB.periods || DB.periods.length === 0) return;
 
         const now = new Date();
         const currentMin = now.getHours() * 60 + now.getMinutes();
-        
         let found = false;
 
         for (let i = 0; i < DB.periods.length; i++) {
@@ -661,17 +644,13 @@
             const pEnd = timeToMin(p.end);
 
             if (currentMin >= pStart && currentMin <= pEnd) {
-                // TRWA LEKCJA
                 statusDiv.innerText = `TRWA LEKCJA ${p.nr} (${p.start} - ${p.end})`;
                 statusDiv.className = 'lesson-status-box status-active';
-                found = true;
-                break;
+                found = true; break;
             } else if (currentMin < pStart) {
-                // PRZED TĄ LEKCJĄ (CZYLI PRZERWA)
                 statusDiv.innerText = `PRZERWA. ZA CHWILĘ: LEKCJA ${p.nr} (${p.start})`;
                 statusDiv.className = 'lesson-status-box status-break';
-                found = true;
-                break;
+                found = true; break;
             }
         }
 
@@ -688,9 +667,8 @@
             const dateStr = now.toLocaleDateString('pl-PL');
             const timeStr = now.toLocaleTimeString('pl-PL', {hour:'2-digit', minute:'2-digit', second:'2-digit'});
             document.getElementById('header-datetime').innerHTML = 
-                `<span class="live-dot"></span> NA DZIEŃ ${dayName.toUpperCase()}, ${dateStr} ${timeStr}`;
-            
-            updateLessonStatus(); // Sprawdzamy status co sekundę
+                `<span class="live-dot"></span> ${dayName.toUpperCase()}, ${dateStr} ${timeStr}`;
+            updateLessonStatus();
         };
         update(); setInterval(update, 1000);
     }
