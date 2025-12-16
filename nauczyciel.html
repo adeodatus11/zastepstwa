@@ -49,15 +49,36 @@
             --header-height-mobile: 130px; 
 
             /* --- NOWE STYLE DLA NAGŁÓWKA --- */
+        /* --- STYL DLA STATUSU LEKCJI (WYŚRODKOWANY) --- */
         .lesson-indicator {
-            font-size: 1.2rem;
+            position: absolute;       /* Pozycjonowanie absolutne względem header */
+            left: 50%;                /* Przesuń do połowy szerokości */
+            top: 50%;                 /* Przesuń do połowy wysokości */
+            transform: translate(-50%, -50%); /* Korekta o połowę własnego rozmiaru -> idealny środek */
+            
+            font-size: 1.4rem;        /* Nieco większe, bo jest na środku */
             font-weight: 800;
-            color: #fbbf24; /* Bursztynowy */
+            color: #fbbf24;
             text-transform: uppercase;
-            margin-top: 5px;
             letter-spacing: 1px;
             text-shadow: 0 0 15px rgba(251, 191, 36, 0.3);
-            min-height: 24px; /* Żeby nie skakało jak puste */
+            white-space: nowrap;      /* Żeby nie łamało tekstu */
+            text-align: center;
+            pointer-events: none;     /* Żeby nie zasłaniało kliknięć */
+        }
+
+        /* --- POPRAWKA MOBILNA --- */
+        /* Na telefonach usuwamy centrowanie absolutne, bo header zmienia układ */
+        @media (max-width: 900px) {
+            .lesson-indicator {
+                position: static;     /* Wróć do normalnego przepływu */
+                transform: none;
+                width: 100%;
+                text-align: center;
+                margin-top: 10px;     /* Odstęp od logo */
+                order: 4;             /* Ustawienie kolejności w flexboxie mobilnym */
+                font-size: 1.1rem;
+            }
         }
         
         .header-right {
@@ -310,12 +331,12 @@
         <img src="orzeł.png" alt="ZSZ5 Logo" class="logo" onerror="this.style.display='none'">
         <div class="header-text">
             <h1>PLAN LEKCJI - ZSZ5</h1>
-            <div id="current-status" class="lesson-indicator"></div>
-            
             <div id="selection-info" class="selection-info"></div>
             <div id="clock" class="clock">--:--</div>
         </div>
     </div>
+
+    <div id="current-status" class="lesson-indicator"></div>
 
     <div class="week-nav" id="week-nav-container" style="display:none">
         <button class="week-nav-btn" onclick="changeWeek(-1)">&#10094;</button>
