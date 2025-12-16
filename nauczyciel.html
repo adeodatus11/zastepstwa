@@ -47,6 +47,51 @@
             --empty: #1f2937;
             --header-height-desktop: 134px; 
             --header-height-mobile: 130px; 
+
+            /* --- NOWE STYLE DLA NAGŁÓWKA --- */
+        .lesson-indicator {
+            font-size: 1.2rem;
+            font-weight: 800;
+            color: #fbbf24; /* Bursztynowy */
+            text-transform: uppercase;
+            margin-top: 5px;
+            letter-spacing: 1px;
+            text-shadow: 0 0 15px rgba(251, 191, 36, 0.3);
+            min-height: 24px; /* Żeby nie skakało jak puste */
+        }
+        
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            background: rgba(0, 0, 0, 0.25);
+            padding: 8px 15px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(4px);
+            margin-left: auto; /* Dopycha do prawej */
+        }
+
+        .qr-text {
+            text-align: right;
+            font-size: 0.85rem;
+            line-height: 1.3;
+            color: #e2e8f0;
+            font-weight: 600;
+        }
+
+        .qr-img {
+            height: 75px;
+            width: auto;
+            border-radius: 6px;
+            border: 2px solid white;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+
+        /* Ukryj QR na telefonach (bo po co skanować telefonem telefon) */
+        @media (max-width: 900px) {
+            .header-right { display: none; }
+        }
         }
 
         body { 
@@ -265,6 +310,8 @@
         <img src="orzeł.png" alt="ZSZ5 Logo" class="logo" onerror="this.style.display='none'">
         <div class="header-text">
             <h1>PLAN LEKCJI - ZSZ5</h1>
+            <div id="current-status" class="lesson-indicator"></div>
+            
             <div id="selection-info" class="selection-info"></div>
             <div id="clock" class="clock">--:--</div>
         </div>
@@ -289,8 +336,15 @@
         <select id="data-select" style="display:none"></select>
         <button class="back-btn" onclick="returnToDashboard()"><span>&#8617;</span> MENU</button>
     </div>
-</header>
 
+    <div class="header-right">
+        <div class="qr-text">
+            strona z planem<br>lekcji na telefon
+        </div>
+        <img src="qr_nauczyciel.png" class="qr-img" alt="QR Code">
+    </div>
+</header>
+    
 <div id="debug-bar">Ładowanie systemu...</div>
 
 <div id="dashboard-view">
@@ -825,9 +879,68 @@
     }
 
     function startClock() {
-        const update = () => { const now = new Date(); document.getElementById('clock').innerText = now.toLocaleString('pl-PL', { weekday:'short', day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }); };
-        update(); setInterval(update, 1000);
+        const update = () => { 
+            const now = new Date(); 
+            document.getElementById('clock').innerText = now.toLocaleString('pl-PL', { weekday:'short', day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }); 
+            updateLessonStatus(); // <--- DODANO TO WYWOŁANIE
+        };
+        update(); 
+        setInterval(update, 1000);
     }
+    
+    function updateLessonStatus() {
+        // Jeśli nie ma danych o okresach (jeszcze się nie załadowały), nic nie rób
+        if (!DB.periods || DB.periods.length === 0) return;
+
+        const now = new Date();
+        const currentMin = now.getHours() * 60 + now.getMinutes();
+        const el = document.getElementById('current-status');
+        
+        // Jeśli jest informacja o wyborze (np. "Klasa 2TI"), ukrywamy status lekcji, żeby nie robić bałaganu
+        // lub zostawiamy - zależy od preferencji. Tutaj zostawiam widoczne.
+        
+        let statusText = "";
+        let color = "#94a3b8"; // Szary domyślny
+
+        for (let i = 0; i < DB.periods.length; i++) {
+            const p = DB.periods[i];
+            const start = timeToMin(p.start);
+            const end = timeToMin(p.end);
+
+            if (currentMin >= start && currentMin < end) {
+                statusText = `🔴 TRWA LEKCJA ${p.nr} (${p.start} - ${p.end})`;
+                color = "#fbbf24"; // Bursztynowy dla lekcji
+                break;
+            }
+
+            // Sprawdzenie przerwy (jeśli to nie ostatnia lekcja)
+            if (i < DB.periods.length - 1) {
+                const nextP = DB.periods[i+1];
+                const nextStart = timeToMin(nextP.start);
+                if (currentMin >= end && currentMin < nextStart) {
+                    statusText = `🟢 PRZERWA (po lekcji ${p.nr})`;
+                    color = "#4ade80"; // Zielony dla przerwy
+                    break;
+                }
+            }
+        }
+
+        // Obsługa przed i po lekcjach
+        if (!statusText && DB.periods.length > 0) {
+            const firstStart = timeToMin(DB.periods[0].start);
+            const lastEnd = timeToMin(DB.periods[DB.periods.length-1].end);
+            
+            if (currentMin < firstStart) {
+                statusText = "Przed lekcjami";
+            } else if (currentMin >= lastEnd) {
+                statusText = "Po lekcjach";
+            }
+        }
+
+        el.innerText = statusText;
+        el.style.color = color;
+    }
+    
     function log(msg, err=false) { const el = document.getElementById('debug-bar'); el.innerText = msg; el.style.color = err ? '#ef4444' : '#64748b'; }
 </script>
 </body>
