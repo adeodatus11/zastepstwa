@@ -174,16 +174,22 @@
         .clock { font-family: 'Consolas', monospace; font-size: 1rem; color: #f0fdf4; font-weight: 600; opacity: 0.9; }
 
         /* --- STREFA ŚRODKOWA (Status + Nawigacja) --- */
+/* --- STREFA ŚRODKOWA (Poprawka nakładania się) --- */
         .h-col-center {
-            flex: 0 0 auto; /* Nie rozciąga się bardziej niż trzeba */
+            flex: 2; /* Dajemy środkowi najwięcej miejsca */
             display: flex;
-            flex-direction: column;
+            flex-direction: column; /* Układamy pionowo: Status nad Nawigacją */
             align-items: center;
             justify-content: center;
-            gap: 8px;
+            gap: 5px; /* Odstęp między napisem a zielonym paskiem */
         }
 
         .lesson-indicator {
+            /* Resetujemy pozycjonowanie absolutne z poprzedniej wersji */
+            position: static; 
+            transform: none;
+            
+            /* Styl tekstu */
             font-size: 1.1rem;
             font-weight: 800;
             color: #fbbf24;
@@ -191,7 +197,11 @@
             text-shadow: 0 0 10px rgba(251, 191, 36, 0.4);
             white-space: nowrap;
             text-align: center;
-            min-height: 22px;
+            
+            /* Pusta przestrzeń, żeby tekst nie skakał */
+            min-height: 25px; 
+            display: flex;
+            align-items: center;
         }
 
         .week-nav {
@@ -200,7 +210,10 @@
             border-radius: 20px; border: 1px solid rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(5px);
             white-space: nowrap;
+            /* Upewniamy się, że pasek nie jest za wielki */
+            max-height: 50px;
         }
+        
         .week-nav-btn { background: none; border: none; color: #4ade80; font-size: 1.5rem; cursor: pointer; line-height: 1; padding: 0 5px; }
         .week-nav-btn:hover { color: #fff; transform: scale(1.2); }
         .week-display { display: flex; flex-direction: column; align-items: center; min-width: 140px; }
