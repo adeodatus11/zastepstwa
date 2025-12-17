@@ -45,7 +45,7 @@
             --duty-sub-bg: #14532d; --duty-sub-border: #4ade80; --duty-sub-color: #dcfce7;
 
             --empty: #1f2937;
-            --header-height-desktop: 140px; /* Zwiększona wysokość dla czytelności */
+            --header-height-desktop: 140px; 
             --header-height-mobile: 110px; 
         }
 
@@ -55,7 +55,7 @@
             color: var(--text-main); display: flex; flex-direction: column; min-height: 100vh;
         }
 
-        /* --- NAGŁÓWEK (NOWY UKŁAD) --- */
+        /* --- NAGŁÓWEK DESKTOP --- */
         header { 
             background: linear-gradient(to right, #4dff88 0%, #33cc66 30%, #020617 100%);
             color: white; 
@@ -72,7 +72,7 @@
             box-sizing: border-box;
         }
 
-        /* LEWA STRONA: Logo, Tytuł, Data */
+        /* LEWA STRONA: Logo, Tytuł, Zegar */
         .h-col-left { 
             flex: 1; 
             display: flex; 
@@ -80,20 +80,21 @@
             gap: 20px; 
             min-width: 0; 
         }
-        .logo { height: 90px; width: auto; mix-blend-mode: multiply; filter: contrast(1.2); flex-shrink: 0; }
+        .logo { height: 85px; width: auto; mix-blend-mode: multiply; filter: contrast(1.2); flex-shrink: 0; }
         
         .header-text { display: flex; flex-direction: column; justify-content: center; min-width: 0; }
         
         .main-title {
-            margin: 0; font-size: 1.8rem; font-weight: 900; text-transform: uppercase;
+            margin: 0; font-size: 1.6rem; font-weight: 900; text-transform: uppercase;
             text-shadow: 0 3px 6px rgba(0,0,0,0.5); white-space: nowrap; letter-spacing: 1px; line-height: 1.1;
         }
         .sub-title {
-            font-size: 1.1rem; font-weight: 600; color: #dcfce7; text-shadow: 0 1px 3px rgba(0,0,0,0.5); margin-bottom: 5px;
+            font-size: 1rem; font-weight: 600; color: #dcfce7; text-shadow: 0 1px 3px rgba(0,0,0,0.5); margin-bottom: 5px;
         }
         .clock { 
-            font-family: 'Segoe UI', sans-serif; font-size: 1.4rem; color: #fff; 
+            font-family: 'Segoe UI', sans-serif; font-size: 1.3rem; color: #fff; 
             font-weight: 700; text-transform: capitalize; text-shadow: 0 2px 4px rgba(0,0,0,0.6);
+            background: rgba(0,0,0,0.2); padding: 2px 10px; border-radius: 6px; display: inline-block;
         }
 
         .selection-info { 
@@ -102,15 +103,11 @@
             white-space: nowrap; overflow: hidden; text-overflow: ellipsis; 
         }
 
-        /* ŚRODEK: Nawigacja Tygodniowa (Tylko ona tu została) */
+        /* ŚRODEK: Nawigacja */
         .h-col-center { 
             flex: 0 0 auto; 
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
-            justify-content: center; 
+            display: flex; align-items: center; justify-content: center; 
         }
-        
         .week-nav { 
             display: flex; align-items: center; gap: 15px; 
             background: rgba(0, 0, 0, 0.25); padding: 8px 20px; 
@@ -123,7 +120,7 @@
         .week-label { font-size: 0.7rem; text-transform: uppercase; color: #a7f3d0; letter-spacing: 1px; }
         .week-range { font-family: 'Consolas', monospace; font-size: 1.2rem; font-weight: 700; color: #fff; }
 
-        /* PRAWA STRONA: Status Lekcji, Menu, QR */
+        /* PRAWA STRONA: Status, Menu, QR */
         .h-col-right { 
             flex: 1; 
             display: flex; 
@@ -132,19 +129,20 @@
             gap: 20px; 
         }
 
-        /* Kontener na status lekcji i QR */
         .status-qr-container {
             display: flex;
             flex-direction: column;
             align-items: flex-end;
-            gap: 8px;
+            gap: 5px;
         }
 
-        .lesson-indicator { 
-            font-size: 1.3rem; font-weight: 800; color: #fbbf24; 
+        /* Status lekcji na desktopie - duży i wyraźny */
+        #desktop-status { 
+            font-size: 1.2rem; font-weight: 800; color: #fbbf24; 
             text-transform: uppercase; text-shadow: 0 0 10px rgba(0, 0, 0, 0.5); 
             white-space: nowrap; text-align: right;
-            background: rgba(0,0,0,0.3); padding: 5px 15px; border-radius: 8px;
+            background: rgba(0,0,0,0.3); padding: 8px 15px; border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.1);
         }
 
         .qr-wrapper { display: flex; align-items: center; gap: 10px; background: rgba(0, 0, 0, 0.25); padding: 5px 10px; border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.1); }
@@ -161,7 +159,7 @@
 
         #debug-bar { background: #111827; font-size: 0.75rem; padding: 4px 20px; color: #64748b; border-bottom: 1px solid #1f2937; text-align: center; letter-spacing: 1px; }
 
-        /* --- DASHBOARD: KAFELKI --- */
+        /* --- DASHBOARD & GENERAL --- */
         #dashboard-view { padding: 40px; display: block; max-width: 1600px; margin: 0 auto; width: 100%; box-sizing: border-box; }
         .selection-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 30px; margin-bottom: 40px; }
         .selection-card { background: #1e293b; border-radius: 16px; padding: 25px; display: flex; flex-direction: column; align-items: center; box-shadow: 0 10px 25px rgba(0,0,0,0.3); border-top: 6px solid #475569; transition: transform 0.3s; }
@@ -177,10 +175,7 @@
         .main-select option { background-color: #1e293b; }
 
         /* --- OGŁOSZENIA --- */
-        #announcements-container {
-            background: rgba(15, 23, 42, 0.9); border-radius: 16px; border: 1px solid #334155; padding: 0; min-height: 220px;
-            display: flex; flex-direction: row; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.4);
-        }
+        #announcements-container { background: rgba(15, 23, 42, 0.9); border-radius: 16px; border: 1px solid #334155; padding: 0; min-height: 220px; display: flex; flex-direction: row; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.4); }
         .anno-left { flex: 6; padding: 30px; border-right: 1px solid #334155; display: flex; flex-direction: column; justify-content: flex-start; text-align: left; }
         .anno-right { flex: 4; padding: 20px; background: rgba(0, 0, 0, 0.2); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 15px; position: relative; }
         .anno-title { font-size: 1.4rem; color: #94a3b8; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 2px; font-weight: 700; }
@@ -231,71 +226,49 @@
         footer a { color: #fff; text-decoration: none; font-weight: bold; }
         @media (max-width: 1200px) { .week-container { grid-template-columns: repeat(3, 1fr); } }
 
-        /* =========================================
-           --- MOBILE OPTIMIZATION ---
-           ========================================= */
+        /* --- MOBILE OPTIMIZATION --- */
         @media (max-width: 900px) {
             header {
-                flex-direction: column; /* Pełny pionowy układ */
+                flex-direction: column; /* Pionowy układ */
                 align-items: stretch;
-                padding: 10px 15px;
-                gap: 10px;
+                padding: 10px;
+                gap: 5px;
                 height: auto;
                 background: linear-gradient(to bottom, #33cc66 20%, #020617 100%);
             }
 
-            /* 1. Górny pasek: Logo + Tytuł + Menu */
+            /* Rząd 1: Logo + Tytuł + Menu */
             .h-col-left {
-                display: flex;
-                justify-content: space-between; /* Rozsuń elementy */
-                align-items: center;
-                gap: 10px;
+                display: flex; justify-content: space-between; align-items: center; gap: 8px;
             }
             .logo { height: 45px; }
-            .header-text { 
-                flex: 1; /* Tekst zajmuje środek */
-                align-items: flex-start;
-            }
-            .main-title { font-size: 1rem; white-space: normal; } /* Mniejszy tytuł, może się zawijać */
-            .sub-title { display: none; } /* Ukryj podtytuł dla oszczędności miejsca */
-            .clock { font-size: 0.9rem; } /* Data widoczna, ale mniejsza */
-            .selection-info { font-size: 1rem; white-space: normal; } /* Nazwisko nauczyciela */
+            .header-text { flex: 1; align-items: flex-start; }
+            .main-title { font-size: 1rem; white-space: normal; }
+            .sub-title { display: none; }
+            .clock { font-size: 0.85rem; padding: 2px 6px; } 
+            .selection-info { font-size: 1rem; white-space: normal; }
 
-            /* Przycisk Menu wchodzi do górnego paska */
-            .h-col-right {
-                flex: 0 0 auto;
-                display: block; /* Pokaż kontener */
-            }
-            #nav-controls { display: flex !important; } /* Wymuś pokazanie kontrolek jeśli ukryte */
+            /* Rząd 1 (prawa strona): Tylko przycisk Menu */
+            .h-col-right { flex: 0 0 auto; display: block; }
+            #nav-controls { display: flex !important; }
             button.back-btn { height: 36px; padding: 0 10px; font-size: 0.8rem; }
-            .qr-wrapper { display: none !important; } /* QR ukryty na mobile */
-            .status-qr-container { display: none; } /* Ukrywamy desktopowy status, zrobimy nowy */
+            .qr-wrapper { display: none !important; }
+            .status-qr-container { display: none; } /* Ukrywamy desktopowy kontener statusu */
 
-            /* 2. Drugi wiersz: Status Lekcji */
+            /* Rząd 2: Status Lekcji (Mobile Specific) */
             .mobile-status-container {
-                display: block; /* Pokaż tylko na mobile */
-                width: 100%;
-                text-align: center;
+                display: block; width: 100%; text-align: center;
+                background: rgba(0,0,0,0.2); border-radius: 6px; padding: 4px;
+                margin-top: 5px;
             }
-            .lesson-indicator {
-                width: 100%;
-                text-align: center;
-                font-size: 1rem;
-                padding: 4px;
-                box-sizing: border-box;
+            #mobile-status {
+                color: #fbbf24; font-weight: 800; font-size: 1rem; text-transform: uppercase;
             }
 
-            /* 3. Trzeci wiersz: Nawigacja */
-            .h-col-center {
-                width: 100%;
-                order: 3;
-            }
-            .week-nav {
-                width: 100%;
-                justify-content: space-between;
-                box-sizing: border-box;
-                height: 40px;
-            }
+            /* Rząd 3: Nawigacja */
+            .h-col-center { width: 100%; order: 3; margin-top: 5px; }
+            .week-nav { width: 100%; justify-content: space-between; box-sizing: border-box; height: 40px; }
+            .week-label { display: none; }
 
             /* Reszta mobile */
             #announcements-container { flex-direction: column; }
@@ -310,7 +283,7 @@
             .day-header { top: var(--header-height-mobile) !important; border-radius: 0; padding: 10px; }
         }
 
-        /* Ukryj mobilny kontener statusu na desktopie */
+        /* Ukryj mobilny pasek statusu na desktopie */
         @media (min-width: 901px) {
             .mobile-status-container { display: none; }
         }
@@ -328,8 +301,12 @@
             <div id="clock" class="clock">--:--</div>
         </div>
         
-        <div class="h-col-right" id="mobile-menu-btn-container" style="display:none;"> 
+        <div class="h-col-right" id="mobile-menu-placeholder" style="display:none;">
              </div>
+    </div>
+
+    <div class="mobile-status-container">
+        <div id="mobile-status"></div>
     </div>
 
     <div class="h-col-center">
@@ -345,7 +322,7 @@
 
     <div class="h-col-right">
         <div class="status-qr-container">
-            <div id="current-status" class="lesson-indicator"></div>
+            <div id="desktop-status"></div>
             
             <div class="qr-wrapper">
                 <div class="qr-text">strona z planem<br>na telefon</div>
@@ -365,10 +342,6 @@
         </div>
     </div>
 </header>
-
-<div class="mobile-status-container" style="background:#064e3b; padding: 5px;">
-    <div id="mobile-status-text" class="lesson-indicator" style="background:transparent; text-align:center;"></div>
-</div>
     
 <div id="debug-bar">Ładowanie systemu...</div>
 
@@ -799,8 +772,8 @@
         const now = new Date(); const currentMin = now.getHours() * 60 + now.getMinutes();
         
         // Aktualizujemy OBA wskaźniki (desktop i mobile)
-        const elDesktop = document.getElementById('current-status-desktop');
-        const elMobile = document.getElementById('current-status-mobile');
+        const elDesktop = document.getElementById('desktop-status');
+        const elMobile = document.getElementById('mobile-status');
         
         let statusText = ""; let color = "#94a3b8"; 
 
