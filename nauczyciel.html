@@ -45,8 +45,8 @@
             --duty-sub-bg: #14532d; --duty-sub-border: #4ade80; --duty-sub-color: #dcfce7;
 
             --empty: #1f2937;
-            --header-height-desktop: 134px; 
-            --header-height-mobile: 95px; 
+            --header-height-desktop: 140px; /* Zwiększona wysokość dla czytelności */
+            --header-height-mobile: 110px; 
         }
 
         body { 
@@ -55,11 +55,11 @@
             color: var(--text-main); display: flex; flex-direction: column; min-height: 100vh;
         }
 
-        /* --- NAGŁÓWEK (Flexbox) --- */
+        /* --- NAGŁÓWEK (NOWY UKŁAD) --- */
         header { 
             background: linear-gradient(to right, #4dff88 0%, #33cc66 30%, #020617 100%);
             color: white; 
-            padding: 10px 20px; 
+            padding: 10px 30px; 
             position: sticky; top: 0; z-index: 1000; 
             box-shadow: 0 10px 30px rgba(0,0,0,0.6);
             border-bottom: 4px solid #22c55e;
@@ -68,53 +68,96 @@
             justify-content: space-between; 
             align-items: center; 
             gap: 20px; 
-            height: 120px; 
+            height: var(--header-height-desktop);
+            box-sizing: border-box;
         }
 
-        .h-col-left { flex: 1; display: flex; align-items: center; gap: 15px; min-width: 0; }
-        .logo { height: 80px; width: auto; mix-blend-mode: multiply; filter: contrast(1.2); flex-shrink: 0; }
+        /* LEWA STRONA: Logo, Tytuł, Data */
+        .h-col-left { 
+            flex: 1; 
+            display: flex; 
+            align-items: center; 
+            gap: 20px; 
+            min-width: 0; 
+        }
+        .logo { height: 90px; width: auto; mix-blend-mode: multiply; filter: contrast(1.2); flex-shrink: 0; }
         
         .header-text { display: flex; flex-direction: column; justify-content: center; min-width: 0; }
         
-        /* NOWE STYLE TYTUŁÓW */
         .main-title {
-            margin: 0;
-            font-size: 1.8rem; /* Większa czcionka */
-            font-weight: 900; /* Grubsza */
-            text-transform: uppercase;
-            /* Mocniejszy cień dla lepszego kontrastu na zielonym tle */
-            text-shadow: 0 3px 6px rgba(0,0,0,0.5), 0 1px 2px rgba(0,0,0,0.7);
-            white-space: nowrap;
-            letter-spacing: 1px; /* Lepsze odstępy */
-            line-height: 1.1;
+            margin: 0; font-size: 1.8rem; font-weight: 900; text-transform: uppercase;
+            text-shadow: 0 3px 6px rgba(0,0,0,0.5); white-space: nowrap; letter-spacing: 1px; line-height: 1.1;
         }
-
         .sub-title {
-            font-size: 1rem;
-            font-weight: 600;
-            color: #dcfce7; /* Lekko jaśniejszy odcień dla hierarchii */
-            text-shadow: 0 1px 3px rgba(0,0,0,0.5);
-            margin-bottom: 5px;
+            font-size: 1.1rem; font-weight: 600; color: #dcfce7; text-shadow: 0 1px 3px rgba(0,0,0,0.5); margin-bottom: 5px;
+        }
+        .clock { 
+            font-family: 'Segoe UI', sans-serif; font-size: 1.4rem; color: #fff; 
+            font-weight: 700; text-transform: capitalize; text-shadow: 0 2px 4px rgba(0,0,0,0.6);
         }
 
-        .selection-info { font-size: 1.3rem; font-weight: 700; color: #fbbf24; margin: 2px 0; text-shadow: 0 2px 4px rgba(0,0,0,0.8); display: none; text-transform: uppercase; letter-spacing: 0.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .clock { font-family: 'Consolas', monospace; font-size: 1rem; color: #f0fdf4; font-weight: 600; opacity: 0.9; }
+        .selection-info { 
+            font-size: 1.4rem; font-weight: 800; color: #fbbf24; margin: 5px 0; 
+            text-shadow: 0 2px 4px rgba(0,0,0,0.9); display: none; text-transform: uppercase; 
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis; 
+        }
 
-        .h-col-center { flex: 2; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px; }
-        .lesson-indicator { position: static; transform: none; font-size: 1.1rem; font-weight: 800; color: #fbbf24; text-transform: uppercase; text-shadow: 0 0 10px rgba(251, 191, 36, 0.4); white-space: nowrap; text-align: center; min-height: 25px; display: flex; align-items: center; }
-        .week-nav { display: flex; align-items: center; gap: 10px; background: rgba(0, 0, 0, 0.25); padding: 5px 15px; border-radius: 20px; border: 1px solid rgba(255, 255, 255, 0.1); backdrop-filter: blur(5px); white-space: nowrap; max-height: 50px; }
-        .week-nav-btn { background: none; border: none; color: #4ade80; font-size: 1.5rem; cursor: pointer; line-height: 1; padding: 0 5px; }
+        /* ŚRODEK: Nawigacja Tygodniowa (Tylko ona tu została) */
+        .h-col-center { 
+            flex: 0 0 auto; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center; 
+        }
+        
+        .week-nav { 
+            display: flex; align-items: center; gap: 15px; 
+            background: rgba(0, 0, 0, 0.25); padding: 8px 20px; 
+            border-radius: 20px; border: 1px solid rgba(255, 255, 255, 0.1); 
+            backdrop-filter: blur(5px); white-space: nowrap; 
+        }
+        .week-nav-btn { background: none; border: none; color: #4ade80; font-size: 1.8rem; cursor: pointer; line-height: 1; padding: 0 5px; transition: transform 0.2s; }
         .week-nav-btn:hover { color: #fff; transform: scale(1.2); }
-        .week-display { display: flex; flex-direction: column; align-items: center; min-width: 140px; }
-        .week-label { font-size: 0.6rem; text-transform: uppercase; color: #a7f3d0; letter-spacing: 1px; }
-        .week-range { font-family: 'Consolas', monospace; font-size: 1.1rem; font-weight: 700; color: #fff; }
+        .week-display { display: flex; flex-direction: column; align-items: center; min-width: 160px; }
+        .week-label { font-size: 0.7rem; text-transform: uppercase; color: #a7f3d0; letter-spacing: 1px; }
+        .week-range { font-family: 'Consolas', monospace; font-size: 1.2rem; font-weight: 700; color: #fff; }
 
-        .h-col-right { flex: 1; display: flex; align-items: center; justify-content: flex-end; gap: 15px; }
-        button.back-btn { background: #b91c1c; color: white; border: 1px solid #ef4444; padding: 0 20px; height: 50px; border-radius: 8px; cursor: pointer; font-weight: 700; font-size: 0.9rem; display: flex; align-items: center; gap: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.3); transition: all 0.2s; text-transform: uppercase; white-space: nowrap; }
-        button.back-btn:hover { background: #dc2626; transform: translateY(-2px); }
+        /* PRAWA STRONA: Status Lekcji, Menu, QR */
+        .h-col-right { 
+            flex: 1; 
+            display: flex; 
+            align-items: center; 
+            justify-content: flex-end; 
+            gap: 20px; 
+        }
+
+        /* Kontener na status lekcji i QR */
+        .status-qr-container {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 8px;
+        }
+
+        .lesson-indicator { 
+            font-size: 1.3rem; font-weight: 800; color: #fbbf24; 
+            text-transform: uppercase; text-shadow: 0 0 10px rgba(0, 0, 0, 0.5); 
+            white-space: nowrap; text-align: right;
+            background: rgba(0,0,0,0.3); padding: 5px 15px; border-radius: 8px;
+        }
+
         .qr-wrapper { display: flex; align-items: center; gap: 10px; background: rgba(0, 0, 0, 0.25); padding: 5px 10px; border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.1); }
         .qr-text { text-align: right; font-size: 0.75rem; line-height: 1.2; color: #e2e8f0; font-weight: 600; }
         .qr-img { height: 60px; width: auto; border-radius: 4px; border: 2px solid white; }
+
+        button.back-btn { 
+            background: #b91c1c; color: white; border: 1px solid #ef4444; 
+            padding: 0 20px; height: 50px; border-radius: 8px; cursor: pointer; 
+            font-weight: 700; font-size: 0.9rem; display: flex; align-items: center; gap: 10px; 
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3); transition: all 0.2s; text-transform: uppercase; white-space: nowrap; 
+        }
+        button.back-btn:hover { background: #dc2626; transform: translateY(-2px); }
 
         #debug-bar { background: #111827; font-size: 0.75rem; padding: 4px 20px; color: #64748b; border-bottom: 1px solid #1f2937; text-align: center; letter-spacing: 1px; }
 
@@ -133,47 +176,23 @@
         .main-select:focus { border-color: white; }
         .main-select option { background-color: #1e293b; }
 
-        /* --- OGŁOSZENIA (Split View) --- */
+        /* --- OGŁOSZENIA --- */
         #announcements-container {
-            background: rgba(15, 23, 42, 0.9);
-            border-radius: 16px; 
-            border: 1px solid #334155;
-            padding: 0; 
-            min-height: 220px;
-            display: flex; 
-            flex-direction: row; 
-            overflow: hidden;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+            background: rgba(15, 23, 42, 0.9); border-radius: 16px; border: 1px solid #334155; padding: 0; min-height: 220px;
+            display: flex; flex-direction: row; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.4);
         }
-        .anno-left {
-            flex: 6; padding: 30px;
-            border-right: 1px solid #334155;
-            display: flex; flex-direction: column; justify-content: flex-start;
-            text-align: left;
-        }
-        .anno-right {
-            flex: 4; padding: 20px;
-            background: rgba(0, 0, 0, 0.2);
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            gap: 15px; position: relative;
-        }
+        .anno-left { flex: 6; padding: 30px; border-right: 1px solid #334155; display: flex; flex-direction: column; justify-content: flex-start; text-align: left; }
+        .anno-right { flex: 4; padding: 20px; background: rgba(0, 0, 0, 0.2); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 15px; position: relative; }
         .anno-title { font-size: 1.4rem; color: #94a3b8; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 2px; font-weight: 700; }
         .anno-content { font-size: 1.3rem; color: #e2e8f0; font-weight: 300; line-height: 1.6; }
         .countdown-label { color: #a7f3d0; text-transform: uppercase; font-size: 0.9rem; letter-spacing: 1px; margin-bottom: 5px; text-align: center; }
-        .countdown { 
-            font-family: 'Consolas', monospace; font-size: 2.5rem; color: #4ade80; 
-            font-weight: bold; text-shadow: 0 0 15px rgba(74, 222, 128, 0.3);
-            text-align: center; line-height: 1.2;
-        }
-        .clock-icon-svg {
-            width: 60px; height: 60px; stroke: #fbbf24; stroke-width: 2;
-            fill: none; stroke-linecap: round; filter: drop-shadow(0 0 5px rgba(251, 191, 36, 0.5));
-        }
+        .countdown { font-family: 'Consolas', monospace; font-size: 2.5rem; color: #4ade80; font-weight: bold; text-shadow: 0 0 15px rgba(74, 222, 128, 0.3); text-align: center; line-height: 1.2; }
+        .clock-icon-svg { width: 60px; height: 60px; stroke: #fbbf24; stroke-width: 2; fill: none; stroke-linecap: round; filter: drop-shadow(0 0 5px rgba(251, 191, 36, 0.5)); }
         .clock-hand-min { transform-origin: 50% 50%; animation: spin 4s linear infinite; }
         .clock-hand-hour { transform-origin: 50% 50%; animation: spin 48s linear infinite; }
         @keyframes spin { 100% { transform: rotate(360deg); } }
 
-        /* --- PLAN LEKCJI (GRID) --- */
+        /* --- PLAN LEKCJI --- */
         #schedule-view { display: none; width: 100%; padding-bottom: 40px; }
         .week-container { display: grid; grid-template-columns: repeat(5, 1fr); gap: 15px; padding: 20px; align-items: start; }
         .day-col { background: #1e293b; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.3); display: flex; flex-direction: column; border: 1px solid #334155; }
@@ -210,7 +229,6 @@
 
         footer { background: #064e3b; color: #a7f3d0; text-align: center; padding: 15px; font-size: 0.9rem; border-top: 1px solid #047857; margin-top: auto; }
         footer a { color: #fff; text-decoration: none; font-weight: bold; }
-        
         @media (max-width: 1200px) { .week-container { grid-template-columns: repeat(3, 1fr); } }
 
         /* =========================================
@@ -218,50 +236,83 @@
            ========================================= */
         @media (max-width: 900px) {
             header {
-                flex-wrap: wrap; justify-content: space-between; align-items: center;
-                padding: 5px 10px; gap: 5px; height: auto;
+                flex-direction: column; /* Pełny pionowy układ */
+                align-items: stretch;
+                padding: 10px 15px;
+                gap: 10px;
+                height: auto;
                 background: linear-gradient(to bottom, #33cc66 20%, #020617 100%);
-                border-bottom-width: 2px;
-            }
-            .h-col-left { flex: 1 1 auto; width: auto; justify-content: flex-start; gap: 8px; }
-            .logo { height: 50px; margin-right: 0; }
-            
-            /* POPRAWKI DLA TYTUŁU NA MOBILE */
-            .header-text { align-items: flex-start; text-align: left; }
-            .main-title { 
-                font-size: 1.2rem; /* Większa niż poprzednio na mobile */
-                white-space: normal; /* Pozwól na zawijanie jeśli ekran jest bardzo wąski */
-            }
-            .sub-title {
-                font-size: 0.85rem;
             }
 
-            .clock { display: none; }
-            .selection-info { font-size: 0.9rem; margin: 0; white-space: normal; }
-            .h-col-right { flex: 0 0 auto; width: auto; order: 2; }
-            button.back-btn { width: auto; height: 36px; padding: 0 12px; font-size: 0.8rem; }
-            .qr-wrapper { display: none !important; }
-            .h-col-center { flex-basis: 100%; order: 3; gap: 4px; margin-top: 2px; align-items: center; }
-            .lesson-indicator { font-size: 0.95rem; min-height: auto; padding: 2px 0; width: 100%; justify-content: center; background: rgba(0,0,0,0.2); border-radius: 4px; }
-            .week-nav { width: 100%; height: 34px; padding: 0 5px; justify-content: space-between; box-sizing: border-box; }
-            .week-nav-btn { font-size: 1.3rem; padding: 0 8px; }
-            .week-range { font-size: 1rem; }
-            .week-label { display: none; }
+            /* 1. Górny pasek: Logo + Tytuł + Menu */
+            .h-col-left {
+                display: flex;
+                justify-content: space-between; /* Rozsuń elementy */
+                align-items: center;
+                gap: 10px;
+            }
+            .logo { height: 45px; }
+            .header-text { 
+                flex: 1; /* Tekst zajmuje środek */
+                align-items: flex-start;
+            }
+            .main-title { font-size: 1rem; white-space: normal; } /* Mniejszy tytuł, może się zawijać */
+            .sub-title { display: none; } /* Ukryj podtytuł dla oszczędności miejsca */
+            .clock { font-size: 0.9rem; } /* Data widoczna, ale mniejsza */
+            .selection-info { font-size: 1rem; white-space: normal; } /* Nazwisko nauczyciela */
 
-            /* --- Mobile Announcements (Vertical Stack) --- */
+            /* Przycisk Menu wchodzi do górnego paska */
+            .h-col-right {
+                flex: 0 0 auto;
+                display: block; /* Pokaż kontener */
+            }
+            #nav-controls { display: flex !important; } /* Wymuś pokazanie kontrolek jeśli ukryte */
+            button.back-btn { height: 36px; padding: 0 10px; font-size: 0.8rem; }
+            .qr-wrapper { display: none !important; } /* QR ukryty na mobile */
+            .status-qr-container { display: none; } /* Ukrywamy desktopowy status, zrobimy nowy */
+
+            /* 2. Drugi wiersz: Status Lekcji */
+            .mobile-status-container {
+                display: block; /* Pokaż tylko na mobile */
+                width: 100%;
+                text-align: center;
+            }
+            .lesson-indicator {
+                width: 100%;
+                text-align: center;
+                font-size: 1rem;
+                padding: 4px;
+                box-sizing: border-box;
+            }
+
+            /* 3. Trzeci wiersz: Nawigacja */
+            .h-col-center {
+                width: 100%;
+                order: 3;
+            }
+            .week-nav {
+                width: 100%;
+                justify-content: space-between;
+                box-sizing: border-box;
+                height: 40px;
+            }
+
+            /* Reszta mobile */
             #announcements-container { flex-direction: column; }
-            .anno-left { border-right: none; border-bottom: 1px solid #334155; text-align: center; align-items: center; }
+            .anno-left { border-right: none; border-bottom: 1px solid #334155; text-align: center; }
             .anno-right { padding: 30px; background: rgba(0,0,0,0.3); }
-            .countdown { font-size: 2.2rem; }
-
             .selection-grid { grid-template-columns: 1fr; gap: 15px; }
             .selection-card { flex-direction: row; justify-content: space-between; padding: 15px; align-items: center; }
             .card-icon { font-size: 2rem; margin-bottom: 0; margin-right: 15px; }
             .card-title { font-size: 1.2rem; margin-bottom: 0; text-align: left; flex: 1; }
             .main-select { width: 50%; padding: 8px; font-size: 1rem; }
-            
             .week-container { grid-template-columns: 1fr !important; }
             .day-header { top: var(--header-height-mobile) !important; border-radius: 0; padding: 10px; }
+        }
+
+        /* Ukryj mobilny kontener statusu na desktopie */
+        @media (min-width: 901px) {
+            .mobile-status-container { display: none; }
         }
     </style>
 </head>
@@ -273,14 +324,15 @@
         <div class="header-text">
             <h1 class="main-title">INTERAKTYWNY PULPIT NAUCZYCIELA</h1>
             <div class="sub-title">ZSZ5 we Wrocławiu</div>
-            
             <div id="selection-info" class="selection-info"></div>
             <div id="clock" class="clock">--:--</div>
         </div>
+        
+        <div class="h-col-right" id="mobile-menu-btn-container" style="display:none;"> 
+             </div>
     </div>
 
     <div class="h-col-center">
-        <div id="current-status" class="lesson-indicator"></div>
         <div class="week-nav" id="week-nav-container" style="display:none">
             <button class="week-nav-btn" onclick="changeWeek(-1)">&#10094;</button>
             <div class="week-display">
@@ -292,6 +344,15 @@
     </div>
 
     <div class="h-col-right">
+        <div class="status-qr-container">
+            <div id="current-status" class="lesson-indicator"></div>
+            
+            <div class="qr-wrapper">
+                <div class="qr-text">strona z planem<br>na telefon</div>
+                <img src="qr_nauczyciel.png" class="qr-img" alt="QR">
+            </div>
+        </div>
+
         <div id="nav-controls" style="display:none">
             <select id="mode-select" style="display:none">
                 <option value="teacher">Nauczyciel</option>
@@ -302,27 +363,22 @@
             <select id="data-select" style="display:none"></select>
             <button class="back-btn" onclick="returnToDashboard()"><span>&#8617;</span> MENU</button>
         </div>
-
-        <div class="qr-wrapper">
-            <div class="qr-text">strona z planem<br>na telefon</div>
-            <img src="qr_nauczyciel.png" class="qr-img" alt="QR">
-        </div>
     </div>
 </header>
+
+<div class="mobile-status-container" style="background:#064e3b; padding: 5px;">
+    <div id="mobile-status-text" class="lesson-indicator" style="background:transparent; text-align:center;"></div>
+</div>
     
 <div id="debug-bar">Ładowanie systemu...</div>
 
 <div id="dashboard-view">
     <div id="selection-grid" class="selection-grid"></div>
-    
     <div id="announcements-container">
         <div class="anno-left">
             <div class="anno-title">📢 Ogłoszenia</div>
-            <div id="announcement-content" class="anno-content">
-                Ładowanie ogłoszeń...
-            </div>
+            <div id="announcement-content" class="anno-content">Ładowanie ogłoszeń...</div>
         </div>
-
         <div class="anno-right">
             <svg class="clock-icon-svg" viewBox="0 0 24 24">
                 <circle cx="12" cy="12" r="10"></circle>
@@ -354,17 +410,9 @@
     let countdownInterval = null;
 
     window.onload = () => {
-        startClock(); 
-        refreshData(); 
-        
-        loadAnnouncements();
-        startCountdown();
-
+        startClock(); refreshData(); loadAnnouncements(); startCountdown();
         refreshTimer = setInterval(() => { refreshData(); loadAnnouncements(); }, CONFIG.refreshInterval);
-        
-        ['mousemove', 'click', 'touchstart', 'scroll', 'keydown'].forEach(evt => 
-            document.addEventListener(evt, resetIdle)
-        );
+        ['mousemove', 'click', 'touchstart', 'scroll', 'keydown'].forEach(evt => document.addEventListener(evt, resetIdle));
     };
 
     function resetIdle() {
@@ -415,61 +463,42 @@
         return new Date(d.setDate(diff));
     }
     function formatDateShort(d) { return `${d.getDate()}.${d.getMonth()+1}`; }
-
     function formatFileDate(dateStr) {
-        if (!dateStr) return 'brak';
-        const d = new Date(dateStr);
+        if (!dateStr) return 'brak'; const d = new Date(dateStr);
         return d.toLocaleString('pl-PL', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
     }
 
-    // --- FUNKCJE OGŁOSZEŃ I LICZNIKA ---
     async function loadAnnouncements() {
         try {
             const res = await fetch('ogloszenia.txt?t=' + new Date().getTime());
             if(res.ok) {
                 const text = await res.text();
                 const contentDiv = document.getElementById('announcement-content');
-                if(text.trim().length > 0) {
-                    contentDiv.innerHTML = text.replace(/\n/g, '<br>');
-                } else {
-                    contentDiv.innerHTML = "Brak nowych ogłoszeń.";
-                }
-            } else { throw new Error("Brak pliku"); }
-        } catch(e) { 
-            document.getElementById('announcement-content').innerText = "Brak aktualnych ogłoszeń.";
-        }
+                if(text.trim().length > 0) contentDiv.innerHTML = text.replace(/\n/g, '<br>');
+                else contentDiv.innerHTML = "Brak nowych ogłoszeń.";
+            } else throw new Error("Brak pliku");
+        } catch(e) { document.getElementById('announcement-content').innerText = "Brak aktualnych ogłoszeń."; }
     }
 
     function startCountdown() {
         const target = new Date('2025-12-20T00:00:00');
         const el = document.getElementById('countdown-display');
-        
         if(countdownInterval) clearInterval(countdownInterval);
-        
         const tick = () => {
-            const now = new Date();
-            const diff = target - now;
-            
-            if(diff <= 0) {
-                el.innerHTML = "<span style='color:#fbbf24'>Wesołych<br>Świąt!</span>";
-                clearInterval(countdownInterval);
-                return;
-            }
+            const now = new Date(); const diff = target - now;
+            if(diff <= 0) { el.innerHTML = "<span style='color:#fbbf24'>Wesołych<br>Świąt!</span>"; clearInterval(countdownInterval); return; }
             const d = Math.floor(diff / (1000 * 60 * 60 * 24));
             const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
             const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
             const s = Math.floor((diff % (1000 * 60)) / 1000);
             el.innerHTML = `${d}d ${h}h<br>${m}m ${s}s`;
         };
-        tick();
-        countdownInterval = setInterval(tick, 1000);
+        tick(); countdownInterval = setInterval(tick, 1000);
     }
 
     async function refreshData() {
-        // log("Aktualizacja danych...", false);
         DB.lessons = []; DB.periods = []; DB.duties = []; DB.subs = []; DB.dutyChanges = []; DB.transfers = [];
         DB.teachers = {}; DB.classes = {}; DB.classesList = []; DB.rooms = []; DB.groups = {}; DB.locations = [];
-
         try {
             await loadXML();
             await Promise.all([ 
@@ -479,7 +508,6 @@
             ]);
             addMissingTeachers();
             if(isDashboardActive) renderDashboard(); else { populateSelect(false); render(); }
-            
             const info = `WERSJE PLIKÓW: Zastępstwa [${FILE_VERSIONS.zastepstwa}]  •  Przeniesienia [${FILE_VERSIONS.przeniesienia}]  •  Odświeżono: ${new Date().toLocaleTimeString()}`;
             log(info);
         } catch (e) { console.error(e); log("Błąd aktualizacji danych!", true); }
@@ -487,7 +515,6 @@
 
     function renderDashboard() {
         const container = document.getElementById('selection-grid'); container.innerHTML = "";
-        
         const createCard = (title, items, type, icon, clickFn) => {
             const card = document.createElement('div'); card.className = `selection-card ${type}`;
             const ico = document.createElement('div'); ico.className = 'card-icon'; ico.innerText = icon;
@@ -499,34 +526,23 @@
             card.appendChild(ico); card.appendChild(tit); card.appendChild(select);
             container.appendChild(card);
         };
-
         const teachers = Object.entries(DB.teachers).sort((a,b) => a[1].name.localeCompare(b[1].name)).filter(([id, t]) => !t.name.toLowerCase().includes('wakat')).map(([id, t]) => ({val: id, txt: t.name}));
         const dutyPlaces = [...new Set(DB.duties.map(d => d.place).concat(DB.dutyChanges.map(d => d.place)))].filter(p => p).sort().map(p => ({val: p, txt: p}));
-
         createCard("Nauczyciele", teachers, 'teacher', '👨‍🏫', (id) => openSchedule('teacher', id));
         createCard("Oddziały", DB.classesList.sort().map(c => ({val: c, txt: c})), 'class', '🎓', (id) => openSchedule('class', id));
         createCard("Sale Lekcyjne", DB.rooms.sort().map(r => ({val: r, txt: r})), 'room', '🏫', (id) => openSchedule('room', id));
         createCard("Miejsca Dyżurów", dutyPlaces, 'duty', '👁️', (id) => openSchedule('duty', id));
     }
 
-    async function fetchFresh(url) {
-        const res = await fetch(url + "?t=" + new Date().getTime()); if(!res.ok) throw new Error(`HTTP ${res.status}`); return res;
-    }
-    async function fetchText(url) {
-        const res = await fetchFresh(url); return await res.text(); 
-    }
+    async function fetchFresh(url) { const res = await fetch(url + "?t=" + new Date().getTime()); if(!res.ok) throw new Error(`HTTP ${res.status}`); return res; }
+    async function fetchText(url) { const res = await fetchFresh(url); return await res.text(); }
     async function loadExcel(url, type) {
         const res = await fetchFresh(url);
-        
         const lastMod = res.headers.get('Last-Modified');
         if (type === 'zastepstwa') FILE_VERSIONS.zastepstwa = formatFileDate(lastMod);
         else if (type === 'przeniesienia') FILE_VERSIONS.przeniesienia = formatFileDate(lastMod);
-
-        const ab = await res.arrayBuffer();
-        const wb = XLSX.read(ab, {type: 'array'});
-        if(type === 'dyzury') parseDuties(wb); 
-        if(type === 'zastepstwa') parseSub(wb);
-        if(type === 'przeniesienia') parseTransfers(wb);
+        const ab = await res.arrayBuffer(); const wb = XLSX.read(ab, {type: 'array'});
+        if(type === 'dyzury') parseDuties(wb); if(type === 'zastepstwa') parseSub(wb); if(type === 'przeniesienia') parseTransfers(wb);
     }
     async function loadXML() {
         const txt = await fetchText(CONFIG.xml); const xml = new DOMParser().parseFromString(txt, "text/xml");
@@ -547,14 +563,12 @@
         });
         DB.periods.sort((a,b) => a.nr - b.nr);
         const subjects = {}; xml.querySelectorAll('subjects subject').forEach(s => subjects[s.getAttribute('id')] = s.getAttribute('name'));
-        
         xml.querySelectorAll('cards card').forEach(c => {
             const lesson = xml.querySelector(`lessons lesson[id="${c.getAttribute('lessonid')}"]`); if(!lesson) return;
             const tidsRaw = lesson.getAttribute('teacherids'); const dayIdx = c.getAttribute('days').indexOf('1') + 1;
             const roomId = c.getAttribute('classroomids'); const classIds = lesson.getAttribute('classids').split(',');
             const classNames = classIds.map(cid => DB.classes[cid]).join(', ');
             const groupIds = lesson.getAttribute('groupids'); const groupName = groupIds ? groupIds.split(',').map(gid => DB.groups[gid]).join(',') : '';
-
             if(dayIdx > 0 && tidsRaw) {
                 const tidsArray = tidsRaw.split(','); const mainTeacherId = tidsArray[0].trim();
                 const supportTeachers = tidsArray.slice(1).map(tid => DB.teachers[tid.trim()]?.name || tid);
@@ -578,7 +592,6 @@
             return { date: isoDate, period: periodPart, room: room };
         } catch(e) { return null; }
     }
-
     function parseTransfers(wb) {
         const sh = wb.Sheets["Oddziały"] || wb.Sheets[0]; const data = XLSX.utils.sheet_to_json(sh);
         data.forEach(r => {
@@ -587,16 +600,11 @@
             if(fromStr && toStr) {
                 const fromInfo = parseTransferString(fromStr); const toInfo = parseTransferString(toStr);
                 const teacherId = findTeacherId(teacherRaw);
-                if(fromInfo) {
-                    DB.transfers.push({ type: 'out', date: fromInfo.date, period: fromInfo.period, room: fromInfo.room, targetInfo: `Przeniesiono na: ${toInfo.date} lekcja ${toInfo.period}`, teacherId: teacherId, teacherName: teacherRaw, class: classRaw, subject: subject, note: note });
-                }
-                if(toInfo) {
-                    DB.transfers.push({ type: 'in', date: toInfo.date, period: toInfo.period, room: toInfo.room, targetInfo: `Przeniesiono z: ${fromInfo.date} lekcja ${fromInfo.period}`, teacherId: teacherId, teacherName: teacherRaw, class: classRaw, subject: subject, note: note });
-                }
+                if(fromInfo) DB.transfers.push({ type: 'out', date: fromInfo.date, period: fromInfo.period, room: fromInfo.room, targetInfo: `Przeniesiono na: ${toInfo.date} lekcja ${toInfo.period}`, teacherId: teacherId, teacherName: teacherRaw, class: classRaw, subject: subject, note: note });
+                if(toInfo) DB.transfers.push({ type: 'in', date: toInfo.date, period: toInfo.period, room: toInfo.room, targetInfo: `Przeniesiono z: ${fromInfo.date} lekcja ${fromInfo.period}`, teacherId: teacherId, teacherName: teacherRaw, class: classRaw, subject: subject, note: note });
             }
         });
     }
-
     function parseDuties(wb) {
         wb.SheetNames.forEach(sheetName => {
             const ws = wb.Sheets[sheetName]; const data = XLSX.utils.sheet_to_json(ws, {header: 1});
@@ -619,9 +627,7 @@
                     for(let c=0; c<5; c++) {
                         if(row[c] && /\d{1,2}:\d{2}\s*-\s*\d{1,2}:\d{2}/.test(String(row[c]))) {
                             timeVal = String(row[c]).trim();
-                            if(c>0 && row[c-1]) placeVal = unifyPlaceName(row[c-1]); 
-                                else if(row[0]) placeVal = unifyPlaceName(row[0]); 
-                                break;
+                            if(c>0 && row[c-1]) placeVal = unifyPlaceName(row[c-1]); else if(row[0]) placeVal = unifyPlaceName(row[0]); break;
                         }
                     }
                     if(timeVal) {
@@ -629,10 +635,7 @@
                             const rawTeacher = row[colIdx];
                             if(rawTeacher && String(rawTeacher).length>2) {
                                 const tId = findTeacherId(String(rawTeacher).trim());
-                                if(tId) DB.duties.push({
-                                    teacherId: tId, day: dayNum, time: timeVal,
-                                    startMin: timeToMin(timeVal.split('-')[0]), place: placeVal ? placeVal.trim() : "Dyżur"
-                                });
+                                if(tId) DB.duties.push({ teacherId: tId, day: dayNum, time: timeVal, startMin: timeToMin(timeVal.split('-')[0]), place: placeVal ? placeVal.trim() : "Dyżur" });
                             }
                         }
                     }
@@ -640,35 +643,25 @@
             }
         });
     }
-
     function parseSub(wb) {
         const sh = wb.Sheets["Oddziały"] || wb.Sheets[0];
         XLSX.utils.sheet_to_json(sh).forEach(r => {
             const d = parseDate(r['Dzień']);
-            if(d) DB.subs.push({
-                date: d, periodRaw: r['Lekcja'], absent: findTeacherId(r['Nauczyciel/wakat']),
-                sub: findTeacherId(r['Zastępca']), rawSub: r['Zastępca'], rawAbs: r['Nauczyciel/wakat'],
-                subject: r['Przedmiot'], room: r['Sala'], note: r['Uwagi'], branch: r['Oddział'], payInfo: r['Forma płatności']
-            });
+            if(d) DB.subs.push({ date: d, periodRaw: r['Lekcja'], absent: findTeacherId(r['Nauczyciel/wakat']), sub: findTeacherId(r['Zastępca']), rawSub: r['Zastępca'], rawAbs: r['Nauczyciel/wakat'], subject: r['Przedmiot'], room: r['Sala'], note: r['Uwagi'], branch: r['Oddział'], payInfo: r['Forma płatności'] });
         });
         const shDy = wb.Sheets["Dyżury"];
         if(shDy) {
             XLSX.utils.sheet_to_json(shDy).forEach(r => {
                 const d = parseDate(r['Dzień']);
-                if(d) DB.dutyChanges.push({
-                    date: d, time: r['Godzina'], absent: findTeacherId(r['Nauczyciel']), sub: findTeacherId(r['Zastępca']),
-                    rawSub: r['Zastępca'], place: unifyPlaceName(r['Miejsce dyżuru']) 
-                });
+                if(d) DB.dutyChanges.push({ date: d, time: r['Godzina'], absent: findTeacherId(r['Nauczyciel']), sub: findTeacherId(r['Zastępca']), rawSub: r['Zastępca'], place: unifyPlaceName(r['Miejsce dyżuru']) });
             });
         }
     }
 
     function normalize(str) { return (str||"").toLowerCase().replace(/^(x\.|ks\.|p\.|pani|pan)\s+/g, '').replace(/[^a-złąceźżńóś\s]/g, '').trim().split(/\s+/).sort().join(' '); }
-    
     function unifyPlaceName(raw) {
         if (!raw) return "";
-        let str = String(raw).trim();
-        let lower = str.toLowerCase();
+        let str = String(raw).trim(); let lower = str.toLowerCase();
         const wfCodes = ['edb+wf', 'sp1', 'sp2', 'ag2', 'aq1', 'sg1', 'sg2', 'sg3', 'sg4', 'sg5'];
         if (wfCodes.some(code => lower.includes(code))) return 'WF - według grafiku tygodniowego';
         if (lower.includes('boisko')) return 'boisko - dziedziniec wejściowy';
@@ -681,7 +674,6 @@
         if (lower.includes('3') && (lower.includes('p') || lower.includes('piętro'))) return 'piętro_3';
         return str;
     }
-    
     function findTeacherId(rawName) {
         if(!rawName || rawName.length<3) return null; if(/wakat|brak|okienko/i.test(rawName)) return null;
         const target = normalize(rawName); let bestId = null, bestScore = 0;
@@ -707,7 +699,6 @@
         else if (mode === 'duty') items = [...new Set(DB.duties.map(d=>d.place).concat(DB.dutyChanges.map(d=>d.place)))].filter(p=>p).sort().map(x => ({val: x, txt: x}));
         items.forEach(i => { const opt = document.createElement('option'); opt.value = i.val; opt.innerText = i.txt; sel.appendChild(opt); }); if(items.length && !sel.value) sel.value = items[0].val;
     }
-
     function getDutiesForTime(tid, day, date, min, max) {
         const res = [];
         DB.duties.filter(d => d.teacherId==tid && d.day==day).forEach(d => {
@@ -721,23 +712,19 @@
             if(start >= min && start < max) res.push({ time: c.time, place: c.place, startMin: start, status: 'added' });
         }); return res;
     }
-
     function render() {
         const mode = document.getElementById('mode-select').value; const selectedId = document.getElementById('data-select').value;
         const grid = document.getElementById('grid'); grid.innerHTML = ""; if(!selectedId) return;
-        
         const today = new Date(); if (today.getDay() === 6 || today.getDay() === 0) { today.setDate(today.getDate() + 2); }
         today.setDate(today.getDate() + (weekOffset * 7)); const monday = getStartOfWeek(today);
         const friday = new Date(monday); friday.setDate(friday.getDate() + 4);
         document.getElementById('week-range-text').innerText = `${formatDateShort(monday)} - ${formatDateShort(friday)}`;
-
         for(let i=0; i<5; i++) {
             const curDate = new Date(monday); curDate.setDate(monday.getDate() + i);
             const dateStr = curDate.toISOString().split('T')[0]; const dayNum = i + 1;
             const col = document.createElement('div'); col.className = 'day-col';
             col.innerHTML = `<div class="day-header">${DAYS[dayNum]}<span class="day-date">${curDate.toLocaleDateString('pl-PL')}</span></div>`;
             const content = document.createElement('div'); content.className = 'day-content';
-
             if (mode === 'teacher') {
                 getDutiesForTime(selectedId, dayNum, dateStr, 0, 480).forEach(d => {
                     const div = document.createElement('div'); div.className = 'card morning-duty'; 
@@ -746,27 +733,16 @@
                     content.appendChild(div);
                 });
             }
-
             if (mode === 'duty') {
                 const duties = DB.duties.filter(d => d.day == dayNum && d.place === selectedId);
                 const changes = DB.dutyChanges.filter(d => d.date == dateStr && d.place === selectedId);
                 let allDuties = [];
-                
-                duties.forEach(d => {
-                    const cancelled = DB.dutyChanges.find(ch => ch.date == dateStr && ch.time == d.time && ch.absent == d.teacherId);
-                    if (!cancelled) { 
-                        allDuties.push({...d, type: 'normal'}); 
-                    }
-                });
-
+                duties.forEach(d => { const cancelled = DB.dutyChanges.find(ch => ch.date == dateStr && ch.time == d.time && ch.absent == d.teacherId); if (!cancelled) allDuties.push({...d, type: 'normal'}); });
                 changes.forEach(ch => { allDuties.push({ time: ch.time, teacherId: ch.sub, type: 'added', startMin: timeToMin(ch.time.split('-')[0]) }); });
                 allDuties.sort((a,b) => a.startMin - b.startMin);
                 allDuties.forEach(d => {
                     const div = document.createElement('div'); div.className = 'card';
-                    if(d.type === 'cancelled') { 
-                        div.classList.add('is-sub'); 
-                        div.innerHTML = `<div class="meta">${d.time}</div><div class="main-info" style="text-decoration:line-through">${getTeacherName(d.teacherId)}</div><div class="sub-line" style="color:var(--sub-color)">Zastępstwo: ${d.sub}</div>`; 
-                    }
+                    if(d.type === 'cancelled') { div.classList.add('is-sub'); div.innerHTML = `<div class="meta">${d.time}</div><div class="main-info" style="text-decoration:line-through">${getTeacherName(d.teacherId)}</div><div class="sub-line" style="color:var(--sub-color)">Zastępstwo: ${d.sub}</div>`; }
                     else if(d.type === 'added') { div.classList.add('is-new'); div.innerHTML = `<div class="meta">${d.time}</div><div class="main-info">${getTeacherName(d.teacherId)}</div><div class="sub-line">ZASTĘPSTWO</div>`; }
                     else { div.innerHTML = `<div class="meta">${d.time}</div><div class="main-info">${getTeacherName(d.teacherId)}</div>`; }
                     content.appendChild(div);
@@ -775,76 +751,31 @@
                 DB.periods.forEach(p => {
                     const wrapper = document.createElement('div'); wrapper.className = 'slot-wrapper';
                     let lessons = [], subAdds = [], transferOut = [], transferIn = [];
-                    
                     if (mode === 'teacher') lessons = DB.lessons.filter(l => l.teacherId == selectedId && l.day == dayNum && l.period == p.nr);
                     else if (mode === 'room') lessons = DB.lessons.filter(l => l.room === selectedId && l.day == dayNum && l.period == p.nr);
                     else if (mode === 'class') lessons = DB.lessons.filter(l => l.classNames.includes(selectedId) && l.day == dayNum && l.period == p.nr);
-                    
                     if (mode === 'teacher') subAdds = DB.subs.filter(s => s.date == dateStr && s.sub == selectedId && s.periodRaw.startsWith(p.nr+','));
                     else if (mode === 'room') subAdds = DB.subs.filter(s => s.date == dateStr && s.room === selectedId && s.periodRaw.startsWith(p.nr+','));
                     else if (mode === 'class') subAdds = DB.subs.filter(s => s.date == dateStr && normalizeClass(s.branch).includes(normalizeClass(selectedId)) && s.periodRaw.startsWith(p.nr+','));
-
-                    if (mode === 'teacher') {
-                        transferOut = DB.transfers.filter(t => t.type === 'out' && t.date === dateStr && t.period == p.nr && t.teacherId == selectedId);
-                        transferIn = DB.transfers.filter(t => t.type === 'in' && t.date === dateStr && t.period == p.nr && t.teacherId == selectedId);
-                    } else if (mode === 'class') {
-                        transferOut = DB.transfers.filter(t => t.type === 'out' && t.date === dateStr && t.period == p.nr && normalizeClass(t.class).includes(normalizeClass(selectedId)));
-                        transferIn = DB.transfers.filter(t => t.type === 'in' && t.date === dateStr && t.period == p.nr && normalizeClass(t.class).includes(normalizeClass(selectedId)));
-                    } else if (mode === 'room') {
-                        transferOut = DB.transfers.filter(t => t.type === 'out' && t.date === dateStr && t.period == p.nr && t.room == selectedId);
-                        transferIn = DB.transfers.filter(t => t.type === 'in' && t.date === dateStr && t.period == p.nr && t.room == selectedId);
-                    }
-
+                    if (mode === 'teacher') { transferOut = DB.transfers.filter(t => t.type === 'out' && t.date === dateStr && t.period == p.nr && t.teacherId == selectedId); transferIn = DB.transfers.filter(t => t.type === 'in' && t.date === dateStr && t.period == p.nr && t.teacherId == selectedId); } 
+                    else if (mode === 'class') { transferOut = DB.transfers.filter(t => t.type === 'out' && t.date === dateStr && t.period == p.nr && normalizeClass(t.class).includes(normalizeClass(selectedId))); transferIn = DB.transfers.filter(t => t.type === 'in' && t.date === dateStr && t.period == p.nr && normalizeClass(t.class).includes(normalizeClass(selectedId))); } 
+                    else if (mode === 'room') { transferOut = DB.transfers.filter(t => t.type === 'out' && t.date === dateStr && t.period == p.nr && t.room == selectedId); transferIn = DB.transfers.filter(t => t.type === 'in' && t.date === dateStr && t.period == p.nr && t.room == selectedId); }
                     lessons.sort((a,b) => (a.groupName||"").localeCompare(b.groupName||""));
-
                     if(lessons.length > 0) {
                         lessons.forEach(lesson => {
                             const div = document.createElement('div');
                             const subAbs = DB.subs.find(s => s.date == dateStr && s.absent == lesson.teacherId && s.periodRaw.startsWith(p.nr+','));
                             const transOut = transferOut.find(t => t.period == p.nr);
-
-                            if(subAbs) {
-                                div.className = 'card is-sub'; div.innerHTML = `<div class="meta"><span class="nr">${p.nr}</span> ${p.start}-${p.end} ${lesson.groupName ? `<span class="group-badge">${lesson.groupName}</span>` : ''}</div><div class="main-info">${lesson.subject}</div><span class="note-red">Nieobecność</span>`;
-                            } else if (transOut) {
-                                div.className = 'card is-transfer'; 
-                                div.style.textDecoration = "line-through";
-                                div.innerHTML = `<div class="meta"><span class="nr">${p.nr}</span> ${p.start}-${p.end}</div><div class="main-info">${lesson.subject}</div><div class="transfer-note">${transOut.targetInfo}</div>`;
-                            } else {
-                                div.className = 'card'; let line = "";
-                                if(mode === 'teacher') line = `${lesson.classNames} / s.${lesson.room}`; else if(mode === 'class') line = `${getTeacherName(lesson.teacherId)} / s.${lesson.room}`; else line = `${getTeacherName(lesson.teacherId)} / ${lesson.classNames}`;
-                                div.innerHTML = `<div class="meta"><span class="nr">${p.nr}</span> ${p.start}-${p.end} ${lesson.groupName ? `<span class="group-badge">${lesson.groupName}</span>` : ''}</div><div class="main-info">${lesson.subject}</div><div class="sub-line">${line}</div>`;
-                            }
+                            if(subAbs) { div.className = 'card is-sub'; div.innerHTML = `<div class="meta"><span class="nr">${p.nr}</span> ${p.start}-${p.end} ${lesson.groupName ? `<span class="group-badge">${lesson.groupName}</span>` : ''}</div><div class="main-info">${lesson.subject}</div><span class="note-red">Nieobecność</span>`; } 
+                            else if (transOut) { div.className = 'card is-transfer'; div.style.textDecoration = "line-through"; div.innerHTML = `<div class="meta"><span class="nr">${p.nr}</span> ${p.start}-${p.end}</div><div class="main-info">${lesson.subject}</div><div class="transfer-note">${transOut.targetInfo}</div>`; } 
+                            else { div.className = 'card'; let line = ""; if(mode === 'teacher') line = `${lesson.classNames} / s.${lesson.room}`; else if(mode === 'class') line = `${getTeacherName(lesson.teacherId)} / s.${lesson.room}`; else line = `${getTeacherName(lesson.teacherId)} / ${lesson.classNames}`; div.innerHTML = `<div class="meta"><span class="nr">${p.nr}</span> ${p.start}-${p.end} ${lesson.groupName ? `<span class="group-badge">${lesson.groupName}</span>` : ''}</div><div class="main-info">${lesson.subject}</div><div class="sub-line">${line}</div>`; }
                             wrapper.appendChild(div);
                         });
                     }
-
-                    if(transferIn.length > 0) {
-                        transferIn.forEach(t => {
-                            const div = document.createElement('div'); div.className = 'card is-transfer';
-                            div.innerHTML = `<div class="meta"><span class="nr">${p.nr}</span> ${p.start}-${p.end}</div><div class="main-info">${t.subject}</div><div class="sub-line">${t.teacherName} / s.${t.room}</div><div class="transfer-note">${t.targetInfo}<br>${t.note || ''}</div>`;
-                            wrapper.appendChild(div);
-                        });
-                    }
-
-                    if(subAdds.length > 0) {
-                        subAdds.forEach(sub => {
-                            let subGroup = ""; if(sub.branch && sub.branch.includes('|')) subGroup = sub.branch.split('|')[1];
-                            const div = document.createElement('div'); div.className = 'card is-new';
-                            let line = ""; if (mode === 'teacher') line = `s.${sub.room} / ${sub.branch}`; else if (mode === 'class') line = `${getTeacherName(sub.sub)} / s.${sub.room}`; else line = `${getTeacherName(sub.sub)} / ${sub.branch}`;
-                            let payBadge = ""; if(mode === 'teacher' && sub.payInfo) payBadge = `<span class="pay-badge">$ ${sub.payInfo}</span>`;
-                            div.innerHTML = `<div class="meta"><span class="nr">${p.nr}</span> ${p.start}-${p.end} ${subGroup ? `<span class="group-badge">${subGroup}</span>` : ''}</div><div class="main-info">ZASTĘPSTWO</div><div class="sub-line">${line} / ${sub.subject}</div><div class="details" style="font-size:0.75em; color:#a7f3d0">Za: ${sub.rawAbs}</div>${payBadge}`;
-                            wrapper.appendChild(div);
-                        });
-                    }
-
+                    if(transferIn.length > 0) { transferIn.forEach(t => { const div = document.createElement('div'); div.className = 'card is-transfer'; div.innerHTML = `<div class="meta"><span class="nr">${p.nr}</span> ${p.start}-${p.end}</div><div class="main-info">${t.subject}</div><div class="sub-line">${t.teacherName} / s.${t.room}</div><div class="transfer-note">${t.targetInfo}<br>${t.note || ''}</div>`; wrapper.appendChild(div); }); }
+                    if(subAdds.length > 0) { subAdds.forEach(sub => { let subGroup = ""; if(sub.branch && sub.branch.includes('|')) subGroup = sub.branch.split('|')[1]; const div = document.createElement('div'); div.className = 'card is-new'; let line = ""; if (mode === 'teacher') line = `s.${sub.room} / ${sub.branch}`; else if (mode === 'class') line = `${getTeacherName(sub.sub)} / s.${sub.room}`; else line = `${getTeacherName(sub.sub)} / ${sub.branch}`; let payBadge = ""; if(mode === 'teacher' && sub.payInfo) payBadge = `<span class="pay-badge">$ ${sub.payInfo}</span>`; div.innerHTML = `<div class="meta"><span class="nr">${p.nr}</span> ${p.start}-${p.end} ${subGroup ? `<span class="group-badge">${subGroup}</span>` : ''}</div><div class="main-info">ZASTĘPSTWO</div><div class="sub-line">${line} / ${sub.subject}</div><div class="details" style="font-size:0.75em; color:#a7f3d0">Za: ${sub.rawAbs}</div>${payBadge}`; wrapper.appendChild(div); }); }
                     if(lessons.length === 0 && subAdds.length === 0 && transferIn.length === 0) { const div = document.createElement('div'); div.className = 'card empty'; div.innerHTML = `${p.nr}. ${p.start}`; wrapper.appendChild(div); }
-                    
-                    if(mode === 'teacher') {
-                        const pEnd = timeToMin(p.end);
-                        getDutiesForTime(selectedId, dayNum, dateStr, pEnd-5, pEnd+15).forEach(d => {
-                            const dDiv = document.createElement('div'); dDiv.className = 'duty-section'; if(d.status === 'added') dDiv.classList.add('duty-sub'); dDiv.innerHTML = `<b>${d.time}</b> ${d.place}`; wrapper.appendChild(dDiv);
-                        });
-                    }
+                    if(mode === 'teacher') { const pEnd = timeToMin(p.end); getDutiesForTime(selectedId, dayNum, dateStr, pEnd-5, pEnd+15).forEach(d => { const dDiv = document.createElement('div'); dDiv.className = 'duty-section'; if(d.status === 'added') dDiv.classList.add('duty-sub'); dDiv.innerHTML = `<b>${d.time}</b> ${d.place}`; wrapper.appendChild(dDiv); }); }
                     content.appendChild(wrapper);
                 });
             }
@@ -855,7 +786,8 @@
     function startClock() {
         const update = () => { 
             const now = new Date(); 
-            document.getElementById('clock').innerText = now.toLocaleString('pl-PL', { weekday:'short', day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }); 
+            // Zmiana formatu daty na pełniejszy (np. środa, 17 grudnia)
+            document.getElementById('clock').innerText = now.toLocaleString('pl-PL', { weekday:'long', day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' }); 
             updateLessonStatus();
         };
         update(); 
@@ -864,41 +796,26 @@
     
     function updateLessonStatus() {
         if (!DB.periods || DB.periods.length === 0) return;
-        const now = new Date();
-        const currentMin = now.getHours() * 60 + now.getMinutes();
-        const el = document.getElementById('current-status');
+        const now = new Date(); const currentMin = now.getHours() * 60 + now.getMinutes();
         
-        let statusText = "";
-        let color = "#94a3b8"; 
+        // Aktualizujemy OBA wskaźniki (desktop i mobile)
+        const elDesktop = document.getElementById('current-status-desktop');
+        const elMobile = document.getElementById('current-status-mobile');
+        
+        let statusText = ""; let color = "#94a3b8"; 
 
         for (let i = 0; i < DB.periods.length; i++) {
-            const p = DB.periods[i];
-            const start = timeToMin(p.start);
-            const end = timeToMin(p.end);
-
-            if (currentMin >= start && currentMin < end) {
-                statusText = `🔴 TRWA LEKCJA ${p.nr} (${p.start} - ${p.end})`;
-                color = "#fbbf24";
-                break;
-            }
-            if (i < DB.periods.length - 1) {
-                const nextP = DB.periods[i+1];
-                const nextStart = timeToMin(nextP.start);
-                if (currentMin >= end && currentMin < nextStart) {
-                    statusText = `🟢 PRZERWA (po lekcji ${p.nr})`;
-                    color = "#4ade80"; 
-                    break;
-                }
-            }
+            const p = DB.periods[i]; const start = timeToMin(p.start); const end = timeToMin(p.end);
+            if (currentMin >= start && currentMin < end) { statusText = `🔴 TRWA LEKCJA ${p.nr} (${p.start} - ${p.end})`; color = "#fbbf24"; break; }
+            if (i < DB.periods.length - 1) { const nextP = DB.periods[i+1]; const nextStart = timeToMin(nextP.start); if (currentMin >= end && currentMin < nextStart) { statusText = `🟢 PRZERWA (po lekcji ${p.nr})`; color = "#4ade80"; break; } }
         }
         if (!statusText && DB.periods.length > 0) {
-            const firstStart = timeToMin(DB.periods[0].start);
-            const lastEnd = timeToMin(DB.periods[DB.periods.length-1].end);
-            if (currentMin < firstStart) statusText = "Przed lekcjami";
-            else if (currentMin >= lastEnd) statusText = "Po lekcjach";
+            const firstStart = timeToMin(DB.periods[0].start); const lastEnd = timeToMin(DB.periods[DB.periods.length-1].end);
+            if (currentMin < firstStart) statusText = "Przed lekcjami"; else if (currentMin >= lastEnd) statusText = "Po lekcjach";
         }
-        el.innerText = statusText;
-        el.style.color = color;
+        
+        if(elDesktop) { elDesktop.innerText = statusText; elDesktop.style.color = color; }
+        if(elMobile) { elMobile.innerText = statusText; elMobile.style.color = color; }
     }
     
     function log(msg, err=false) { const el = document.getElementById('debug-bar'); el.innerText = msg; el.style.color = err ? '#ef4444' : '#64748b'; }
