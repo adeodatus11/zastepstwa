@@ -46,7 +46,8 @@
 
             --empty: #1f2937;
             --header-height-desktop: 134px; 
-            --header-height-mobile: 130px; 
+            /* Nowa, mniejsza wysokość nagłówka dla mobile, żeby plan się dobrze przyklejał */
+            --header-height-mobile: 95px; 
         }
 
         body { 
@@ -55,7 +56,7 @@
             color: var(--text-main); display: flex; flex-direction: column; min-height: 100vh;
         }
 
-        /* --- NAGŁÓWEK (Flexbox) --- */
+        /* --- NAGŁÓWEK (Desktop - bez zmian) --- */
         header { 
             background: linear-gradient(to right, #4dff88 0%, #33cc66 30%, #020617 100%);
             color: white; 
@@ -68,167 +69,49 @@
             justify-content: space-between; 
             align-items: center; 
             gap: 20px; 
-            height: 120px; /* Wysokość na desktop */
+            height: 120px; 
         }
 
-        /* LEWA KOLUMNA */
-        .h-col-left {
-            flex: 1;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            min-width: 0; 
-        }
-
+        .h-col-left { flex: 1; display: flex; align-items: center; gap: 15px; min-width: 0; }
         .logo { height: 75px; width: auto; mix-blend-mode: multiply; filter: contrast(1.1); flex-shrink: 0; }
-        
-        .header-text { 
-            display: flex; 
-            flex-direction: column; 
-            justify-content: center; 
-            min-width: 0; 
-        }
-        
-        .header-text h1 { 
-            margin: 0; font-size: 1.3rem; font-weight: 800; text-transform: uppercase; 
-            text-shadow: 0 2px 4px rgba(0,0,0,0.4); 
-            white-space: nowrap; 
-        }
-
-        .selection-info {
-            font-size: 1.3rem; font-weight: 700; color: #fbbf24; margin: 2px 0;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.8); display: none; 
-            text-transform: uppercase; letter-spacing: 0.5px;
-            white-space: nowrap; 
-            overflow: hidden; 
-            text-overflow: ellipsis; 
-        }
-
+        .header-text { display: flex; flex-direction: column; justify-content: center; min-width: 0; }
+        .header-text h1 { margin: 0; font-size: 1.3rem; font-weight: 800; text-transform: uppercase; text-shadow: 0 2px 4px rgba(0,0,0,0.4); white-space: nowrap; }
+        .selection-info { font-size: 1.3rem; font-weight: 700; color: #fbbf24; margin: 2px 0; text-shadow: 0 2px 4px rgba(0,0,0,0.8); display: none; text-transform: uppercase; letter-spacing: 0.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .clock { font-family: 'Consolas', monospace; font-size: 1rem; color: #f0fdf4; font-weight: 600; opacity: 0.9; }
 
-        /* ŚRODKOWA KOLUMNA */
-        .h-col-center {
-            flex: 2; 
-            display: flex;
-            flex-direction: column; 
-            align-items: center;
-            justify-content: center;
-            gap: 8px; 
-        }
-
-        .lesson-indicator {
-            position: static; 
-            transform: none;
-            
-            font-size: 1.1rem;
-            font-weight: 800;
-            color: #fbbf24;
-            text-transform: uppercase;
-            text-shadow: 0 0 10px rgba(251, 191, 36, 0.4);
-            white-space: nowrap;
-            text-align: center;
-            
-            min-height: 25px; 
-            display: flex;
-            align-items: center;
-        }
-
-        .week-nav {
-            display: flex; align-items: center; gap: 10px;
-            background: rgba(0, 0, 0, 0.25); padding: 5px 15px;
-            border-radius: 20px; border: 1px solid rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(5px);
-            white-space: nowrap;
-            max-height: 50px;
-        }
-        
+        .h-col-center { flex: 2; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px; }
+        .lesson-indicator { position: static; transform: none; font-size: 1.1rem; font-weight: 800; color: #fbbf24; text-transform: uppercase; text-shadow: 0 0 10px rgba(251, 191, 36, 0.4); white-space: nowrap; text-align: center; min-height: 25px; display: flex; align-items: center; }
+        .week-nav { display: flex; align-items: center; gap: 10px; background: rgba(0, 0, 0, 0.25); padding: 5px 15px; border-radius: 20px; border: 1px solid rgba(255, 255, 255, 0.1); backdrop-filter: blur(5px); white-space: nowrap; max-height: 50px; }
         .week-nav-btn { background: none; border: none; color: #4ade80; font-size: 1.5rem; cursor: pointer; line-height: 1; padding: 0 5px; }
         .week-nav-btn:hover { color: #fff; transform: scale(1.2); }
         .week-display { display: flex; flex-direction: column; align-items: center; min-width: 140px; }
         .week-label { font-size: 0.6rem; text-transform: uppercase; color: #a7f3d0; letter-spacing: 1px; }
         .week-range { font-family: 'Consolas', monospace; font-size: 1.1rem; font-weight: 700; color: #fff; }
 
-        /* PRAWA KOLUMNA */
-        .h-col-right {
-            flex: 1; 
-            display: flex;
-            align-items: center;
-            justify-content: flex-end; 
-            gap: 15px;
-        }
-
-        button.back-btn {
-            background: #b91c1c; color: white; border: 1px solid #ef4444; 
-            padding: 0 20px; height: 50px; border-radius: 8px; cursor: pointer; 
-            font-weight: 700; font-size: 0.9rem; display: flex; align-items: center; gap: 10px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.3); transition: all 0.2s; text-transform: uppercase;
-            white-space: nowrap;
-        }
+        .h-col-right { flex: 1; display: flex; align-items: center; justify-content: flex-end; gap: 15px; }
+        button.back-btn { background: #b91c1c; color: white; border: 1px solid #ef4444; padding: 0 20px; height: 50px; border-radius: 8px; cursor: pointer; font-weight: 700; font-size: 0.9rem; display: flex; align-items: center; gap: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.3); transition: all 0.2s; text-transform: uppercase; white-space: nowrap; }
         button.back-btn:hover { background: #dc2626; transform: translateY(-2px); }
-
-        .qr-wrapper {
-            display: flex; align-items: center; gap: 10px;
-            background: rgba(0, 0, 0, 0.25); padding: 5px 10px;
-            border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.1);
-        }
+        .qr-wrapper { display: flex; align-items: center; gap: 10px; background: rgba(0, 0, 0, 0.25); padding: 5px 10px; border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.1); }
         .qr-text { text-align: right; font-size: 0.75rem; line-height: 1.2; color: #e2e8f0; font-weight: 600; }
         .qr-img { height: 60px; width: auto; border-radius: 4px; border: 2px solid white; }
 
         #debug-bar { background: #111827; font-size: 0.75rem; padding: 4px 20px; color: #64748b; border-bottom: 1px solid #1f2937; text-align: center; letter-spacing: 1px; }
 
-        /* --- DASHBOARD: KAFELKI --- */
-        #dashboard-view { 
-            padding: 40px; display: block; max-width: 1600px; margin: 0 auto; width: 100%; box-sizing: border-box; 
-        }
-
-        .selection-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr); 
-            gap: 30px;
-            margin-bottom: 40px;
-        }
-
-        .selection-card {
-            background: #1e293b;
-            border-radius: 16px;
-            padding: 25px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
-            border-top: 6px solid #475569;
-            transition: transform 0.3s;
-        }
+        /* --- KAFELKI & OGŁOSZENIA --- */
+        #dashboard-view { padding: 40px; display: block; max-width: 1600px; margin: 0 auto; width: 100%; box-sizing: border-box; }
+        .selection-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 30px; margin-bottom: 40px; }
+        .selection-card { background: #1e293b; border-radius: 16px; padding: 25px; display: flex; flex-direction: column; align-items: center; box-shadow: 0 10px 25px rgba(0,0,0,0.3); border-top: 6px solid #475569; transition: transform 0.3s; }
         .selection-card:hover { transform: translateY(-5px); }
-        
         .selection-card.teacher { border-top-color: var(--accent-teacher); background: linear-gradient(180deg, #1e293b 0%, #064e3b 100%); }
         .selection-card.class { border-top-color: var(--accent-class); background: linear-gradient(180deg, #1e293b 0%, #0c4a6e 100%); }
         .selection-card.room { border-top-color: var(--accent-room); background: linear-gradient(180deg, #1e293b 0%, #451a03 100%); }
         .selection-card.duty { border-top-color: var(--accent-duty); background: linear-gradient(180deg, #1e293b 0%, #831843 100%); }
-
         .card-icon { font-size: 3rem; margin-bottom: 10px; }
-        .card-title { 
-            font-size: 1.5rem; font-weight: 800; text-transform: uppercase; 
-            margin-bottom: 20px; color: white; letter-spacing: 1px; text-align: center;
-        }
-
-        .main-select {
-            width: 100%; padding: 12px 15px; font-size: 1.1rem;
-            background-color: rgba(0,0,0,0.3); color: white;
-            border: 2px solid rgba(255,255,255,0.2); border-radius: 8px;
-            cursor: pointer; outline: none;
-        }
+        .card-title { font-size: 1.5rem; font-weight: 800; text-transform: uppercase; margin-bottom: 20px; color: white; letter-spacing: 1px; text-align: center; }
+        .main-select { width: 100%; padding: 12px 15px; font-size: 1.1rem; background-color: rgba(0,0,0,0.3); color: white; border: 2px solid rgba(255,255,255,0.2); border-radius: 8px; cursor: pointer; outline: none; }
         .main-select:focus { border-color: white; }
         .main-select option { background-color: #1e293b; }
-
-        /* --- OGŁOSZENIA --- */
-        #announcements-container {
-            background: rgba(15, 23, 42, 0.8);
-            border-radius: 16px; border: 1px solid #334155;
-            padding: 30px; text-align: center; min-height: 200px;
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.4);
-        }
+        #announcements-container { background: rgba(15, 23, 42, 0.8); border-radius: 16px; border: 1px solid #334155; padding: 30px; text-align: center; min-height: 200px; display: flex; flex-direction: column; justify-content: center; align-items: center; box-shadow: 0 4px 20px rgba(0,0,0,0.4); }
         .anno-title { font-size: 1.5rem; color: #94a3b8; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 2px; }
         .anno-content { font-size: 1.8rem; color: #e2e8f0; font-weight: 300; line-height: 1.5; }
         .countdown { font-family: 'Consolas', monospace; font-size: 3rem; color: #4ade80; font-weight: bold; margin-top: 10px; }
@@ -237,49 +120,33 @@
         #schedule-view { display: none; width: 100%; padding-bottom: 40px; }
         .week-container { display: grid; grid-template-columns: repeat(5, 1fr); gap: 15px; padding: 20px; align-items: start; }
         .day-col { background: #1e293b; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.3); display: flex; flex-direction: column; border: 1px solid #334155; }
-        
-        .day-header {
-            background: linear-gradient(to bottom, #065f46, #064e3b); color: #ecfdf5; 
-            padding: 15px; text-align: center; font-weight: 700; border-bottom: 1px solid #047857; text-transform: uppercase; letter-spacing: 1px;
-            position: sticky; top: var(--header-height-desktop); z-index: 900; border-top-left-radius: 10px; border-top-right-radius: 10px;
-        }
+        .day-header { background: linear-gradient(to bottom, #065f46, #064e3b); color: #ecfdf5; padding: 15px; text-align: center; font-weight: 700; border-bottom: 1px solid #047857; text-transform: uppercase; letter-spacing: 1px; position: sticky; top: var(--header-height-desktop); z-index: 900; border-top-left-radius: 10px; border-top-right-radius: 10px; }
         .day-date { font-weight: 400; font-size: 0.8em; color: #a7f3d0; display: block; margin-top: 4px; }
         .day-content { padding: 10px; display: flex; flex-direction: column; gap: 8px; }
         .slot-wrapper { border: 1px solid #334155; border-radius: 8px; overflow: hidden; display: flex; flex-direction: column; gap: 0px; background: #0f172a; }
-
         .card { background: var(--card-bg); border-left: 4px solid var(--lesson-border); color: #e2e8f0; padding: 10px 12px; min-height: 55px; display: flex; flex-direction: column; gap: 3px; border-bottom: 1px solid #334155; position: relative; }
         .card:last-child { border-bottom: none; }
         .card.empty { background: var(--empty); border-left-color: #4b5563; color: #64748b; display: flex; align-items: center; justify-content: center; font-style: italic; font-size: 0.85rem; min-height: 40px; }
-        
         body.mode-room .card { border-left-color: var(--room-border); }
         body.mode-class .card { border-left-color: var(--class-border); }
         body.mode-duty .card { border-left-color: var(--duty-border); }
-
         .meta { display: flex; justify-content: space-between; font-size: 0.8rem; color: #94a3b8; margin-bottom: 2px; font-weight: 600; }
         .nr { background: #334155; padding: 1px 6px; border-radius: 4px; color: #f1f5f9; }
         .main-info { font-weight: 700; font-size: 1rem; color: #f8fafc; }
         .sub-line { font-weight: 500; font-size: 0.9rem; color: #cbd5e1; margin-top: 2px; }
         .group-badge { display: inline-block; background: #334155; color: #e2e8f0; font-size: 0.7rem; padding: 1px 6px; border-radius: 4px; margin-left: 6px; font-weight: bold; vertical-align: middle; border: 1px solid #475569; }
-
         .is-sub { background: var(--sub-bg); border-left-color: var(--sub-border) !important; }
         .is-sub .main-info { text-decoration: line-through; opacity: 0.6; color: #fca5a5; }
         .note-red { color: #f87171; font-weight: 700; font-size: 0.8rem; text-transform: uppercase; }
-        
         .is-new { background: var(--new-bg); border-left-color: var(--new-border) !important; }
         .is-new .main-info { color: #86efac; }
         .is-new .sub-line { color: #dcfce7; }
-        
-        .is-transfer { 
-            background: var(--trans-bg); 
-            border-left-color: var(--trans-border) !important; 
-        }
+        .is-transfer { background: var(--trans-bg); border-left-color: var(--trans-border) !important; }
         .is-transfer .main-info { color: #e0f2fe; }
         .is-transfer .sub-line { color: #bae6fd; }
         .is-transfer .transfer-note { color: #7dd3fc; }
-
         .pay-badge { display: inline-block; background: var(--pay-bg); color: var(--pay-text); border: 1px solid var(--pay-border); border-radius: 4px; padding: 2px 6px; font-size: 0.75rem; font-weight: bold; margin-top: 4px; text-transform: uppercase; box-shadow: 0 0 5px rgba(251, 191, 36, 0.2); }
         .transfer-note { font-size: 0.75em; font-style: italic; margin-top: 2px; line-height: 1.2; border-top: 1px dotted #475569; padding-top: 2px; }
-
         .duty-section { background: var(--duty-bg); color: var(--duty-color); border-top: 1px dashed var(--duty-border); padding: 8px 10px; font-size: 0.85rem; }
         .morning-duty { background: var(--duty-bg); border-left: 4px solid #f59e0b; padding: 12px; border-radius: 8px; margin-bottom: 8px; color: var(--duty-color); font-size: 0.9rem; border: 1px solid #78350f; }
         .duty-sub { background: var(--duty-sub-bg); border-left-color: var(--duty-sub-border); color: var(--duty-sub-color); border-color: #14532d; }
@@ -289,67 +156,122 @@
         
         @media (max-width: 1200px) { .week-container { grid-template-columns: repeat(3, 1fr); } }
 
-        /* --- STYLES FOR MOBILE --- */
+        /* =========================================
+           --- MOBILE OPTIMIZATION (Compact Header) ---
+           ========================================= */
         @media (max-width: 900px) {
-            header { 
-                height: auto; /* NAJWAŻNIEJSZE: Pozwól nagłówkowi rosnąć */
-                flex-direction: column; /* Elementy pod sobą */
-                padding: 15px;
-                gap: 15px;
-            }
-            
-            /* Reset kolumn flexa dla mobile */
-            .h-col-left, .h-col-center, .h-col-right { 
-                width: 100%; 
-                justify-content: center; 
-                flex: none; /* Wyłącz proporcje z desktopu */
+            header {
+                /* Zmiana układu na zawijany wiersz */
+                flex-wrap: wrap;
+                justify-content: space-between;
+                align-items: center;
+                /* Drastyczne zmniejszenie paddingu i odstępów */
+                padding: 5px 10px;
+                gap: 5px;
+                height: auto; /* Pozwól wysokości dostosować się do zawartości */
+                /* Bardziej zwarty gradient, żeby dół nie był czarny */
+                background: linear-gradient(to bottom, #33cc66 20%, #020617 100%);
+                /* Cieńsza dolna ramka */
+                border-bottom-width: 2px;
             }
 
-            /* Lewa kolumna: Logo + Tytuł (centrowanie) */
-            .h-col-left { 
-                flex-direction: column; 
-                text-align: center;
-                gap: 10px;
-            }
-            .header-text { align-items: center; }
-            .logo { height: 60px; margin-right: 0; }
-            .selection-info { white-space: normal; text-align: center; font-size: 1.1rem; }
+            /* --- 1. GÓRNY RZĄD (Logo + Tytuł + Przycisk) --- */
 
-            /* Środkowa kolumna: Status + Nawigacja */
+            /* LEWA STRONA: Logo i Tytuł */
+            .h-col-left {
+                flex: 1 1 auto; /* Zajmij dostępne miejsce */
+                width: auto;
+                justify-content: flex-start;
+                gap: 8px;
+            }
+            .logo {
+                height: 40px; /* Dużo mniejsze logo */
+                margin-right: 0;
+            }
+            .header-text {
+                align-items: flex-start;
+                text-align: left;
+            }
+            .header-text h1 {
+                font-size: 0.95rem; /* Mniejszy tytuł */
+                margin-bottom: 0;
+            }
+            /* UKRYWAMY ZEGAR na telefonie, żeby oszczędzić miejsce (status lekcji wystarczy) */
+            .clock { display: none; }
+            .selection-info {
+                font-size: 0.9rem;
+                margin: 0;
+                white-space: normal; /* Pozwól na zawijanie długich nazwisk */
+            }
+
+            /* PRAWA STRONA: Przycisk Menu */
+            .h-col-right {
+                flex: 0 0 auto; /* Nie rozciągaj się */
+                width: auto;
+                order: 2; /* Utrzymaj po prawej w górnym rzędzie */
+            }
+            button.back-btn {
+                width: auto; /* Nie na całą szerokość */
+                height: 36px; /* Niższy przycisk */
+                padding: 0 12px;
+                font-size: 0.8rem;
+            }
+            /* Ukrywamy QR */
+            .qr-wrapper { display: none !important; }
+
+            /* --- 2. DOLNY RZĄD (Status + Nawigacja) --- */
+
+            /* ŚRODKOWY KONTENER: Zmuszamy do przejścia do nowej linii */
             .h-col-center {
-                order: 2; /* Kolejność */
-                gap: 10px;
+                flex-basis: 100%; /* Wymuś pełną szerokość, co przeniesie go niżej */
+                order: 3; /* Ustaw na samym dole */
+                gap: 4px; /* Mały odstęp między statusem a nawigacją */
+                margin-top: 2px;
+                align-items: center;
             }
-            .week-nav { 
-                width: 100%; 
-                justify-content: space-between; 
+
+            /* Status lekcji (cienki pasek) */
+            .lesson-indicator {
+                font-size: 0.95rem;
+                min-height: auto;
+                padding: 2px 0;
+                width: 100%;
+                justify-content: center;
+                /* Opcjonalne tło dla lepszej czytelności */
+                background: rgba(0,0,0,0.2);
+                border-radius: 4px;
+            }
+
+            /* Nawigacja tygodniowa (cienki pasek) */
+            .week-nav {
+                width: 100%;
+                height: 34px; /* Bardzo niski pasek nawigacji */
+                padding: 0 5px;
+                justify-content: space-between;
                 box-sizing: border-box;
             }
+            .week-nav-btn { font-size: 1.3rem; padding: 0 8px; }
+            .week-range { font-size: 1rem; }
+            .week-label { display: none; }
 
-            /* Prawa kolumna: Tylko przycisk Menu (QR ukryty) */
-            .h-col-right {
-                order: 3;
-                justify-content: center;
-            }
-            .qr-wrapper { display: none !important; } /* Ukrywamy QR na telefonie */
-            button.back-btn { width: 100%; justify-content: center; }
-
-            /* Dashboard (Kafelki) - jedna kolumna */
+            /* --- Reszta stylów mobilnych (bez większych zmian) --- */
             .selection-grid { grid-template-columns: 1fr; gap: 15px; }
             .selection-card { flex-direction: row; justify-content: space-between; padding: 15px; align-items: center; }
             .card-icon { font-size: 2rem; margin-bottom: 0; margin-right: 15px; }
             .card-title { font-size: 1.2rem; margin-bottom: 0; text-align: left; flex: 1; }
             .main-select { width: 50%; padding: 8px; font-size: 1rem; }
-
-            /* Ogłoszenia */
             #announcements-container { padding: 20px; }
             .anno-content { font-size: 1.2rem; }
             .countdown { font-size: 2rem; }
-
-            /* Grid planu */
+            
+            /* Grid planu i przyklejony nagłówek */
             .week-container { grid-template-columns: 1fr !important; }
-            /* Poprawka sticky header w planie na mobile */
-            .day-header { top: 0 !important; border-radius: 0; }
+            .day-header { 
+                /* Używamy nowej, mniejszej zmiennej wysokości dla mobile */
+                top: var(--header-height-mobile) !important; 
+                border-radius: 0; 
+                padding: 10px;
+            }
         }
     </style>
     
