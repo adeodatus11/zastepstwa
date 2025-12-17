@@ -55,7 +55,7 @@
             color: var(--text-main); display: flex; flex-direction: column; min-height: 100vh;
         }
 
-        /* --- NAGŁÓWEK (Poprawiony Flexbox) --- */
+        /* --- NAGŁÓWEK (Flexbox) --- */
         header { 
             background: linear-gradient(to right, #4dff88 0%, #33cc66 30%, #020617 100%);
             color: white; 
@@ -68,7 +68,7 @@
             justify-content: space-between; 
             align-items: center; 
             gap: 20px; 
-            height: 120px; 
+            height: 120px; /* Wysokość na desktop */
         }
 
         /* LEWA KOLUMNA */
@@ -106,18 +106,18 @@
 
         .clock { font-family: 'Consolas', monospace; font-size: 1rem; color: #f0fdf4; font-weight: 600; opacity: 0.9; }
 
-        /* ŚRODKOWA KOLUMNA (Naprawione nakładanie) */
+        /* ŚRODKOWA KOLUMNA */
         .h-col-center {
-            flex: 2; /* Środek ma najwięcej miejsca */
+            flex: 2; 
             display: flex;
-            flex-direction: column; /* Elementy jeden pod drugim */
+            flex-direction: column; 
             align-items: center;
             justify-content: center;
-            gap: 5px; /* Odstęp pionowy między napisem a paskiem tygodnia */
+            gap: 8px; 
         }
 
         .lesson-indicator {
-            position: static; /* WAŻNE: Nie absolute! Dzięki temu nie nakłada się */
+            position: static; 
             transform: none;
             
             font-size: 1.1rem;
@@ -174,21 +174,9 @@
         .qr-text { text-align: right; font-size: 0.75rem; line-height: 1.2; color: #e2e8f0; font-weight: 600; }
         .qr-img { height: 60px; width: auto; border-radius: 4px; border: 2px solid white; }
 
-        /* --- MOBILE --- */
-        @media (max-width: 900px) {
-            header { flex-direction: column; height: auto; gap: 10px; padding: 10px; }
-            .h-col-left, .h-col-center, .h-col-right { width: 100%; justify-content: center; flex: none; }
-            .h-col-left { justify-content: flex-start; }
-            .selection-info { white-space: normal; text-align: left; }
-            .logo { height: 50px; }
-            .week-nav { width: 100%; justify-content: space-between; }
-            .qr-wrapper { display: none; } 
-            button.back-btn { width: 100%; justify-content: center; }
-        }
-
         #debug-bar { background: #111827; font-size: 0.75rem; padding: 4px 20px; color: #64748b; border-bottom: 1px solid #1f2937; text-align: center; letter-spacing: 1px; }
 
-        /* --- DASHBOARD: SELECT CARDS --- */
+        /* --- DASHBOARD: KAFELKI --- */
         #dashboard-view { 
             padding: 40px; display: block; max-width: 1600px; margin: 0 auto; width: 100%; box-sizing: border-box; 
         }
@@ -212,7 +200,7 @@
             transition: transform 0.3s;
         }
         .selection-card:hover { transform: translateY(-5px); }
-
+        
         .selection-card.teacher { border-top-color: var(--accent-teacher); background: linear-gradient(180deg, #1e293b 0%, #064e3b 100%); }
         .selection-card.class { border-top-color: var(--accent-class); background: linear-gradient(180deg, #1e293b 0%, #0c4a6e 100%); }
         .selection-card.room { border-top-color: var(--accent-room); background: linear-gradient(180deg, #1e293b 0%, #451a03 100%); }
@@ -245,10 +233,11 @@
         .anno-content { font-size: 1.8rem; color: #e2e8f0; font-weight: 300; line-height: 1.5; }
         .countdown { font-family: 'Consolas', monospace; font-size: 3rem; color: #4ade80; font-weight: bold; margin-top: 10px; }
 
-        /* --- PLAN LEKCJI --- */
+        /* --- PLAN LEKCJI (GRID) --- */
         #schedule-view { display: none; width: 100%; padding-bottom: 40px; }
         .week-container { display: grid; grid-template-columns: repeat(5, 1fr); gap: 15px; padding: 20px; align-items: start; }
         .day-col { background: #1e293b; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.3); display: flex; flex-direction: column; border: 1px solid #334155; }
+        
         .day-header {
             background: linear-gradient(to bottom, #065f46, #064e3b); color: #ecfdf5; 
             padding: 15px; text-align: center; font-weight: 700; border-bottom: 1px solid #047857; text-transform: uppercase; letter-spacing: 1px;
@@ -272,7 +261,6 @@
         .sub-line { font-weight: 500; font-size: 0.9rem; color: #cbd5e1; margin-top: 2px; }
         .group-badge { display: inline-block; background: #334155; color: #e2e8f0; font-size: 0.7rem; padding: 1px 6px; border-radius: 4px; margin-left: 6px; font-weight: bold; vertical-align: middle; border: 1px solid #475569; }
 
-        /* STATUSY */
         .is-sub { background: var(--sub-bg); border-left-color: var(--sub-border) !important; }
         .is-sub .main-info { text-decoration: line-through; opacity: 0.6; color: #fca5a5; }
         .note-red { color: #f87171; font-weight: 700; font-size: 0.8rem; text-transform: uppercase; }
@@ -298,8 +286,73 @@
 
         footer { background: #064e3b; color: #a7f3d0; text-align: center; padding: 15px; font-size: 0.9rem; border-top: 1px solid #047857; margin-top: auto; }
         footer a { color: #fff; text-decoration: none; font-weight: bold; }
+        
         @media (max-width: 1200px) { .week-container { grid-template-columns: repeat(3, 1fr); } }
+
+        /* --- STYLES FOR MOBILE --- */
+        @media (max-width: 900px) {
+            header { 
+                height: auto; /* NAJWAŻNIEJSZE: Pozwól nagłówkowi rosnąć */
+                flex-direction: column; /* Elementy pod sobą */
+                padding: 15px;
+                gap: 15px;
+            }
+            
+            /* Reset kolumn flexa dla mobile */
+            .h-col-left, .h-col-center, .h-col-right { 
+                width: 100%; 
+                justify-content: center; 
+                flex: none; /* Wyłącz proporcje z desktopu */
+            }
+
+            /* Lewa kolumna: Logo + Tytuł (centrowanie) */
+            .h-col-left { 
+                flex-direction: column; 
+                text-align: center;
+                gap: 10px;
+            }
+            .header-text { align-items: center; }
+            .logo { height: 60px; margin-right: 0; }
+            .selection-info { white-space: normal; text-align: center; font-size: 1.1rem; }
+
+            /* Środkowa kolumna: Status + Nawigacja */
+            .h-col-center {
+                order: 2; /* Kolejność */
+                gap: 10px;
+            }
+            .week-nav { 
+                width: 100%; 
+                justify-content: space-between; 
+                box-sizing: border-box;
+            }
+
+            /* Prawa kolumna: Tylko przycisk Menu (QR ukryty) */
+            .h-col-right {
+                order: 3;
+                justify-content: center;
+            }
+            .qr-wrapper { display: none !important; } /* Ukrywamy QR na telefonie */
+            button.back-btn { width: 100%; justify-content: center; }
+
+            /* Dashboard (Kafelki) - jedna kolumna */
+            .selection-grid { grid-template-columns: 1fr; gap: 15px; }
+            .selection-card { flex-direction: row; justify-content: space-between; padding: 15px; align-items: center; }
+            .card-icon { font-size: 2rem; margin-bottom: 0; margin-right: 15px; }
+            .card-title { font-size: 1.2rem; margin-bottom: 0; text-align: left; flex: 1; }
+            .main-select { width: 50%; padding: 8px; font-size: 1rem; }
+
+            /* Ogłoszenia */
+            #announcements-container { padding: 20px; }
+            .anno-content { font-size: 1.2rem; }
+            .countdown { font-size: 2rem; }
+
+            /* Grid planu */
+            .week-container { grid-template-columns: 1fr !important; }
+            /* Poprawka sticky header w planie na mobile */
+            .day-header { top: 0 !important; border-radius: 0; }
+        }
     </style>
+    
 </head>
 <body>
 
