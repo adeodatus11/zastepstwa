@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Plan lekcji - Panel Kiosk</title>
+    <title>Interaktywny Pulpit Nauczyciela - ZSZ5</title>
     <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
     <style>
         :root {
@@ -72,9 +72,31 @@
         }
 
         .h-col-left { flex: 1; display: flex; align-items: center; gap: 15px; min-width: 0; }
-        .logo { height: 75px; width: auto; mix-blend-mode: multiply; filter: contrast(1.1); flex-shrink: 0; }
+        .logo { height: 80px; width: auto; mix-blend-mode: multiply; filter: contrast(1.2); flex-shrink: 0; }
+        
         .header-text { display: flex; flex-direction: column; justify-content: center; min-width: 0; }
-        .header-text h1 { margin: 0; font-size: 1.3rem; font-weight: 800; text-transform: uppercase; text-shadow: 0 2px 4px rgba(0,0,0,0.4); white-space: nowrap; }
+        
+        /* NOWE STYLE TYTUŁÓW */
+        .main-title {
+            margin: 0;
+            font-size: 1.8rem; /* Większa czcionka */
+            font-weight: 900; /* Grubsza */
+            text-transform: uppercase;
+            /* Mocniejszy cień dla lepszego kontrastu na zielonym tle */
+            text-shadow: 0 3px 6px rgba(0,0,0,0.5), 0 1px 2px rgba(0,0,0,0.7);
+            white-space: nowrap;
+            letter-spacing: 1px; /* Lepsze odstępy */
+            line-height: 1.1;
+        }
+
+        .sub-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #dcfce7; /* Lekko jaśniejszy odcień dla hierarchii */
+            text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+            margin-bottom: 5px;
+        }
+
         .selection-info { font-size: 1.3rem; font-weight: 700; color: #fbbf24; margin: 2px 0; text-shadow: 0 2px 4px rgba(0,0,0,0.8); display: none; text-transform: uppercase; letter-spacing: 0.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .clock { font-family: 'Consolas', monospace; font-size: 1rem; color: #f0fdf4; font-weight: 600; opacity: 0.9; }
 
@@ -202,9 +224,18 @@
                 border-bottom-width: 2px;
             }
             .h-col-left { flex: 1 1 auto; width: auto; justify-content: flex-start; gap: 8px; }
-            .logo { height: 40px; margin-right: 0; }
+            .logo { height: 50px; margin-right: 0; }
+            
+            /* POPRAWKI DLA TYTUŁU NA MOBILE */
             .header-text { align-items: flex-start; text-align: left; }
-            .header-text h1 { font-size: 0.95rem; margin-bottom: 0; }
+            .main-title { 
+                font-size: 1.2rem; /* Większa niż poprzednio na mobile */
+                white-space: normal; /* Pozwól na zawijanie jeśli ekran jest bardzo wąski */
+            }
+            .sub-title {
+                font-size: 0.85rem;
+            }
+
             .clock { display: none; }
             .selection-info { font-size: 0.9rem; margin: 0; white-space: normal; }
             .h-col-right { flex: 0 0 auto; width: auto; order: 2; }
@@ -240,7 +271,9 @@
     <div class="h-col-left">
         <img src="orzeł.png" alt="ZSZ5 Logo" class="logo" onerror="this.style.display='none'">
         <div class="header-text">
-            <h1>PLAN LEKCJI - ZSZ5</h1>
+            <h1 class="main-title">INTERAKTYWNY PULPIT NAUCZYCIELA</h1>
+            <div class="sub-title">ZSZ5 we Wrocławiu</div>
+            
             <div id="selection-info" class="selection-info"></div>
             <div id="clock" class="clock">--:--</div>
         </div>
@@ -324,7 +357,6 @@
         startClock(); 
         refreshData(); 
         
-        // Niezależne uruchomienie obu sekcji ogłoszeń
         loadAnnouncements();
         startCountdown();
 
