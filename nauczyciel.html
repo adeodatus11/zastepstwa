@@ -46,7 +46,6 @@
 
             --empty: #1f2937;
             --header-height-desktop: 134px; 
-            /* Nowa, mniejsza wysokość nagłówka dla mobile, żeby plan się dobrze przyklejał */
             --header-height-mobile: 95px; 
         }
 
@@ -56,7 +55,7 @@
             color: var(--text-main); display: flex; flex-direction: column; min-height: 100vh;
         }
 
-        /* --- NAGŁÓWEK (Desktop - bez zmian) --- */
+        /* --- NAGŁÓWEK (Flexbox) --- */
         header { 
             background: linear-gradient(to right, #4dff88 0%, #33cc66 30%, #020617 100%);
             color: white; 
@@ -97,7 +96,7 @@
 
         #debug-bar { background: #111827; font-size: 0.75rem; padding: 4px 20px; color: #64748b; border-bottom: 1px solid #1f2937; text-align: center; letter-spacing: 1px; }
 
-        /* --- KAFELKI & OGŁOSZENIA --- */
+        /* --- DASHBOARD: KAFELKI --- */
         #dashboard-view { padding: 40px; display: block; max-width: 1600px; margin: 0 auto; width: 100%; box-sizing: border-box; }
         .selection-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 30px; margin-bottom: 40px; }
         .selection-card { background: #1e293b; border-radius: 16px; padding: 25px; display: flex; flex-direction: column; align-items: center; box-shadow: 0 10px 25px rgba(0,0,0,0.3); border-top: 6px solid #475569; transition: transform 0.3s; }
@@ -111,10 +110,46 @@
         .main-select { width: 100%; padding: 12px 15px; font-size: 1.1rem; background-color: rgba(0,0,0,0.3); color: white; border: 2px solid rgba(255,255,255,0.2); border-radius: 8px; cursor: pointer; outline: none; }
         .main-select:focus { border-color: white; }
         .main-select option { background-color: #1e293b; }
-        #announcements-container { background: rgba(15, 23, 42, 0.8); border-radius: 16px; border: 1px solid #334155; padding: 30px; text-align: center; min-height: 200px; display: flex; flex-direction: column; justify-content: center; align-items: center; box-shadow: 0 4px 20px rgba(0,0,0,0.4); }
-        .anno-title { font-size: 1.5rem; color: #94a3b8; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 2px; }
-        .anno-content { font-size: 1.8rem; color: #e2e8f0; font-weight: 300; line-height: 1.5; }
-        .countdown { font-family: 'Consolas', monospace; font-size: 3rem; color: #4ade80; font-weight: bold; margin-top: 10px; }
+
+        /* --- OGŁOSZENIA (Split View) --- */
+        #announcements-container {
+            background: rgba(15, 23, 42, 0.9);
+            border-radius: 16px; 
+            border: 1px solid #334155;
+            padding: 0; 
+            min-height: 220px;
+            display: flex; 
+            flex-direction: row; 
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+        }
+        .anno-left {
+            flex: 6; padding: 30px;
+            border-right: 1px solid #334155;
+            display: flex; flex-direction: column; justify-content: flex-start;
+            text-align: left;
+        }
+        .anno-right {
+            flex: 4; padding: 20px;
+            background: rgba(0, 0, 0, 0.2);
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            gap: 15px; position: relative;
+        }
+        .anno-title { font-size: 1.4rem; color: #94a3b8; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 2px; font-weight: 700; }
+        .anno-content { font-size: 1.3rem; color: #e2e8f0; font-weight: 300; line-height: 1.6; }
+        .countdown-label { color: #a7f3d0; text-transform: uppercase; font-size: 0.9rem; letter-spacing: 1px; margin-bottom: 5px; text-align: center; }
+        .countdown { 
+            font-family: 'Consolas', monospace; font-size: 2.5rem; color: #4ade80; 
+            font-weight: bold; text-shadow: 0 0 15px rgba(74, 222, 128, 0.3);
+            text-align: center; line-height: 1.2;
+        }
+        .clock-icon-svg {
+            width: 60px; height: 60px; stroke: #fbbf24; stroke-width: 2;
+            fill: none; stroke-linecap: round; filter: drop-shadow(0 0 5px rgba(251, 191, 36, 0.5));
+        }
+        .clock-hand-min { transform-origin: 50% 50%; animation: spin 4s linear infinite; }
+        .clock-hand-hour { transform-origin: 50% 50%; animation: spin 48s linear infinite; }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
 
         /* --- PLAN LEKCJI (GRID) --- */
         #schedule-view { display: none; width: 100%; padding-bottom: 40px; }
@@ -157,124 +192,47 @@
         @media (max-width: 1200px) { .week-container { grid-template-columns: repeat(3, 1fr); } }
 
         /* =========================================
-           --- MOBILE OPTIMIZATION (Compact Header) ---
+           --- MOBILE OPTIMIZATION ---
            ========================================= */
         @media (max-width: 900px) {
             header {
-                /* Zmiana układu na zawijany wiersz */
-                flex-wrap: wrap;
-                justify-content: space-between;
-                align-items: center;
-                /* Drastyczne zmniejszenie paddingu i odstępów */
-                padding: 5px 10px;
-                gap: 5px;
-                height: auto; /* Pozwól wysokości dostosować się do zawartości */
-                /* Bardziej zwarty gradient, żeby dół nie był czarny */
+                flex-wrap: wrap; justify-content: space-between; align-items: center;
+                padding: 5px 10px; gap: 5px; height: auto;
                 background: linear-gradient(to bottom, #33cc66 20%, #020617 100%);
-                /* Cieńsza dolna ramka */
                 border-bottom-width: 2px;
             }
-
-            /* --- 1. GÓRNY RZĄD (Logo + Tytuł + Przycisk) --- */
-
-            /* LEWA STRONA: Logo i Tytuł */
-            .h-col-left {
-                flex: 1 1 auto; /* Zajmij dostępne miejsce */
-                width: auto;
-                justify-content: flex-start;
-                gap: 8px;
-            }
-            .logo {
-                height: 40px; /* Dużo mniejsze logo */
-                margin-right: 0;
-            }
-            .header-text {
-                align-items: flex-start;
-                text-align: left;
-            }
-            .header-text h1 {
-                font-size: 0.95rem; /* Mniejszy tytuł */
-                margin-bottom: 0;
-            }
-            /* UKRYWAMY ZEGAR na telefonie, żeby oszczędzić miejsce (status lekcji wystarczy) */
+            .h-col-left { flex: 1 1 auto; width: auto; justify-content: flex-start; gap: 8px; }
+            .logo { height: 40px; margin-right: 0; }
+            .header-text { align-items: flex-start; text-align: left; }
+            .header-text h1 { font-size: 0.95rem; margin-bottom: 0; }
             .clock { display: none; }
-            .selection-info {
-                font-size: 0.9rem;
-                margin: 0;
-                white-space: normal; /* Pozwól na zawijanie długich nazwisk */
-            }
-
-            /* PRAWA STRONA: Przycisk Menu */
-            .h-col-right {
-                flex: 0 0 auto; /* Nie rozciągaj się */
-                width: auto;
-                order: 2; /* Utrzymaj po prawej w górnym rzędzie */
-            }
-            button.back-btn {
-                width: auto; /* Nie na całą szerokość */
-                height: 36px; /* Niższy przycisk */
-                padding: 0 12px;
-                font-size: 0.8rem;
-            }
-            /* Ukrywamy QR */
+            .selection-info { font-size: 0.9rem; margin: 0; white-space: normal; }
+            .h-col-right { flex: 0 0 auto; width: auto; order: 2; }
+            button.back-btn { width: auto; height: 36px; padding: 0 12px; font-size: 0.8rem; }
             .qr-wrapper { display: none !important; }
-
-            /* --- 2. DOLNY RZĄD (Status + Nawigacja) --- */
-
-            /* ŚRODKOWY KONTENER: Zmuszamy do przejścia do nowej linii */
-            .h-col-center {
-                flex-basis: 100%; /* Wymuś pełną szerokość, co przeniesie go niżej */
-                order: 3; /* Ustaw na samym dole */
-                gap: 4px; /* Mały odstęp między statusem a nawigacją */
-                margin-top: 2px;
-                align-items: center;
-            }
-
-            /* Status lekcji (cienki pasek) */
-            .lesson-indicator {
-                font-size: 0.95rem;
-                min-height: auto;
-                padding: 2px 0;
-                width: 100%;
-                justify-content: center;
-                /* Opcjonalne tło dla lepszej czytelności */
-                background: rgba(0,0,0,0.2);
-                border-radius: 4px;
-            }
-
-            /* Nawigacja tygodniowa (cienki pasek) */
-            .week-nav {
-                width: 100%;
-                height: 34px; /* Bardzo niski pasek nawigacji */
-                padding: 0 5px;
-                justify-content: space-between;
-                box-sizing: border-box;
-            }
+            .h-col-center { flex-basis: 100%; order: 3; gap: 4px; margin-top: 2px; align-items: center; }
+            .lesson-indicator { font-size: 0.95rem; min-height: auto; padding: 2px 0; width: 100%; justify-content: center; background: rgba(0,0,0,0.2); border-radius: 4px; }
+            .week-nav { width: 100%; height: 34px; padding: 0 5px; justify-content: space-between; box-sizing: border-box; }
             .week-nav-btn { font-size: 1.3rem; padding: 0 8px; }
             .week-range { font-size: 1rem; }
             .week-label { display: none; }
 
-            /* --- Reszta stylów mobilnych (bez większych zmian) --- */
+            /* --- Mobile Announcements (Vertical Stack) --- */
+            #announcements-container { flex-direction: column; }
+            .anno-left { border-right: none; border-bottom: 1px solid #334155; text-align: center; align-items: center; }
+            .anno-right { padding: 30px; background: rgba(0,0,0,0.3); }
+            .countdown { font-size: 2.2rem; }
+
             .selection-grid { grid-template-columns: 1fr; gap: 15px; }
             .selection-card { flex-direction: row; justify-content: space-between; padding: 15px; align-items: center; }
             .card-icon { font-size: 2rem; margin-bottom: 0; margin-right: 15px; }
             .card-title { font-size: 1.2rem; margin-bottom: 0; text-align: left; flex: 1; }
             .main-select { width: 50%; padding: 8px; font-size: 1rem; }
-            #announcements-container { padding: 20px; }
-            .anno-content { font-size: 1.2rem; }
-            .countdown { font-size: 2rem; }
             
-            /* Grid planu i przyklejony nagłówek */
             .week-container { grid-template-columns: 1fr !important; }
-            .day-header { 
-                /* Używamy nowej, mniejszej zmiennej wysokości dla mobile */
-                top: var(--header-height-mobile) !important; 
-                border-radius: 0; 
-                padding: 10px;
-            }
+            .day-header { top: var(--header-height-mobile) !important; border-radius: 0; padding: 10px; }
         }
     </style>
-    
 </head>
 <body>
 
@@ -290,7 +248,6 @@
 
     <div class="h-col-center">
         <div id="current-status" class="lesson-indicator"></div>
-        
         <div class="week-nav" id="week-nav-container" style="display:none">
             <button class="week-nav-btn" onclick="changeWeek(-1)">&#10094;</button>
             <div class="week-display">
@@ -324,9 +281,26 @@
 
 <div id="dashboard-view">
     <div id="selection-grid" class="selection-grid"></div>
+    
     <div id="announcements-container">
-        <div class="anno-title">Ogłoszenia</div>
-        <div id="announcement-content" class="anno-content">Ładowanie...</div>
+        <div class="anno-left">
+            <div class="anno-title">📢 Ogłoszenia</div>
+            <div id="announcement-content" class="anno-content">
+                Ładowanie ogłoszeń...
+            </div>
+        </div>
+
+        <div class="anno-right">
+            <svg class="clock-icon-svg" viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="6" x2="12" y2="12" class="clock-hand-hour"></line>
+                <line x1="12" y1="12" x2="16" y2="12" class="clock-hand-min"></line>
+            </svg>
+            <div>
+                <div class="countdown-label">Do przerwy świątecznej:</div>
+                <div id="countdown-display" class="countdown">...</div>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -341,35 +315,31 @@
 <script>
     const CONFIG = { xml: './plan.xml', dyzury: './dyzury.xlsx', zastepstwa: './zastepstwa.xlsx', przeniesienia: './InformacjeOPrzeniesieniach.xlsx', refreshInterval: 120000, idleTimeout: 45000 };
     const DB = { teachers: {}, rooms: [], classes: {}, classesList: [], groups: {}, locations: [], periods: [], lessons: [], duties: [], subs: [], dutyChanges: [], transfers: [] };
-    // Tutaj będziemy trzymać daty modyfikacji plików
     const FILE_VERSIONS = { zastepstwa: '---', przeniesienia: '---' };
     const DAYS = ["Niedziela", "Poniedziałek", "Wtorek", "Środa", "Czwartek", "Piątek", "Sobota"];
     let refreshTimer = null; let idleTimer = null; let isDashboardActive = true; let weekOffset = 0; 
     let countdownInterval = null;
 
     window.onload = () => {
-        startClock(); refreshData(); loadAnnouncements();
+        startClock(); 
+        refreshData(); 
+        
+        // Niezależne uruchomienie obu sekcji ogłoszeń
+        loadAnnouncements();
+        startCountdown();
+
         refreshTimer = setInterval(() => { refreshData(); loadAnnouncements(); }, CONFIG.refreshInterval);
-        // Dodano 'scroll' i 'keydown' dla pewności
+        
         ['mousemove', 'click', 'touchstart', 'scroll', 'keydown'].forEach(evt => 
             document.addEventListener(evt, resetIdle)
         );
     };
 
     function resetIdle() {
-        // Jeśli jesteśmy na panelu głównym (Dashboard), nie musimy odliczać
         if (isDashboardActive) return;
-        
         clearTimeout(idleTimer);
-
-        // Sprawdzamy szerokość okna (900px to granica mobilna w Twoim CSS)
         const isMobile = window.innerWidth <= 900;
-
-        // Czas w milisekundach:
-        // Mobile: 10 minut * 60 sekund * 1000 = 600000 ms
-        // Desktop: 30 sekund * 1000 = 30000 ms
         const timeLimit = isMobile ? 600000 : 30000;
-
         idleTimer = setTimeout(returnToDashboard, timeLimit);
     }
 
@@ -417,35 +387,39 @@
     function formatFileDate(dateStr) {
         if (!dateStr) return 'brak';
         const d = new Date(dateStr);
-        // Format: 15.12 08:45
         return d.toLocaleString('pl-PL', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
     }
 
+    // --- FUNKCJE OGŁOSZEŃ I LICZNIKA ---
     async function loadAnnouncements() {
         try {
             const res = await fetch('ogloszenia.txt?t=' + new Date().getTime());
             if(res.ok) {
                 const text = await res.text();
+                const contentDiv = document.getElementById('announcement-content');
                 if(text.trim().length > 0) {
-                    if(countdownInterval) clearInterval(countdownInterval);
-                    document.getElementById('announcement-content').innerHTML = text.replace(/\n/g, '<br>');
-                    return;
+                    contentDiv.innerHTML = text.replace(/\n/g, '<br>');
+                } else {
+                    contentDiv.innerHTML = "Brak nowych ogłoszeń.";
                 }
-            }
-            throw new Error("Pusty plik");
-        } catch(e) { startCountdown(); }
+            } else { throw new Error("Brak pliku"); }
+        } catch(e) { 
+            document.getElementById('announcement-content').innerText = "Brak aktualnych ogłoszeń.";
+        }
     }
 
     function startCountdown() {
         const target = new Date('2025-12-20T00:00:00');
-        const el = document.getElementById('announcement-content');
+        const el = document.getElementById('countdown-display');
+        
         if(countdownInterval) clearInterval(countdownInterval);
         
         const tick = () => {
             const now = new Date();
             const diff = target - now;
+            
             if(diff <= 0) {
-                el.innerHTML = "Wesołych Świąt!";
+                el.innerHTML = "<span style='color:#fbbf24'>Wesołych<br>Świąt!</span>";
                 clearInterval(countdownInterval);
                 return;
             }
@@ -453,14 +427,14 @@
             const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
             const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
             const s = Math.floor((diff % (1000 * 60)) / 1000);
-            el.innerHTML = `Dobrego dnia!<br>Do przerwy świątecznej zostało:<br><div class="countdown">${d}d ${h}h ${m}m ${s}s</div>`;
+            el.innerHTML = `${d}d ${h}h<br>${m}m ${s}s`;
         };
         tick();
         countdownInterval = setInterval(tick, 1000);
     }
 
     async function refreshData() {
-        log("Aktualizacja danych...", false);
+        // log("Aktualizacja danych...", false);
         DB.lessons = []; DB.periods = []; DB.duties = []; DB.subs = []; DB.dutyChanges = []; DB.transfers = [];
         DB.teachers = {}; DB.classes = {}; DB.classesList = []; DB.rooms = []; DB.groups = {}; DB.locations = [];
 
@@ -473,7 +447,9 @@
             ]);
             addMissingTeachers();
             if(isDashboardActive) renderDashboard(); else { populateSelect(false); render(); }
-            log(`Dane zaktualizowane: ${new Date().toLocaleTimeString()}`);
+            
+            const info = `WERSJE PLIKÓW: Zastępstwa [${FILE_VERSIONS.zastepstwa}]  •  Przeniesienia [${FILE_VERSIONS.przeniesienia}]  •  Odświeżono: ${new Date().toLocaleTimeString()}`;
+            log(info);
         } catch (e) { console.error(e); log("Błąd aktualizacji danych!", true); }
     }
 
@@ -508,7 +484,13 @@
         const res = await fetchFresh(url); return await res.text(); 
     }
     async function loadExcel(url, type) {
-        const res = await fetchFresh(url); const ab = await res.arrayBuffer();
+        const res = await fetchFresh(url);
+        
+        const lastMod = res.headers.get('Last-Modified');
+        if (type === 'zastepstwa') FILE_VERSIONS.zastepstwa = formatFileDate(lastMod);
+        else if (type === 'przeniesienia') FILE_VERSIONS.przeniesienia = formatFileDate(lastMod);
+
+        const ab = await res.arrayBuffer();
         const wb = XLSX.read(ab, {type: 'array'});
         if(type === 'dyzury') parseDuties(wb); 
         if(type === 'zastepstwa') parseSub(wb);
@@ -643,46 +625,28 @@
                 const d = parseDate(r['Dzień']);
                 if(d) DB.dutyChanges.push({
                     date: d, time: r['Godzina'], absent: findTeacherId(r['Nauczyciel']), sub: findTeacherId(r['Zastępca']),
-                    rawSub: r['Zastępca'], place: unifyPlaceName(r['Miejsce dyżuru']) // <-- TU ZMIANA
+                    rawSub: r['Zastępca'], place: unifyPlaceName(r['Miejsce dyżuru']) 
                 });
             });
         }
     }
 
     function normalize(str) { return (str||"").toLowerCase().replace(/^(x\.|ks\.|p\.|pani|pan)\s+/g, '').replace(/[^a-złąceźżńóś\s]/g, '').trim().split(/\s+/).sort().join(' '); }
-    // --- NOWA FUNKCJA DO UJEDNOLICANIA NAZW MIEJSC ---
+    
     function unifyPlaceName(raw) {
         if (!raw) return "";
         let str = String(raw).trim();
         let lower = str.toLowerCase();
-
-        // --- 1. SEKCJA WF (Nowa) ---
-        // Lista kodów, które mają być wyświetlane jako ogólny WF
-        const wfCodes = [
-            'edb+wf', 
-            'sp1', 'sp2', 
-            'ag2', 'aq1', 
-            'sg1', 'sg2', 'sg3', 'sg4', 'sg5'
-        ];
-
-        // Jeśli nazwa zawiera którykolwiek z kodów WF (np. "sg3/39" zawiera "sg3"), podmień nazwę
-        if (wfCodes.some(code => lower.includes(code))) {
-            return 'WF - według grafiku tygodniowego';
-        }
-
-        // --- 2. RESZTA UJEDNOLICEŃ (Poprzednie) ---
+        const wfCodes = ['edb+wf', 'sp1', 'sp2', 'ag2', 'aq1', 'sg1', 'sg2', 'sg3', 'sg4', 'sg5'];
+        if (wfCodes.some(code => lower.includes(code))) return 'WF - według grafiku tygodniowego';
         if (lower.includes('boisko')) return 'boisko - dziedziniec wejściowy';
         if (lower.includes('bramka')) return 'bramka wejściowa';
         if (lower.includes('stołówka') || lower.includes('stolowka')) return 'stołówka';
         if (lower.includes('biblioteka') || lower.includes('czytelnia')) return 'biblioteka';
         if (lower.includes('parter')) return 'parter';
-
-        // Piętra
         if (lower.includes('1') && (lower.includes('p') || lower.includes('piętro'))) return 'piętro_1';
         if (lower.includes('2') && (lower.includes('p') || lower.includes('piętro'))) return 'piętro_2';
         if (lower.includes('3') && (lower.includes('p') || lower.includes('piętro'))) return 'piętro_3';
-
-        // Jeśli nic nie pasuje, zwróć oryginał
         return str;
     }
     
@@ -756,18 +720,12 @@
                 const changes = DB.dutyChanges.filter(d => d.date == dateStr && d.place === selectedId);
                 let allDuties = [];
                 
-                // --- ZMIANA TUTAJ ---
                 duties.forEach(d => {
                     const cancelled = DB.dutyChanges.find(ch => ch.date == dateStr && ch.time == d.time && ch.absent == d.teacherId);
-                    
-                    // Jeśli dyżur ma zastępstwo (cancelled istnieje), po prostu GO POMIJAMY.
-                    // Nie dodajemy go do listy 'allDuties', więc nie wyświetli się czerwony pasek.
-                    // Zastępstwo i tak wejdzie z listy 'changes' (poniżej) jako zielony pasek.
                     if (!cancelled) { 
                         allDuties.push({...d, type: 'normal'}); 
                     }
                 });
-                // --------------------
 
                 changes.forEach(ch => { allDuties.push({ time: ch.time, teacherId: ch.sub, type: 'added', startMin: timeToMin(ch.time.split('-')[0]) }); });
                 allDuties.sort((a,b) => a.startMin - b.startMin);
@@ -866,25 +824,20 @@
         const update = () => { 
             const now = new Date(); 
             document.getElementById('clock').innerText = now.toLocaleString('pl-PL', { weekday:'short', day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }); 
-            updateLessonStatus(); // <--- DODANO TO WYWOŁANIE
+            updateLessonStatus();
         };
         update(); 
         setInterval(update, 1000);
     }
     
     function updateLessonStatus() {
-        // Jeśli nie ma danych o okresach (jeszcze się nie załadowały), nic nie rób
         if (!DB.periods || DB.periods.length === 0) return;
-
         const now = new Date();
         const currentMin = now.getHours() * 60 + now.getMinutes();
         const el = document.getElementById('current-status');
         
-        // Jeśli jest informacja o wyborze (np. "Klasa 2TI"), ukrywamy status lekcji, żeby nie robić bałaganu
-        // lub zostawiamy - zależy od preferencji. Tutaj zostawiam widoczne.
-        
         let statusText = "";
-        let color = "#94a3b8"; // Szary domyślny
+        let color = "#94a3b8"; 
 
         for (let i = 0; i < DB.periods.length; i++) {
             const p = DB.periods[i];
@@ -893,34 +846,25 @@
 
             if (currentMin >= start && currentMin < end) {
                 statusText = `🔴 TRWA LEKCJA ${p.nr} (${p.start} - ${p.end})`;
-                color = "#fbbf24"; // Bursztynowy dla lekcji
+                color = "#fbbf24";
                 break;
             }
-
-            // Sprawdzenie przerwy (jeśli to nie ostatnia lekcja)
             if (i < DB.periods.length - 1) {
                 const nextP = DB.periods[i+1];
                 const nextStart = timeToMin(nextP.start);
                 if (currentMin >= end && currentMin < nextStart) {
                     statusText = `🟢 PRZERWA (po lekcji ${p.nr})`;
-                    color = "#4ade80"; // Zielony dla przerwy
+                    color = "#4ade80"; 
                     break;
                 }
             }
         }
-
-        // Obsługa przed i po lekcjach
         if (!statusText && DB.periods.length > 0) {
             const firstStart = timeToMin(DB.periods[0].start);
             const lastEnd = timeToMin(DB.periods[DB.periods.length-1].end);
-            
-            if (currentMin < firstStart) {
-                statusText = "Przed lekcjami";
-            } else if (currentMin >= lastEnd) {
-                statusText = "Po lekcjach";
-            }
+            if (currentMin < firstStart) statusText = "Przed lekcjami";
+            else if (currentMin >= lastEnd) statusText = "Po lekcjach";
         }
-
         el.innerText = statusText;
         el.style.color = color;
     }
