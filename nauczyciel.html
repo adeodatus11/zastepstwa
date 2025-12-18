@@ -136,7 +136,7 @@
             gap: 5px;
         }
 
-        /* Status lekcji na desktopie - duży i wyraźny */
+        /* Status lekcji na desktopie */
         #desktop-status { 
             font-size: 1.2rem; font-weight: 800; color: #fbbf24; 
             text-transform: uppercase; text-shadow: 0 0 10px rgba(0, 0, 0, 0.5); 
@@ -175,17 +175,40 @@
         .main-select option { background-color: #1e293b; }
 
         /* --- OGŁOSZENIA --- */
-        #announcements-container { background: rgba(15, 23, 42, 0.9); border-radius: 16px; border: 1px solid #334155; padding: 0; min-height: 220px; display: flex; flex-direction: row; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.4); }
+        #announcements-container { 
+            background: rgba(15, 23, 42, 0.9); 
+            border-radius: 16px; 
+            border: 1px solid #334155; 
+            padding: 0; 
+            min-height: 250px; /* Zwiększona wysokość */
+            display: flex; 
+            flex-direction: row; 
+            overflow: hidden; 
+            box-shadow: 0 4px 20px rgba(0,0,0,0.4); 
+        }
         .anno-left { flex: 6; padding: 30px; border-right: 1px solid #334155; display: flex; flex-direction: column; justify-content: flex-start; text-align: left; }
-        .anno-right { flex: 4; padding: 20px; background: rgba(0, 0, 0, 0.2); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 15px; position: relative; }
+        .anno-right { flex: 4; position: relative; }
+        
         .anno-title { font-size: 1.4rem; color: #94a3b8; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 2px; font-weight: 700; }
         .anno-content { font-size: 1.3rem; color: #e2e8f0; font-weight: 300; line-height: 1.6; }
-        .countdown-label { color: #a7f3d0; text-transform: uppercase; font-size: 0.9rem; letter-spacing: 1px; margin-bottom: 5px; text-align: center; }
-        .countdown { font-family: 'Consolas', monospace; font-size: 2.5rem; color: #4ade80; font-weight: bold; text-shadow: 0 0 15px rgba(74, 222, 128, 0.3); text-align: center; line-height: 1.2; }
-        .clock-icon-svg { width: 60px; height: 60px; stroke: #fbbf24; stroke-width: 2; fill: none; stroke-linecap: round; filter: drop-shadow(0 0 5px rgba(251, 191, 36, 0.5)); }
-        .clock-hand-min { transform-origin: 50% 50%; animation: spin 4s linear infinite; }
-        .clock-hand-hour { transform-origin: 50% 50%; animation: spin 48s linear infinite; }
-        @keyframes spin { 100% { transform: rotate(360deg); } }
+
+        /* --- STYL ŚWIĄTECZNY --- */
+        .holiday-vibes {
+            /* Zdjęcie w tle: góry, las, śnieg */
+            background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.6)), url('https://images.unsplash.com/photo-1491002052546-bf38f186af56?q=80&w=800&auto=format&fit=crop') center/cover no-repeat !important;
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center;
+            border-left: 1px solid #334155;
+        }
+
+        .holiday-content { z-index: 2; text-align: center; animation: fadeIn 1s ease-in; padding: 20px; }
+        .holiday-icon { font-size: 3rem; margin-bottom: 10px; filter: drop-shadow(0 0 10px rgba(0,0,0,0.5)); }
+        .holiday-text { font-size: 1.4rem; color: #f1f5f9; font-weight: 600; line-height: 1.4; text-shadow: 0 2px 4px rgba(0,0,0,0.8); }
+        .highlight { color: #fbbf24; font-weight: 800; font-size: 1.6rem; text-transform: uppercase; display: block; margin-top: 5px; }
+        .holiday-wish { margin-top: 15px; font-family: 'Brush Script MT', cursive; font-size: 1.8rem; color: #4ade80; transform: rotate(-3deg); text-shadow: 0 2px 5px rgba(0,0,0,1); }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
         /* --- PLAN LEKCJI --- */
         #schedule-view { display: none; width: 100%; padding-bottom: 40px; }
@@ -273,7 +296,14 @@
             /* Reszta mobile */
             #announcements-container { flex-direction: column; }
             .anno-left { border-right: none; border-bottom: 1px solid #334155; text-align: center; }
-            .anno-right { padding: 30px; background: rgba(0,0,0,0.3); }
+            /* Poprawka panelu świątecznego na mobile */
+            .holiday-vibes { 
+                border-left: none; 
+                border-top: 1px solid #334155;
+                min-height: 200px;
+                padding: 20px;
+            }
+            
             .selection-grid { grid-template-columns: 1fr; gap: 15px; }
             .selection-card { flex-direction: row; justify-content: space-between; padding: 15px; align-items: center; }
             .card-icon { font-size: 2rem; margin-bottom: 0; margin-right: 15px; }
@@ -287,63 +317,6 @@
         @media (min-width: 901px) {
             .mobile-status-container { display: none; }
         }
-        /* --- STYL ŚWIĄTECZNY (Góry i Lasy) --- */
-        .holiday-vibes {
-            /* Zdjęcie w tle: góry, las, śnieg */
-            background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.6)), url('https://images.unsplash.com/photo-1491002052546-bf38f186af56?q=80&w=800&auto=format&fit=crop') center/cover no-repeat !important;
-            position: relative;
-            border-left: 1px solid #334155;
-        }
-
-        .holiday-content {
-            z-index: 2;
-            text-align: center;
-            animation: fadeIn 1s ease-in;
-        }
-
-        .holiday-icon {
-            font-size: 3rem;
-            margin-bottom: 10px;
-            filter: drop-shadow(0 0 10px rgba(0,0,0,0.5));
-        }
-
-        .holiday-text {
-            font-size: 1.4rem;
-            color: #f1f5f9;
-            font-weight: 600;
-            line-height: 1.4;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.8);
-        }
-
-        .holiday-text .highlight {
-            color: #fbbf24; /* Bursztynowy */
-            font-weight: 800;
-            font-size: 1.6rem;
-            text-transform: uppercase;
-            display: block;
-            margin-top: 5px;
-        }
-
-        .holiday-wish {
-            margin-top: 15px;
-            font-family: 'Brush Script MT', cursive; /* Ozdobna czcionka */
-            font-size: 1.8rem;
-            color: #4ade80;
-            transform: rotate(-3deg);
-            text-shadow: 0 2px 5px rgba(0,0,0,1);
-        }
-
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-        /* Poprawka mobilna dla nowego panelu */
-        @media (max-width: 900px) {
-            .holiday-vibes {
-                border-left: none;
-                border-top: 1px solid #334155;
-                min-height: 250px;
-            }
-        }
-        
     </style>
 </head>
 <body>
@@ -409,7 +382,7 @@
             <div class="anno-title">📢 Ogłoszenia</div>
             <div id="announcement-content" class="anno-content">Ładowanie ogłoszeń...</div>
         </div>
-<div class="anno-right holiday-vibes">
+        <div class="anno-right holiday-vibes">
             <div class="holiday-content">
                 <div class="holiday-icon">🏔️🌲⛷️</div>
                 <div class="holiday-text">
@@ -418,7 +391,7 @@
                     <span class="highlight">już dzisiaj po pracy!</span>
                 </div>
                 <div class="holiday-wish">Odpoczywajcie!</div>
-            </div><style
+            </div>
         </div>
     </div>
 </div>
@@ -440,7 +413,8 @@
     let countdownInterval = null;
 
     window.onload = () => {
-        startClock(); refreshData(); loadAnnouncements(); startCountdown();
+        startClock(); refreshData(); loadAnnouncements(); 
+        // startCountdown(); // Odliczanie wyłączone na rzecz widoku świątecznego
         refreshTimer = setInterval(() => { refreshData(); loadAnnouncements(); }, CONFIG.refreshInterval);
         ['mousemove', 'click', 'touchstart', 'scroll', 'keydown'].forEach(evt => document.addEventListener(evt, resetIdle));
     };
@@ -510,7 +484,7 @@
         } catch(e) { document.getElementById('announcement-content').innerText = "Brak aktualnych ogłoszeń."; }
     }
 
-    // function startCountdown() {
+    function startCountdown() {
         const target = new Date('2025-12-20T00:00:00');
         const el = document.getElementById('countdown-display');
         if(countdownInterval) clearInterval(countdownInterval);
