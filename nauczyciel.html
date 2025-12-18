@@ -287,6 +287,63 @@
         @media (min-width: 901px) {
             .mobile-status-container { display: none; }
         }
+        /* --- STYL ŚWIĄTECZNY (Góry i Lasy) --- */
+        .holiday-vibes {
+            /* Zdjęcie w tle: góry, las, śnieg */
+            background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.6)), url('https://images.unsplash.com/photo-1491002052546-bf38f186af56?q=80&w=800&auto=format&fit=crop') center/cover no-repeat !important;
+            position: relative;
+            border-left: 1px solid #334155;
+        }
+
+        .holiday-content {
+            z-index: 2;
+            text-align: center;
+            animation: fadeIn 1s ease-in;
+        }
+
+        .holiday-icon {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            filter: drop-shadow(0 0 10px rgba(0,0,0,0.5));
+        }
+
+        .holiday-text {
+            font-size: 1.4rem;
+            color: #f1f5f9;
+            font-weight: 600;
+            line-height: 1.4;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+        }
+
+        .holiday-text .highlight {
+            color: #fbbf24; /* Bursztynowy */
+            font-weight: 800;
+            font-size: 1.6rem;
+            text-transform: uppercase;
+            display: block;
+            margin-top: 5px;
+        }
+
+        .holiday-wish {
+            margin-top: 15px;
+            font-family: 'Brush Script MT', cursive; /* Ozdobna czcionka */
+            font-size: 1.8rem;
+            color: #4ade80;
+            transform: rotate(-3deg);
+            text-shadow: 0 2px 5px rgba(0,0,0,1);
+        }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Poprawka mobilna dla nowego panelu */
+        @media (max-width: 900px) {
+            .holiday-vibes {
+                border-left: none;
+                border-top: 1px solid #334155;
+                min-height: 250px;
+            }
+        }
+        
     </style>
 </head>
 <body>
@@ -352,16 +409,16 @@
             <div class="anno-title">📢 Ogłoszenia</div>
             <div id="announcement-content" class="anno-content">Ładowanie ogłoszeń...</div>
         </div>
-        <div class="anno-right">
-            <svg class="clock-icon-svg" viewBox="0 0 24 24">
-                <circle cx="12" cy="12" r="10"></circle>
-                <line x1="12" y1="6" x2="12" y2="12" class="clock-hand-hour"></line>
-                <line x1="12" y1="12" x2="16" y2="12" class="clock-hand-min"></line>
-            </svg>
-            <div>
-                <div class="countdown-label">Do przerwy świątecznej:</div>
-                <div id="countdown-display" class="countdown">...</div>
-            </div>
+<div class="anno-right holiday-vibes">
+            <div class="holiday-content">
+                <div class="holiday-icon">🏔️🌲⛷️</div>
+                <div class="holiday-text">
+                    Przerwa świąteczna<br>
+                    rozpoczyna się<br>
+                    <span class="highlight">już dzisiaj po pracy!</span>
+                </div>
+                <div class="holiday-wish">Odpoczywajcie!</div>
+            </div><style
         </div>
     </div>
 </div>
@@ -453,7 +510,7 @@
         } catch(e) { document.getElementById('announcement-content').innerText = "Brak aktualnych ogłoszeń."; }
     }
 
-    function startCountdown() {
+    // function startCountdown() {
         const target = new Date('2025-12-20T00:00:00');
         const el = document.getElementById('countdown-display');
         if(countdownInterval) clearInterval(countdownInterval);
