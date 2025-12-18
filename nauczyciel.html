@@ -72,89 +72,32 @@
             box-sizing: border-box;
         }
 
-        /* LEWA STRONA: Logo, Tytuł, Zegar */
-        .h-col-left { 
-            flex: 1; 
-            display: flex; 
-            align-items: center; 
-            gap: 20px; 
-            min-width: 0; 
-        }
+        /* LEWA STRONA */
+        .h-col-left { flex: 1; display: flex; align-items: center; gap: 20px; min-width: 0; }
         .logo { height: 85px; width: auto; mix-blend-mode: multiply; filter: contrast(1.2); flex-shrink: 0; }
-        
         .header-text { display: flex; flex-direction: column; justify-content: center; min-width: 0; }
-        
-        .main-title {
-            margin: 0; font-size: 1.6rem; font-weight: 900; text-transform: uppercase;
-            text-shadow: 0 3px 6px rgba(0,0,0,0.5); white-space: nowrap; letter-spacing: 1px; line-height: 1.1;
-        }
-        .sub-title {
-            font-size: 1rem; font-weight: 600; color: #dcfce7; text-shadow: 0 1px 3px rgba(0,0,0,0.5); margin-bottom: 5px;
-        }
-        .clock { 
-            font-family: 'Segoe UI', sans-serif; font-size: 1.3rem; color: #fff; 
-            font-weight: 700; text-transform: capitalize; text-shadow: 0 2px 4px rgba(0,0,0,0.6);
-            background: rgba(0,0,0,0.2); padding: 2px 10px; border-radius: 6px; display: inline-block;
-        }
+        .main-title { margin: 0; font-size: 1.6rem; font-weight: 900; text-transform: uppercase; text-shadow: 0 3px 6px rgba(0,0,0,0.5); white-space: nowrap; letter-spacing: 1px; line-height: 1.1; }
+        .sub-title { font-size: 1rem; font-weight: 600; color: #dcfce7; text-shadow: 0 1px 3px rgba(0,0,0,0.5); margin-bottom: 5px; }
+        .clock { font-family: 'Segoe UI', sans-serif; font-size: 1.3rem; color: #fff; font-weight: 700; text-transform: capitalize; text-shadow: 0 2px 4px rgba(0,0,0,0.6); background: rgba(0,0,0,0.2); padding: 2px 10px; border-radius: 6px; display: inline-block; }
+        .selection-info { font-size: 1.4rem; font-weight: 800; color: #fbbf24; margin: 5px 0; text-shadow: 0 2px 4px rgba(0,0,0,0.9); display: none; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-        .selection-info { 
-            font-size: 1.4rem; font-weight: 800; color: #fbbf24; margin: 5px 0; 
-            text-shadow: 0 2px 4px rgba(0,0,0,0.9); display: none; text-transform: uppercase; 
-            white-space: nowrap; overflow: hidden; text-overflow: ellipsis; 
-        }
-
-        /* ŚRODEK: Nawigacja */
-        .h-col-center { 
-            flex: 0 0 auto; 
-            display: flex; align-items: center; justify-content: center; 
-        }
-        .week-nav { 
-            display: flex; align-items: center; gap: 15px; 
-            background: rgba(0, 0, 0, 0.25); padding: 8px 20px; 
-            border-radius: 20px; border: 1px solid rgba(255, 255, 255, 0.1); 
-            backdrop-filter: blur(5px); white-space: nowrap; 
-        }
+        /* ŚRODEK */
+        .h-col-center { flex: 0 0 auto; display: flex; align-items: center; justify-content: center; }
+        .week-nav { display: flex; align-items: center; gap: 15px; background: rgba(0, 0, 0, 0.25); padding: 8px 20px; border-radius: 20px; border: 1px solid rgba(255, 255, 255, 0.1); backdrop-filter: blur(5px); white-space: nowrap; }
         .week-nav-btn { background: none; border: none; color: #4ade80; font-size: 1.8rem; cursor: pointer; line-height: 1; padding: 0 5px; transition: transform 0.2s; }
         .week-nav-btn:hover { color: #fff; transform: scale(1.2); }
         .week-display { display: flex; flex-direction: column; align-items: center; min-width: 160px; }
         .week-label { font-size: 0.7rem; text-transform: uppercase; color: #a7f3d0; letter-spacing: 1px; }
         .week-range { font-family: 'Consolas', monospace; font-size: 1.2rem; font-weight: 700; color: #fff; }
 
-        /* PRAWA STRONA: Status, Menu, QR */
-        .h-col-right { 
-            flex: 1; 
-            display: flex; 
-            align-items: center; 
-            justify-content: flex-end; 
-            gap: 20px; 
-        }
-
-        .status-qr-container {
-            display: flex;
-            flex-direction: column;
-            align-items: flex-end;
-            gap: 5px;
-        }
-
-        /* Status lekcji na desktopie */
-        #desktop-status { 
-            font-size: 1.2rem; font-weight: 800; color: #fbbf24; 
-            text-transform: uppercase; text-shadow: 0 0 10px rgba(0, 0, 0, 0.5); 
-            white-space: nowrap; text-align: right;
-            background: rgba(0,0,0,0.3); padding: 8px 15px; border-radius: 8px;
-            border: 1px solid rgba(255,255,255,0.1);
-        }
-
+        /* PRAWA STRONA */
+        .h-col-right { flex: 1; display: flex; align-items: center; justify-content: flex-end; gap: 20px; }
+        .status-qr-container { display: flex; flex-direction: column; align-items: flex-end; gap: 5px; }
+        #desktop-status { font-size: 1.2rem; font-weight: 800; color: #fbbf24; text-transform: uppercase; text-shadow: 0 0 10px rgba(0, 0, 0, 0.5); white-space: nowrap; text-align: right; background: rgba(0,0,0,0.3); padding: 8px 15px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); }
         .qr-wrapper { display: flex; align-items: center; gap: 10px; background: rgba(0, 0, 0, 0.25); padding: 5px 10px; border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.1); }
         .qr-text { text-align: right; font-size: 0.75rem; line-height: 1.2; color: #e2e8f0; font-weight: 600; }
         .qr-img { height: 60px; width: auto; border-radius: 4px; border: 2px solid white; }
-
-        button.back-btn { 
-            background: #b91c1c; color: white; border: 1px solid #ef4444; 
-            padding: 0 20px; height: 50px; border-radius: 8px; cursor: pointer; 
-            font-weight: 700; font-size: 0.9rem; display: flex; align-items: center; gap: 10px; 
-            box-shadow: 0 4px 6px rgba(0,0,0,0.3); transition: all 0.2s; text-transform: uppercase; white-space: nowrap; 
-        }
+        button.back-btn { background: #b91c1c; color: white; border: 1px solid #ef4444; padding: 0 20px; height: 50px; border-radius: 8px; cursor: pointer; font-weight: 700; font-size: 0.9rem; display: flex; align-items: center; gap: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.3); transition: all 0.2s; text-transform: uppercase; white-space: nowrap; }
         button.back-btn:hover { background: #dc2626; transform: translateY(-2px); }
 
         #debug-bar { background: #111827; font-size: 0.75rem; padding: 4px 20px; color: #64748b; border-bottom: 1px solid #1f2937; text-align: center; letter-spacing: 1px; }
@@ -175,40 +118,60 @@
         .main-select option { background-color: #1e293b; }
 
         /* --- OGŁOSZENIA --- */
-        #announcements-container { 
-            background: rgba(15, 23, 42, 0.9); 
-            border-radius: 16px; 
-            border: 1px solid #334155; 
-            padding: 0; 
-            min-height: 250px; /* Zwiększona wysokość */
-            display: flex; 
-            flex-direction: row; 
-            overflow: hidden; 
-            box-shadow: 0 4px 20px rgba(0,0,0,0.4); 
-        }
+        #announcements-container { background: rgba(15, 23, 42, 0.9); border-radius: 16px; border: 1px solid #334155; padding: 0; min-height: 250px; display: flex; flex-direction: row; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.4); }
         .anno-left { flex: 6; padding: 30px; border-right: 1px solid #334155; display: flex; flex-direction: column; justify-content: flex-start; text-align: left; }
         .anno-right { flex: 4; position: relative; }
-        
         .anno-title { font-size: 1.4rem; color: #94a3b8; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 2px; font-weight: 700; }
         .anno-content { font-size: 1.3rem; color: #e2e8f0; font-weight: 300; line-height: 1.6; }
 
         /* --- STYL ŚWIĄTECZNY --- */
         .holiday-vibes {
-            /* Zdjęcie w tle: góry, las, śnieg */
             background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.6)), url('https://images.unsplash.com/photo-1491002052546-bf38f186af56?q=80&w=800&auto=format&fit=crop') center/cover no-repeat !important;
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
-            justify-content: center;
-            border-left: 1px solid #334155;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            border-left: 1px solid #334155; padding: 20px;
         }
+        
+        .holiday-content { z-index: 2; text-align: center; animation: fadeIn 1s ease-in; width: 100%; }
+        .question-text { font-size: 1.2rem; color: #e2e8f0; margin-bottom: 15px; font-weight: 700; text-shadow: 0 2px 4px rgba(0,0,0,0.8); }
+        
+        /* Przyciski lekcji */
+        .lesson-buttons { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+        .lesson-btn {
+            background: rgba(255, 255, 255, 0.15); border: 1px solid rgba(255,255,255,0.4);
+            color: white; font-weight: 800; font-size: 1.2rem;
+            width: 40px; height: 40px; border-radius: 50%; cursor: pointer;
+            transition: all 0.2s; backdrop-filter: blur(2px);
+        }
+        .lesson-btn:hover { background: #fbbf24; color: #000; transform: scale(1.1); border-color: #fbbf24; }
 
-        .holiday-content { z-index: 2; text-align: center; animation: fadeIn 1s ease-in; padding: 20px; }
-        .holiday-icon { font-size: 3rem; margin-bottom: 10px; filter: drop-shadow(0 0 10px rgba(0,0,0,0.5)); }
-        .holiday-text { font-size: 1.4rem; color: #f1f5f9; font-weight: 600; line-height: 1.4; text-shadow: 0 2px 4px rgba(0,0,0,0.8); }
-        .highlight { color: #fbbf24; font-weight: 800; font-size: 1.6rem; text-transform: uppercase; display: block; margin-top: 5px; }
-        .holiday-wish { margin-top: 15px; font-family: 'Brush Script MT', cursive; font-size: 1.8rem; color: #4ade80; transform: rotate(-3deg); text-shadow: 0 2px 5px rgba(0,0,0,1); }
+        .personal-countdown { font-family: 'Consolas', monospace; font-size: 2rem; color: #4ade80; font-weight: bold; text-shadow: 0 0 10px rgba(0,0,0,0.8); margin-top: 10px; }
+        .personal-msg { font-size: 1rem; color: #fbbf24; margin-bottom: 5px; font-weight: 700; }
+        .reset-btn { margin-top: 15px; background: transparent; border: none; color: #94a3b8; font-size: 0.8rem; cursor: pointer; text-decoration: underline; }
+
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* --- BLACKOUT OVERLAY (FREEDOM SCREEN) --- */
+        #freedom-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: black; z-index: 9999;
+            display: none; flex-direction: column; align-items: center; justify-content: center;
+            text-align: center; padding: 20px; box-sizing: border-box;
+        }
+        .freedom-title {
+            font-size: 3rem; font-weight: 900; color: #fbbf24; 
+            text-transform: uppercase; margin-bottom: 20px;
+            animation: pulse 2s infinite;
+        }
+        .freedom-sub {
+            font-size: 2rem; color: #fff; font-weight: 300; margin-bottom: 40px;
+        }
+        .close-freedom {
+            background: #334155; border: 1px solid #475569; color: #94a3b8;
+            padding: 10px 25px; border-radius: 8px; font-size: 1rem; cursor: pointer;
+            transition: all 0.2s;
+        }
+        .close-freedom:hover { background: #475569; color: white; }
+        @keyframes pulse { 0% { opacity: 0.8; transform: scale(1); } 50% { opacity: 1; transform: scale(1.05); } 100% { opacity: 0.8; transform: scale(1); } }
 
         /* --- PLAN LEKCJI --- */
         #schedule-view { display: none; width: 100%; padding-bottom: 40px; }
@@ -252,57 +215,31 @@
         /* --- MOBILE OPTIMIZATION --- */
         @media (max-width: 900px) {
             header {
-                flex-direction: column; /* Pionowy układ */
-                align-items: stretch;
-                padding: 10px;
-                gap: 5px;
-                height: auto;
+                flex-direction: column; align-items: stretch; padding: 10px; gap: 5px; height: auto;
                 background: linear-gradient(to bottom, #33cc66 20%, #020617 100%);
             }
-
-            /* Rząd 1: Logo + Tytuł + Menu */
-            .h-col-left {
-                display: flex; justify-content: space-between; align-items: center; gap: 8px;
-            }
+            .h-col-left { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
             .logo { height: 45px; }
             .header-text { flex: 1; align-items: flex-start; }
             .main-title { font-size: 1rem; white-space: normal; }
             .sub-title { display: none; }
             .clock { font-size: 0.85rem; padding: 2px 6px; } 
             .selection-info { font-size: 1rem; white-space: normal; }
-
-            /* Rząd 1 (prawa strona): Tylko przycisk Menu */
             .h-col-right { flex: 0 0 auto; display: block; }
             #nav-controls { display: flex !important; }
             button.back-btn { height: 36px; padding: 0 10px; font-size: 0.8rem; }
             .qr-wrapper { display: none !important; }
-            .status-qr-container { display: none; } /* Ukrywamy desktopowy kontener statusu */
-
-            /* Rząd 2: Status Lekcji (Mobile Specific) */
-            .mobile-status-container {
-                display: block; width: 100%; text-align: center;
-                background: rgba(0,0,0,0.2); border-radius: 6px; padding: 4px;
-                margin-top: 5px;
-            }
-            #mobile-status {
-                color: #fbbf24; font-weight: 800; font-size: 1rem; text-transform: uppercase;
-            }
-
-            /* Rząd 3: Nawigacja */
+            .status-qr-container { display: none; } 
+            .mobile-status-container { display: block; width: 100%; text-align: center; background: rgba(0,0,0,0.2); border-radius: 6px; padding: 4px; margin-top: 5px; }
+            #mobile-status { color: #fbbf24; font-weight: 800; font-size: 1rem; text-transform: uppercase; }
             .h-col-center { width: 100%; order: 3; margin-top: 5px; }
             .week-nav { width: 100%; justify-content: space-between; box-sizing: border-box; height: 40px; }
             .week-label { display: none; }
-
-            /* Reszta mobile */
             #announcements-container { flex-direction: column; }
             .anno-left { border-right: none; border-bottom: 1px solid #334155; text-align: center; }
-            /* Poprawka panelu świątecznego na mobile */
-            .holiday-vibes { 
-                border-left: none; 
-                border-top: 1px solid #334155;
-                min-height: 200px;
-                padding: 20px;
-            }
+            .holiday-vibes { border-left: none; border-top: 1px solid #334155; min-height: 250px; padding: 20px; }
+            .freedom-title { font-size: 2rem; }
+            .freedom-sub { font-size: 1.5rem; }
             
             .selection-grid { grid-template-columns: 1fr; gap: 15px; }
             .selection-card { flex-direction: row; justify-content: space-between; padding: 15px; align-items: center; }
@@ -312,14 +249,16 @@
             .week-container { grid-template-columns: 1fr !important; }
             .day-header { top: var(--header-height-mobile) !important; border-radius: 0; padding: 10px; }
         }
-
-        /* Ukryj mobilny pasek statusu na desktopie */
-        @media (min-width: 901px) {
-            .mobile-status-container { display: none; }
-        }
+        @media (min-width: 901px) { .mobile-status-container { display: none; } }
     </style>
 </head>
 <body>
+
+<div id="freedom-overlay">
+    <div class="freedom-title">PRZERWA ŚWIĄTECZNA</div>
+    <div class="freedom-sub">CZAS NA ODPOCZYNEK! 🎄🎁</div>
+    <button class="close-freedom" onclick="closeFreedom()">Wróć do planu</button>
+</div>
 
 <header>
     <div class="h-col-left">
@@ -330,9 +269,7 @@
             <div id="selection-info" class="selection-info"></div>
             <div id="clock" class="clock">--:--</div>
         </div>
-        
-        <div class="h-col-right" id="mobile-menu-placeholder" style="display:none;">
-             </div>
+        <div class="h-col-right" id="mobile-menu-placeholder" style="display:none;"></div>
     </div>
 
     <div class="mobile-status-container">
@@ -353,7 +290,6 @@
     <div class="h-col-right">
         <div class="status-qr-container">
             <div id="desktop-status"></div>
-            
             <div class="qr-wrapper">
                 <div class="qr-text">strona z planem<br>na telefon</div>
                 <img src="qr_nauczyciel.png" class="qr-img" alt="QR">
@@ -383,14 +319,11 @@
             <div id="announcement-content" class="anno-content">Ładowanie ogłoszeń...</div>
         </div>
         <div class="anno-right holiday-vibes">
-            <div class="holiday-content">
-                <div class="holiday-icon">🏔️🌲⛷️</div>
-                <div class="holiday-text">
-                    Przerwa świąteczna<br>
-                    rozpoczyna się<br>
-                    <span class="highlight">już dzisiaj po pracy!</span>
+            <div class="holiday-content" id="holiday-interactive-content">
+                <div class="question-text">O której godzinie dzisiaj kończysz?</div>
+                <div class="lesson-buttons" id="lesson-buttons-container">
+                    Ładowanie...
                 </div>
-                <div class="holiday-wish">Odpoczywajcie!</div>
             </div>
         </div>
     </div>
@@ -410,11 +343,10 @@
     const FILE_VERSIONS = { zastepstwa: '---', przeniesienia: '---' };
     const DAYS = ["Niedziela", "Poniedziałek", "Wtorek", "Środa", "Czwartek", "Piątek", "Sobota"];
     let refreshTimer = null; let idleTimer = null; let isDashboardActive = true; let weekOffset = 0; 
-    let countdownInterval = null;
+    let countdownInterval = null; let personalCountdownTimer = null;
 
     window.onload = () => {
         startClock(); refreshData(); loadAnnouncements(); 
-        // startCountdown(); // Odliczanie wyłączone na rzecz widoku świątecznego
         refreshTimer = setInterval(() => { refreshData(); loadAnnouncements(); }, CONFIG.refreshInterval);
         ['mousemove', 'click', 'touchstart', 'scroll', 'keydown'].forEach(evt => document.addEventListener(evt, resetIdle));
     };
@@ -484,20 +416,101 @@
         } catch(e) { document.getElementById('announcement-content').innerText = "Brak aktualnych ogłoszeń."; }
     }
 
-    function startCountdown() {
-        const target = new Date('2025-12-20T00:00:00');
-        const el = document.getElementById('countdown-display');
-        if(countdownInterval) clearInterval(countdownInterval);
-        const tick = () => {
-            const now = new Date(); const diff = target - now;
-            if(diff <= 0) { el.innerHTML = "<span style='color:#fbbf24'>Wesołych<br>Świąt!</span>"; clearInterval(countdownInterval); return; }
-            const d = Math.floor(diff / (1000 * 60 * 60 * 24));
-            const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-            const s = Math.floor((diff % (1000 * 60)) / 1000);
-            el.innerHTML = `${d}d ${h}h<br>${m}m ${s}s`;
+    // --- NOWA LOGIKA: INTERAKCJA ŚWIĄTECZNA ---
+    function initHolidayInteraction() {
+        const container = document.getElementById('lesson-buttons-container');
+        if(!container) return;
+        container.innerHTML = '';
+        
+        // Generujemy przyciski na podstawie lekcji z DB
+        if(DB.periods && DB.periods.length > 0) {
+            DB.periods.forEach(p => {
+                // Generuj przyciski od 4. lekcji wzwyż (żeby nie było za dużo)
+                if(p.nr >= 4) {
+                    const btn = document.createElement('button');
+                    btn.className = 'lesson-btn';
+                    btn.innerText = p.nr;
+                    btn.onclick = () => checkBreakStatus(p.nr);
+                    container.appendChild(btn);
+                }
+            });
+        } else {
+            container.innerText = "Brak danych o lekcjach.";
+        }
+    }
+
+    function checkBreakStatus(lessonNr) {
+        const period = DB.periods.find(p => p.nr === lessonNr);
+        if(!period) return;
+
+        const now = new Date();
+        const currentMin = now.getHours() * 60 + now.getMinutes();
+        const endMin = timeToMin(period.end);
+
+        // Jeśli czas obecny jest WIĘKSZY niż koniec wybranej lekcji -> BLACKOUT
+        if (currentMin > endMin) {
+            showFreedomScreen();
+        } else {
+            // Jeśli jeszcze trwa -> Odliczanie
+            startPersonalCountdown(endMin);
+        }
+    }
+
+    function showFreedomScreen() {
+        document.getElementById('freedom-overlay').style.display = 'flex';
+    }
+
+    function closeFreedom() {
+        document.getElementById('freedom-overlay').style.display = 'none';
+        resetHolidayPanel();
+    }
+
+    function resetHolidayPanel() {
+        if(personalCountdownTimer) clearInterval(personalCountdownTimer);
+        const container = document.getElementById('holiday-interactive-content');
+        container.innerHTML = `
+            <div class="question-text">O której godzinie dzisiaj kończysz?</div>
+            <div class="lesson-buttons" id="lesson-buttons-container"></div>
+        `;
+        initHolidayInteraction();
+    }
+
+    function startPersonalCountdown(targetMin) {
+        const container = document.getElementById('holiday-interactive-content');
+        if(personalCountdownTimer) clearInterval(personalCountdownTimer);
+
+        const updateTick = () => {
+            const now = new Date();
+            const currentMin = now.getHours() * 60 + now.getMinutes();
+            const currentSec = now.getSeconds();
+            const diffMin = targetMin - currentMin - 1; 
+            const diffSec = 60 - currentSec;
+            
+            // Obliczamy całkowitą różnicę w sekundach
+            const totalSec = (targetMin * 60) - (currentMin * 60 + currentSec);
+
+            if (totalSec <= 0) {
+                clearInterval(personalCountdownTimer);
+                showFreedomScreen();
+                return;
+            }
+
+            const h = Math.floor(totalSec / 3600);
+            const m = Math.floor((totalSec % 3600) / 60);
+            const s = totalSec % 60;
+
+            const timeStr = `${h>0?h+'h ':''}${m}m ${s}s`;
+
+            container.innerHTML = `
+                <div class="personal-msg">Do wolności zostało:</div>
+                <div class="personal-countdown">${timeStr}</div>
+                <div style="font-size:3rem; margin:10px 0;">🎁</div>
+                <button class="reset-btn" onclick="resetHolidayPanel()">Wybierz inną godzinę</button>
+            `;
         };
-        tick(); countdownInterval = setInterval(tick, 1000);
+
+        updateTick();
+        personalCountdownTimer = setInterval(updateTick, 1000);
     }
 
     async function refreshData() {
@@ -512,6 +525,12 @@
             ]);
             addMissingTeachers();
             if(isDashboardActive) renderDashboard(); else { populateSelect(false); render(); }
+            
+            // Inicjalizujemy przyciski dopiero jak mamy dane o lekcjach (DB.periods)
+            if(document.getElementById('lesson-buttons-container').innerHTML.includes('Ładowanie')) {
+                initHolidayInteraction();
+            }
+
             const info = `WERSJE PLIKÓW: Zastępstwa [${FILE_VERSIONS.zastepstwa}]  •  Przeniesienia [${FILE_VERSIONS.przeniesienia}]  •  Odświeżono: ${new Date().toLocaleTimeString()}`;
             log(info);
         } catch (e) { console.error(e); log("Błąd aktualizacji danych!", true); }
@@ -790,7 +809,6 @@
     function startClock() {
         const update = () => { 
             const now = new Date(); 
-            // Zmiana formatu daty na pełniejszy (np. środa, 17 grudnia)
             document.getElementById('clock').innerText = now.toLocaleString('pl-PL', { weekday:'long', day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' }); 
             updateLessonStatus();
         };
@@ -802,7 +820,6 @@
         if (!DB.periods || DB.periods.length === 0) return;
         const now = new Date(); const currentMin = now.getHours() * 60 + now.getMinutes();
         
-        // Aktualizujemy OBA wskaźniki (desktop i mobile)
         const elDesktop = document.getElementById('desktop-status');
         const elMobile = document.getElementById('mobile-status');
         
