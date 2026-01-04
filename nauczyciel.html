@@ -25,7 +25,7 @@
             /* Paski boczne planu */
             --lesson-border: #16a34a;
             --room-border: #d97706;      
-            --class-border: #0284c7;    
+            --class-border: #0284c7;     
             --duty-border: #db2777;
 
             /* Statusy */
@@ -124,54 +124,17 @@
         .anno-title { font-size: 1.4rem; color: #94a3b8; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 2px; font-weight: 700; }
         .anno-content { font-size: 1.3rem; color: #e2e8f0; font-weight: 300; line-height: 1.6; }
 
-        /* --- STYL ŚWIĄTECZNY --- */
+        /* --- STYL DLA LICZNIKA ZIMOWEGO --- */
         .holiday-vibes {
-            background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.6)), url('https://images.unsplash.com/photo-1491002052546-bf38f186af56?q=80&w=800&auto=format&fit=crop') center/cover no-repeat !important;
+            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.7)), url('https://images.unsplash.com/photo-1491002052546-bf38f186af56?q=80&w=800&auto=format&fit=crop') center/cover no-repeat !important;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
             border-left: 1px solid #334155; padding: 20px;
         }
         
-        .holiday-content { z-index: 2; text-align: center; animation: fadeIn 1s ease-in; width: 100%; }
-        .question-text { font-size: 1.2rem; color: #e2e8f0; margin-bottom: 15px; font-weight: 700; text-shadow: 0 2px 4px rgba(0,0,0,0.8); }
+        .holiday-content { z-index: 2; text-align: center; width: 100%; }
+        .question-text { font-size: 1.3rem; color: #e2e8f0; margin-bottom: 15px; font-weight: 700; text-shadow: 0 2px 4px rgba(0,0,0,0.8); text-transform: uppercase; letter-spacing: 2px; }
         
-        /* Przyciski lekcji */
-        .lesson-buttons { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
-        .lesson-btn {
-            background: rgba(255, 255, 255, 0.15); border: 1px solid rgba(255,255,255,0.4);
-            color: white; font-weight: 800; font-size: 1.2rem;
-            width: 40px; height: 40px; border-radius: 50%; cursor: pointer;
-            transition: all 0.2s; backdrop-filter: blur(2px);
-        }
-        .lesson-btn:hover { background: #fbbf24; color: #000; transform: scale(1.1); border-color: #fbbf24; }
-
-        .personal-countdown { font-family: 'Consolas', monospace; font-size: 2rem; color: #4ade80; font-weight: bold; text-shadow: 0 0 10px rgba(0,0,0,0.8); margin-top: 10px; }
-        .personal-msg { font-size: 1rem; color: #fbbf24; margin-bottom: 5px; font-weight: 700; }
-        .reset-btn { margin-top: 15px; background: transparent; border: none; color: #94a3b8; font-size: 0.8rem; cursor: pointer; text-decoration: underline; }
-
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-        /* --- BLACKOUT OVERLAY (FREEDOM SCREEN) --- */
-        #freedom-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: black; z-index: 9999;
-            display: none; flex-direction: column; align-items: center; justify-content: center;
-            text-align: center; padding: 20px; box-sizing: border-box;
-        }
-        .freedom-title {
-            font-size: 3rem; font-weight: 900; color: #fbbf24; 
-            text-transform: uppercase; margin-bottom: 20px;
-            animation: pulse 2s infinite;
-        }
-        .freedom-sub {
-            font-size: 2rem; color: #fff; font-weight: 300; margin-bottom: 40px;
-        }
-        .close-freedom {
-            background: #334155; border: 1px solid #475569; color: #94a3b8;
-            padding: 10px 25px; border-radius: 8px; font-size: 1rem; cursor: pointer;
-            transition: all 0.2s;
-        }
-        .close-freedom:hover { background: #475569; color: white; }
-        @keyframes pulse { 0% { opacity: 0.8; transform: scale(1); } 50% { opacity: 1; transform: scale(1.05); } 100% { opacity: 0.8; transform: scale(1); } }
+        .personal-countdown { font-family: 'Consolas', monospace; font-size: 2.2rem; color: #4ade80; font-weight: bold; text-shadow: 0 0 10px rgba(0,0,0,0.8); margin-top: 10px; }
 
         /* --- PLAN LEKCJI --- */
         #schedule-view { display: none; width: 100%; padding-bottom: 40px; }
@@ -238,8 +201,6 @@
             #announcements-container { flex-direction: column; }
             .anno-left { border-right: none; border-bottom: 1px solid #334155; text-align: center; }
             .holiday-vibes { border-left: none; border-top: 1px solid #334155; min-height: 250px; padding: 20px; }
-            .freedom-title { font-size: 2rem; }
-            .freedom-sub { font-size: 1.5rem; }
             
             .selection-grid { grid-template-columns: 1fr; gap: 15px; }
             .selection-card { flex-direction: row; justify-content: space-between; padding: 15px; align-items: center; }
@@ -253,12 +214,6 @@
     </style>
 </head>
 <body>
-
-<div id="freedom-overlay">
-    <div class="freedom-title">PRZERWA ŚWIĄTECZNA</div>
-    <div class="freedom-sub">CZAS NA ODPOCZYNEK! 🎄🎁</div>
-    <button class="close-freedom" onclick="closeFreedom()">Wróć do planu</button>
-</div>
 
 <header>
     <div class="h-col-left">
@@ -319,11 +274,10 @@
             <div id="announcement-content" class="anno-content">Ładowanie ogłoszeń...</div>
         </div>
         <div class="anno-right holiday-vibes">
-            <div class="holiday-content" id="holiday-interactive-content">
-                <div class="question-text">Którą lekcją dzisiaj kończysz pracę?</div>
-                <div class="lesson-buttons" id="lesson-buttons-container">
-                    Ładowanie...
-                </div>
+            <div class="holiday-content">
+                <div class="question-text">DO FERII ZIMOWYCH POZOSTAŁO:</div>
+                <div class="personal-countdown" id="winter-countdown">Ładowanie...</div>
+                <div style="font-size:3rem; margin-top:10px;">❄️☃️⛷️</div>
             </div>
         </div>
     </div>
@@ -343,13 +297,40 @@
     const FILE_VERSIONS = { zastepstwa: '---', przeniesienia: '---' };
     const DAYS = ["Niedziela", "Poniedziałek", "Wtorek", "Środa", "Czwartek", "Piątek", "Sobota"];
     let refreshTimer = null; let idleTimer = null; let isDashboardActive = true; let weekOffset = 0; 
-    let countdownInterval = null; let personalCountdownTimer = null;
 
     window.onload = () => {
-        startClock(); refreshData(); loadAnnouncements(); 
+        startClock(); refreshData(); loadAnnouncements(); startWinterCountdown();
         refreshTimer = setInterval(() => { refreshData(); loadAnnouncements(); }, CONFIG.refreshInterval);
         ['mousemove', 'click', 'touchstart', 'scroll', 'keydown'].forEach(evt => document.addEventListener(evt, resetIdle));
     };
+
+    function startWinterCountdown() {
+        // Data docelowa: 30 grudnia 2025, 18:10:00
+        const targetDate = new Date('2025-12-30T18:10:00').getTime();
+
+        const update = () => {
+            const now = new Date().getTime();
+            const distance = targetDate - now;
+
+            const el = document.getElementById("winter-countdown");
+
+            if (distance < 0) {
+                el.innerHTML = "FERIE ROZPOCZĘTE!";
+                return;
+            }
+
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+            el.innerHTML = `${days}d ${hours}h ${minutes}m ${seconds}s`;
+        };
+
+        // Aktualizuj co sekundę
+        setInterval(update, 1000);
+        update(); // Wywołaj raz od razu
+    }
 
     function resetIdle() {
         if (isDashboardActive) return;
@@ -416,103 +397,6 @@
         } catch(e) { document.getElementById('announcement-content').innerText = "Brak aktualnych ogłoszeń."; }
     }
 
-    // --- NOWA LOGIKA: INTERAKCJA ŚWIĄTECZNA ---
-    function initHolidayInteraction() {
-        const container = document.getElementById('lesson-buttons-container');
-        if(!container) return;
-        container.innerHTML = '';
-        
-        // Generujemy przyciski na podstawie lekcji z DB
-        if(DB.periods && DB.periods.length > 0) {
-            DB.periods.forEach(p => {
-                // Generuj przyciski od 4. lekcji wzwyż (żeby nie było za dużo)
-                if(p.nr >= 4) {
-                    const btn = document.createElement('button');
-                    btn.className = 'lesson-btn';
-                    btn.innerText = p.nr;
-                    btn.onclick = () => checkBreakStatus(p.nr);
-                    container.appendChild(btn);
-                }
-            });
-        } else {
-            container.innerText = "Brak danych o lekcjach.";
-        }
-    }
-
-    function checkBreakStatus(lessonNr) {
-        const period = DB.periods.find(p => p.nr === lessonNr);
-        if(!period) return;
-
-        const now = new Date();
-        const currentMin = now.getHours() * 60 + now.getMinutes();
-        const endMin = timeToMin(period.end);
-
-        // Jeśli czas obecny jest WIĘKSZY niż koniec wybranej lekcji -> BLACKOUT
-        if (currentMin > endMin) {
-            showFreedomScreen();
-        } else {
-            // Jeśli jeszcze trwa -> Odliczanie
-            startPersonalCountdown(endMin);
-        }
-    }
-
-    function showFreedomScreen() {
-        document.getElementById('freedom-overlay').style.display = 'flex';
-    }
-
-    function closeFreedom() {
-        document.getElementById('freedom-overlay').style.display = 'none';
-        resetHolidayPanel();
-    }
-
-    function resetHolidayPanel() {
-        if(personalCountdownTimer) clearInterval(personalCountdownTimer);
-        const container = document.getElementById('holiday-interactive-content');
-        container.innerHTML = `
-            <div class="question-text">O której godzinie dzisiaj kończysz?</div>
-            <div class="lesson-buttons" id="lesson-buttons-container"></div>
-        `;
-        initHolidayInteraction();
-    }
-
-    function startPersonalCountdown(targetMin) {
-        const container = document.getElementById('holiday-interactive-content');
-        if(personalCountdownTimer) clearInterval(personalCountdownTimer);
-
-        const updateTick = () => {
-            const now = new Date();
-            const currentMin = now.getHours() * 60 + now.getMinutes();
-            const currentSec = now.getSeconds();
-            const diffMin = targetMin - currentMin - 1; 
-            const diffSec = 60 - currentSec;
-            
-            // Obliczamy całkowitą różnicę w sekundach
-            const totalSec = (targetMin * 60) - (currentMin * 60 + currentSec);
-
-            if (totalSec <= 0) {
-                clearInterval(personalCountdownTimer);
-                showFreedomScreen();
-                return;
-            }
-
-            const h = Math.floor(totalSec / 3600);
-            const m = Math.floor((totalSec % 3600) / 60);
-            const s = totalSec % 60;
-
-            const timeStr = `${h>0?h+'h ':''}${m}m ${s}s`;
-
-            container.innerHTML = `
-                <div class="personal-msg">Do przerwy światecznej zostało:</div>
-                <div class="personal-countdown">${timeStr}</div>
-                <div style="font-size:3rem; margin:10px 0;">🎁</div>
-                <button class="reset-btn" onclick="resetHolidayPanel()">Wybierz inną godzinę</button>
-            `;
-        };
-
-        updateTick();
-        personalCountdownTimer = setInterval(updateTick, 1000);
-    }
-
     async function refreshData() {
         DB.lessons = []; DB.periods = []; DB.duties = []; DB.subs = []; DB.dutyChanges = []; DB.transfers = [];
         DB.teachers = {}; DB.classes = {}; DB.classesList = []; DB.rooms = []; DB.groups = {}; DB.locations = [];
@@ -526,11 +410,6 @@
             addMissingTeachers();
             if(isDashboardActive) renderDashboard(); else { populateSelect(false); render(); }
             
-            // Inicjalizujemy przyciski dopiero jak mamy dane o lekcjach (DB.periods)
-            if(document.getElementById('lesson-buttons-container').innerHTML.includes('Ładowanie')) {
-                initHolidayInteraction();
-            }
-
             const info = `WERSJE PLIKÓW: Zastępstwa [${FILE_VERSIONS.zastepstwa}]  •  Przeniesienia [${FILE_VERSIONS.przeniesienia}]  •  Odświeżono: ${new Date().toLocaleTimeString()}`;
             log(info);
         } catch (e) { console.error(e); log("Błąd aktualizacji danych!", true); }
