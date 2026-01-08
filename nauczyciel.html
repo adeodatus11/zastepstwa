@@ -145,17 +145,22 @@
         .question-text { font-size: 1.3rem; color: #e2e8f0; margin-bottom: 15px; font-weight: 700; text-shadow: 0 2px 4px rgba(0,0,0,0.8); text-transform: uppercase; letter-spacing: 2px; }
         .personal-countdown { font-family: 'Consolas', monospace; font-size: 2.2rem; color: #4ade80; font-weight: bold; text-shadow: 0 0 10px rgba(0,0,0,0.8); margin-top: 10px; }
 
-        /* --- POPUP (OKNO Z TREŚCIĄ) --- */
+        /* --- POPUP (NAPRAWIONY DLA MOBILE) --- */
         #popup-overlay {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0, 0, 0, 0.85); z-index: 9999;
             align-items: center; justify-content: center; backdrop-filter: blur(5px);
         }
         #popup-window {
-            background: #1e293b; width: 80%; max-width: 800px; max-height: 85vh;
+            background: #1e293b; 
+            width: 80%; 
+            max-width: 800px; 
+            max-height: 90vh; /* Zwiększono z 85vh dla mobile */
             border-radius: 12px; border: 2px solid #22c55e;
             box-shadow: 0 0 40px rgba(34, 197, 94, 0.3);
-            display: flex; flex-direction: column; position: relative; animation: popIn 0.3s ease-out;
+            display: flex; 
+            flex-direction: column; /* Kluczowe: układ pionowy */
+            position: relative; animation: popIn 0.3s ease-out;
         }
         @keyframes popIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
         
@@ -163,6 +168,7 @@
             padding: 15px 20px; background: #0f172a; border-bottom: 1px solid #334155;
             display: flex; justify-content: space-between; align-items: center;
             border-top-left-radius: 10px; border-top-right-radius: 10px;
+            flex-shrink: 0; /* Nie kurcz nagłówka */
         }
         #popup-title { font-size: 1.4rem; font-weight: bold; color: #4ade80; text-transform: uppercase; }
         #popup-close {
@@ -172,13 +178,19 @@
         #popup-close:hover { color: #ef4444; }
         
         #popup-body {
-            padding: 30px; overflow-y: auto; font-size: 1.4rem; line-height: 1.6;
+            padding: 20px; /* Mniejszy padding dla mobile */
+            overflow-y: auto; /* Włącz scrollowanie */
+            flex: 1; /* Zajmij dostępną przestrzeń */
+            min-height: 0; /* Naprawa scrollowania w flexboxie */
+            font-size: 1.3rem; line-height: 1.6;
             color: #f1f5f9; white-space: pre-wrap; font-family: 'Segoe UI', sans-serif;
+            -webkit-overflow-scrolling: touch; /* Płynne przewijanie na iOS */
         }
         #popup-footer {
             padding: 10px 20px; background: #0f172a; border-top: 1px solid #334155;
             text-align: right; color: #64748b; font-size: 0.8rem;
             border-bottom-left-radius: 10px; border-bottom-right-radius: 10px;
+            flex-shrink: 0; /* Nie kurcz stopki */
         }
 
         /* --- PLAN LEKCJI --- */
@@ -255,7 +267,9 @@
             .week-container { grid-template-columns: 1fr !important; }
             .day-header { top: var(--header-height-mobile) !important; border-radius: 0; padding: 10px; }
             
+            /* Poprawka dla popupu na mobile */
             #popup-window { width: 95%; max-height: 90vh; }
+            #popup-title { font-size: 1.1rem; }
         }
         @media (min-width: 901px) { .mobile-status-container { display: none; } }
     </style>
@@ -354,8 +368,9 @@
     
     // --- TUTAJ WPISZ LISTĘ PLIKÓW Z OGŁOSZENIAMI (Nazwa pliku w folderze na GitHub) ---
     const ANNOUNCEMENT_FILES = [
-        "terminarz końcówki I półrocza.txt",
-        "ocenianie zachowania.txt"
+        "ogloszenia.txt",
+        "dyzury_zmiany.txt",
+        "wycieczka.txt"
     ];
 
     const DB = { teachers: {}, rooms: [], classes: {}, classesList: [], groups: {}, locations: [], periods: [], lessons: [], duties: [], subs: [], dutyChanges: [], transfers: [] };
@@ -427,7 +442,7 @@
     // ---------------------------------
 
     function startWinterCountdown() {
-        // Data docelowa: 30 stycznia 2026 (poprawiłem rok na 2026 bo 2025 minął)
+        // Data docelowa: 30 stycznia 2026
         const targetDate = new Date('2026-01-30T15:00:00').getTime();
 
         const update = () => {
