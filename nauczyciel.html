@@ -117,12 +117,22 @@
         .main-select:focus { border-color: white; }
         .main-select option { background-color: #1e293b; }
 
-        /* --- OGŁOSZENIA --- */
+        /* --- OGŁOSZENIA (LISTA I POPUP) --- */
         #announcements-container { background: rgba(15, 23, 42, 0.9); border-radius: 16px; border: 1px solid #334155; padding: 0; min-height: 250px; display: flex; flex-direction: row; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.4); }
         .anno-left { flex: 6; padding: 30px; border-right: 1px solid #334155; display: flex; flex-direction: column; justify-content: flex-start; text-align: left; }
         .anno-right { flex: 4; position: relative; }
         .anno-title { font-size: 1.4rem; color: #94a3b8; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 2px; font-weight: 700; }
-        .anno-content { font-size: 1.3rem; color: #e2e8f0; font-weight: 300; line-height: 1.6; }
+        
+        /* Styl listy ogłoszeń */
+        #announcement-list { display: flex; flex-direction: column; gap: 10px; max-height: 250px; overflow-y: auto; }
+        .anno-btn { 
+            background: #1e293b; color: #e2e8f0; border: 1px solid #334155; 
+            padding: 12px 15px; text-align: left; font-size: 1.1rem; border-radius: 8px; 
+            cursor: pointer; transition: all 0.2s; display: flex; justify-content: space-between; align-items: center;
+        }
+        .anno-btn:hover { background: #334155; border-color: #4ade80; color: white; transform: translateX(5px); }
+        .anno-btn::after { content: '➜'; opacity: 0; transition: opacity 0.2s; }
+        .anno-btn:hover::after { opacity: 1; }
 
         /* --- STYL DLA LICZNIKA ZIMOWEGO --- */
         .holiday-vibes {
@@ -133,8 +143,43 @@
         
         .holiday-content { z-index: 2; text-align: center; width: 100%; }
         .question-text { font-size: 1.3rem; color: #e2e8f0; margin-bottom: 15px; font-weight: 700; text-shadow: 0 2px 4px rgba(0,0,0,0.8); text-transform: uppercase; letter-spacing: 2px; }
-        
         .personal-countdown { font-family: 'Consolas', monospace; font-size: 2.2rem; color: #4ade80; font-weight: bold; text-shadow: 0 0 10px rgba(0,0,0,0.8); margin-top: 10px; }
+
+        /* --- POPUP (OKNO Z TREŚCIĄ) --- */
+        #popup-overlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.85); z-index: 9999;
+            align-items: center; justify-content: center; backdrop-filter: blur(5px);
+        }
+        #popup-window {
+            background: #1e293b; width: 80%; max-width: 800px; max-height: 85vh;
+            border-radius: 12px; border: 2px solid #22c55e;
+            box-shadow: 0 0 40px rgba(34, 197, 94, 0.3);
+            display: flex; flex-direction: column; position: relative; animation: popIn 0.3s ease-out;
+        }
+        @keyframes popIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
+        
+        #popup-header {
+            padding: 15px 20px; background: #0f172a; border-bottom: 1px solid #334155;
+            display: flex; justify-content: space-between; align-items: center;
+            border-top-left-radius: 10px; border-top-right-radius: 10px;
+        }
+        #popup-title { font-size: 1.4rem; font-weight: bold; color: #4ade80; text-transform: uppercase; }
+        #popup-close {
+            background: none; border: none; color: #94a3b8; font-size: 2rem;
+            cursor: pointer; line-height: 1; padding: 0 10px;
+        }
+        #popup-close:hover { color: #ef4444; }
+        
+        #popup-body {
+            padding: 30px; overflow-y: auto; font-size: 1.4rem; line-height: 1.6;
+            color: #f1f5f9; white-space: pre-wrap; font-family: 'Segoe UI', sans-serif;
+        }
+        #popup-footer {
+            padding: 10px 20px; background: #0f172a; border-top: 1px solid #334155;
+            text-align: right; color: #64748b; font-size: 0.8rem;
+            border-bottom-left-radius: 10px; border-bottom-right-radius: 10px;
+        }
 
         /* --- PLAN LEKCJI --- */
         #schedule-view { display: none; width: 100%; padding-bottom: 40px; }
@@ -209,6 +254,8 @@
             .main-select { width: 50%; padding: 8px; font-size: 1rem; }
             .week-container { grid-template-columns: 1fr !important; }
             .day-header { top: var(--header-height-mobile) !important; border-radius: 0; padding: 10px; }
+            
+            #popup-window { width: 95%; max-height: 90vh; }
         }
         @media (min-width: 901px) { .mobile-status-container { display: none; } }
     </style>
@@ -270,8 +317,8 @@
     <div id="selection-grid" class="selection-grid"></div>
     <div id="announcements-container">
         <div class="anno-left">
-            <div class="anno-title">📢 Ogłoszenia</div>
-            <div id="announcement-content" class="anno-content">Ładowanie ogłoszeń...</div>
+            <div class="anno-title">📢 Komunikaty</div>
+            <div id="announcement-list"></div>
         </div>
         <div class="anno-right holiday-vibes">
             <div class="holiday-content">
@@ -287,31 +334,105 @@
     <div id="grid" class="week-container"></div>
 </div>
 
+<div id="popup-overlay" onclick="if(event.target===this) closePopup()">
+    <div id="popup-window">
+        <div id="popup-header">
+            <div id="popup-title">Tytuł ogłoszenia</div>
+            <button id="popup-close" onclick="closePopup()">&#10005;</button>
+        </div>
+        <div id="popup-body">Treść...</div>
+        <div id="popup-footer">Okno zamknie się automatycznie za chwilę.</div>
+    </div>
+</div>
+
 <footer>
     <a href="https://www.zsz5.edupage.org" target="_blank">www.zsz5.edupage.org</a>
 </footer>
 
 <script>
     const CONFIG = { xml: './plan.xml', dyzury: './dyzury.xlsx', zastepstwa: './zastepstwa.xlsx', przeniesienia: './InformacjeOPrzeniesieniach.xlsx', refreshInterval: 120000, idleTimeout: 45000 };
+    
+    // --- TUTAJ WPISZ LISTĘ PLIKÓW Z OGŁOSZENIAMI (Nazwa pliku w folderze na GitHub) ---
+    const ANNOUNCEMENT_FILES = [
+        "terminarz końcówki I półrocza.txt",
+        "ocenianie zachowania.txt"
+    ];
+
     const DB = { teachers: {}, rooms: [], classes: {}, classesList: [], groups: {}, locations: [], periods: [], lessons: [], duties: [], subs: [], dutyChanges: [], transfers: [] };
     const FILE_VERSIONS = { zastepstwa: '---', przeniesienia: '---' };
     const DAYS = ["Niedziela", "Poniedziałek", "Wtorek", "Środa", "Czwartek", "Piątek", "Sobota"];
     let refreshTimer = null; let idleTimer = null; let isDashboardActive = true; let weekOffset = 0; 
+    let popupTimer = null;
 
     window.onload = () => {
-        startClock(); refreshData(); loadAnnouncements(); startWinterCountdown();
-        refreshTimer = setInterval(() => { refreshData(); loadAnnouncements(); }, CONFIG.refreshInterval);
+        startClock(); refreshData(); initAnnouncements(); startWinterCountdown();
+        refreshTimer = setInterval(() => { refreshData(); }, CONFIG.refreshInterval);
         ['mousemove', 'click', 'touchstart', 'scroll', 'keydown'].forEach(evt => document.addEventListener(evt, resetIdle));
     };
 
+    // --- LOGIKA OGŁOSZEŃ I POPUP ---
+    function initAnnouncements() {
+        const listContainer = document.getElementById('announcement-list');
+        listContainer.innerHTML = "";
+        
+        ANNOUNCEMENT_FILES.forEach(filename => {
+            const displayName = filename.replace('.txt', '').replace(/_/g, ' ').toUpperCase();
+            const btn = document.createElement('button');
+            btn.className = 'anno-btn';
+            btn.innerHTML = `<span>${displayName}</span>`;
+            btn.onclick = () => openAnnouncement(filename, displayName);
+            listContainer.appendChild(btn);
+        });
+
+        // Jeśli lista pusta
+        if (ANNOUNCEMENT_FILES.length === 0) {
+            listContainer.innerHTML = "<div style='color:#64748b; font-style:italic;'>Brak zdefiniowanych ogłoszeń.</div>";
+        }
+    }
+
+    async function openAnnouncement(filename, title) {
+        try {
+            // Dodajemy ?t=czas żeby pominąć cache przeglądarki i pobrać świeżą wersję
+            const res = await fetch(filename + '?t=' + new Date().getTime());
+            if (res.ok) {
+                const text = await res.text();
+                showPopup(title, text);
+            } else {
+                showPopup("Błąd", "Nie znaleziono pliku: " + filename);
+            }
+        } catch (e) {
+            showPopup("Błąd", "Wystąpił problem z pobraniem ogłoszenia.");
+        }
+    }
+
+    function showPopup(title, content) {
+        const overlay = document.getElementById('popup-overlay');
+        const pTitle = document.getElementById('popup-title');
+        const pBody = document.getElementById('popup-body');
+
+        pTitle.innerText = title;
+        pBody.innerHTML = content.replace(/\n/g, '<br>');
+        
+        overlay.style.display = 'flex';
+        
+        // Auto zamknięcie
+        if (popupTimer) clearTimeout(popupTimer);
+        popupTimer = setTimeout(closePopup, 30000); // 30 sekund
+    }
+
+    function closePopup() {
+        document.getElementById('popup-overlay').style.display = 'none';
+        if (popupTimer) clearTimeout(popupTimer);
+    }
+    // ---------------------------------
+
     function startWinterCountdown() {
-        // Data docelowa: 30 grudnia 2025, 18:10:00
-        const targetDate = new Date('2026-01-30T18:10:00').getTime();
+        // Data docelowa: 30 stycznia 2026 (poprawiłem rok na 2026 bo 2025 minął)
+        const targetDate = new Date('2026-01-30T15:00:00').getTime();
 
         const update = () => {
             const now = new Date().getTime();
             const distance = targetDate - now;
-
             const el = document.getElementById("winter-countdown");
 
             if (distance < 0) {
@@ -326,10 +447,8 @@
 
             el.innerHTML = `${days}d ${hours}h ${minutes}m ${seconds}s`;
         };
-
-        // Aktualizuj co sekundę
         setInterval(update, 1000);
-        update(); // Wywołaj raz od razu
+        update();
     }
 
     function resetIdle() {
@@ -341,7 +460,7 @@
     }
 
     function returnToDashboard() {
-        isDashboardActive = true; weekOffset = 0; clearTimeout(idleTimer);
+        isDashboardActive = true; weekOffset = 0; clearTimeout(idleTimer); closePopup();
         document.getElementById('dashboard-view').style.display = 'block';
         document.getElementById('schedule-view').style.display = 'none';
         document.getElementById('nav-controls').style.display = 'none';
@@ -383,18 +502,6 @@
     function formatFileDate(dateStr) {
         if (!dateStr) return 'brak'; const d = new Date(dateStr);
         return d.toLocaleString('pl-PL', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
-    }
-
-    async function loadAnnouncements() {
-        try {
-            const res = await fetch('ogloszenia.txt?t=' + new Date().getTime());
-            if(res.ok) {
-                const text = await res.text();
-                const contentDiv = document.getElementById('announcement-content');
-                if(text.trim().length > 0) contentDiv.innerHTML = text.replace(/\n/g, '<br>');
-                else contentDiv.innerHTML = "Brak nowych ogłoszeń.";
-            } else throw new Error("Brak pliku");
-        } catch(e) { document.getElementById('announcement-content').innerText = "Brak aktualnych ogłoszeń."; }
     }
 
     async function refreshData() {
