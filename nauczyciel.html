@@ -364,16 +364,23 @@
 </footer>
 
 <script>
-    const CONFIG = { xml: './plan.xml', dyzury: './dyzury.xlsx', zastepstwa: './zastepstwa.xlsx', przeniesienia: './InformacjeOPrzeniesieniach.xlsx', refreshInterval: 120000, idleTimeout: 45000 };
+    const CONFIG = { 
+        xml: './plan.xml', 
+        dyzury: './dyzury.xlsx', 
+        zastepstwa: './zastepstwa.xlsx', 
+        przeniesienia: './InformacjeOPrzeniesieniach.xlsx',
+        godziny: './godziny.json', // Nowy plik konfiguracyjny
+        refreshInterval: 120000, 
+        idleTimeout: 45000 
+    };
     
-    // --- TUTAJ WPISZ LISTĘ PLIKÓW Z OGŁOSZENIAMI (Nazwa pliku w folderze na GitHub) ---
+    // --- LISTA PLIKÓW Z OGŁOSZENIAMI ---
     const ANNOUNCEMENT_FILES = [
         "terminarz końcówki I półrocza.txt",
-        "ocenianie zachowania.txt"
-        
+        "skrócone lekcje + Rady Pedagogiczne.txt"
     ];
 
-    const DB = { teachers: {}, rooms: [], classes: {}, classesList: [], groups: {}, locations: [], periods: [], lessons: [], duties: [], subs: [], dutyChanges: [], transfers: [] };
+    const DB = { teachers: {}, rooms: [], classes: {}, classesList: [], groups: {}, locations: [], periods: [], lessons: [], duties: [], subs: [], dutyChanges: [], transfers: [], customHours: {} };
     const FILE_VERSIONS = { zastepstwa: '---', przeniesienia: '---' };
     const DAYS = ["Niedziela", "Poniedziałek", "Wtorek", "Środa", "Czwartek", "Piątek", "Sobota"];
     let refreshTimer = null; let idleTimer = null; let isDashboardActive = true; let weekOffset = 0; 
@@ -399,7 +406,6 @@
             listContainer.appendChild(btn);
         });
 
-        // Jeśli lista pusta
         if (ANNOUNCEMENT_FILES.length === 0) {
             listContainer.innerHTML = "<div style='color:#64748b; font-style:italic;'>Brak zdefiniowanych ogłoszeń.</div>";
         }
@@ -407,7 +413,6 @@
 
     async function openAnnouncement(filename, title) {
         try {
-            // Dodajemy ?t=czas żeby pominąć cache przeglądarki i pobrać świeżą wersję
             const res = await fetch(filename + '?t=' + new Date().getTime());
             if (res.ok) {
                 const text = await res.text();
@@ -430,9 +435,8 @@
         
         overlay.style.display = 'flex';
         
-        // Auto zamknięcie
         if (popupTimer) clearTimeout(popupTimer);
-        popupTimer = setTimeout(closePopup, 30000); // 30 sekund
+        popupTimer = setTimeout(closePopup, 30000); 
     }
 
     function closePopup() {
@@ -442,7 +446,6 @@
     // ---------------------------------
 
     function startWinterCountdown() {
-        // Data docelowa: 30 stycznia 2026
         const targetDate = new Date('2026-01-30T15:00:00').getTime();
 
         const update = () => {
@@ -520,14 +523,15 @@
     }
 
     async function refreshData() {
-        DB.lessons = []; DB.periods = []; DB.duties = []; DB.subs = []; DB.dutyChanges = []; DB.transfers = [];
+        DB.lessons = []; DB.periods = []; DB.duties = []; DB.subs = []; DB.dutyChanges = []; DB.transfers = []; DB.customHours = {};
         DB.teachers = {}; DB.classes = {}; DB.classesList = []; DB.rooms = []; DB.groups = {}; DB.locations = [];
         try {
             await loadXML();
             await Promise.all([ 
                 loadExcel(CONFIG.dyzury, 'dyzury').catch(() => {}), 
                 loadExcel(CONFIG.zastepstwa, 'zastepstwa').catch(() => {}),
-                loadExcel(CONFIG.przeniesienia, 'przeniesienia').catch(() => {})
+                loadExcel(CONFIG.przeniesienia, 'przeniesienia').catch(() => {}),
+                loadCustomHours().catch(() => {})
             ]);
             addMissingTeachers();
             if(isDashboardActive) renderDashboard(); else { populateSelect(false); render(); }
@@ -535,6 +539,15 @@
             const info = `WERSJE PLIKÓW: Zastępstwa [${FILE_VERSIONS.zastepstwa}]  •  Przeniesienia [${FILE_VERSIONS.przeniesienia}]  •  Odświeżono: ${new Date().toLocaleTimeString()}`;
             log(info);
         } catch (e) { console.error(e); log("Błąd aktualizacji danych!", true); }
+    }
+
+    async function loadCustomHours() {
+        try {
+            const res = await fetchFresh(CONFIG.godziny);
+            DB.customHours = await res.json();
+        } catch (e) {
+            console.warn("Brak pliku godziny.json lub błąd parsowania.", e);
+        }
     }
 
     function renderDashboard() {
@@ -743,9 +756,24 @@
         today.setDate(today.getDate() + (weekOffset * 7)); const monday = getStartOfWeek(today);
         const friday = new Date(monday); friday.setDate(friday.getDate() + 4);
         document.getElementById('week-range-text').innerText = `${formatDateShort(monday)} - ${formatDateShort(friday)}`;
+        
         for(let i=0; i<5; i++) {
             const curDate = new Date(monday); curDate.setDate(monday.getDate() + i);
             const dateStr = curDate.toISOString().split('T')[0]; const dayNum = i + 1;
+            
+            // --- LOGIKA NADPISYWANIA GODZIN DLA KONKRETNEGO DNIA ---
+            let dayPeriods = JSON.parse(JSON.stringify(DB.periods)); // Kopia głęboka
+            if (DB.customHours[dateStr]) {
+                DB.customHours[dateStr].forEach(customP => {
+                    const idx = dayPeriods.findIndex(p => p.nr === customP.nr);
+                    if (idx !== -1) {
+                        dayPeriods[idx].start = customP.start;
+                        dayPeriods[idx].end = customP.end;
+                    }
+                });
+            }
+            // -------------------------------------------------------
+
             const col = document.createElement('div'); col.className = 'day-col';
             col.innerHTML = `<div class="day-header">${DAYS[dayNum]}<span class="day-date">${curDate.toLocaleDateString('pl-PL')}</span></div>`;
             const content = document.createElement('div'); content.className = 'day-content';
@@ -772,7 +800,7 @@
                     content.appendChild(div);
                 });
             } else {
-                DB.periods.forEach(p => {
+                dayPeriods.forEach(p => {
                     const wrapper = document.createElement('div'); wrapper.className = 'slot-wrapper';
                     let lessons = [], subAdds = [], transferOut = [], transferIn = [];
                     if (mode === 'teacher') lessons = DB.lessons.filter(l => l.teacherId == selectedId && l.day == dayNum && l.period == p.nr);
@@ -819,20 +847,35 @@
     
     function updateLessonStatus() {
         if (!DB.periods || DB.periods.length === 0) return;
-        const now = new Date(); const currentMin = now.getHours() * 60 + now.getMinutes();
+        const now = new Date(); 
+        const currentMin = now.getHours() * 60 + now.getMinutes();
+        const dateStr = now.toISOString().split('T')[0];
+        
+        // --- LOGIKA NADPISYWANIA GODZIN DLA ZEGARA ---
+        let todayPeriods = JSON.parse(JSON.stringify(DB.periods));
+        if (DB.customHours[dateStr]) {
+            DB.customHours[dateStr].forEach(customP => {
+                const idx = todayPeriods.findIndex(p => p.nr === customP.nr);
+                if (idx !== -1) {
+                    todayPeriods[idx].start = customP.start;
+                    todayPeriods[idx].end = customP.end;
+                }
+            });
+        }
+        // ---------------------------------------------
         
         const elDesktop = document.getElementById('desktop-status');
         const elMobile = document.getElementById('mobile-status');
         
         let statusText = ""; let color = "#94a3b8"; 
 
-        for (let i = 0; i < DB.periods.length; i++) {
-            const p = DB.periods[i]; const start = timeToMin(p.start); const end = timeToMin(p.end);
+        for (let i = 0; i < todayPeriods.length; i++) {
+            const p = todayPeriods[i]; const start = timeToMin(p.start); const end = timeToMin(p.end);
             if (currentMin >= start && currentMin < end) { statusText = `🔴 TRWA LEKCJA ${p.nr} (${p.start} - ${p.end})`; color = "#fbbf24"; break; }
-            if (i < DB.periods.length - 1) { const nextP = DB.periods[i+1]; const nextStart = timeToMin(nextP.start); if (currentMin >= end && currentMin < nextStart) { statusText = `🟢 PRZERWA (po lekcji ${p.nr})`; color = "#4ade80"; break; } }
+            if (i < todayPeriods.length - 1) { const nextP = todayPeriods[i+1]; const nextStart = timeToMin(nextP.start); if (currentMin >= end && currentMin < nextStart) { statusText = `🟢 PRZERWA (po lekcji ${p.nr})`; color = "#4ade80"; break; } }
         }
-        if (!statusText && DB.periods.length > 0) {
-            const firstStart = timeToMin(DB.periods[0].start); const lastEnd = timeToMin(DB.periods[DB.periods.length-1].end);
+        if (!statusText && todayPeriods.length > 0) {
+            const firstStart = timeToMin(todayPeriods[0].start); const lastEnd = timeToMin(todayPeriods[todayPeriods.length-1].end);
             if (currentMin < firstStart) statusText = "Przed lekcjami"; else if (currentMin >= lastEnd) statusText = "Po lekcjach";
         }
         
