@@ -541,13 +541,51 @@
         } catch (e) { console.error(e); log("Błąd aktualizacji danych!", true); }
     }
 
-    async function loadCustomHours() {
-        try {
-            const res = await fetchFresh(CONFIG.godziny);
-            DB.customHours = await res.json();
-        } catch (e) {
-            console.warn("Brak pliku godziny.json lub błąd parsowania.", e);
-        }
+    async function loadXML() {
+        // --- ZMIANA: Ręczne dekodowanie Windows-1250 ---
+        const res = await fetchFresh(CONFIG.xml);
+        const buffer = await res.arrayBuffer(); // Pobieramy surowe dane
+        const decoder = new TextDecoder('windows-1250'); // Ustawiamy polskie kodowanie
+        const txt = decoder.decode(buffer); // Zamieniamy dane na tekst
+        // -----------------------------------------------
+
+        const xml = new DOMParser().parseFromString(txt, "text/xml");
+        
+        // Dalsza część funkcji bez zmian...
+        xml.querySelectorAll('groups group').forEach(g => { DB.groups[g.getAttribute('id')] = g.getAttribute('name'); });
+        xml.querySelectorAll('teachers teacher').forEach(t => {
+            const id = t.getAttribute('id'); const name = (t.getAttribute('firstname')||'') + ' ' + (t.getAttribute('lastname')||t.getAttribute('name'));
+            DB.teachers[id] = { name: name.trim(), normalized: normalize(name) };
+        });
+        xml.querySelectorAll('classes class').forEach(c => {
+            const id = c.getAttribute('id'); const name = c.getAttribute('name');
+            DB.classes[id] = name; if(!DB.classesList.includes(name)) DB.classesList.push(name);
+        });
+        const roomMap = {}; const roomSet = new Set();
+        xml.querySelectorAll('classrooms classroom').forEach(r => { const name = r.getAttribute('name'); roomMap[r.getAttribute('id')] = name; roomSet.add(name); });
+        DB.rooms = Array.from(roomSet);
+        xml.querySelectorAll('periods period').forEach(p => {
+            DB.periods.push({ nr: parseInt(p.getAttribute('period')), start: p.getAttribute('starttime'), end: p.getAttribute('endtime') });
+        });
+        DB.periods.sort((a,b) => a.nr - b.nr);
+        const subjects = {}; xml.querySelectorAll('subjects subject').forEach(s => subjects[s.getAttribute('id')] = s.getAttribute('name'));
+        xml.querySelectorAll('cards card').forEach(c => {
+            const lesson = xml.querySelector(`lessons lesson[id="${c.getAttribute('lessonid')}"]`); if(!lesson) return;
+            const tidsRaw = lesson.getAttribute('teacherids'); const dayIdx = c.getAttribute('days').indexOf('1') + 1;
+            const roomId = c.getAttribute('classroomids'); const classIds = lesson.getAttribute('classids').split(',');
+            const classNames = classIds.map(cid => DB.classes[cid]).join(', ');
+            const groupIds = lesson.getAttribute('groupids'); const groupName = groupIds ? groupIds.split(',').map(gid => DB.groups[gid]).join(',') : '';
+            if(dayIdx > 0 && tidsRaw) {
+                const tidsArray = tidsRaw.split(','); const mainTeacherId = tidsArray[0].trim();
+                const supportTeachers = tidsArray.slice(1).map(tid => DB.teachers[tid.trim()]?.name || tid);
+                DB.lessons.push({
+                    teacherId: mainTeacherId, day: dayIdx, period: parseInt(c.getAttribute('period')),
+                    subject: subjects[lesson.getAttribute('subjectid')] || 'Lekcja',
+                    room: roomMap[roomId] || '', classNames: classNames, branch: '', groupName: groupName,
+                    supportInfo: supportTeachers.length ? supportTeachers.join(', ') : null
+                });
+            }
+        });
     }
 
     function renderDashboard() {
