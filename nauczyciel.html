@@ -369,7 +369,7 @@
         dyzury: './dyzury.xlsx', 
         zastepstwa: './zastepstwa.xlsx', 
         przeniesienia: './InformacjeOPrzeniesieniach.xlsx',
-        godziny: './godziny.json', // Nowy plik konfiguracyjny
+        godziny: './godziny.json',
         refreshInterval: 120000, 
         idleTimeout: 45000 
     };
@@ -522,70 +522,40 @@
         return d.toLocaleString('pl-PL', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
     }
 
+    // --- ZMODYFIKOWANA FUNKCJA ODŚWIEŻANIA DANYCH ---
     async function refreshData() {
         DB.lessons = []; DB.periods = []; DB.duties = []; DB.subs = []; DB.dutyChanges = []; DB.transfers = []; DB.customHours = {};
         DB.teachers = {}; DB.classes = {}; DB.classesList = []; DB.rooms = []; DB.groups = {}; DB.locations = [];
         try {
+            // 1. Ładujemy XML (wymagany)
             await loadXML();
+            
+            // 2. Ładujemy resztę (opcjonalne - brak plików nie wywoła błędu)
             await Promise.all([ 
-                loadExcel(CONFIG.dyzury, 'dyzury').catch(() => {}), 
-                loadExcel(CONFIG.zastepstwa, 'zastepstwa').catch(() => {}),
-                loadExcel(CONFIG.przeniesienia, 'przeniesienia').catch(() => {}),
+                loadExcel(CONFIG.dyzury, 'dyzury'), 
+                loadExcel(CONFIG.zastepstwa, 'zastepstwa'),
+                loadExcel(CONFIG.przeniesienia, 'przeniesienia'),
                 loadCustomHours().catch(() => {})
             ]);
+
             addMissingTeachers();
             if(isDashboardActive) renderDashboard(); else { populateSelect(false); render(); }
             
             const info = `WERSJE PLIKÓW: Zastępstwa [${FILE_VERSIONS.zastepstwa}]  •  Przeniesienia [${FILE_VERSIONS.przeniesienia}]  •  Odświeżono: ${new Date().toLocaleTimeString()}`;
             log(info);
-        } catch (e) { console.error(e); log("Błąd aktualizacji danych!", true); }
+        } catch (e) { 
+            console.error(e); 
+            log("Błąd krytyczny! Sprawdź czy plik plan.xml istnieje.", true); 
+        }
     }
 
-    async function loadXML() {
-        // --- ZMIANA: Ręczne dekodowanie Windows-1250 ---
-        const res = await fetchFresh(CONFIG.xml);
-        const buffer = await res.arrayBuffer(); // Pobieramy surowe dane
-        const decoder = new TextDecoder('windows-1250'); // Ustawiamy polskie kodowanie
-        const txt = decoder.decode(buffer); // Zamieniamy dane na tekst
-        // -----------------------------------------------
-
-        const xml = new DOMParser().parseFromString(txt, "text/xml");
-        
-        // Dalsza część funkcji bez zmian...
-        xml.querySelectorAll('groups group').forEach(g => { DB.groups[g.getAttribute('id')] = g.getAttribute('name'); });
-        xml.querySelectorAll('teachers teacher').forEach(t => {
-            const id = t.getAttribute('id'); const name = (t.getAttribute('firstname')||'') + ' ' + (t.getAttribute('lastname')||t.getAttribute('name'));
-            DB.teachers[id] = { name: name.trim(), normalized: normalize(name) };
-        });
-        xml.querySelectorAll('classes class').forEach(c => {
-            const id = c.getAttribute('id'); const name = c.getAttribute('name');
-            DB.classes[id] = name; if(!DB.classesList.includes(name)) DB.classesList.push(name);
-        });
-        const roomMap = {}; const roomSet = new Set();
-        xml.querySelectorAll('classrooms classroom').forEach(r => { const name = r.getAttribute('name'); roomMap[r.getAttribute('id')] = name; roomSet.add(name); });
-        DB.rooms = Array.from(roomSet);
-        xml.querySelectorAll('periods period').forEach(p => {
-            DB.periods.push({ nr: parseInt(p.getAttribute('period')), start: p.getAttribute('starttime'), end: p.getAttribute('endtime') });
-        });
-        DB.periods.sort((a,b) => a.nr - b.nr);
-        const subjects = {}; xml.querySelectorAll('subjects subject').forEach(s => subjects[s.getAttribute('id')] = s.getAttribute('name'));
-        xml.querySelectorAll('cards card').forEach(c => {
-            const lesson = xml.querySelector(`lessons lesson[id="${c.getAttribute('lessonid')}"]`); if(!lesson) return;
-            const tidsRaw = lesson.getAttribute('teacherids'); const dayIdx = c.getAttribute('days').indexOf('1') + 1;
-            const roomId = c.getAttribute('classroomids'); const classIds = lesson.getAttribute('classids').split(',');
-            const classNames = classIds.map(cid => DB.classes[cid]).join(', ');
-            const groupIds = lesson.getAttribute('groupids'); const groupName = groupIds ? groupIds.split(',').map(gid => DB.groups[gid]).join(',') : '';
-            if(dayIdx > 0 && tidsRaw) {
-                const tidsArray = tidsRaw.split(','); const mainTeacherId = tidsArray[0].trim();
-                const supportTeachers = tidsArray.slice(1).map(tid => DB.teachers[tid.trim()]?.name || tid);
-                DB.lessons.push({
-                    teacherId: mainTeacherId, day: dayIdx, period: parseInt(c.getAttribute('period')),
-                    subject: subjects[lesson.getAttribute('subjectid')] || 'Lekcja',
-                    room: roomMap[roomId] || '', classNames: classNames, branch: '', groupName: groupName,
-                    supportInfo: supportTeachers.length ? supportTeachers.join(', ') : null
-                });
-            }
-        });
+    async function loadCustomHours() {
+        try {
+            const res = await fetchFresh(CONFIG.godziny);
+            DB.customHours = await res.json();
+        } catch (e) {
+            console.warn("Brak pliku godziny.json lub błąd parsowania.", e);
+        }
     }
 
     function renderDashboard() {
@@ -610,17 +580,33 @@
     }
 
     async function fetchFresh(url) { const res = await fetch(url + "?t=" + new Date().getTime()); if(!res.ok) throw new Error(`HTTP ${res.status}`); return res; }
-    async function fetchText(url) { const res = await fetchFresh(url); return await res.text(); }
+    
+    // --- ZMODYFIKOWANA FUNKCJA DO EXCELA (BEZ BŁĘDÓW GDY BRAK PLIKU) ---
     async function loadExcel(url, type) {
-        const res = await fetchFresh(url);
-        const lastMod = res.headers.get('Last-Modified');
-        if (type === 'zastepstwa') FILE_VERSIONS.zastepstwa = formatFileDate(lastMod);
-        else if (type === 'przeniesienia') FILE_VERSIONS.przeniesienia = formatFileDate(lastMod);
-        const ab = await res.arrayBuffer(); const wb = XLSX.read(ab, {type: 'array'});
-        if(type === 'dyzury') parseDuties(wb); if(type === 'zastepstwa') parseSub(wb); if(type === 'przeniesienia') parseTransfers(wb);
+        try {
+            const res = await fetch(url + "?t=" + new Date().getTime());
+            if (!res.ok) { console.warn(`Pominięto plik: ${type} (${url})`); return; }
+
+            const lastMod = res.headers.get('Last-Modified');
+            if (type === 'zastepstwa') FILE_VERSIONS.zastepstwa = formatFileDate(lastMod);
+            else if (type === 'przeniesienia') FILE_VERSIONS.przeniesienia = formatFileDate(lastMod);
+            
+            const ab = await res.arrayBuffer(); const wb = XLSX.read(ab, {type: 'array'});
+            if(type === 'dyzury') parseDuties(wb); if(type === 'zastepstwa') parseSub(wb); if(type === 'przeniesienia') parseTransfers(wb);
+        } catch (e) {
+            console.warn(`Błąd parsowania pliku ${type}:`, e);
+        }
     }
+
+    // --- ZMODYFIKOWANA FUNKCJA XML (DEKODOWANIE WINDOWS-1250) ---
     async function loadXML() {
-        const txt = await fetchText(CONFIG.xml); const xml = new DOMParser().parseFromString(txt, "text/xml");
+        const res = await fetchFresh(CONFIG.xml);
+        const buffer = await res.arrayBuffer(); 
+        const decoder = new TextDecoder('windows-1250');
+        const txt = decoder.decode(buffer);
+        
+        const xml = new DOMParser().parseFromString(txt, "text/xml");
+        
         xml.querySelectorAll('groups group').forEach(g => { DB.groups[g.getAttribute('id')] = g.getAttribute('name'); });
         xml.querySelectorAll('teachers teacher').forEach(t => {
             const id = t.getAttribute('id'); const name = (t.getAttribute('firstname')||'') + ' ' + (t.getAttribute('lastname')||t.getAttribute('name'));
