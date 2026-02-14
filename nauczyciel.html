@@ -134,9 +134,9 @@
         .anno-btn::after { content: '➜'; opacity: 0; transition: opacity 0.2s; }
         .anno-btn:hover::after { opacity: 1; }
 
-        /* --- STYL DLA LICZNIKA ZIMOWEGO --- */
+        /* --- STYL DLA LICZNIKA WIOSENNEGO --- */
         .holiday-vibes {
-            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.7)), url('https://images.unsplash.com/photo-1491002052546-bf38f186af56?q=80&w=800&auto=format&fit=crop') center/cover no-repeat !important;
+            background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.7)), url('https://images.unsplash.com/photo-1490750967868-88cb44cb2720?q=80&w=800&auto=format&fit=crop') center/cover no-repeat !important;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
             border-left: 1px solid #334155; padding: 20px;
         }
@@ -336,9 +336,9 @@
         </div>
         <div class="anno-right holiday-vibes">
             <div class="holiday-content">
-                <div class="question-text">DO FERII ZIMOWYCH POZOSTAŁO:</div>
-                <div class="personal-countdown" id="winter-countdown">Ładowanie...</div>
-                <div style="font-size:3rem; margin-top:10px;">❄️☃️⛷️</div>
+                <div class="question-text">DO PRZERWY WIELKANOCNEJ POZOSTAŁO:</div>
+                <div class="personal-countdown" id="spring-countdown">Ładowanie...</div>
+                <div style="font-size:3rem; margin-top:10px;">🐣🌷🐰</div>
             </div>
         </div>
     </div>
@@ -387,7 +387,7 @@
     let popupTimer = null;
 
     window.onload = () => {
-        startClock(); refreshData(); initAnnouncements(); startWinterCountdown();
+        startClock(); refreshData(); initAnnouncements(); startSpringCountdown(); // <--- Zmiana z startWinterCountdown
         refreshTimer = setInterval(() => { refreshData(); }, CONFIG.refreshInterval);
         ['mousemove', 'click', 'touchstart', 'scroll', 'keydown'].forEach(evt => document.addEventListener(evt, resetIdle));
     };
@@ -445,16 +445,17 @@
     }
     // ---------------------------------
 
-    function startWinterCountdown() {
-        const targetDate = new Date('2026-01-30T15:00:00').getTime();
+    function startSpringCountdown() {
+        // Środa przed Wielkim Czwartkiem: 1 kwietnia 2026 r., godz. 15:40
+        const targetDate = new Date('2026-04-01T15:40:00').getTime();
 
         const update = () => {
             const now = new Date().getTime();
             const distance = targetDate - now;
-            const el = document.getElementById("winter-countdown");
+            const el = document.getElementById("spring-countdown");
 
             if (distance < 0) {
-                el.innerHTML = "FERIE ROZPOCZĘTE!";
+                el.innerHTML = "WESOŁEGO ALLELUJA!";
                 return;
             }
 
