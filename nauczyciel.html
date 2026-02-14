@@ -671,36 +671,90 @@
         });
     }
     function parseDuties(wb) {
+        // 1. ZBUDUJ SŁOWNIK SKRÓTÓW
+        const shortcutsMap = {};
+        // Szukamy arkusza, którego nazwa zawiera słowo "skróty" lub "skroty"
+        const shortcutsSheetName = wb.SheetNames.find(name => name.toLowerCase().includes('skróty') || name.toLowerCase().includes('skroty'));
+        
+        if (shortcutsSheetName) {
+            const wsShortcuts = wb.Sheets[shortcutsSheetName];
+            const shortcutsData = XLSX.utils.sheet_to_json(wsShortcuts, {header: 1});
+            shortcutsData.forEach(row => {
+                // Kolumna A (indeks 0) to skrót, Kolumna B (indeks 1) to pełne nazwisko
+                if (row && row.length >= 2) {
+                    const short = String(row[0]).trim().toLowerCase();
+                    const fullName = String(row[1]).trim();
+                    if (short && fullName) {
+                        shortcutsMap[short] = fullName;
+                    }
+                }
+            });
+        }
+
+        // 2. PRZETWÓRZ WŁAŚCIWE PLAN DYŻURÓW
         wb.SheetNames.forEach(sheetName => {
-            const ws = wb.Sheets[sheetName]; const data = XLSX.utils.sheet_to_json(ws, {header: 1});
+            // Pomijamy arkusz ze słownikiem, żeby nie próbował go czytać jako planu
+            if (sheetName === shortcutsSheetName) return;
+
+            const ws = wb.Sheets[sheetName]; 
+            const data = XLSX.utils.sheet_to_json(ws, {header: 1});
             let currentDayMap = null;
+            
             for(let i=0; i<data.length; i++) {
                 const row = data[i]; if(!row || !row.length) continue;
                 const rowStr = row.map(c => String(c||"").toLowerCase());
+                
+                // Szukanie nagłówka dni tygodnia
                 if(rowStr.some(s => s.includes('poniedziałek'))) {
                     currentDayMap = {};
                     row.forEach((cell, idx) => {
                         const val = String(cell||"").toLowerCase();
-                        if(val.includes('poniedziałek')) currentDayMap[idx]=1; if(val.includes('wtorek')) currentDayMap[idx]=2;
-                        if(val.includes('środa')) currentDayMap[idx]=3; if(val.includes('czwartek')) currentDayMap[idx]=4;
+                        if(val.includes('poniedziałek')) currentDayMap[idx]=1; 
+                        if(val.includes('wtorek')) currentDayMap[idx]=2;
+                        if(val.includes('środa')) currentDayMap[idx]=3; 
+                        if(val.includes('czwartek')) currentDayMap[idx]=4;
                         if(val.includes('piątek')) currentDayMap[idx]=5;
                     });
                     continue;
                 }
+                
                 if(currentDayMap) {
                     let timeVal=null, placeVal=null;
+                    
+                    // Szukanie czasu i miejsca
                     for(let c=0; c<5; c++) {
                         if(row[c] && /\d{1,2}:\d{2}\s*-\s*\d{1,2}:\d{2}/.test(String(row[c]))) {
                             timeVal = String(row[c]).trim();
-                            if(c>0 && row[c-1]) placeVal = unifyPlaceName(row[c-1]); else if(row[0]) placeVal = unifyPlaceName(row[0]); break;
+                            if(c>0 && row[c-1]) placeVal = unifyPlaceName(row[c-1]); 
+                            else if(row[0]) placeVal = unifyPlaceName(row[0]); 
+                            break;
                         }
                     }
+                    
                     if(timeVal) {
                         for(const [colIdx, dayNum] of Object.entries(currentDayMap)) {
-                            const rawTeacher = row[colIdx];
-                            if(rawTeacher && String(rawTeacher).length>2) {
-                                const tId = findTeacherId(String(rawTeacher).trim());
-                                if(tId) DB.duties.push({ teacherId: tId, day: dayNum, time: timeVal, startMin: timeToMin(timeVal.split('-')[0]), place: placeVal ? placeVal.trim() : "Dyżur" });
+                            let rawTeacher = row[colIdx];
+                            
+                            // UWAGA: Zmiana na >= 2, aby wyłapywać 2-literowe skróty (np. "MP", "JA")
+                            if(rawTeacher && String(rawTeacher).trim().length >= 2) {
+                                let teacherStr = String(rawTeacher).trim();
+                                
+                                // TŁUMACZENIE ZE SŁOWNIKA
+                                const shortLower = teacherStr.toLowerCase();
+                                if (shortcutsMap[shortLower]) {
+                                    teacherStr = shortcutsMap[shortLower]; // Podmiana skrótu na pełne nazwisko
+                                }
+                                
+                                const tId = findTeacherId(teacherStr);
+                                if(tId) {
+                                    DB.duties.push({ 
+                                        teacherId: tId, 
+                                        day: dayNum, 
+                                        time: timeVal, 
+                                        startMin: timeToMin(timeVal.split('-')[0]), 
+                                        place: placeVal ? placeVal.trim() : "Dyżur" 
+                                    });
+                                }
                             }
                         }
                     }
