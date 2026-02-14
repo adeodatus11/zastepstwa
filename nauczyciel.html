@@ -775,7 +775,7 @@
                 if(d) DB.dutyChanges.push({ date: d, time: r['Godzina'], absent: findTeacherId(r['Nauczyciel']), sub: findTeacherId(r['Zastępca']), rawSub: r['Zastępca'], place: unifyPlaceName(r['Miejsce dyżuru']) });
             });
         }
-    }
+    } 
 
     function normalize(str) { return (str||"").toLowerCase().replace(/^(x\.|ks\.|p\.|pani|pan)\s+/g, '').replace(/[^a-złąceźżńóś\s]/g, '').trim().split(/\s+/).sort().join(' '); }
     function unifyPlaceName(raw) {
