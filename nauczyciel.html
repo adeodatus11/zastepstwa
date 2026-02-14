@@ -598,12 +598,10 @@
         }
     }
 
-    // --- ZMODYFIKOWANA FUNKCJA XML (DEKODOWANIE WINDOWS-1250) ---
-    async function loadXML() {
+// --- FUNKCJA XML (DEKODOWANIE UTF-8) ---
+        async function loadXML() {
         const res = await fetchFresh(CONFIG.xml);
-        const buffer = await res.arrayBuffer(); 
-        const decoder = new TextDecoder('windows-1250');
-        const txt = decoder.decode(buffer);
+        const txt = await res.text(); // fetch domyślnie odczytuje tekst jako UTF-8
         
         const xml = new DOMParser().parseFromString(txt, "text/xml");
         
