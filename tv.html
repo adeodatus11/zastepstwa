@@ -512,7 +512,13 @@
     }
     function pad(n) { return n<10?'0'+n:n; }
 
-    async function fetchText(url) { const res = await fetchFresh(url); return await res.text(); }
+    async function fetchText(url) { 
+    const res = await fetchFresh(url); 
+    const buffer = await res.arrayBuffer();
+    // Używamy TextDecoder do odczytania polskiego kodowania Windows-1250
+    const decoder = new TextDecoder('windows-1250'); 
+    return decoder.decode(buffer); 
+    }
 
     async function loadXML() {
         const txt = await fetchText(CONFIG.xml);
