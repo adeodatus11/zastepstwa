@@ -81,14 +81,33 @@
         .clock { font-family: 'Segoe UI', sans-serif; font-size: 1.3rem; color: #fff; font-weight: 700; text-transform: capitalize; text-shadow: 0 2px 4px rgba(0,0,0,0.6); background: rgba(0,0,0,0.2); padding: 2px 10px; border-radius: 6px; display: inline-block; }
         .selection-info { font-size: 1.4rem; font-weight: 800; color: #fbbf24; margin: 5px 0; text-shadow: 0 2px 4px rgba(0,0,0,0.9); display: none; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-        /* ŚRODEK */
-        .h-col-center { flex: 0 0 auto; display: flex; align-items: center; justify-content: center; }
+        /* ŚRODEK (ZMIENIONY UKŁAD) */
+        .h-col-center { flex: 0 0 auto; display: flex; align-items: center; justify-content: center; gap: 15px; flex-wrap: wrap; }
         .week-nav { display: flex; align-items: center; gap: 15px; background: rgba(0, 0, 0, 0.25); padding: 8px 20px; border-radius: 20px; border: 1px solid rgba(255, 255, 255, 0.1); backdrop-filter: blur(5px); white-space: nowrap; }
         .week-nav-btn { background: none; border: none; color: #4ade80; font-size: 1.8rem; cursor: pointer; line-height: 1; padding: 0 5px; transition: transform 0.2s; }
         .week-nav-btn:hover { color: #fff; transform: scale(1.2); }
         .week-display { display: flex; flex-direction: column; align-items: center; min-width: 160px; }
         .week-label { font-size: 0.7rem; text-transform: uppercase; color: #a7f3d0; letter-spacing: 1px; }
         .week-range { font-family: 'Consolas', monospace; font-size: 1.2rem; font-weight: 700; color: #fff; }
+
+        /* --- PULSUJĄCY PRZYCISK PLANU --- */
+        @keyframes pulseAlert {
+            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+            50% { transform: scale(1.05); box-shadow: 0 0 15px 10px rgba(239, 68, 68, 0); }
+            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+        }
+        .new-schedule-btn {
+            background: linear-gradient(135deg, #ef4444, #b91c1c);
+            color: white; font-weight: 900; font-size: 1.1rem; padding: 10px 20px;
+            border-radius: 8px; border: 2px solid #fca5a5; text-transform: uppercase;
+            cursor: pointer; animation: pulseAlert 2s infinite; 
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5); text-shadow: 0 2px 4px rgba(0,0,0,0.4);
+            white-space: nowrap; transition: background 0.2s;
+        }
+        .new-schedule-btn:hover {
+            background: linear-gradient(135deg, #f87171, #dc2626);
+            animation: none; transform: scale(1.05);
+        }
 
         /* PRAWA STRONA */
         .h-col-right { flex: 1; display: flex; align-items: center; justify-content: flex-end; gap: 20px; }
@@ -155,11 +174,11 @@
             background: #1e293b; 
             width: 80%; 
             max-width: 800px; 
-            max-height: 90vh; /* Zwiększono z 85vh dla mobile */
+            max-height: 90vh; 
             border-radius: 12px; border: 2px solid #22c55e;
             box-shadow: 0 0 40px rgba(34, 197, 94, 0.3);
             display: flex; 
-            flex-direction: column; /* Kluczowe: układ pionowy */
+            flex-direction: column; 
             position: relative; animation: popIn 0.3s ease-out;
         }
         @keyframes popIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
@@ -168,7 +187,7 @@
             padding: 15px 20px; background: #0f172a; border-bottom: 1px solid #334155;
             display: flex; justify-content: space-between; align-items: center;
             border-top-left-radius: 10px; border-top-right-radius: 10px;
-            flex-shrink: 0; /* Nie kurcz nagłówka */
+            flex-shrink: 0; 
         }
         #popup-title { font-size: 1.4rem; font-weight: bold; color: #4ade80; text-transform: uppercase; }
         #popup-close {
@@ -178,19 +197,19 @@
         #popup-close:hover { color: #ef4444; }
         
         #popup-body {
-            padding: 20px; /* Mniejszy padding dla mobile */
-            overflow-y: auto; /* Włącz scrollowanie */
-            flex: 1; /* Zajmij dostępną przestrzeń */
-            min-height: 0; /* Naprawa scrollowania w flexboxie */
+            padding: 20px; 
+            overflow-y: auto; 
+            flex: 1; 
+            min-height: 0; 
             font-size: 1.3rem; line-height: 1.6;
             color: #f1f5f9; white-space: pre-wrap; font-family: 'Segoe UI', sans-serif;
-            -webkit-overflow-scrolling: touch; /* Płynne przewijanie na iOS */
+            -webkit-overflow-scrolling: touch; 
         }
         #popup-footer {
             padding: 10px 20px; background: #0f172a; border-top: 1px solid #334155;
             text-align: right; color: #64748b; font-size: 0.8rem;
             border-bottom-left-radius: 10px; border-bottom-right-radius: 10px;
-            flex-shrink: 0; /* Nie kurcz stopki */
+            flex-shrink: 0; 
         }
 
         /* --- PLAN LEKCJI --- */
@@ -255,6 +274,7 @@
             .h-col-center { width: 100%; order: 3; margin-top: 5px; }
             .week-nav { width: 100%; justify-content: space-between; box-sizing: border-box; height: 40px; }
             .week-label { display: none; }
+            .new-schedule-btn { font-size: 0.85rem; padding: 8px 10px; width: 100%; margin-bottom: 5px; }
             #announcements-container { flex-direction: column; }
             .anno-left { border-right: none; border-bottom: 1px solid #334155; text-align: center; }
             .holiday-vibes { border-left: none; border-top: 1px solid #334155; min-height: 250px; padding: 20px; }
@@ -293,6 +313,10 @@
     </div>
 
     <div class="h-col-center">
+        <button class="new-schedule-btn" onclick="openAndCloseSchedule()">
+            ⚠️ NOWY PLAN (OD 30 MARCA)
+        </button>
+
         <div class="week-nav" id="week-nav-container" style="display:none">
             <button class="week-nav-btn" onclick="changeWeek(-1)">&#10094;</button>
             <div class="week-display">
@@ -333,6 +357,10 @@
         <div class="anno-left">
             <div class="anno-title">📢 Komunikaty</div>
             <div id="announcement-list"></div>
+            
+            <a href="https://adeodatus11.github.io/plan-30-marca-2026/" target="_blank" class="anno-btn" style="text-decoration: none; margin-top: 15px; border: 1px solid #22c55e; background: linear-gradient(180deg, #1e293b 0%, #064e3b 100%); color: #fff;">
+                <span style="font-weight: bold;">🗓️ Nowy plan lekcji (od 30 marca 2026)</span>
+            </a>
         </div>
         <div class="anno-right holiday-vibes">
             <div class="holiday-content">
@@ -385,10 +413,25 @@
     let popupTimer = null;
 
     window.onload = () => {
-        startClock(); refreshData(); initAnnouncements(); startSpringCountdown(); // <--- Zmiana z startWinterCountdown
+        startClock(); refreshData(); initAnnouncements(); startSpringCountdown(); 
         refreshTimer = setInterval(() => { refreshData(); }, CONFIG.refreshInterval);
         ['mousemove', 'click', 'touchstart', 'scroll', 'keydown'].forEach(evt => document.addEventListener(evt, resetIdle));
     };
+
+    // --- FUNKCJA DO OTWIERANIA I ZAMYKANIA NOWEGO PLANU LEKCJI ---
+    function openAndCloseSchedule() {
+        const scheduleWindow = window.open("https://adeodatus11.github.io/plan-30-marca-2026/", "_blank");
+        
+        if (scheduleWindow) {
+            setTimeout(() => {
+                if (!scheduleWindow.closed) {
+                    scheduleWindow.close();
+                }
+            }, 120000); 
+        } else {
+            alert("Twoja przeglądarka zablokowała otwarcie nowej karty. Zezwól na wyskakujące okienka (pop-ups).");
+        }
+    }
 
     // --- LOGIKA OGŁOSZEŃ I POPUP ---
     function initAnnouncements() {
@@ -404,9 +447,7 @@
             listContainer.appendChild(btn);
         });
 
-        if (ANNOUNCEMENT_FILES.length === 0) {
-            listContainer.innerHTML = "<div style='color:#64748b; font-style:italic;'>Brak zdefiniowanych ogłoszeń.</div>";
-        }
+        // Usunięto tekst "Brak zdefiniowanych ogłoszeń" dla czystszego widoku
     }
 
     async function openAnnouncement(filename, title) {
@@ -444,7 +485,6 @@
     // ---------------------------------
 
     function startSpringCountdown() {
-        // Środa przed Wielkim Czwartkiem: 1 kwietnia 2026 r., godz. 15:40
         const targetDate = new Date('2026-04-01T15:40:00').getTime();
 
         const update = () => {
@@ -521,15 +561,12 @@
         return d.toLocaleString('pl-PL', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
     }
 
-    // --- ZMODYFIKOWANA FUNKCJA ODŚWIEŻANIA DANYCH ---
     async function refreshData() {
         DB.lessons = []; DB.periods = []; DB.duties = []; DB.subs = []; DB.dutyChanges = []; DB.transfers = []; DB.customHours = {};
         DB.teachers = {}; DB.classes = {}; DB.classesList = []; DB.rooms = []; DB.groups = {}; DB.locations = [];
         try {
-            // 1. Ładujemy XML (wymagany)
             await loadXML();
             
-            // 2. Ładujemy resztę (opcjonalne - brak plików nie wywoła błędu)
             await Promise.all([ 
                 loadExcel(CONFIG.dyzury, 'dyzury'), 
                 loadExcel(CONFIG.zastepstwa, 'zastepstwa'),
@@ -580,7 +617,6 @@
 
     async function fetchFresh(url) { const res = await fetch(url + "?t=" + new Date().getTime()); if(!res.ok) throw new Error(`HTTP ${res.status}`); return res; }
     
-    // --- ZMODYFIKOWANA FUNKCJA DO EXCELA (BEZ BŁĘDÓW GDY BRAK PLIKU) ---
     async function loadExcel(url, type) {
         try {
             const res = await fetch(url + "?t=" + new Date().getTime());
@@ -597,14 +633,11 @@
         }
     }
 
-// --- FUNKCJA XML (NAPRAWIONE DEKODOWANIE WINDOWS-1250) ---
-        async function loadXML() {
+    async function loadXML() {
         const res = await fetchFresh(CONFIG.xml);
         
-        // Pobierz surowe dane binarne (zamiast tekstu)
         const buffer = await res.arrayBuffer(); 
         
-        // Wymuś dekodowanie z użyciem windows-1250
         const decoder = new TextDecoder('windows-1250');
         const txt = decoder.decode(buffer);
         
@@ -670,16 +703,13 @@
         });
     }
     function parseDuties(wb) {
-        // 1. ZBUDUJ SŁOWNIK SKRÓTÓW
         const shortcutsMap = {};
-        // Szukamy arkusza, którego nazwa zawiera słowo "skróty" lub "skroty"
         const shortcutsSheetName = wb.SheetNames.find(name => name.toLowerCase().includes('skróty') || name.toLowerCase().includes('skroty'));
         
         if (shortcutsSheetName) {
             const wsShortcuts = wb.Sheets[shortcutsSheetName];
             const shortcutsData = XLSX.utils.sheet_to_json(wsShortcuts, {header: 1});
             shortcutsData.forEach(row => {
-                // Kolumna A (indeks 0) to skrót, Kolumna B (indeks 1) to pełne nazwisko
                 if (row && row.length >= 2) {
                     const short = String(row[0]).trim().toLowerCase();
                     const fullName = String(row[1]).trim();
@@ -690,9 +720,7 @@
             });
         }
 
-        // 2. PRZETWÓRZ WŁAŚCIWE PLAN DYŻURÓW
         wb.SheetNames.forEach(sheetName => {
-            // Pomijamy arkusz ze słownikiem, żeby nie próbował go czytać jako planu
             if (sheetName === shortcutsSheetName) return;
 
             const ws = wb.Sheets[sheetName]; 
@@ -703,7 +731,6 @@
                 const row = data[i]; if(!row || !row.length) continue;
                 const rowStr = row.map(c => String(c||"").toLowerCase());
                 
-                // Szukanie nagłówka dni tygodnia
                 if(rowStr.some(s => s.includes('poniedziałek'))) {
                     currentDayMap = {};
                     row.forEach((cell, idx) => {
@@ -720,7 +747,6 @@
                 if(currentDayMap) {
                     let timeVal=null, placeVal=null;
                     
-                    // Szukanie czasu i miejsca
                     for(let c=0; c<5; c++) {
                         if(row[c] && /\d{1,2}:\d{2}\s*-\s*\d{1,2}:\d{2}/.test(String(row[c]))) {
                             timeVal = String(row[c]).trim();
@@ -734,14 +760,12 @@
                         for(const [colIdx, dayNum] of Object.entries(currentDayMap)) {
                             let rawTeacher = row[colIdx];
                             
-                            // UWAGA: Zmiana na >= 2, aby wyłapywać 2-literowe skróty (np. "MP", "JA")
                             if(rawTeacher && String(rawTeacher).trim().length >= 2) {
                                 let teacherStr = String(rawTeacher).trim();
                                 
-                                // TŁUMACZENIE ZE SŁOWNIKA
                                 const shortLower = teacherStr.toLowerCase();
                                 if (shortcutsMap[shortLower]) {
-                                    teacherStr = shortcutsMap[shortLower]; // Podmiana skrótu na pełne nazwisko
+                                    teacherStr = shortcutsMap[shortLower];
                                 }
                                 
                                 const tId = findTeacherId(teacherStr);
@@ -842,8 +866,7 @@
             const curDate = new Date(monday); curDate.setDate(monday.getDate() + i);
             const dateStr = curDate.toISOString().split('T')[0]; const dayNum = i + 1;
             
-            // --- LOGIKA NADPISYWANIA GODZIN DLA KONKRETNEGO DNIA ---
-            let dayPeriods = JSON.parse(JSON.stringify(DB.periods)); // Kopia głęboka
+            let dayPeriods = JSON.parse(JSON.stringify(DB.periods)); 
             if (DB.customHours[dateStr]) {
                 DB.customHours[dateStr].forEach(customP => {
                     const idx = dayPeriods.findIndex(p => p.nr === customP.nr);
@@ -853,7 +876,6 @@
                     }
                 });
             }
-            // -------------------------------------------------------
 
             const col = document.createElement('div'); col.className = 'day-col';
             col.innerHTML = `<div class="day-header">${DAYS[dayNum]}<span class="day-date">${curDate.toLocaleDateString('pl-PL')}</span></div>`;
@@ -932,7 +954,6 @@
         const currentMin = now.getHours() * 60 + now.getMinutes();
         const dateStr = now.toISOString().split('T')[0];
         
-        // --- LOGIKA NADPISYWANIA GODZIN DLA ZEGARA ---
         let todayPeriods = JSON.parse(JSON.stringify(DB.periods));
         if (DB.customHours[dateStr]) {
             DB.customHours[dateStr].forEach(customP => {
@@ -943,7 +964,6 @@
                 }
             });
         }
-        // ---------------------------------------------
         
         const elDesktop = document.getElementById('desktop-status');
         const elMobile = document.getElementById('mobile-status');
