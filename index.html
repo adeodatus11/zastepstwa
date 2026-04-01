@@ -1727,7 +1727,9 @@
 
         async function loadExcel(url, type) {
             try {
-                const res = await fetch(url + "?t=" + new Date().getTime());
+                // Zamieniamy znak + na %2B, by GitHub Pages poprawnie go wczytywało jako znak, a nie jako spację
+                const safeUrl = encodeURI(url).replace(/\+/g, '%2B');
+                const res = await fetch(safeUrl + "?t=" + new Date().getTime());
                 if (!res.ok) { console.warn(`Pominięto plik: ${type} (${url})`); return; }
 
                 const lastMod = res.headers.get('Last-Modified');
