@@ -1339,9 +1339,9 @@
                 <div class="anno-title">📢 Komunikaty</div>
                 <div id="announcement-list"></div>
 
-                <div class="anno-btn" style="text-decoration: none; margin-top: 15px; border: 1px solid #eab308; background: linear-gradient(180deg, #1e293b 0%, #713f12 100%); color: #fff; cursor: default; display: flex; flex-direction: column; align-items: flex-start; padding: 12px; gap: 4px;">
-                    <div style="font-weight: bold; font-size: 1.1em;">🐣 Przerwa świąteczna wielkanocna</div>
-                    <div style="font-size: 0.9em; font-weight: normal; line-height: 1.4; text-align: left;">W dniach <strong>od 2 kwietnia do 7 kwietnia</strong> trwać będzie wiosenna przerwa świąteczna.</div>
+                <div class="anno-btn" style="text-decoration: none; margin-top: 15px; border: 1px solid #3b82f6; background: linear-gradient(180deg, #1e293b 0%, #1e3a8a 100%); color: #fff; cursor: default; display: flex; flex-direction: column; align-items: flex-start; padding: 12px; gap: 4px;">
+                    <div style="font-weight: bold; font-size: 1.1em;">📅 Rada pedagogiczna klasyfikacyjna</div>
+                    <div style="font-size: 0.9em; font-weight: normal; line-height: 1.4; text-align: left;">Rada pedagogiczna klasyfikacyjna klas 5 oraz klasy 4B jest w <strong>środę 22 kwietnia o 15:00</strong>.</div>
                 </div>
 
                 <div class="anno-btn" style="text-decoration: none; margin-top: 10px; border: 1px solid #3b82f6; background: linear-gradient(180deg, #1e293b 0%, #172554 100%); color: #fff; cursor: default; display: flex; flex-direction: column; align-items: flex-start; padding: 12px; gap: 4px;">
@@ -1351,9 +1351,9 @@
             </div>
             <div class="anno-right holiday-vibes">
                 <div class="holiday-content">
-                    <div class="question-text">DO PRZERWY WIELKANOCNEJ POZOSTAŁO:</div>
-                    <div class="personal-countdown" id="spring-countdown">Ładowanie...</div>
-                    <div style="font-size:3rem; margin-top:10px;">🐣🌷🐰</div>
+                    <div class="question-text">DO MAJÓWKI 2026 ZOSTAŁO:</div>
+                    <div class="personal-countdown" id="holiday-countdown">Ładowanie...</div>
+                    <div style="font-size:3rem; margin-top:10px;">🥩🔥🍢</div>
                 </div>
             </div>
         </div>
@@ -1404,7 +1404,7 @@
         let popupTimer = null;
 
         window.onload = () => {
-            startClock(); refreshData(); initAnnouncements(); startSpringCountdown();
+            startClock(); refreshData(); initAnnouncements(); startHolidayCountdown();
             refreshTimer = setInterval(() => { refreshData(); }, CONFIG.refreshInterval);
             ['mousemove', 'click', 'touchstart', 'scroll', 'keydown'].forEach(evt => document.addEventListener(evt, resetIdle));
         };
@@ -1461,16 +1461,18 @@
         }
         // ---------------------------------
 
-        function startSpringCountdown() {
-            const targetDate = new Date('2026-04-01T15:40:00').getTime();
+        function startHolidayCountdown() {
+            const targetDate = new Date('2026-04-30T17:20:00').getTime();
 
             const update = () => {
                 const now = new Date().getTime();
                 const distance = targetDate - now;
-                const el = document.getElementById("spring-countdown");
+                const el = document.getElementById("holiday-countdown");
+
+                if (!el) return;
 
                 if (distance < 0) {
-                    el.innerHTML = "WESOŁEGO ALLELUJA!";
+                    el.innerHTML = "UDANEGO WYPOCZYNKU!";
                     return;
                 }
 
