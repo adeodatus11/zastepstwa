@@ -1339,14 +1339,24 @@
                 <div class="anno-title">📢 Komunikaty</div>
                 <div id="announcement-list"></div>
 
-                <div class="anno-btn" style="text-decoration: none; margin-top: 15px; border: 1px solid #3b82f6; background: linear-gradient(180deg, #1e293b 0%, #1e3a8a 100%); color: #fff; cursor: default; display: flex; flex-direction: column; align-items: flex-start; padding: 12px; gap: 4px;">
+                <div class="anno-btn"
+                    style="text-decoration: none; margin-top: 15px; border: 1px solid #3b82f6; background: linear-gradient(180deg, #1e293b 0%, #1e3a8a 100%); color: #fff; cursor: default; display: flex; flex-direction: column; align-items: flex-start; padding: 12px; gap: 4px;">
                     <div style="font-weight: bold; font-size: 1.1em;">📅 Rada pedagogiczna klasyfikacyjna</div>
-                    <div style="font-size: 0.9em; font-weight: normal; line-height: 1.4; text-align: left;">Rada pedagogiczna klasyfikacyjna klas 5 oraz klasy 4B jest w <strong>środę 22 kwietnia o 15:00</strong>.</div>
+                    <div style="font-size: 0.9em; font-weight: normal; line-height: 1.4; text-align: left;">Rada
+                        pedagogiczna klasyfikacyjna klas 5 oraz klasy 4B jest w <strong>środę 22 kwietnia o
+                            15:00</strong>.</div>
                 </div>
 
-                <div class="anno-btn" style="text-decoration: none; margin-top: 10px; border: 1px solid #3b82f6; background: linear-gradient(180deg, #1e293b 0%, #172554 100%); color: #fff; cursor: default; display: flex; flex-direction: column; align-items: flex-start; padding: 12px; gap: 4px;">
-                    <div style="font-weight: bold; font-size: 1.1em;">📝 Oceny proponowane - klasy maturalne</div>
-                    <div style="font-size: 0.9em; font-weight: normal; line-height: 1.4; text-align: left;">Nadszedł czas na wpisywanie proponowanych ocen rocznych oraz ocen z zachowania w oddziałach kończących szkołę w kwietniu: <strong>4B</strong>, <strong>5TF</strong>, <strong>5TH</strong>.</div>
+                <div class="anno-btn"
+                    style="text-decoration: none; margin-top: 10px; border: 1px solid #f59e0b; background: linear-gradient(180deg, #1e293b 0%, #451a03 100%); color: #fff; cursor: default; display: flex; flex-direction: column; align-items: flex-start; padding: 12px; gap: 4px;">
+                    <div style="font-weight: bold; font-size: 1.1em;">🎓 Oceny końcowe - klasy maturalne</div>
+                    <div style="font-size: 0.9em; font-weight: normal; line-height: 1.4; text-align: left;">W <strong>piątek 17 kwietnia</strong> wpisujemy oceny końcowe roczne w klasach maturalnych: <strong>4B</strong>, <strong>5TF</strong>, <strong>5TH</strong>.</div>
+                </div>
+
+                <div class="anno-btn" onclick="document.getElementById('popup-dyrektor').style.display='flex'"
+                    style="text-decoration: none; margin-top: 10px; border: 1px solid #a855f7; background: linear-gradient(180deg, #1e293b 0%, #2e1065 100%); color: #fff; cursor: pointer; display: flex; flex-direction: column; align-items: flex-start; padding: 12px; gap: 4px; transition: all 0.2s;" onmouseover="this.style.opacity='0.85'" onmouseout="this.style.opacity='1'">
+                    <div style="font-weight: bold; font-size: 1.1em;">📋 Komunikat Dyrektora – kliknij, aby rozwinąć</div>
+                    <div style="font-size: 0.9em; font-weight: normal; line-height: 1.4; text-align: left;">Rady pedagogiczne, zakończenie roku maturalnych, wolne 4–6 maja, najbliższe wydarzenia szkolne.</div>
                 </div>
             </div>
             <div class="anno-right holiday-vibes">
@@ -1371,6 +1381,64 @@
             </div>
             <div id="popup-body">Treść...</div>
             <div id="popup-footer">Okno zamknie się automatycznie za chwilę.</div>
+        </div>
+    </div>
+
+    <!-- POPUP: Komunikat Dyrektora -->
+    <div id="popup-dyrektor" onclick="if(event.target===this)this.style.display='none'" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.75); z-index:9999; align-items:center; justify-content:center; padding:20px; box-sizing:border-box;">
+        <div style="background:linear-gradient(160deg,#1e1b4b,#0f172a); border:1px solid #a855f7; border-radius:16px; max-width:700px; width:100%; max-height:90vh; overflow-y:auto; padding:30px; color:#e2e8f0; position:relative; box-shadow:0 25px 60px rgba(168,85,247,0.3);">
+            <button onclick="document.getElementById('popup-dyrektor').style.display='none'" style="position:absolute; top:15px; right:15px; background:rgba(168,85,247,0.2); border:1px solid #a855f7; color:#d8b4fe; border-radius:8px; width:32px; height:32px; font-size:1.1rem; cursor:pointer; display:flex; align-items:center; justify-content:center;">✕</button>
+            <div style="font-size:1.3rem; font-weight:900; color:#d8b4fe; margin-bottom:20px; padding-right:40px;">📋 Komunikat Dyrektora</div>
+
+            <!-- Rada klasyfikacyjna 22 kwietnia -->
+            <div style="background:rgba(59,130,246,0.1); border:1px solid #3b82f6; border-radius:10px; padding:15px; margin-bottom:12px;">
+                <div style="font-weight:800; color:#93c5fd; margin-bottom:6px;">📅 Rada Pedagogiczna Klasyfikacyjna – 22 kwietnia (środa)</div>
+                <div style="font-size:0.9em; line-height:1.6; color:#cbd5e1;">Klasyfikacja klas <strong>5TF i 5TH</strong> Technikum nr 5. Godz. <strong>15:00</strong>, sala kinowa, ok. <strong>70 minut</strong>.<br>
+                <strong>Porządek:</strong>
+                <ol style="margin:6px 0 0 18px; padding:0;">
+                    <li>Przyjęcie protokołu z poprzedniego posiedzenia RP – 2 min</li>
+                    <li>Klasyfikacja klas 5TF i 5TH (p. I. Leńczowska, p. M. Kopij) – 15 min</li>
+                    <li>Szkolenie z procedur maturalnych (p. dyr. M. Filusz) – 40 min</li>
+                    <li>Sprawy różne (skreślenia, komunikaty…) – 13 min</li>
+                </ol></div>
+            </div>
+
+            <!-- Zakończenie roku maturalnych 24 kwietnia -->
+            <div style="background:rgba(234,179,8,0.1); border:1px solid #ca8a04; border-radius:10px; padding:15px; margin-bottom:12px;">
+                <div style="font-weight:800; color:#fde047; margin-bottom:6px;">🎓 Uroczystość Zakończenia Roku – 24 kwietnia (piątek)</div>
+                <div style="font-size:0.9em; line-height:1.6; color:#cbd5e1;">Zakończenie roku szkolnego 2025/2026 dla klas maturalnych. Godz. <strong>14:00</strong>, sala kinowa.<br>
+                Osoby z zaplanowanymi lekcjami chcące uczestniczyć – prosimy o kontakt z <strong>p. dyr. Maciejem Najwerem</strong>.</div>
+            </div>
+
+            <!-- Rada szkoleniowa 29 kwietnia -->
+            <div style="background:rgba(59,130,246,0.1); border:1px solid #3b82f6; border-radius:10px; padding:15px; margin-bottom:12px;">
+                <div style="font-weight:800; color:#93c5fd; margin-bottom:6px;">📚 Rada Pedagogiczna Szkoleniowa – 29 kwietnia (środa)</div>
+                <div style="font-size:0.9em; line-height:1.6; color:#cbd5e1;">Godz. <strong>15:00</strong>, sala kinowa, ok. <strong>150 minut</strong>.<br>
+                <strong>Porządek:</strong>
+                <ol style="margin:6px 0 0 18px; padding:0;">
+                    <li>Przyjęcie protokołu z poprzedniego posiedzenia RP – 2 min</li>
+                    <li>Szkolenie: <em>Ocena funkcjonalna ucznia</em> (3 × godz. dydaktyczna) – 135 min</li>
+                    <li>Sprawy różne – 13 min</li>
+                </ol></div>
+            </div>
+
+            <!-- Wolne 4-6 maja -->
+            <div style="background:rgba(239,68,68,0.1); border:1px solid #ef4444; border-radius:10px; padding:15px; margin-bottom:12px;">
+                <div style="font-weight:800; color:#fca5a5; margin-bottom:6px;">🚫 Brak zajęć dydaktycznych – 4–6 maja (pn–śr)</div>
+                <div style="font-size:0.9em; line-height:1.6; color:#cbd5e1;">Ze względu na <strong>egzaminy maturalne</strong> nie prowadzimy zajęć.<br>
+                Uczniowie klas branżowej szkoły I stopnia realizują w tym czasie <strong>zajęcia praktyczne u pracodawców</strong> (chyba że pracodawca zdecyduje inaczej).</div>
+            </div>
+
+            <!-- Najbliższe wydarzenia -->
+            <div style="background:rgba(168,85,247,0.1); border:1px solid #a855f7; border-radius:10px; padding:15px;">
+                <div style="font-weight:800; color:#d8b4fe; margin-bottom:8px;">🗓 Najbliższe wydarzenia szkolne</div>
+                <div style="font-size:0.9em; line-height:1.8; color:#cbd5e1;">
+                    <div>🏆 <strong>XXXI Ogólnopolski Turniej Cukiernik i Piekarz</strong> – 14–16 kwietnia (wt–czw)</div>
+                    <div>🎤 <strong>Forum Zawodowe</strong> – 20 kwietnia (pn), godz. 10:00–14:00, sala kinowa</div>
+                    <div>✂️ <strong>Kongres Fryzjerstwa Naturalnego</strong> – 21 kwietnia (wt), godz. 11:00, sala kinowa + prac. s.09</div>
+                    <div>🚪 <strong>Drzwi Otwarte</strong> – 29 kwietnia (śr), godz. 10:00–15:00</div>
+                </div>
+            </div>
         </div>
     </div>
 
