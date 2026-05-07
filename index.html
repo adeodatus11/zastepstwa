@@ -959,7 +959,7 @@
                 display: block;
             }
 
-            #nav-controls {
+            body.schedule-active #nav-controls {
                 display: flex !important;
             }
 
@@ -1217,7 +1217,8 @@
             detailedChanges: ["./ZbiorczeZestawienieZmian.xlsx"],
             substitutionsInfo: ["./InformacjeOZastepstwach.xlsx"],
             transfersInfo: ["./InformacjeOPrzeniesieniach (1).xlsx"],
-            refreshInterval: 120000
+            refreshInterval: 120000,
+            idleReturnMs: 15000
         };
 
         const DAY_NAMES = ["Poniedziałek", "Wtorek", "Środa", "Czwartek", "Piątek"];
@@ -1250,7 +1251,8 @@
             currentMode: "teacher",
             currentSelection: "",
             lastLoadedAt: null,
-            isDashboardActive: true
+            isDashboardActive: true,
+            idleTimerId: null
         };
 
         const refs = {
@@ -1378,6 +1380,27 @@
                 current.setDate(monday.getDate() + index);
                 return current;
             });
+        }
+
+        function clearIdleReturnTimer() {
+            if (STATE.idleTimerId) {
+                window.clearTimeout(STATE.idleTimerId);
+                STATE.idleTimerId = null;
+            }
+        }
+
+        function resetIdleReturnTimer() {
+            if (STATE.isDashboardActive) {
+                clearIdleReturnTimer();
+                return;
+            }
+
+            clearIdleReturnTimer();
+            STATE.idleTimerId = window.setTimeout(() => {
+                if (!STATE.isDashboardActive) {
+                    returnToDashboard();
+                }
+            }, CONFIG.idleReturnMs);
         }
 
         function encodePath(url) {
@@ -1907,7 +1930,7 @@
             STATE.currentSelection = selection;
             STATE.weekOffset = 0;
             STATE.isDashboardActive = false;
-            document.body.className = `mode-${mode}`;
+            document.body.className = `schedule-active mode-${mode}`;
             refs.selectionInfo.textContent = getSelectionLabel(mode, selection);
             refs.selectionInfo.style.display = "block";
             refs.dashboardView.style.display = "none";
@@ -1917,9 +1940,11 @@
             refs.modeSelect.style.display = "block";
             refs.dataSelect.style.display = "block";
             renderSchedule();
+            resetIdleReturnTimer();
         }
 
         function returnToDashboard() {
+            clearIdleReturnTimer();
             STATE.isDashboardActive = true;
             STATE.weekOffset = 0;
             refs.dashboardView.style.display = "block";
@@ -1935,6 +1960,7 @@
         function changeWeek(direction) {
             STATE.weekOffset += direction;
             renderSchedule();
+            resetIdleReturnTimer();
         }
 
         function getPeriodMeta(periodNumber) {
@@ -2715,19 +2741,27 @@
         refs.modeSelect.addEventListener("change", (event) => {
             STATE.currentMode = event.target.value;
             STATE.currentSelection = "";
-            document.body.className = `mode-${STATE.currentMode}`;
+            document.body.className = `schedule-active mode-${STATE.currentMode}`;
             renderSchedule();
+            resetIdleReturnTimer();
         });
 
         refs.dataSelect.addEventListener("change", (event) => {
             STATE.currentSelection = event.target.value;
             renderSchedule();
+            resetIdleReturnTimer();
         });
 
         window.addEventListener("load", async () => {
             startClock();
             await refreshData();
             window.setInterval(refreshData, CONFIG.refreshInterval);
+        });
+
+        ["mousemove", "click", "touchstart", "scroll", "keydown"].forEach((eventName) => {
+            document.addEventListener(eventName, () => {
+                resetIdleReturnTimer();
+            }, { passive: true });
         });
     </script>
 </body>
