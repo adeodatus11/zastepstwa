@@ -1,66 +1,53 @@
 <!DOCTYPE html>
 <html lang="pl">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Interaktywny Pulpit Nauczyciela - ZSZ5</title>
+    <link rel="icon" href="data:,">
     <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
+    <script src="schedule-changes.js"></script>
     <style>
         :root {
-            /* --- PALETA DARK FOREST --- */
             --bg: #020617;
             --text-main: #e2e8f0;
             --card-bg: #111827;
-
-            /* Akcenty Kategorii */
             --accent-teacher: #22c55e;
             --accent-class: #38bdf8;
             --accent-room: #fbbf24;
             --accent-duty: #f472b6;
-
-            /* Elementy UI */
-            --tile-bg: #0f172a;
-            --tile-border: #1e293b;
-
-            /* Paski boczne planu */
             --lesson-border: #16a34a;
             --room-border: #d97706;
             --class-border: #0284c7;
             --duty-border: #db2777;
-
-            /* Statusy */
             --sub-bg: #450a0a;
             --sub-color: #fca5a5;
             --sub-border: #ef4444;
             --new-bg: #064e3b;
             --new-color: #4ade80;
             --new-border: #22c55e;
-
-            /* Transfery */
             --trans-bg: #083344;
             --trans-color: #bae6fd;
             --trans-border: #0ea5e9;
-
-            /* Płatności */
             --pay-bg: #451a03;
             --pay-text: #fbbf24;
             --pay-border: #f59e0b;
-
-            /* Dyżury */
             --duty-bg: #3f2c06;
             --duty-color: #fcd34d;
             --duty-sub-bg: #14532d;
             --duty-sub-border: #4ade80;
             --duty-sub-color: #dcfce7;
-
             --empty: #1f2937;
             --header-height-desktop: 140px;
             --header-height-mobile: 110px;
         }
 
+        * {
+            box-sizing: border-box;
+        }
+
         body {
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             background-color: var(--bg);
             margin: 0;
             padding: 0;
@@ -70,7 +57,10 @@
             min-height: 100vh;
         }
 
-        /* --- NAGŁÓWEK DESKTOP --- */
+        a {
+            color: inherit;
+        }
+
         header {
             background: linear-gradient(to right, #4dff88 0%, #33cc66 30%, #020617 100%);
             color: white;
@@ -80,7 +70,6 @@
             z-index: 1000;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
             border-bottom: 4px solid #22c55e;
-
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -89,7 +78,6 @@
             box-sizing: border-box;
         }
 
-        /* LEWA STRONA */
         .h-col-left {
             flex: 1;
             display: flex;
@@ -133,7 +121,7 @@
         }
 
         .clock {
-            font-family: 'Segoe UI', sans-serif;
+            font-family: "Segoe UI", sans-serif;
             font-size: 1.3rem;
             color: #fff;
             font-weight: 700;
@@ -158,7 +146,6 @@
             text-overflow: ellipsis;
         }
 
-        /* ŚRODEK (ZMIENIONY UKŁAD) */
         .h-col-center {
             flex: 0 0 auto;
             display: flex;
@@ -211,54 +198,12 @@
         }
 
         .week-range {
-            font-family: 'Consolas', monospace;
+            font-family: Consolas, "SFMono-Regular", monospace;
             font-size: 1.2rem;
             font-weight: 700;
             color: #fff;
         }
 
-        /* --- PULSUJĄCY PRZYCISK PLANU --- */
-        @keyframes pulseAlert {
-            0% {
-                transform: scale(1);
-                box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
-            }
-
-            50% {
-                transform: scale(1.05);
-                box-shadow: 0 0 15px 10px rgba(239, 68, 68, 0);
-            }
-
-            100% {
-                transform: scale(1);
-                box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
-            }
-        }
-
-        .new-schedule-btn {
-            background: linear-gradient(135deg, #ef4444, #b91c1c);
-            color: white;
-            font-weight: 900;
-            font-size: 1.1rem;
-            padding: 10px 20px;
-            border-radius: 8px;
-            border: 2px solid #fca5a5;
-            text-transform: uppercase;
-            cursor: pointer;
-            animation: pulseAlert 2s infinite;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
-            white-space: nowrap;
-            transition: background 0.2s;
-        }
-
-        .new-schedule-btn:hover {
-            background: linear-gradient(135deg, #f87171, #dc2626);
-            animation: none;
-            transform: scale(1.05);
-        }
-
-        /* PRAWA STRONA */
         .h-col-right {
             flex: 1;
             display: flex;
@@ -313,6 +258,23 @@
             border: 2px solid white;
         }
 
+        #nav-controls {
+            display: none;
+            align-items: center;
+            gap: 10px;
+        }
+
+        #nav-controls select {
+            min-width: 180px;
+            height: 50px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(0, 0, 0, 0.35);
+            color: white;
+            padding: 0 12px;
+            font-size: 0.95rem;
+        }
+
         button.back-btn {
             background: #b91c1c;
             color: white;
@@ -347,7 +309,6 @@
             letter-spacing: 1px;
         }
 
-        /* --- DASHBOARD & GENERAL --- */
         #dashboard-view {
             padding: 40px;
             display: block;
@@ -435,7 +396,6 @@
             background-color: #1e293b;
         }
 
-        /* --- OGŁOSZENIA (LISTA I POPUP) --- */
         #announcements-container {
             background: rgba(15, 23, 42, 0.9);
             border-radius: 16px;
@@ -472,13 +432,10 @@
             font-weight: 700;
         }
 
-        /* Styl listy ogłoszeń */
         #announcement-list {
             display: flex;
             flex-direction: column;
             gap: 10px;
-            max-height: 250px;
-            overflow-y: auto;
         }
 
         .anno-btn {
@@ -489,33 +446,20 @@
             text-align: left;
             font-size: 1.1rem;
             border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.2s;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
 
-        .anno-btn:hover {
-            background: #334155;
-            border-color: #4ade80;
+        .anno-btn strong {
             color: white;
-            transform: translateX(5px);
+            font-size: 1.05rem;
         }
 
-        .anno-btn::after {
-            content: '➜';
-            opacity: 0;
-            transition: opacity 0.2s;
-        }
-
-        .anno-btn:hover::after {
-            opacity: 1;
-        }
-
-        /* --- STYL DLA LICZNIKA WIOSENNEGO --- */
         .holiday-vibes {
-            background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.7)), url('https://images.unsplash.com/photo-1490750967868-88cb44cb2720?q=80&w=800&auto=format&fit=crop') center/cover no-repeat !important;
+            background:
+                linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.72)),
+                url("https://images.unsplash.com/photo-1490750967868-88cb44cb2720?q=80&w=800&auto=format&fit=crop") center/cover no-repeat;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -531,124 +475,168 @@
         }
 
         .question-text {
-            font-size: 1.3rem;
+            font-size: 1.2rem;
             color: #e2e8f0;
             margin-bottom: 15px;
             font-weight: 700;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
             text-transform: uppercase;
             letter-spacing: 2px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
         }
 
         .personal-countdown {
-            font-family: 'Consolas', monospace;
-            font-size: 2.2rem;
+            font-family: Consolas, "SFMono-Regular", monospace;
+            font-size: 2rem;
             color: #4ade80;
             font-weight: bold;
             text-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
             margin-top: 10px;
         }
 
-        /* --- POPUP (NAPRAWIONY DLA MOBILE) --- */
-        #popup-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.85);
-            z-index: 9999;
-            align-items: center;
-            justify-content: center;
-            backdrop-filter: blur(5px);
+        .summary-sub {
+            color: #cbd5e1;
+            line-height: 1.5;
+            font-size: 0.95rem;
+            margin-top: 12px;
         }
 
-        #popup-window {
-            background: #1e293b;
-            width: 80%;
-            max-width: 800px;
-            max-height: 90vh;
-            border-radius: 12px;
-            border: 2px solid #22c55e;
-            box-shadow: 0 0 40px rgba(34, 197, 94, 0.3);
+        #duty-bar {
+            background: linear-gradient(90deg, #111827 0%, #1e293b 50%, #111827 100%);
+            border: 2px solid #3b82f6;
+            border-radius: 16px;
+            margin-bottom: 30px;
+            padding: 20px 40px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), inset 0 0 20px rgba(59, 130, 246, 0.1);
+        }
+
+        .duty-label-box {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            color: #60a5fa;
+        }
+
+        .duty-label-icon {
+            font-size: 2.5rem;
+            filter: drop-shadow(0 0 10px rgba(96, 165, 250, 0.5));
+        }
+
+        .duty-label-text {
             display: flex;
             flex-direction: column;
-            position: relative;
-            animation: popIn 0.3s ease-out;
         }
 
-        @keyframes popIn {
-            from {
-                opacity: 0;
-                transform: scale(0.9);
-            }
-
-            to {
-                opacity: 1;
-                transform: scale(1);
-            }
-        }
-
-        #popup-header {
-            padding: 15px 20px;
-            background: #0f172a;
-            border-bottom: 1px solid #334155;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-top-left-radius: 10px;
-            border-top-right-radius: 10px;
-            flex-shrink: 0;
-        }
-
-        #popup-title {
-            font-size: 1.4rem;
-            font-weight: bold;
-            color: #4ade80;
-            text-transform: uppercase;
-        }
-
-        #popup-close {
-            background: none;
-            border: none;
-            color: #94a3b8;
-            font-size: 2rem;
-            cursor: pointer;
-            line-height: 1;
-            padding: 0 10px;
-        }
-
-        #popup-close:hover {
-            color: #ef4444;
-        }
-
-        #popup-body {
-            padding: 20px;
-            overflow-y: auto;
-            flex: 1;
-            min-height: 0;
-            font-size: 1.3rem;
-            line-height: 1.6;
-            color: #f1f5f9;
-            white-space: pre-wrap;
-            font-family: 'Segoe UI', sans-serif;
-            -webkit-overflow-scrolling: touch;
-        }
-
-        #popup-footer {
-            padding: 10px 20px;
-            background: #0f172a;
-            border-top: 1px solid #334155;
-            text-align: right;
-            color: #64748b;
+        .duty-label-top {
             font-size: 0.8rem;
-            border-bottom-left-radius: 10px;
-            border-bottom-right-radius: 10px;
-            flex-shrink: 0;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            opacity: 0.8;
         }
 
-        /* --- PLAN LEKCJI --- */
+        .duty-label-main {
+            font-size: 1.4rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .duty-info-center {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+
+        .duty-time-badge {
+            background: rgba(59, 130, 246, 0.2);
+            border: 1px solid #3b82f6;
+            padding: 5px 15px;
+            border-radius: 8px;
+            color: #93c5fd;
+            font-weight: 700;
+            font-size: 1rem;
+            white-space: nowrap;
+        }
+
+        .duty-person-name {
+            font-size: 1.8rem;
+            font-weight: 900;
+            color: #ffffff;
+            text-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
+            white-space: nowrap;
+        }
+
+        .duty-contact-box {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .duty-phone-btn {
+            background: linear-gradient(135deg, #2563eb, #1d4ed8);
+            color: white;
+            padding: 12px 25px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 800;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border: 1px solid #3b82f6;
+            box-shadow: 0 5px 15px rgba(37, 99, 235, 0.4);
+            transition: all 0.2s;
+        }
+
+        .duty-phone-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(37, 99, 235, 0.6);
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+        }
+
+        .duty-phone-btn svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        .duty-ext-info {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            line-height: 1.2;
+        }
+
+        .duty-ext-label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            color: #94a3b8;
+            font-weight: 700;
+        }
+
+        .duty-ext-num {
+            font-size: 1.4rem;
+            font-weight: 900;
+            color: #fbbf24;
+            letter-spacing: 1px;
+            font-family: Consolas, "SFMono-Regular", monospace;
+        }
+
+        .duty-empty-msg {
+            color: #94a3b8;
+            font-style: italic;
+            font-size: 1rem;
+            line-height: 1.4;
+        }
+
         #schedule-view {
             display: none;
             width: 100%;
@@ -670,6 +658,7 @@
             display: flex;
             flex-direction: column;
             border: 1px solid #334155;
+            overflow: hidden;
         }
 
         .day-header {
@@ -681,11 +670,8 @@
             border-bottom: 1px solid #047857;
             text-transform: uppercase;
             letter-spacing: 1px;
-            position: sticky;
-            top: var(--header-height-desktop);
-            z-index: 900;
-            border-top-left-radius: 10px;
-            border-top-right-radius: 10px;
+            position: relative;
+            z-index: 1;
         }
 
         .day-date {
@@ -709,7 +695,7 @@
             overflow: hidden;
             display: flex;
             flex-direction: column;
-            gap: 0px;
+            gap: 0;
             background: #0f172a;
         }
 
@@ -724,10 +710,12 @@
             gap: 3px;
             border-bottom: 1px solid #334155;
             position: relative;
+            border-radius: 0;
         }
 
-        .card:last-child {
-            border-bottom: none;
+        .day-content > .card,
+        .day-content > .morning-duty {
+            border-radius: 8px;
         }
 
         .card.empty {
@@ -740,6 +728,13 @@
             font-style: italic;
             font-size: 0.85rem;
             min-height: 40px;
+        }
+
+        .card.empty .main-info {
+            color: inherit;
+            font-size: 0.85rem;
+            font-style: italic;
+            font-weight: 500;
         }
 
         body.mode-room .card {
@@ -761,6 +756,8 @@
             color: #94a3b8;
             margin-bottom: 2px;
             font-weight: 600;
+            gap: 10px;
+            flex-wrap: wrap;
         }
 
         .nr {
@@ -781,6 +778,12 @@
             font-size: 0.9rem;
             color: #cbd5e1;
             margin-top: 2px;
+        }
+
+        .details {
+            font-size: 0.78rem;
+            color: #cbd5e1;
+            line-height: 1.35;
         }
 
         .group-badge {
@@ -807,6 +810,11 @@
             color: #fca5a5;
         }
 
+        .card.transfer-out .main-info {
+            text-decoration: line-through;
+            opacity: 0.72;
+        }
+
         .note-red {
             color: #f87171;
             font-weight: 700;
@@ -823,7 +831,8 @@
             color: #86efac;
         }
 
-        .is-new .sub-line {
+        .is-new .sub-line,
+        .is-new .details {
             color: #dcfce7;
         }
 
@@ -836,12 +845,10 @@
             color: #e0f2fe;
         }
 
-        .is-transfer .sub-line {
-            color: #bae6fd;
-        }
-
+        .is-transfer .sub-line,
+        .is-transfer .details,
         .is-transfer .transfer-note {
-            color: #7dd3fc;
+            color: #bae6fd;
         }
 
         .pay-badge {
@@ -867,30 +874,17 @@
             padding-top: 2px;
         }
 
-        .duty-section {
-            background: var(--duty-bg);
-            color: var(--duty-color);
-            border-top: 1px dashed var(--duty-border);
-            padding: 8px 10px;
-            font-size: 0.85rem;
-        }
-
+        .duty-section,
         .morning-duty {
             background: var(--duty-bg);
-            border-left: 4px solid #f59e0b;
-            padding: 12px;
-            border-radius: 8px;
-            margin-bottom: 8px;
+            border-left-color: #f59e0b !important;
             color: var(--duty-color);
-            font-size: 0.9rem;
-            border: 1px solid #78350f;
         }
 
         .duty-sub {
             background: var(--duty-sub-bg);
-            border-left-color: var(--duty-sub-border);
+            border-left-color: var(--duty-sub-border) !important;
             color: var(--duty-sub-color);
-            border-color: #14532d;
         }
 
         footer {
@@ -915,7 +909,6 @@
             }
         }
 
-        /* --- MOBILE OPTIMIZATION --- */
         @media (max-width: 900px) {
             header {
                 flex-direction: column;
@@ -970,18 +963,22 @@
                 display: flex !important;
             }
 
+            #nav-controls select {
+                min-width: 0;
+                flex: 1 1 0;
+                height: 36px;
+                font-size: 0.8rem;
+            }
+
             button.back-btn {
                 height: 36px;
                 padding: 0 10px;
                 font-size: 0.8rem;
             }
 
-            .qr-wrapper {
-                display: none !important;
-            }
-
+            .qr-wrapper,
             .status-qr-container {
-                display: none;
+                display: none !important;
             }
 
             .mobile-status-container {
@@ -1018,11 +1015,8 @@
                 display: none;
             }
 
-            .new-schedule-btn {
-                font-size: 0.85rem;
-                padding: 8px 10px;
-                width: 100%;
-                margin-bottom: 5px;
+            #dashboard-view {
+                padding: 20px 12px;
             }
 
             #announcements-container {
@@ -1039,7 +1033,6 @@
                 border-left: none;
                 border-top: 1px solid #334155;
                 min-height: 250px;
-                padding: 20px;
             }
 
             .selection-grid {
@@ -1075,166 +1068,13 @@
 
             .week-container {
                 grid-template-columns: 1fr !important;
+                padding: 12px;
             }
 
             .day-header {
-                top: var(--header-height-mobile) !important;
-                border-radius: 0;
                 padding: 10px;
             }
 
-            /* Poprawka dla popupu na mobile */
-            #popup-window {
-                width: 95%;
-                max-height: 90vh;
-            }
-
-            #popup-title {
-                font-size: 1.1rem;
-            }
-        }
-
-        @media (min-width: 901px) {
-            .mobile-status-container {
-                display: none;
-            }
-        }
-
-        /* --- PASEK DYŻURNEGO NADZORU --- */
-        #duty-bar {
-            background: linear-gradient(90deg, #111827 0%, #1e293b 50%, #111827 100%);
-            border: 2px solid #3b82f6;
-            border-radius: 16px;
-            margin-bottom: 30px;
-            padding: 20px 40px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 30px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), inset 0 0 20px rgba(59, 130, 246, 0.1);
-        }
-
-        .duty-label-box {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            color: #60a5fa;
-        }
-
-        .duty-label-icon {
-            font-size: 2.5rem;
-            filter: drop-shadow(0 0 10px rgba(96, 165, 250, 0.5));
-        }
-
-        .duty-label-text {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .duty-label-top {
-            font-size: 0.8rem;
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            opacity: 0.8;
-        }
-
-        .duty-label-main {
-            font-size: 1.4rem;
-            font-weight: 900;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .duty-info-center {
-            flex: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 30px;
-        }
-
-        .duty-time-badge {
-            background: rgba(59, 130, 246, 0.2);
-            border: 1px solid #3b82f6;
-            padding: 5px 15px;
-            border-radius: 8px;
-            color: #93c5fd;
-            font-weight: 700;
-            font-size: 1rem;
-            white-space: nowrap;
-        }
-
-        .duty-person-name {
-            font-size: 1.8rem;
-            font-weight: 900;
-            color: #ffffff;
-            text-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
-            white-space: nowrap;
-        }
-
-        .duty-contact-box {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-        }
-
-        .duty-phone-btn {
-            background: linear-gradient(135deg, #2563eb, #1d4ed8);
-            color: white;
-            padding: 12px 25px;
-            border-radius: 12px;
-            text-decoration: none;
-            font-weight: 800;
-            font-size: 1.1rem;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            border: 1px solid #3b82f6;
-            box-shadow: 0 5px 15px rgba(37, 99, 235, 0.4);
-            transition: all 0.2s;
-        }
-
-        .duty-phone-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(37, 99, 235, 0.6);
-            background: linear-gradient(135deg, #3b82f6, #2563eb);
-        }
-
-        .duty-phone-btn svg {
-            width: 20px;
-            height: 20px;
-        }
-
-        .duty-ext-info {
-            display: flex;
-            flex-direction: column;
-            align-items: flex-end;
-            line-height: 1.2;
-        }
-
-        .duty-ext-label {
-            font-size: 0.7rem;
-            text-transform: uppercase;
-            color: #94a3b8;
-            font-weight: 700;
-        }
-
-        .duty-ext-num {
-            font-size: 1.4rem;
-            font-weight: 900;
-            color: #fbbf24;
-            letter-spacing: 1px;
-            font-family: 'Consolas', monospace;
-        }
-
-        .duty-empty-msg {
-            color: #64748b;
-            font-style: italic;
-            font-size: 1.2rem;
-        }
-
-        @media (max-width: 900px) {
             #duty-bar {
                 flex-direction: column;
                 padding: 20px;
@@ -1261,11 +1101,15 @@
                 align-items: center;
             }
         }
+
+        @media (min-width: 901px) {
+            .mobile-status-container {
+                display: none;
+            }
+        }
     </style>
 </head>
-
 <body>
-
     <header>
         <div class="h-col-left">
             <img src="orzeł.png" alt="ZSZ5 Logo" class="logo" onerror="this.style.display='none'">
@@ -1275,11 +1119,10 @@
                 <div id="selection-info" class="selection-info"></div>
                 <div id="clock" class="clock">--:--</div>
             </div>
-            <div class="h-col-right" id="mobile-menu-placeholder" style="display:none;"></div>
         </div>
 
         <div class="mobile-status-container">
-            <div id="mobile-status"></div>
+            <div id="mobile-status">Ładowanie...</div>
         </div>
 
         <div class="h-col-center">
@@ -1295,10 +1138,10 @@
 
         <div class="h-col-right">
             <div class="status-qr-container">
-                <div id="desktop-status"></div>
+                <div id="desktop-status">Ładowanie...</div>
                 <div class="qr-wrapper">
                     <div class="qr-text">strona z planem<br>na telefon</div>
-                    <img src="qr_nauczyciel.png" class="qr-img" alt="QR">
+                    <img src="qr_nauczyciel.png" class="qr-img" alt="QR" onerror="this.parentElement.style.display='none'">
                 </div>
             </div>
 
@@ -1320,7 +1163,6 @@
     <div id="dashboard-view">
         <div id="selection-grid" class="selection-grid"></div>
 
-        <!-- PASEK DYŻURNEGO NADZORU -->
         <div id="duty-bar">
             <div class="duty-label-box">
                 <div class="duty-label-icon">🛡️</div>
@@ -1330,40 +1172,28 @@
                 </div>
             </div>
             <div id="duty-bar-content" class="duty-info-center">
-                <span class="duty-empty-msg">Ładowanie grafiku...</span>
+                <span class="duty-empty-msg">Ładowanie danych...</span>
             </div>
         </div>
 
         <div id="announcements-container">
             <div class="anno-left">
                 <div class="anno-title">📢 Komunikaty</div>
-                <div id="announcement-list"></div>
-
-                <div class="anno-btn"
-                    style="text-decoration: none; margin-top: 15px; border: 1px solid #3b82f6; background: linear-gradient(180deg, #1e293b 0%, #1e3a8a 100%); color: #fff; cursor: default; display: flex; flex-direction: column; align-items: flex-start; padding: 12px; gap: 4px;">
-                    <div style="font-weight: bold; font-size: 1.1em;">📅 Rada pedagogiczna klasyfikacyjna</div>
-                    <div style="font-size: 0.9em; font-weight: normal; line-height: 1.4; text-align: left;">Rada
-                        pedagogiczna klasyfikacyjna klas 5 oraz klasy 4B jest w <strong>środę 22 kwietnia o
-                            15:00</strong>.</div>
-                </div>
-
-                <div class="anno-btn"
-                    style="text-decoration: none; margin-top: 10px; border: 1px solid #f59e0b; background: linear-gradient(180deg, #1e293b 0%, #451a03 100%); color: #fff; cursor: default; display: flex; flex-direction: column; align-items: flex-start; padding: 12px; gap: 4px;">
-                    <div style="font-weight: bold; font-size: 1.1em;">🎓 Oceny końcowe - klasy maturalne</div>
-                    <div style="font-size: 0.9em; font-weight: normal; line-height: 1.4; text-align: left;">W <strong>piątek 17 kwietnia</strong> wpisujemy oceny końcowe roczne w klasach maturalnych: <strong>4B</strong>, <strong>5TF</strong>, <strong>5TH</strong>.</div>
-                </div>
-
-                <div class="anno-btn" onclick="document.getElementById('popup-dyrektor').style.display='flex'"
-                    style="text-decoration: none; margin-top: 10px; border: 1px solid #a855f7; background: linear-gradient(180deg, #1e293b 0%, #2e1065 100%); color: #fff; cursor: pointer; display: flex; flex-direction: column; align-items: flex-start; padding: 12px; gap: 4px; transition: all 0.2s;" onmouseover="this.style.opacity='0.85'" onmouseout="this.style.opacity='1'">
-                    <div style="font-weight: bold; font-size: 1.1em;">📋 Komunikat Dyrektora – kliknij, aby rozwinąć</div>
-                    <div style="font-size: 0.9em; font-weight: normal; line-height: 1.4; text-align: left;">Rady pedagogiczne, zakończenie roku maturalnych, wolne 4–6 maja, najbliższe wydarzenia szkolne.</div>
+                <div id="announcement-list">
+                    <div class="anno-btn">
+                        <span>
+                            <strong>30 maja 2026 (sobota) jest dniem pracującym.</strong><br>
+                            Odrabiamy wolny piątek 5 czerwca 2026 po Bożym Ciele.<br>
+                            To dzień konsultacji dla uczniów oraz szkolenia.
+                        </span>
+                    </div>
                 </div>
             </div>
             <div class="anno-right holiday-vibes">
                 <div class="holiday-content">
-                    <div class="question-text">DO MAJÓWKI 2026 ZOSTAŁO:</div>
-                    <div class="personal-countdown" id="holiday-countdown">Ładowanie...</div>
-                    <div style="font-size:3rem; margin-top:10px;">🥩🔥🍢</div>
+                    <div class="question-text">AKTYWNE DANE PLANU</div>
+                    <div class="personal-countdown" id="summaryCounts">Ładowanie...</div>
+                    <div class="summary-sub" id="summarySources">Plan, dyżury, zastępstwa i przeniesienia.</div>
                 </div>
             </div>
         </div>
@@ -1373,837 +1203,1532 @@
         <div id="grid" class="week-container"></div>
     </div>
 
-    <div id="popup-overlay" onclick="if(event.target===this) closePopup()">
-        <div id="popup-window">
-            <div id="popup-header">
-                <div id="popup-title">Tytuł ogłoszenia</div>
-                <button id="popup-close" onclick="closePopup()">&#10005;</button>
-            </div>
-            <div id="popup-body">Treść...</div>
-            <div id="popup-footer">Okno zamknie się automatycznie za chwilę.</div>
-        </div>
-    </div>
-
-    <!-- POPUP: Komunikat Dyrektora -->
-    <div id="popup-dyrektor" onclick="if(event.target===this)this.style.display='none'" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.75); z-index:9999; align-items:center; justify-content:center; padding:20px; box-sizing:border-box;">
-        <div style="background:linear-gradient(160deg,#1e1b4b,#0f172a); border:1px solid #a855f7; border-radius:16px; max-width:700px; width:100%; max-height:90vh; overflow-y:auto; padding:30px; color:#e2e8f0; position:relative; box-shadow:0 25px 60px rgba(168,85,247,0.3);">
-            <button onclick="document.getElementById('popup-dyrektor').style.display='none'" style="position:absolute; top:15px; right:15px; background:rgba(168,85,247,0.2); border:1px solid #a855f7; color:#d8b4fe; border-radius:8px; width:32px; height:32px; font-size:1.1rem; cursor:pointer; display:flex; align-items:center; justify-content:center;">✕</button>
-            <div style="font-size:1.3rem; font-weight:900; color:#d8b4fe; margin-bottom:20px; padding-right:40px;">📋 Komunikat Dyrektora</div>
-
-            <!-- Rada klasyfikacyjna 22 kwietnia -->
-            <div style="background:rgba(59,130,246,0.1); border:1px solid #3b82f6; border-radius:10px; padding:15px; margin-bottom:12px;">
-                <div style="font-weight:800; color:#93c5fd; margin-bottom:6px;">📅 Rada Pedagogiczna Klasyfikacyjna – 22 kwietnia (środa)</div>
-                <div style="font-size:0.9em; line-height:1.6; color:#cbd5e1;">Klasyfikacja klas <strong>5TF i 5TH</strong> Technikum nr 5. Godz. <strong>15:00</strong>, sala kinowa, ok. <strong>70 minut</strong>.<br>
-                <strong>Porządek:</strong>
-                <ol style="margin:6px 0 0 18px; padding:0;">
-                    <li>Przyjęcie protokołu z poprzedniego posiedzenia RP – 2 min</li>
-                    <li>Klasyfikacja klas 5TF i 5TH (p. I. Leńczowska, p. M. Kopij) – 15 min</li>
-                    <li>Szkolenie z procedur maturalnych (p. dyr. M. Filusz) – 40 min</li>
-                    <li>Sprawy różne (skreślenia, komunikaty…) – 13 min</li>
-                </ol></div>
-            </div>
-
-            <!-- Zakończenie roku maturalnych 24 kwietnia -->
-            <div style="background:rgba(234,179,8,0.1); border:1px solid #ca8a04; border-radius:10px; padding:15px; margin-bottom:12px;">
-                <div style="font-weight:800; color:#fde047; margin-bottom:6px;">🎓 Uroczystość Zakończenia Roku – 24 kwietnia (piątek)</div>
-                <div style="font-size:0.9em; line-height:1.6; color:#cbd5e1;">Zakończenie roku szkolnego 2025/2026 dla klas maturalnych. Godz. <strong>14:00</strong>, sala kinowa.<br>
-                Osoby z zaplanowanymi lekcjami chcące uczestniczyć – prosimy o kontakt z <strong>p. dyr. Maciejem Najwerem</strong>.</div>
-            </div>
-
-            <!-- Rada szkoleniowa 29 kwietnia -->
-            <div style="background:rgba(59,130,246,0.1); border:1px solid #3b82f6; border-radius:10px; padding:15px; margin-bottom:12px;">
-                <div style="font-weight:800; color:#93c5fd; margin-bottom:6px;">📚 Rada Pedagogiczna Szkoleniowa – 29 kwietnia (środa)</div>
-                <div style="font-size:0.9em; line-height:1.6; color:#cbd5e1;">Godz. <strong>15:00</strong>, sala kinowa, ok. <strong>150 minut</strong>.<br>
-                <strong>Porządek:</strong>
-                <ol style="margin:6px 0 0 18px; padding:0;">
-                    <li>Przyjęcie protokołu z poprzedniego posiedzenia RP – 2 min</li>
-                    <li>Szkolenie: <em>Ocena funkcjonalna ucznia</em> (3 × godz. dydaktyczna) – 135 min</li>
-                    <li>Sprawy różne – 13 min</li>
-                </ol></div>
-            </div>
-
-            <!-- Wolne 4-6 maja -->
-            <div style="background:rgba(239,68,68,0.1); border:1px solid #ef4444; border-radius:10px; padding:15px; margin-bottom:12px;">
-                <div style="font-weight:800; color:#fca5a5; margin-bottom:6px;">🚫 Brak zajęć dydaktycznych – 4–6 maja (pn–śr)</div>
-                <div style="font-size:0.9em; line-height:1.6; color:#cbd5e1;">Ze względu na <strong>egzaminy maturalne</strong> nie prowadzimy zajęć.<br>
-                Uczniowie klas branżowej szkoły I stopnia realizują w tym czasie <strong>zajęcia praktyczne u pracodawców</strong> (chyba że pracodawca zdecyduje inaczej).</div>
-            </div>
-
-            <!-- Najbliższe wydarzenia -->
-            <div style="background:rgba(168,85,247,0.1); border:1px solid #a855f7; border-radius:10px; padding:15px;">
-                <div style="font-weight:800; color:#d8b4fe; margin-bottom:8px;">🗓 Najbliższe wydarzenia szkolne</div>
-                <div style="font-size:0.9em; line-height:1.8; color:#cbd5e1;">
-                    <div>🏆 <strong>XXXI Ogólnopolski Turniej Cukiernik i Piekarz</strong> – 14–16 kwietnia (wt–czw)</div>
-                    <div>🎤 <strong>Forum Zawodowe</strong> – 20 kwietnia (pn), godz. 10:00–14:00, sala kinowa</div>
-                    <div>✂️ <strong>Kongres Fryzjerstwa Naturalnego</strong> – 21 kwietnia (wt), godz. 11:00, sala kinowa + prac. s.09</div>
-                    <div>🚪 <strong>Drzwi Otwarte</strong> – 29 kwietnia (śr), godz. 10:00–15:00</div>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <footer>
-        <a href="https://www.zsz5.edupage.org" target="_blank">www.zsz5.edupage.org</a>
+        <span id="footer-meta">Ładowanie danych...</span>
+        <span> • <a href="https://www.zsz5.edupage.org" target="_blank" rel="noreferrer">www.zsz5.edupage.org</a></span>
+        <span> • Widok TV: <a href="tv.html">tv.html</a></span>
     </footer>
 
     <script>
         const CONFIG = {
-            xml: './plan.xml',
-            dyzury: './dyzury.xlsx',
-            zastepstwa: './zastepstwa.xlsx',
-            przeniesienia: './InformacjeOPrzeniesieniach.xlsx',
-            grafik: './nadzor.xlsx',
-            godziny: './godziny.json',
-            refreshInterval: 120000,
-            idleTimeout: 45000
+            xml: "./plan lekcji 4 maja.xml",
+            dutyWorkbook: "./plan_lekcji_z_dyzurami 4 maja.xlsx",
+            oversightWorkbook: "./nadzor.xlsx",
+            detailedChanges: ["./ZbiorczeZestawienieZmian.xlsx"],
+            substitutionsInfo: ["./InformacjeOZastepstwach.xlsx"],
+            transfersInfo: ["./InformacjeOPrzeniesieniach (1).xlsx"],
+            refreshInterval: 120000
         };
 
-        // --- LISTA PLIKÓW Z OGŁOSZENIAMI ---
-        const ANNOUNCEMENT_FILES = [
-        ];
+        const DAY_NAMES = ["Poniedziałek", "Wtorek", "Środa", "Czwartek", "Piątek"];
 
         const DB = {
-            teachers: {}, rooms: [], classes: {}, classesList: [], groups: {}, locations: [], periods: [], lessons: [], duties: [], subs: [], dutyChanges: [], transfers: [], customHours: {},
-            dutySchedule: [], phoneNumbers: {}
+            teachers: {},
+            teacherOrder: [],
+            teacherByShort: {},
+            classesById: {},
+            classesList: [],
+            groups: {},
+            periods: [],
+            rooms: [],
+            lessons: [],
+            duties: [],
+            dutySchedule: [],
+            phoneNumbers: {},
+            supervisoryDutyError: "",
+            substitutions: [],
+            transfers: [],
+            changeSources: {
+                detailedChanges: "",
+                substitutionsInfo: "",
+                transfersInfo: ""
+            }
         };
-        const FILE_VERSIONS = { zastepstwa: '---', przeniesienia: '---' };
-        const DAYS = ["Niedziela", "Poniedziałek", "Wtorek", "Środa", "Czwartek", "Piątek", "Sobota"];
-        let refreshTimer = null; let idleTimer = null; let isDashboardActive = true; let weekOffset = 0;
-        let popupTimer = null;
 
-        window.onload = () => {
-            startClock(); refreshData(); initAnnouncements(); startHolidayCountdown();
-            refreshTimer = setInterval(() => { refreshData(); }, CONFIG.refreshInterval);
-            ['mousemove', 'click', 'touchstart', 'scroll', 'keydown'].forEach(evt => document.addEventListener(evt, resetIdle));
+        const STATE = {
+            weekOffset: 0,
+            currentMode: "teacher",
+            currentSelection: "",
+            lastLoadedAt: null,
+            isDashboardActive: true
         };
 
+        const refs = {
+            clock: document.getElementById("clock"),
+            selectionInfo: document.getElementById("selection-info"),
+            mobileStatus: document.getElementById("mobile-status"),
+            desktopStatus: document.getElementById("desktop-status"),
+            weekNavContainer: document.getElementById("week-nav-container"),
+            weekRangeText: document.getElementById("week-range-text"),
+            navControls: document.getElementById("nav-controls"),
+            modeSelect: document.getElementById("mode-select"),
+            dataSelect: document.getElementById("data-select"),
+            debugBar: document.getElementById("debug-bar"),
+            dashboardView: document.getElementById("dashboard-view"),
+            selectionGrid: document.getElementById("selection-grid"),
+            dutyBarContent: document.getElementById("duty-bar-content"),
+            summaryCounts: document.getElementById("summaryCounts"),
+            summarySources: document.getElementById("summarySources"),
+            scheduleView: document.getElementById("schedule-view"),
+            grid: document.getElementById("grid"),
+            footerMeta: document.getElementById("footer-meta")
+        };
 
-        // --- LOGIKA OGŁOSZEŃ I POPUP ---
-        function initAnnouncements() {
-            const listContainer = document.getElementById('announcement-list');
-            listContainer.innerHTML = "";
+        const CHANGES = window.ScheduleChanges;
 
-            ANNOUNCEMENT_FILES.forEach(filename => {
-                const displayName = filename.replace('.txt', '').replace(/_/g, ' ').toUpperCase();
-                const btn = document.createElement('button');
-                btn.className = 'anno-btn';
-                btn.innerHTML = `<span>${displayName}</span>`;
-                btn.onclick = () => openAnnouncement(filename, displayName);
-                listContainer.appendChild(btn);
+        function splitCsv(value) {
+            return String(value || "")
+                .split(",")
+                .map((item) => item.trim())
+                .filter(Boolean);
+        }
+
+        function compactSpaces(value) {
+            return String(value || "").replace(/\s+/g, " ").trim();
+        }
+
+        function stripAccents(value) {
+            return String(value || "")
+                .normalize("NFKD")
+                .replace(/[\u0300-\u036f]/g, "")
+                .replace(/ł/g, "l")
+                .replace(/Ł/g, "L");
+        }
+
+        function normalize(value) {
+            return stripAccents(compactSpaces(value)).toLowerCase();
+        }
+
+        function escapeHtml(value) {
+            return String(value ?? "")
+                .replaceAll("&", "&amp;")
+                .replaceAll("<", "&lt;")
+                .replaceAll(">", "&gt;")
+                .replaceAll('"', "&quot;")
+                .replaceAll("'", "&#039;");
+        }
+
+        function padTime(value) {
+            const text = String(value || "").trim();
+            if (!text) {
+                return "";
+            }
+            const [hours, minutes] = text.split(":");
+            if (hours === undefined || minutes === undefined) {
+                return text;
+            }
+            return `${hours.padStart(2, "0")}:${minutes.padStart(2, "0")}`;
+        }
+
+        function timeToMinutes(value) {
+            const [hours, minutes] = padTime(value).split(":").map(Number);
+            if (Number.isNaN(hours) || Number.isNaN(minutes)) {
+                return 0;
+            }
+            return hours * 60 + minutes;
+        }
+
+        function formatDateLabel(date) {
+            return date.toLocaleDateString("pl-PL", {
+                day: "2-digit",
+                month: "2-digit",
+                year: "numeric"
+            });
+        }
+
+        function formatDateShort(date) {
+            return date.toLocaleDateString("pl-PL", {
+                day: "2-digit",
+                month: "2-digit"
+            });
+        }
+
+        function dateToIso(date) {
+            return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+        }
+
+        function getTodayKey() {
+            return dateToIso(new Date());
+        }
+
+        function getReferenceDate() {
+            const base = new Date();
+            const day = base.getDay();
+            if (day === 6) {
+                base.setDate(base.getDate() + 2);
+            } else if (day === 0) {
+                base.setDate(base.getDate() + 1);
+            }
+            return base;
+        }
+
+        function getStartOfWeek(baseDate, offset = 0) {
+            const result = new Date(baseDate);
+            const day = result.getDay();
+            const diff = result.getDate() - day + (day === 0 ? -6 : 1);
+            result.setDate(diff + offset * 7);
+            result.setHours(0, 0, 0, 0);
+            return result;
+        }
+
+        function getWeekDates(offset = 0) {
+            const monday = getStartOfWeek(getReferenceDate(), offset);
+            return DAY_NAMES.map((_, index) => {
+                const current = new Date(monday);
+                current.setDate(monday.getDate() + index);
+                return current;
+            });
+        }
+
+        function encodePath(url) {
+            return encodeURI(url).replace(/\+/g, "%2B");
+        }
+
+        async function fetchArrayBuffer(url) {
+            const response = await fetch(`${encodePath(url)}?t=${Date.now()}`, { cache: "no-store" });
+            if (!response.ok) {
+                throw new Error(`Nie można wczytać pliku ${url} (HTTP ${response.status})`);
+            }
+            return response.arrayBuffer();
+        }
+
+        async function fetchDecodedText(url, encoding) {
+            const buffer = await fetchArrayBuffer(url);
+            return new TextDecoder(encoding).decode(buffer);
+        }
+
+        function log(message, isError = false) {
+            refs.debugBar.textContent = message;
+            refs.debugBar.style.color = isError ? "#ef4444" : "#64748b";
+        }
+
+        function resetDatabase() {
+            DB.teachers = {};
+            DB.teacherOrder = [];
+            DB.teacherByShort = {};
+            DB.classesById = {};
+            DB.classesList = [];
+            DB.groups = {};
+            DB.periods = [];
+            DB.rooms = [];
+            DB.lessons = [];
+            DB.duties = [];
+            DB.dutySchedule = [];
+            DB.phoneNumbers = {};
+            DB.supervisoryDutyError = "";
+            DB.substitutions = [];
+            DB.transfers = [];
+            DB.changeSources = {
+                detailedChanges: "",
+                substitutionsInfo: "",
+                transfersInfo: ""
+            };
+        }
+
+        async function loadXMLData() {
+            const xmlText = await fetchDecodedText(CONFIG.xml, "windows-1250");
+            const xml = new DOMParser().parseFromString(xmlText, "text/xml");
+
+            const roomsById = {};
+            const subjectsById = {};
+            const lessonDefs = {};
+
+            xml.querySelectorAll("teachers teacher").forEach((node) => {
+                const id = node.getAttribute("id");
+                if (!id) {
+                    return;
+                }
+                const firstName = compactSpaces(node.getAttribute("firstname"));
+                const lastName = compactSpaces(node.getAttribute("lastname") || node.getAttribute("name"));
+                const name = compactSpaces(`${firstName} ${lastName}`) || compactSpaces(node.getAttribute("name"));
+                const short = compactSpaces(node.getAttribute("short"));
+                DB.teachers[id] = {
+                    id,
+                    name,
+                    short,
+                    normalized: normalize(name)
+                };
+                if (short) {
+                    DB.teacherByShort[normalize(short)] = id;
+                }
             });
 
-            // Usunięto tekst "Brak zdefiniowanych ogłoszeń" dla czystszego widoku
-        }
+            DB.teacherOrder = Object.values(DB.teachers)
+                .filter((teacher) => !/vacat|wakat/i.test(teacher.name))
+                .sort((left, right) => left.name.localeCompare(right.name, "pl"));
 
-        async function openAnnouncement(filename, title) {
-            try {
-                const res = await fetch(filename + '?t=' + new Date().getTime());
-                if (res.ok) {
-                    const text = await res.text();
-                    showPopup(title, text);
-                } else {
-                    showPopup("Błąd", "Nie znaleziono pliku: " + filename);
+            xml.querySelectorAll("groups group").forEach((node) => {
+                const id = node.getAttribute("id");
+                const name = compactSpaces(node.getAttribute("name"));
+                if (id && name) {
+                    DB.groups[id] = name;
                 }
-            } catch (e) {
-                showPopup("Błąd", "Wystąpił problem z pobraniem ogłoszenia.");
-            }
-        }
+            });
 
-        function showPopup(title, content) {
-            const overlay = document.getElementById('popup-overlay');
-            const pTitle = document.getElementById('popup-title');
-            const pBody = document.getElementById('popup-body');
+            xml.querySelectorAll("classes class").forEach((node) => {
+                const id = node.getAttribute("id");
+                const name = compactSpaces(node.getAttribute("name"));
+                if (id && name) {
+                    DB.classesById[id] = name;
+                    DB.classesList.push(name);
+                }
+            });
+            DB.classesList = [...new Set(DB.classesList)].sort((left, right) => left.localeCompare(right, "pl"));
 
-            pTitle.innerText = title;
-            pBody.innerHTML = content.replace(/\n/g, '<br>');
+            xml.querySelectorAll("classrooms classroom").forEach((node) => {
+                const id = node.getAttribute("id");
+                const name = compactSpaces(node.getAttribute("name"));
+                if (id && name) {
+                    roomsById[id] = name;
+                }
+            });
+            DB.rooms = [...new Set(Object.values(roomsById))].sort((left, right) => left.localeCompare(right, "pl"));
 
-            overlay.style.display = 'flex';
+            xml.querySelectorAll("subjects subject").forEach((node) => {
+                const id = node.getAttribute("id");
+                const name = compactSpaces(node.getAttribute("name"));
+                if (id && name) {
+                    subjectsById[id] = name;
+                }
+            });
 
-            if (popupTimer) clearTimeout(popupTimer);
-            popupTimer = setTimeout(closePopup, 30000);
-        }
+            xml.querySelectorAll("periods period").forEach((node) => {
+                const number = Number(node.getAttribute("period"));
+                const start = padTime(node.getAttribute("starttime"));
+                const end = padTime(node.getAttribute("endtime"));
+                DB.periods.push({
+                    number,
+                    nr: number,
+                    start,
+                    end,
+                    startMinutes: timeToMinutes(start),
+                    endMinutes: timeToMinutes(end)
+                });
+            });
+            DB.periods.sort((left, right) => left.number - right.number);
 
-        function closePopup() {
-            document.getElementById('popup-overlay').style.display = 'none';
-            if (popupTimer) clearTimeout(popupTimer);
-        }
-        // ---------------------------------
+            xml.querySelectorAll("lessons lesson").forEach((node) => {
+                const id = node.getAttribute("id");
+                if (!id) {
+                    return;
+                }
+                lessonDefs[id] = {
+                    id,
+                    subject: subjectsById[node.getAttribute("subjectid")] || "Lekcja",
+                    classIds: splitCsv(node.getAttribute("classids")),
+                    roomIds: splitCsv(node.getAttribute("classroomids")),
+                    teacherIds: splitCsv(node.getAttribute("teacherids")),
+                    groupIds: splitCsv(node.getAttribute("groupids"))
+                };
+            });
 
-        function startHolidayCountdown() {
-            const targetDate = new Date('2026-04-30T17:20:00').getTime();
-
-            const update = () => {
-                const now = new Date().getTime();
-                const distance = targetDate - now;
-                const el = document.getElementById("holiday-countdown");
-
-                if (!el) return;
-
-                if (distance < 0) {
-                    el.innerHTML = "UDANEGO WYPOCZYNKU!";
+            xml.querySelectorAll("cards card").forEach((node) => {
+                const lessonDef = lessonDefs[node.getAttribute("lessonid")];
+                if (!lessonDef) {
                     return;
                 }
 
-                const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-                const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-                const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-
-                el.innerHTML = `${days}d ${hours}h ${minutes}m ${seconds}s`;
-            };
-            setInterval(update, 1000);
-            update();
-        }
-
-        function resetIdle() {
-            if (isDashboardActive) return;
-            clearTimeout(idleTimer);
-            const isMobile = window.innerWidth <= 900;
-            const timeLimit = isMobile ? 600000 : 30000;
-            idleTimer = setTimeout(returnToDashboard, timeLimit);
-        }
-
-        function returnToDashboard() {
-            isDashboardActive = true; weekOffset = 0; clearTimeout(idleTimer); closePopup();
-            document.getElementById('dashboard-view').style.display = 'block';
-            document.getElementById('schedule-view').style.display = 'none';
-            document.getElementById('nav-controls').style.display = 'none';
-            document.getElementById('week-nav-container').style.display = 'none';
-            document.getElementById('selection-info').style.display = 'none';
-            document.getElementById('selection-info').innerText = '';
-            document.body.className = ''; log("Menu Główne");
-        }
-
-        function openSchedule(mode, id) {
-            isDashboardActive = false; weekOffset = 0;
-            const modeSel = document.getElementById('mode-select');
-            const dataSel = document.getElementById('data-select');
-            modeSel.value = mode; populateSelect(false); dataSel.value = id;
-            document.body.className = `mode-${mode}`;
-
-            const displayDiv = document.getElementById('selection-info');
-            let displayName = id;
-            if (mode === 'teacher' && DB.teachers[id]) displayName = DB.teachers[id].name;
-            else if (mode === 'room') displayName = "Sala " + id;
-            else if (mode === 'class') displayName = "Klasa " + id;
-            else if (mode === 'duty') displayName = "Dyżur: " + id;
-
-            displayDiv.innerText = displayName; displayDiv.style.display = 'block';
-            document.getElementById('dashboard-view').style.display = 'none';
-            document.getElementById('schedule-view').style.display = 'block';
-            document.getElementById('nav-controls').style.display = 'flex';
-            document.getElementById('week-nav-container').style.display = 'flex';
-            render(); resetIdle();
-        }
-
-        function changeWeek(direction) { weekOffset += direction; render(); resetIdle(); }
-        function getStartOfWeek(date) {
-            const d = new Date(date); const day = d.getDay();
-            const diff = d.getDate() - day + (day == 0 ? -6 : 1);
-            return new Date(d.setDate(diff));
-        }
-        function formatDateShort(d) { return `${d.getDate()}.${d.getMonth() + 1}`; }
-        function formatFileDate(dateStr) {
-            if (!dateStr) return 'brak'; const d = new Date(dateStr);
-            return d.toLocaleString('pl-PL', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
-        }
-
-        async function refreshData() {
-            DB.lessons = []; DB.periods = []; DB.duties = []; DB.subs = []; DB.dutyChanges = []; DB.transfers = []; DB.customHours = {};
-            DB.teachers = {}; DB.classes = {}; DB.classesList = []; DB.rooms = []; DB.groups = {}; DB.locations = [];
-            DB.dutySchedule = []; DB.phoneNumbers = {};
-            try {
-                await loadXML();
-
-                await Promise.all([
-                    loadExcel(CONFIG.dyzury, 'dyzury'),
-                    loadExcel(CONFIG.zastepstwa, 'zastepstwa'),
-                    loadExcel(CONFIG.przeniesienia, 'przeniesienia'),
-                    loadExcel(CONFIG.grafik, 'grafik').catch(e => console.warn('Błąd ładowania grafiku:', e)),
-                    loadCustomHours().catch(() => { })
-                ]);
-
-                addMissingTeachers();
-                if (isDashboardActive) {
-                    renderDashboard();
-                    updateDutyBar();
-                } else { populateSelect(false); render(); }
-
-                const info = `WERSJE PLIKÓW: Zastępstwa [${FILE_VERSIONS.zastepstwa}]  •  Przeniesienia [${FILE_VERSIONS.przeniesienia}]  •  Odświeżono: ${new Date().toLocaleTimeString()}`;
-                log(info);
-            } catch (e) {
-                console.error(e);
-                log("Błąd krytyczny! Sprawdź czy plik plan.xml istnieje.", true);
-            }
-        }
-
-        // ============================================================
-        // LOGIKA DYŻURÓW NADZORU
-        // ============================================================
-
-        function parseWeekRange(str) {
-            if (!str || typeof str !== 'string') return null;
-            try {
-                const parts = str.trim().split('-');
-                if (parts.length < 2) return null;
-                const currentYear = new Date().getFullYear();
-                let endPart = parts[parts.length - 1].trim();
-                let startPart = parts.slice(0, parts.length - 1).join('-').trim();
-
-                const parseDate = (s, yearHint) => {
-                    const p = s.trim().split('.');
-                    if (p.length === 3) return new Date(parseInt(p[2]), parseInt(p[1]) - 1, parseInt(p[0]));
-                    if (p.length === 2) return new Date(yearHint, parseInt(p[1]) - 1, parseInt(p[0]));
-                    return null;
-                };
-
-                const endParts = endPart.split('.');
-                let year = currentYear;
-                if (endParts.length === 3) year = parseInt(endParts[2]);
-
-                const endDate = parseDate(endPart, year);
-                const startDate = parseDate(startPart, year);
-                if (!startDate || !endDate || isNaN(startDate) || isNaN(endDate)) return null;
-                if (startDate > endDate) startDate.setFullYear(endDate.getFullYear() - 1);
-                return { start: startDate, end: endDate };
-            } catch (e) { return null; }
-        }
-
-        function getCurrentDutyPerson() {
-            const now = new Date();
-            const dayOfWeek = now.getDay();
-            if (dayOfWeek === 0 || dayOfWeek === 6) return null; // Weekend
-
-            const currentMin = now.getHours() * 60 + now.getMinutes();
-            const dayColMap = { 1: 2, 2: 3, 3: 4, 4: 5, 5: 6 };
-            const dayCol = dayColMap[dayOfWeek];
-            if (!dayCol) return null;
-
-            let shiftKey = null;
-            let isWednesday = false;
-
-            if (dayOfWeek === 3) {
-                if (currentMin >= 0 && currentMin <= 940) {
-                    shiftKey = '08:00 - 13:15';
-                    isWednesday = true;
-                } else return null;
-            } else {
-                if (currentMin >= 0 && currentMin < 795) shiftKey = '08:00 - 13:15';
-                else if (currentMin >= 795 && currentMin < 1140) shiftKey = '13:15 - 19:00';
-                else return null;
-            }
-
-            const todayMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-            let bestEntry = null;
-
-            for (const entry of DB.dutySchedule) {
-                if (!entry.range) continue;
-                const start = new Date(entry.range.start.getFullYear(), entry.range.start.getMonth(), entry.range.start.getDate());
-                const end = new Date(entry.range.end.getFullYear(), entry.range.end.getMonth(), entry.range.end.getDate());
-                if (todayMidnight >= start && todayMidnight <= end && entry.shift === shiftKey) {
-                    bestEntry = entry;
-                    break;
+                const dayBits = compactSpaces(node.getAttribute("days"));
+                const dayIndex = dayBits.indexOf("1") + 1;
+                if (dayIndex < 1 || dayIndex > 5) {
+                    return;
                 }
-            }
 
-            if (!bestEntry) return null;
-            // Dni w DB.dutySchedule.days: [pn(0), wt(1), sr(2), cz(3), pt(4)]
-            const name = bestEntry.days[dayOfWeek - 1];
-            if (!name || String(name).toLowerCase().includes('brak')) return null;
-            return { name: String(name), shift: shiftKey, isWednesday: isWednesday };
-        }
+                const periodNumber = Number(node.getAttribute("period"));
+                const periodMeta = DB.periods.find((period) => period.number === periodNumber);
+                const roomIds = splitCsv(node.getAttribute("classroomids"));
+                const effectiveRoomIds = roomIds.length > 0 ? roomIds : lessonDef.roomIds;
+                const roomNames = effectiveRoomIds
+                    .map((roomId) => roomsById[roomId])
+                    .filter(Boolean);
+                const teacherIds = lessonDef.teacherIds.filter((teacherId) => DB.teachers[teacherId]);
+                const teacherNames = teacherIds.map((teacherId) => DB.teachers[teacherId].name);
+                const classNames = lessonDef.classIds
+                    .map((classId) => DB.classesById[classId])
+                    .filter(Boolean);
+                const groupNames = lessonDef.groupIds
+                    .map((groupId) => DB.groups[groupId])
+                    .filter(Boolean);
 
-        function updateDutyBar() {
-            if (!isDashboardActive) return;
-            const container = document.getElementById('duty-bar-content');
-            if (!container) return;
-
-            const duty = getCurrentDutyPerson();
-
-            if (!duty || !duty.name) {
-                const now = new Date();
-                const dayOfWeek = now.getDay();
-                const currentMin = now.getHours() * 60 + now.getMinutes();
-                let msg = 'Brak zaplanowanego dyżuru nadzoru w tym czasie.';
-                if (dayOfWeek === 0 || dayOfWeek === 6) msg = 'Weekend – szkoła zamknięta.';
-                else if (dayOfWeek === 3 && currentMin > 940) msg = 'Zakończono dyżury na dziś (po 15:40).';
-                else if (dayOfWeek !== 3 && currentMin >= 1140) msg = 'Zakończono dyżury na dziś (po 19:00).';
-
-                container.innerHTML = `<span class="duty-empty-msg">${msg}</span>`;
-                return;
-            }
-
-            const rawName = duty.name.split('/')[0].split('\\n')[0].trim();
-            const phone = DB.phoneNumbers[rawName] || DB.phoneNumbers[duty.name.trim()];
-            const shiftLabel = duty.shift.replace(' - ', ' – ');
-
-            let badgeHtml = `<div class="duty-time-badge">${shiftLabel}</div>`;
-            if (duty.isWednesday) {
-                badgeHtml = ''; // W środę nie wyświetlamy godzin
-            }
-
-            let contactHtml = '';
-            if (phone) {
-                const telLink = 'tel:' + phone.number.replace(/\s/g, '');
-                contactHtml = `
-                <div class="duty-contact-box">
-                    <a href="${telLink}" class="duty-phone-btn">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81 19.79 19.79 0 01.0 1.18 2 2 0 012 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 14.92z"/>
-                        </svg>
-                        ${phone.display}
-                    </a>
-                    <div class="duty-ext-info">
-                        <span class="duty-ext-label">Wewnętrzny</span>
-                        <span class="duty-ext-num">${phone.ext || '---'}</span>
-                    </div>
-                </div>
-            `;
-            }
-
-            container.innerHTML = `
-            ${badgeHtml}
-            <div class="duty-person-name">${rawName}</div>
-            ${contactHtml}
-        `;
-        }
-
-        async function loadCustomHours() {
-            try {
-                const res = await fetchFresh(CONFIG.godziny);
-                DB.customHours = await res.json();
-            } catch (e) {
-                console.warn("Brak pliku godziny.json lub błąd parsowania.", e);
-            }
-        }
-
-        function renderDashboard() {
-            const container = document.getElementById('selection-grid'); container.innerHTML = "";
-            const createCard = (title, items, type, icon, clickFn) => {
-                const card = document.createElement('div'); card.className = `selection-card ${type}`;
-                const ico = document.createElement('div'); ico.className = 'card-icon'; ico.innerText = icon;
-                const tit = document.createElement('div'); tit.className = 'card-title'; tit.innerText = title;
-                const select = document.createElement('select'); select.className = 'main-select';
-                const def = document.createElement('option'); def.text = "Wybierz..."; def.value = ""; def.disabled = true; def.selected = true; select.add(def);
-                items.forEach(i => { const opt = document.createElement('option'); opt.value = i.val; opt.text = i.txt; select.add(opt); });
-                select.onchange = (e) => { if (e.target.value) clickFn(e.target.value); select.value = ""; };
-                card.appendChild(ico); card.appendChild(tit); card.appendChild(select);
-                container.appendChild(card);
-            };
-            const teachers = Object.entries(DB.teachers).sort((a, b) => a[1].name.localeCompare(b[1].name)).filter(([id, t]) => !t.name.toLowerCase().includes('wakat')).map(([id, t]) => ({ val: id, txt: t.name }));
-            const dutyPlaces = [...new Set(DB.duties.map(d => d.place).concat(DB.dutyChanges.map(d => d.place)))].filter(p => p).sort().map(p => ({ val: p, txt: p }));
-            createCard("Nauczyciele", teachers, 'teacher', '👨‍🏫', (id) => openSchedule('teacher', id));
-            createCard("Oddziały", DB.classesList.sort().map(c => ({ val: c, txt: c })), 'class', '🎓', (id) => openSchedule('class', id));
-            createCard("Sale Lekcyjne", DB.rooms.sort().map(r => ({ val: r, txt: r })), 'room', '🏫', (id) => openSchedule('room', id));
-            createCard("Miejsca Dyżurów", dutyPlaces, 'duty', '👁️', (id) => openSchedule('duty', id));
-        }
-
-        async function fetchFresh(url) { const res = await fetch(url + "?t=" + new Date().getTime()); if (!res.ok) throw new Error(`HTTP ${res.status}`); return res; }
-
-        async function loadExcel(url, type) {
-            try {
-                // Zamieniamy znak + na %2B, by GitHub Pages poprawnie go wczytywało jako znak, a nie jako spację
-                const safeUrl = encodeURI(url).replace(/\+/g, '%2B');
-                const res = await fetch(safeUrl + "?t=" + new Date().getTime());
-                if (!res.ok) { console.warn(`Pominięto plik: ${type} (${url})`); return; }
-
-                const lastMod = res.headers.get('Last-Modified');
-                if (type === 'zastepstwa') FILE_VERSIONS.zastepstwa = formatFileDate(lastMod);
-                else if (type === 'przeniesienia') FILE_VERSIONS.przeniesienia = formatFileDate(lastMod);
-
-                const ab = await res.arrayBuffer(); const wb = XLSX.read(ab, { type: 'array' });
-                if (type === 'dyzury') parseDuties(wb);
-                if (type === 'zastepstwa') parseSub(wb);
-                if (type === 'przeniesienia') parseTransfers(wb);
-                if (type === 'grafik') {
-                    const shGrafik = wb.Sheets['grafik dyżurów'];
-                    if (shGrafik) {
-                        const data = XLSX.utils.sheet_to_json(shGrafik, { header: 1, defval: null });
-                        let i = 0;
-                        while (i < data.length) {
-                            const row = data[i];
-                            if (row && row[0] && typeof row[0] === 'string' && row[1] && String(row[1]).toLowerCase().includes('godzin')) {
-                                const range = parseWeekRange(row[0]);
-                                const row1 = data[i + 1]; if (row1 && row1[1]) DB.dutySchedule.push({ range, shift: '08:00 - 13:15', days: [row1[2], row1[3], row1[4], row1[5], row1[6]] });
-                                const row2 = data[i + 2]; if (row2 && row2[1]) DB.dutySchedule.push({ range, shift: '13:15 - 19:00', days: [row2[2], row2[3], row2[4], row2[5], row2[6]] });
-                                i += 3; continue;
-                            }
-                            i++;
-                        }
-                    }
-                    const shPhones = wb.Sheets['numery telefonów'];
-                    if (shPhones) {
-                        const data2 = XLSX.utils.sheet_to_json(shPhones, { header: 1, defval: null });
-                        data2.forEach(row => {
-                            if (!row || !row[0] || !row[1]) return;
-                            const main = String(row[1]).trim().split(/\n|\r/)[0].trim();
-                            let ext = '';
-                            const extSource = row[2] ? String(row[2]) : String(row[1]);
-                            const m = extSource.match(/wew\.?\s*(\d+)/i);
-                            if (m) ext = m[1];
-                            DB.phoneNumbers[String(row[0]).trim()] = { number: main, display: main, ext: ext };
-                        });
-                    }
-                }
-            } catch (e) {
-                console.warn(`Błąd parsowania pliku ${type}:`, e);
-            }
-        }
-
-        async function loadXML() {
-            const res = await fetchFresh(CONFIG.xml);
-
-            const buffer = await res.arrayBuffer();
-
-            const decoder = new TextDecoder('windows-1250');
-            const txt = decoder.decode(buffer);
-
-            const xml = new DOMParser().parseFromString(txt, "text/xml");
-
-            xml.querySelectorAll('groups group').forEach(g => { DB.groups[g.getAttribute('id')] = g.getAttribute('name'); });
-            xml.querySelectorAll('teachers teacher').forEach(t => {
-                const id = t.getAttribute('id'); const name = (t.getAttribute('firstname') || '') + ' ' + (t.getAttribute('lastname') || t.getAttribute('name'));
-                DB.teachers[id] = { name: name.trim(), normalized: normalize(name) };
-            });
-            xml.querySelectorAll('classes class').forEach(c => {
-                const id = c.getAttribute('id'); const name = c.getAttribute('name');
-                DB.classes[id] = name; if (!DB.classesList.includes(name)) DB.classesList.push(name);
-            });
-            const roomMap = {}; const roomSet = new Set();
-            xml.querySelectorAll('classrooms classroom').forEach(r => { const name = r.getAttribute('name'); roomMap[r.getAttribute('id')] = name; roomSet.add(name); });
-            DB.rooms = Array.from(roomSet);
-            xml.querySelectorAll('periods period').forEach(p => {
-                DB.periods.push({ nr: parseInt(p.getAttribute('period')), start: p.getAttribute('starttime'), end: p.getAttribute('endtime') });
-            });
-            DB.periods.sort((a, b) => a.nr - b.nr);
-            const subjects = {}; xml.querySelectorAll('subjects subject').forEach(s => subjects[s.getAttribute('id')] = s.getAttribute('name'));
-            xml.querySelectorAll('cards card').forEach(c => {
-                const lesson = xml.querySelector(`lessons lesson[id="${c.getAttribute('lessonid')}"]`); if (!lesson) return;
-                const tidsRaw = lesson.getAttribute('teacherids'); const dayIdx = c.getAttribute('days').indexOf('1') + 1;
-                const roomId = c.getAttribute('classroomids'); const classIds = lesson.getAttribute('classids').split(',');
-                const classNames = classIds.map(cid => DB.classes[cid]).join(', ');
-                const groupIds = lesson.getAttribute('groupids'); const groupName = groupIds ? groupIds.split(',').map(gid => DB.groups[gid]).join(',') : '';
-                if (dayIdx > 0 && tidsRaw) {
-                    const tidsArray = tidsRaw.split(','); const mainTeacherId = tidsArray[0].trim();
-                    const supportTeachers = tidsArray.slice(1).map(tid => DB.teachers[tid.trim()]?.name || tid);
-                    DB.lessons.push({
-                        teacherId: mainTeacherId, day: dayIdx, period: parseInt(c.getAttribute('period')),
-                        subject: subjects[lesson.getAttribute('subjectid')] || 'Lekcja',
-                        room: roomMap[roomId] || '', classNames: classNames, branch: '', groupName: groupName,
-                        supportInfo: supportTeachers.length ? supportTeachers.join(', ') : null
-                    });
-                }
-            });
-        }
-
-        function parseTransferString(str) {
-            try {
-                const parts = str.split(','); if (parts.length < 2) return null;
-                const datePart = parts[0].trim(); const periodPart = parseInt(parts[1].trim());
-                const d = datePart.split('.'); const isoDate = `${d[2]}-${d[1]}-${d[0]}`;
-                let room = ""; const roomPart = parts.find(p => p.trim().includes('sala:'));
-                if (roomPart) room = roomPart.replace('sala:', '').trim();
-                return { date: isoDate, period: periodPart, room: room };
-            } catch (e) { return null; }
-        }
-        function parseTransfers(wb) {
-            const sh = wb.Sheets["Oddziały"] || wb.Sheets[0]; const data = XLSX.utils.sheet_to_json(sh);
-            data.forEach(r => {
-                const fromStr = r['Przeniesiono z']; const toStr = r['Przeniesiono na'];
-                const teacherRaw = r['Nauczyciel/wakat']; const classRaw = r['Oddział']; const subject = r['Przedmiot']; const note = r['Uwagi'];
-                if (fromStr && toStr) {
-                    const fromInfo = parseTransferString(fromStr); const toInfo = parseTransferString(toStr);
-                    const teacherId = findTeacherId(teacherRaw);
-                    if (fromInfo) DB.transfers.push({ type: 'out', date: fromInfo.date, period: fromInfo.period, room: fromInfo.room, targetInfo: `Przeniesiono na: ${toInfo.date} lekcja ${toInfo.period}`, teacherId: teacherId, teacherName: teacherRaw, class: classRaw, subject: subject, note: note });
-                    if (toInfo) DB.transfers.push({ type: 'in', date: toInfo.date, period: toInfo.period, room: toInfo.room, targetInfo: `Przeniesiono z: ${fromInfo.date} lekcja ${fromInfo.period}`, teacherId: teacherId, teacherName: teacherRaw, class: classRaw, subject: subject, note: note });
-                }
-            });
-        }
-        function parseDuties(wb) {
-            const shortcutsMap = {};
-            const shortcutsSheetName = wb.SheetNames.find(name => name.toLowerCase().includes('skróty') || name.toLowerCase().includes('skroty'));
-
-            if (shortcutsSheetName) {
-                const wsShortcuts = wb.Sheets[shortcutsSheetName];
-                const shortcutsData = XLSX.utils.sheet_to_json(wsShortcuts, { header: 1 });
-                shortcutsData.forEach(row => {
-                    if (row && row.length >= 2) {
-                        const short = String(row[0]).trim().toLowerCase();
-                        const fullName = String(row[1]).trim();
-                        if (short && fullName) {
-                            shortcutsMap[short] = fullName;
-                        }
-                    }
+                DB.lessons.push({
+                    id: `${lessonDef.id}-${dayIndex}-${periodNumber}`,
+                    day: dayIndex,
+                    period: periodNumber,
+                    subject: lessonDef.subject,
+                    classNames,
+                    className: classNames.join(", "),
+                    teacherIds,
+                    teacherId: teacherIds[0] || "",
+                    teacherNames,
+                    roomNames,
+                    room: roomNames.join(" / "),
+                    groupNames,
+                    groupName: groupNames.join(", "),
+                    start: periodMeta?.start || "",
+                    end: periodMeta?.end || "",
+                    startMinutes: periodMeta?.startMinutes || 0,
+                    endMinutes: periodMeta?.endMinutes || 0
                 });
+            });
+        }
+
+        function prettifyLocation(raw) {
+            const text = compactSpaces(raw).toUpperCase();
+            const map = {
+                "PARTER": "Parter",
+                "PIETRO 1": "Piętro 1",
+                "PIETRO 2": "Piętro 2",
+                "PIETRO 3": "Piętro 3",
+                "PIĘTRO 1": "Piętro 1",
+                "PIĘTRO 2": "Piętro 2",
+                "PIĘTRO 3": "Piętro 3",
+                "BOISKO": "Boisko",
+                "BRAMKA WEJSCIOWA": "Bramka wejściowa",
+                "BRAMKA WEJŚCIOWA": "Bramka wejściowa"
+            };
+            return map[text] || compactSpaces(raw);
+        }
+
+        function parseDutyTeacher(raw) {
+            const value = compactSpaces(raw);
+            if (!value || /wylaczone|wyłączone/i.test(value)) {
+                return null;
+            }
+            const lines = String(raw)
+                .split(/\r?\n/)
+                .map((entry) => compactSpaces(entry))
+                .filter(Boolean);
+            const name = lines[0] || value;
+            const shortMatch = String(raw).match(/\(([^\)]+)\)/);
+            const short = shortMatch ? compactSpaces(shortMatch[1]) : "";
+            return { name, short };
+        }
+
+        function resolveTeacherId(name, short) {
+            if (short) {
+                const byShort = DB.teacherByShort[normalize(short)];
+                if (byShort) {
+                    return byShort;
+                }
+            }
+            const normalizedName = normalize(name);
+            const teacher = Object.values(DB.teachers).find((candidate) => candidate.normalized === normalizedName);
+            return teacher ? teacher.id : "";
+        }
+
+        async function loadDutyData() {
+            const workbookBuffer = await fetchArrayBuffer(CONFIG.dutyWorkbook);
+            const workbook = XLSX.read(workbookBuffer, { type: "array" });
+            const sheet = workbook.Sheets["Plan dyżurów"] || workbook.Sheets[workbook.SheetNames[0]];
+            if (!sheet) {
+                throw new Error("Brak arkusza 'Plan dyżurów' w pliku dyżurów.");
             }
 
-            wb.SheetNames.forEach(sheetName => {
-                if (sheetName === shortcutsSheetName) return;
+            const rows = XLSX.utils.sheet_to_json(sheet, { header: 1, defval: null, raw: false });
+            let currentLocation = "";
 
-                const ws = wb.Sheets[sheetName];
-                const data = XLSX.utils.sheet_to_json(ws, { header: 1 });
-                let currentDayMap = null;
+            rows.forEach((row) => {
+                const cells = row.slice(0, 6).map((cell) => (typeof cell === "string" ? cell.trim() : cell));
+                const firstCell = compactSpaces(cells[0]);
+                const hasAnyDayCell = cells.slice(1).some((cell) => compactSpaces(cell));
 
-                for (let i = 0; i < data.length; i++) {
-                    const row = data[i]; if (!row || !row.length) continue;
-                    const rowStr = row.map(c => String(c || "").toLowerCase());
+                if (!firstCell) {
+                    return;
+                }
 
-                    if (rowStr.some(s => s.includes('poniedziałek'))) {
-                        currentDayMap = {};
-                        row.forEach((cell, idx) => {
-                            const val = String(cell || "").toLowerCase();
-                            if (val.includes('poniedziałek')) currentDayMap[idx] = 1;
-                            if (val.includes('wtorek')) currentDayMap[idx] = 2;
-                            if (val.includes('środa')) currentDayMap[idx] = 3;
-                            if (val.includes('czwartek')) currentDayMap[idx] = 4;
-                            if (val.includes('piątek')) currentDayMap[idx] = 5;
-                        });
+                const isTitleRow = /plan dyzurow|plan dyżurów|zolte|żółte/i.test(firstCell);
+                if (!hasAnyDayCell && !isTitleRow && !/przerwa/i.test(firstCell)) {
+                    currentLocation = prettifyLocation(firstCell);
+                    return;
+                }
+
+                if (!currentLocation || /przerwa/i.test(firstCell) || !/^\d{1,2}:\d{2}\s*-\s*\d{1,2}:\d{2}$/.test(firstCell)) {
+                    return;
+                }
+
+                const [timeFrom, timeTo] = firstCell.split("-").map((part) => padTime(part));
+                for (let columnIndex = 1; columnIndex <= 5; columnIndex += 1) {
+                    const teacherInfo = parseDutyTeacher(cells[columnIndex]);
+                    if (!teacherInfo) {
                         continue;
                     }
 
-                    if (currentDayMap) {
-                        let timeVal = null, placeVal = null;
-
-                        for (let c = 0; c < 5; c++) {
-                            if (row[c] && /\d{1,2}:\d{2}\s*-\s*\d{1,2}:\d{2}/.test(String(row[c]))) {
-                                timeVal = String(row[c]).trim();
-                                if (c > 0 && row[c - 1]) placeVal = unifyPlaceName(row[c - 1]);
-                                else if (row[0]) placeVal = unifyPlaceName(row[0]);
-                                break;
-                            }
-                        }
-
-                        if (timeVal) {
-                            for (const [colIdx, dayNum] of Object.entries(currentDayMap)) {
-                                let rawTeacher = row[colIdx];
-
-                                if (rawTeacher && String(rawTeacher).trim().length >= 2) {
-                                    let teacherStr = String(rawTeacher).trim();
-
-                                    const shortLower = teacherStr.toLowerCase();
-                                    if (shortcutsMap[shortLower]) {
-                                        teacherStr = shortcutsMap[shortLower];
-                                    }
-
-                                    const tId = findTeacherId(teacherStr);
-                                    if (tId) {
-                                        DB.duties.push({
-                                            teacherId: tId,
-                                            day: dayNum,
-                                            time: timeVal,
-                                            startMin: timeToMin(timeVal.split('-')[0]),
-                                            place: placeVal ? placeVal.trim() : "Dyżur"
-                                        });
-                                    }
-                                }
-                            }
-                        }
-                    }
+                    const teacherId = resolveTeacherId(teacherInfo.name, teacherInfo.short);
+                    DB.duties.push({
+                        day: columnIndex,
+                        time: `${timeFrom}-${timeTo}`,
+                        timeFrom,
+                        timeTo,
+                        startMinutes: timeToMinutes(timeFrom),
+                        startMin: timeToMinutes(timeFrom),
+                        locationKey: normalize(currentLocation),
+                        locationLabel: currentLocation,
+                        place: currentLocation,
+                        teacherId,
+                        teacherName: teacherId && DB.teachers[teacherId] ? DB.teachers[teacherId].name : teacherInfo.name
+                    });
                 }
             });
-        }
-        function parseSub(wb) {
-            const sh = wb.Sheets["Oddziały"] || wb.Sheets[0];
-            XLSX.utils.sheet_to_json(sh).forEach(r => {
-                const d = parseDate(r['Dzień']);
-                if (d) DB.subs.push({ date: d, periodRaw: r['Lekcja'], absent: findTeacherId(r['Nauczyciel/wakat']), sub: findTeacherId(r['Zastępca']), rawSub: r['Zastępca'], rawAbs: r['Nauczyciel/wakat'], subject: r['Przedmiot'], room: r['Sala'], note: r['Uwagi'], branch: r['Oddział'], payInfo: r['Forma płatności'] });
+
+            DB.duties.sort((left, right) => {
+                if (left.day !== right.day) {
+                    return left.day - right.day;
+                }
+                if (left.startMinutes !== right.startMinutes) {
+                    return left.startMinutes - right.startMinutes;
+                }
+                return left.locationLabel.localeCompare(right.locationLabel, "pl");
             });
-            const shDy = wb.Sheets["Dyżury"];
-            if (shDy) {
-                XLSX.utils.sheet_to_json(shDy).forEach(r => {
-                    const d = parseDate(r['Dzień']);
-                    if (d) DB.dutyChanges.push({ date: d, time: r['Godzina'], absent: findTeacherId(r['Nauczyciel']), sub: findTeacherId(r['Zastępca']), rawSub: r['Zastępca'], place: unifyPlaceName(r['Miejsce dyżuru']) });
+        }
+
+        function parseWeekRange(rawValue) {
+            if (!rawValue || typeof rawValue !== "string") {
+                return null;
+            }
+
+            try {
+                const parts = rawValue.trim().split("-");
+                if (parts.length < 2) {
+                    return null;
+                }
+
+                const currentYear = new Date().getFullYear();
+                const endPart = parts[parts.length - 1].trim();
+                const startPart = parts.slice(0, parts.length - 1).join("-").trim();
+
+                const parseDate = (value, yearHint) => {
+                    const chunks = value.trim().split(".");
+                    if (chunks.length === 3) {
+                        return new Date(Number(chunks[2]), Number(chunks[1]) - 1, Number(chunks[0]));
+                    }
+                    if (chunks.length === 2) {
+                        return new Date(yearHint, Number(chunks[1]) - 1, Number(chunks[0]));
+                    }
+                    return null;
+                };
+
+                const endParts = endPart.split(".");
+                let year = currentYear;
+                if (endParts.length === 3) {
+                    year = Number(endParts[2]);
+                }
+
+                const endDate = parseDate(endPart, year);
+                const startDate = parseDate(startPart, year);
+                if (!startDate || !endDate || Number.isNaN(startDate.getTime()) || Number.isNaN(endDate.getTime())) {
+                    return null;
+                }
+                if (startDate > endDate) {
+                    startDate.setFullYear(endDate.getFullYear() - 1);
+                }
+                return { start: startDate, end: endDate };
+            } catch {
+                return null;
+            }
+        }
+
+        function storePhoneNumber(name, phone) {
+            if (!name || !phone?.number) {
+                return;
+            }
+            DB.phoneNumbers[compactSpaces(name)] = phone;
+            DB.phoneNumbers[normalize(name)] = phone;
+        }
+
+        async function loadSupervisoryDutyData() {
+            const workbookBuffer = await fetchArrayBuffer(CONFIG.oversightWorkbook);
+            const workbook = XLSX.read(workbookBuffer, { type: "array" });
+            const scheduleSheet = workbook.Sheets["grafik dyżurów"];
+            const phonesSheet = workbook.Sheets["numery telefonów"];
+
+            if (scheduleSheet) {
+                const rows = XLSX.utils.sheet_to_json(scheduleSheet, { header: 1, defval: null, raw: false });
+                const fallbackEntries = [];
+
+                for (let index = 0; index < rows.length; index += 1) {
+                    const row = rows[index];
+                    const label = compactSpaces(row?.[0]);
+                    const marker = compactSpaces(row?.[1]).toLowerCase();
+                    if (!label || !marker.includes("godzin")) {
+                        continue;
+                    }
+
+                    const range = parseWeekRange(label);
+                    const target = range ? DB.dutySchedule : fallbackEntries;
+                    const firstShift = rows[index + 1];
+                    const secondShift = rows[index + 2];
+
+                    if (compactSpaces(firstShift?.[1])) {
+                        target.push({
+                            range,
+                            shift: compactSpaces(firstShift[1]),
+                            days: [firstShift[2], firstShift[3], firstShift[4], firstShift[5], firstShift[6]]
+                        });
+                    }
+
+                    if (compactSpaces(secondShift?.[1])) {
+                        target.push({
+                            range,
+                            shift: compactSpaces(secondShift[1]),
+                            days: [secondShift[2], secondShift[3], secondShift[4], secondShift[5], secondShift[6]]
+                        });
+                    }
+
+                    index += 2;
+                }
+
+                DB.dutySchedule.push(...fallbackEntries);
+            }
+
+            if (phonesSheet) {
+                const rows = XLSX.utils.sheet_to_json(phonesSheet, { header: 1, defval: null, raw: false });
+                rows.forEach((row) => {
+                    const name = compactSpaces(row?.[0]);
+                    const phoneNumber = compactSpaces(row?.[1]).split(/\r?\n/)[0];
+                    if (!name || !phoneNumber || normalize(name) === "imie i nazwisko") {
+                        return;
+                    }
+
+                    const extSource = compactSpaces(row?.[2] || row?.[1]);
+                    const extMatch = extSource.match(/wew\.?\s*(\d+)/i);
+                    storePhoneNumber(name, {
+                        number: phoneNumber,
+                        display: phoneNumber,
+                        ext: extMatch ? extMatch[1] : ""
+                    });
                 });
             }
         }
 
-        function normalize(str) { return (str || "").toLowerCase().replace(/^(x\.|ks\.|p\.|pani|pan)\s+/g, '').replace(/[^a-złąceźżńóś\s]/g, '').trim().split(/\s+/).sort().join(' '); }
-        function unifyPlaceName(raw) {
-            if (!raw) return "";
-            let str = String(raw).trim(); let lower = str.toLowerCase();
-            const wfCodes = ['edb+wf', 'sp1', 'sp2', 'ag2', 'aq1', 'sg1', 'sg2', 'sg3', 'sg4', 'sg5'];
-            if (wfCodes.some(code => lower.includes(code))) return 'WF - według grafiku tygodniowego';
-            if (lower.includes('boisko')) return 'boisko - dziedziniec wejściowy';
-            if (lower.includes('bramka')) return 'bramka wejściowa';
-            if (lower.includes('stołówka') || lower.includes('stolowka')) return 'stołówka';
-            if (lower.includes('biblioteka') || lower.includes('czytelnia')) return 'biblioteka';
-            if (lower.includes('parter')) return 'parter';
-            if (lower.includes('1') && (lower.includes('p') || lower.includes('piętro'))) return 'piętro_1';
-            if (lower.includes('2') && (lower.includes('p') || lower.includes('piętro'))) return 'piętro_2';
-            if (lower.includes('3') && (lower.includes('p') || lower.includes('piętro'))) return 'piętro_3';
-            return str;
-        }
-        function findTeacherId(rawName) {
-            if (!rawName || rawName.length < 3) return null; if (/wakat|brak|okienko/i.test(rawName)) return null;
-            const target = normalize(rawName); let bestId = null, bestScore = 0;
-            for (const [id, t] of Object.entries(DB.teachers)) {
-                const source = t.normalized;
-                if (source === target) return id;
-                if (source.includes(target) || target.includes(source)) { if (bestScore < 50) { bestScore = 50; bestId = id; } }
-            } return bestId;
-        }
-        function timeToMin(str) { if (!str) return 0; const [h, m] = str.trim().split(':').map(Number); return h * 60 + m; }
-        function parseDate(val) {
-            if (!val) return null; if (typeof val === 'number') { const d = XLSX.SSF.parse_date_code(val); return `${d.y}-${d.m < 10 ? '0' : ''}${d.m}-${d.d < 10 ? '0' : ''}${d.d}`; }
-            if (typeof val === 'string') { const p = val.trim().split('.'); if (p.length === 3) return `${p[2]}-${p[1]}-${p[0]}`; } return null;
-        }
-        function getTeacherName(id) { return DB.teachers[id] ? DB.teachers[id].name : id; }
-        function normalizeClass(c) { return (c || "").replace(/\s/g, '').toLowerCase(); }
-        function addMissingTeachers() { const check = (raw, obj, f) => { if (raw && !obj[f]) { const nid = "EXT_" + normalize(raw).replace(/\s/g, '_'); if (!DB.teachers[nid]) DB.teachers[nid] = { name: raw.trim(), normalized: normalize(raw) }; obj[f] = nid; } }; DB.subs.forEach(s => check(s.rawSub, s, 'sub')); DB.dutyChanges.forEach(d => check(d.rawSub, d, 'sub')); }
-        function populateSelect(renderIt = true) {
-            const mode = document.getElementById('mode-select').value; const sel = document.getElementById('data-select'); sel.innerHTML = ""; let items = [];
-            if (mode === 'teacher') items = Object.entries(DB.teachers).sort((a, b) => a[1].name.localeCompare(b[1].name)).map(x => ({ val: x[0], txt: x[1].name }));
-            else if (mode === 'room') items = DB.rooms.sort().map(x => ({ val: x, txt: x }));
-            else if (mode === 'class') items = DB.classesList.sort().map(x => ({ val: x, txt: x }));
-            else if (mode === 'duty') items = [...new Set(DB.duties.map(d => d.place).concat(DB.dutyChanges.map(d => d.place)))].filter(p => p).sort().map(x => ({ val: x, txt: x }));
-            items.forEach(i => { const opt = document.createElement('option'); opt.value = i.val; opt.innerText = i.txt; sel.appendChild(opt); }); if (items.length && !sel.value) sel.value = items[0].val;
-        }
-        function getDutiesForTime(tid, day, date, min, max) {
-            const res = [];
-            DB.duties.filter(d => d.teacherId == tid && d.day == day).forEach(d => {
-                if (d.startMin >= min && d.startMin < max) {
-                    const canc = DB.dutyChanges.find(c => c.date == date && c.time == d.time && c.absent == tid);
-                    res.push({ ...d, status: canc ? 'cancelled' : 'ok' });
+        function getDutyLocations() {
+            const locationMap = new Map();
+            DB.duties.forEach((duty) => {
+                if (!locationMap.has(duty.locationKey)) {
+                    locationMap.set(duty.locationKey, duty.locationLabel);
                 }
             });
-            DB.dutyChanges.filter(c => c.date == date && c.sub == tid).forEach(c => {
-                const start = timeToMin(c.time.split('-')[0]);
-                if (start >= min && start < max) res.push({ time: c.time, place: c.place, startMin: start, status: 'added' });
-            }); return res;
+            return [...locationMap.entries()]
+                .map(([value, label]) => ({ value, label }))
+                .sort((left, right) => left.label.localeCompare(right.label, "pl"));
         }
-        function render() {
-            const mode = document.getElementById('mode-select').value; const selectedId = document.getElementById('data-select').value;
-            const grid = document.getElementById('grid'); grid.innerHTML = ""; if (!selectedId) return;
-            const today = new Date(); if (today.getDay() === 6 || today.getDay() === 0) { today.setDate(today.getDate() + 2); }
-            today.setDate(today.getDate() + (weekOffset * 7)); const monday = getStartOfWeek(today);
-            const friday = new Date(monday); friday.setDate(friday.getDate() + 4);
-            document.getElementById('week-range-text').innerText = `${formatDateShort(monday)} - ${formatDateShort(friday)}`;
 
-            for (let i = 0; i < 5; i++) {
-                const curDate = new Date(monday); curDate.setDate(monday.getDate() + i);
-                const dateStr = curDate.toISOString().split('T')[0]; const dayNum = i + 1;
-
-                let dayPeriods = JSON.parse(JSON.stringify(DB.periods));
-                if (DB.customHours[dateStr]) {
-                    DB.customHours[dateStr].forEach(customP => {
-                        const idx = dayPeriods.findIndex(p => p.nr === customP.nr);
-                        if (idx !== -1) {
-                            dayPeriods[idx].start = customP.start;
-                            dayPeriods[idx].end = customP.end;
-                        }
-                    });
-                }
-
-                const col = document.createElement('div'); col.className = 'day-col';
-                col.innerHTML = `<div class="day-header">${DAYS[dayNum]}<span class="day-date">${curDate.toLocaleDateString('pl-PL')}</span></div>`;
-                const content = document.createElement('div'); content.className = 'day-content';
-                if (mode === 'teacher') {
-                    getDutiesForTime(selectedId, dayNum, dateStr, 0, 480).forEach(d => {
-                        const div = document.createElement('div'); div.className = 'card morning-duty';
-                        if (d.status === 'added') div.classList.add('duty-sub'); if (d.status === 'cancelled') div.style.textDecoration = 'line-through';
-                        div.innerHTML = `<div style="font-weight:700">${d.status === 'added' ? 'ZASTĘPSTWO' : 'DYŻUR'} ${d.time}</div><div>${d.place}</div>`;
-                        content.appendChild(div);
-                    });
-                }
-                if (mode === 'duty') {
-                    const duties = DB.duties.filter(d => d.day == dayNum && d.place === selectedId);
-                    const changes = DB.dutyChanges.filter(d => d.date == dateStr && d.place === selectedId);
-                    let allDuties = [];
-                    duties.forEach(d => { const cancelled = DB.dutyChanges.find(ch => ch.date == dateStr && ch.time == d.time && ch.absent == d.teacherId); if (!cancelled) allDuties.push({ ...d, type: 'normal' }); });
-                    changes.forEach(ch => { allDuties.push({ time: ch.time, teacherId: ch.sub, type: 'added', startMin: timeToMin(ch.time.split('-')[0]) }); });
-                    allDuties.sort((a, b) => a.startMin - b.startMin);
-                    allDuties.forEach(d => {
-                        const div = document.createElement('div'); div.className = 'card';
-                        if (d.type === 'cancelled') { div.classList.add('is-sub'); div.innerHTML = `<div class="meta">${d.time}</div><div class="main-info" style="text-decoration:line-through">${getTeacherName(d.teacherId)}</div><div class="sub-line" style="color:var(--sub-color)">Zastępstwo: ${d.sub}</div>`; }
-                        else if (d.type === 'added') { div.classList.add('is-new'); div.innerHTML = `<div class="meta">${d.time}</div><div class="main-info">${getTeacherName(d.teacherId)}</div><div class="sub-line">ZASTĘPSTWO</div>`; }
-                        else { div.innerHTML = `<div class="meta">${d.time}</div><div class="main-info">${getTeacherName(d.teacherId)}</div>`; }
-                        content.appendChild(div);
-                    });
-                } else {
-                    dayPeriods.forEach(p => {
-                        const wrapper = document.createElement('div'); wrapper.className = 'slot-wrapper';
-                        let lessons = [], subAdds = [], transferOut = [], transferIn = [];
-                        if (mode === 'teacher') lessons = DB.lessons.filter(l => l.teacherId == selectedId && l.day == dayNum && l.period == p.nr);
-                        else if (mode === 'room') lessons = DB.lessons.filter(l => l.room === selectedId && l.day == dayNum && l.period == p.nr);
-                        else if (mode === 'class') lessons = DB.lessons.filter(l => l.classNames.includes(selectedId) && l.day == dayNum && l.period == p.nr);
-                        if (mode === 'teacher') subAdds = DB.subs.filter(s => s.date == dateStr && s.sub == selectedId && s.periodRaw.startsWith(p.nr + ','));
-                        else if (mode === 'room') subAdds = DB.subs.filter(s => s.date == dateStr && s.room === selectedId && s.periodRaw.startsWith(p.nr + ','));
-                        else if (mode === 'class') subAdds = DB.subs.filter(s => s.date == dateStr && normalizeClass(s.branch).includes(normalizeClass(selectedId)) && s.periodRaw.startsWith(p.nr + ','));
-                        if (mode === 'teacher') { transferOut = DB.transfers.filter(t => t.type === 'out' && t.date === dateStr && t.period == p.nr && t.teacherId == selectedId); transferIn = DB.transfers.filter(t => t.type === 'in' && t.date === dateStr && t.period == p.nr && t.teacherId == selectedId); }
-                        else if (mode === 'class') { transferOut = DB.transfers.filter(t => t.type === 'out' && t.date === dateStr && t.period == p.nr && normalizeClass(t.class).includes(normalizeClass(selectedId))); transferIn = DB.transfers.filter(t => t.type === 'in' && t.date === dateStr && t.period == p.nr && normalizeClass(t.class).includes(normalizeClass(selectedId))); }
-                        else if (mode === 'room') { transferOut = DB.transfers.filter(t => t.type === 'out' && t.date === dateStr && t.period == p.nr && t.room == selectedId); transferIn = DB.transfers.filter(t => t.type === 'in' && t.date === dateStr && t.period == p.nr && t.room == selectedId); }
-                        lessons.sort((a, b) => (a.groupName || "").localeCompare(b.groupName || ""));
-                        if (lessons.length > 0) {
-                            lessons.forEach(lesson => {
-                                const div = document.createElement('div');
-                                const subAbs = DB.subs.find(s => s.date == dateStr && s.absent == lesson.teacherId && s.periodRaw.startsWith(p.nr + ','));
-                                const transOut = transferOut.find(t => t.period == p.nr);
-                                if (subAbs) { div.className = 'card is-sub'; div.innerHTML = `<div class="meta"><span class="nr">${p.nr}</span> ${p.start}-${p.end} ${lesson.groupName ? `<span class="group-badge">${lesson.groupName}</span>` : ''}</div><div class="main-info">${lesson.subject}</div><span class="note-red">Nieobecność</span>`; }
-                                else if (transOut) { div.className = 'card is-transfer'; div.style.textDecoration = "line-through"; div.innerHTML = `<div class="meta"><span class="nr">${p.nr}</span> ${p.start}-${p.end}</div><div class="main-info">${lesson.subject}</div><div class="transfer-note">${transOut.targetInfo}</div>`; }
-                                else { div.className = 'card'; let line = ""; if (mode === 'teacher') line = `${lesson.classNames} / s.${lesson.room}`; else if (mode === 'class') line = `${getTeacherName(lesson.teacherId)} / s.${lesson.room}`; else line = `${getTeacherName(lesson.teacherId)} / ${lesson.classNames}`; div.innerHTML = `<div class="meta"><span class="nr">${p.nr}</span> ${p.start}-${p.end} ${lesson.groupName ? `<span class="group-badge">${lesson.groupName}</span>` : ''}</div><div class="main-info">${lesson.subject}</div><div class="sub-line">${line}</div>`; }
-                                wrapper.appendChild(div);
-                            });
-                        }
-                        if (transferIn.length > 0) { transferIn.forEach(t => { const div = document.createElement('div'); div.className = 'card is-transfer'; div.innerHTML = `<div class="meta"><span class="nr">${p.nr}</span> ${p.start}-${p.end}</div><div class="main-info">${t.subject}</div><div class="sub-line">${t.teacherName} / s.${t.room}</div><div class="transfer-note">${t.targetInfo}<br>${t.note || ''}</div>`; wrapper.appendChild(div); }); }
-                        if (subAdds.length > 0) { subAdds.forEach(sub => { let subGroup = ""; if (sub.branch && sub.branch.includes('|')) subGroup = sub.branch.split('|')[1]; const div = document.createElement('div'); div.className = 'card is-new'; let line = ""; if (mode === 'teacher') line = `s.${sub.room} / ${sub.branch}`; else if (mode === 'class') line = `${getTeacherName(sub.sub)} / s.${sub.room}`; else line = `${getTeacherName(sub.sub)} / ${sub.branch}`; let payBadge = ""; if (mode === 'teacher' && sub.payInfo) payBadge = `<span class="pay-badge">$ ${sub.payInfo}</span>`; div.innerHTML = `<div class="meta"><span class="nr">${p.nr}</span> ${p.start}-${p.end} ${subGroup ? `<span class="group-badge">${subGroup}</span>` : ''}</div><div class="main-info">ZASTĘPSTWO</div><div class="sub-line">${line} / ${sub.subject}</div><div class="details" style="font-size:0.75em; color:#a7f3d0">Za: ${sub.rawAbs}</div>${payBadge}`; wrapper.appendChild(div); }); }
-                        if (lessons.length === 0 && subAdds.length === 0 && transferIn.length === 0) { const div = document.createElement('div'); div.className = 'card empty'; div.innerHTML = `${p.nr}. ${p.start}`; wrapper.appendChild(div); }
-                        if (mode === 'teacher') { const pEnd = timeToMin(p.end); getDutiesForTime(selectedId, dayNum, dateStr, pEnd - 5, pEnd + 15).forEach(d => { const dDiv = document.createElement('div'); dDiv.className = 'duty-section'; if (d.status === 'added') dDiv.classList.add('duty-sub'); dDiv.innerHTML = `<b>${d.time}</b> ${d.place}`; wrapper.appendChild(dDiv); }); }
-                        content.appendChild(wrapper);
-                    });
-                }
-                col.appendChild(content); grid.appendChild(col);
+        function getModeOptions(mode) {
+            if (mode === "teacher") {
+                return DB.teacherOrder.map((teacher) => ({ value: teacher.id, label: teacher.name }));
             }
+            if (mode === "class") {
+                return DB.classesList.map((className) => ({ value: className, label: className }));
+            }
+            if (mode === "room") {
+                return DB.rooms.map((roomName) => ({ value: roomName, label: roomName }));
+            }
+            return getDutyLocations();
+        }
+
+        function renderDashboard() {
+            refs.selectionGrid.innerHTML = "";
+            const createCard = (title, items, type, icon) => {
+                const card = document.createElement("div");
+                card.className = `selection-card ${type}`;
+
+                const iconEl = document.createElement("div");
+                iconEl.className = "card-icon";
+                iconEl.textContent = icon;
+
+                const titleEl = document.createElement("div");
+                titleEl.className = "card-title";
+                titleEl.textContent = title;
+
+                const select = document.createElement("select");
+                select.className = "main-select";
+                const defaultOption = document.createElement("option");
+                defaultOption.text = "Wybierz...";
+                defaultOption.value = "";
+                defaultOption.disabled = true;
+                defaultOption.selected = true;
+                select.add(defaultOption);
+
+                items.forEach((item) => {
+                    const option = document.createElement("option");
+                    option.value = item.value;
+                    option.text = item.label;
+                    select.add(option);
+                });
+
+                select.addEventListener("change", (event) => {
+                    if (event.target.value) {
+                        openSchedule(type, event.target.value);
+                        select.value = "";
+                    }
+                });
+
+                card.append(iconEl, titleEl, select);
+                refs.selectionGrid.appendChild(card);
+            };
+
+            createCard("Nauczyciele", DB.teacherOrder.map((item) => ({ value: item.id, label: item.name })), "teacher", "👨‍🏫");
+            createCard("Oddziały", DB.classesList.map((item) => ({ value: item, label: item })), "class", "🎓");
+            createCard("Sale lekcyjne", DB.rooms.map((item) => ({ value: item, label: item })), "room", "🏫");
+            createCard("Miejsca dyżurów", getDutyLocations().map((item) => ({ value: item.value, label: item.label })), "duty", "👁️");
+        }
+
+        function populateScheduleControls() {
+            refs.modeSelect.value = STATE.currentMode;
+            const options = getModeOptions(STATE.currentMode);
+            refs.dataSelect.innerHTML = "";
+            options.forEach((optionData) => {
+                const option = document.createElement("option");
+                option.value = optionData.value;
+                option.textContent = optionData.label;
+                refs.dataSelect.append(option);
+            });
+
+            if (!options.some((option) => option.value === STATE.currentSelection)) {
+                STATE.currentSelection = options[0]?.value || "";
+            }
+            refs.dataSelect.value = STATE.currentSelection;
+        }
+
+        function getSelectionLabel(mode, value) {
+            if (mode === "teacher") {
+                return DB.teachers[value]?.name || value;
+            }
+            if (mode === "room") {
+                return `Sala ${value}`;
+            }
+            if (mode === "class") {
+                return `Oddział ${value}`;
+            }
+            return getDutyLocations().find((location) => location.value === value)?.label || value;
+        }
+
+        function openSchedule(mode, selection) {
+            STATE.currentMode = mode;
+            STATE.currentSelection = selection;
+            STATE.weekOffset = 0;
+            STATE.isDashboardActive = false;
+            document.body.className = `mode-${mode}`;
+            refs.selectionInfo.textContent = getSelectionLabel(mode, selection);
+            refs.selectionInfo.style.display = "block";
+            refs.dashboardView.style.display = "none";
+            refs.scheduleView.style.display = "block";
+            refs.navControls.style.display = "flex";
+            refs.weekNavContainer.style.display = "flex";
+            refs.modeSelect.style.display = "block";
+            refs.dataSelect.style.display = "block";
+            renderSchedule();
+        }
+
+        function returnToDashboard() {
+            STATE.isDashboardActive = true;
+            STATE.weekOffset = 0;
+            refs.dashboardView.style.display = "block";
+            refs.scheduleView.style.display = "none";
+            refs.navControls.style.display = "none";
+            refs.weekNavContainer.style.display = "none";
+            refs.selectionInfo.style.display = "none";
+            refs.selectionInfo.textContent = "";
+            document.body.className = "";
+            log("Menu główne");
+        }
+
+        function changeWeek(direction) {
+            STATE.weekOffset += direction;
+            renderSchedule();
+        }
+
+        function getPeriodMeta(periodNumber) {
+            return DB.periods.find((period) => period.number === periodNumber) || null;
+        }
+
+        function getPeriodTimeLabel(periodNumber, fallbackStart = "", fallbackEnd = "") {
+            const period = getPeriodMeta(periodNumber);
+            const start = padTime(fallbackStart) || period?.start || "";
+            const end = padTime(fallbackEnd) || period?.end || "";
+            if (start && end) {
+                return `${start}-${end}`;
+            }
+            return [start, end].filter(Boolean).join("-") || "-";
+        }
+
+        function getPeriodStartMinutes(periodNumber, fallbackStart = "") {
+            if (fallbackStart) {
+                return timeToMinutes(fallbackStart);
+            }
+            return getPeriodMeta(periodNumber)?.startMinutes || 0;
+        }
+
+        function buildBranchLabel(branch) {
+            return compactSpaces(branch?.className || "");
+        }
+
+        function buildGroupLine(lesson, branch) {
+            if (branch?.groupName) {
+                return `Podział: ${branch.groupName}`;
+            }
+            if (lesson?.groupNames?.length) {
+                return `Podział: ${lesson.groupNames.join(", ")}`;
+            }
+            return "";
+        }
+
+        function getLessonRoomLabel(lesson) {
+            return lesson?.roomNames?.filter(Boolean).join(", ") || "";
+        }
+
+        function getLessonTeacherLabel(lesson) {
+            return lesson?.teacherNames?.filter(Boolean).join(", ") || "";
+        }
+
+        function lessonHasRoom(lesson, roomName) {
+            const roomKey = normalize(roomName);
+            return (lesson?.roomNames || []).some((room) => normalize(room) === roomKey);
+        }
+
+        function getActualSubstitutionRoom(lesson, event) {
+            return compactSpaces(event.room) || getLessonRoomLabel(lesson);
+        }
+
+        function getTransferSourceRoom(lesson, event) {
+            return compactSpaces(event.from?.room) || getLessonRoomLabel(lesson);
+        }
+
+        function getTransferTargetRoom(lesson, event) {
+            return compactSpaces(event.to?.room) || getTransferSourceRoom(lesson, event);
+        }
+
+        function getSubstitutionStatusLabel(event) {
+            const rawFallback = compactSpaces(event.effectLabel || event.rawSubstituteLabel || event.substituteTeacherName || "");
+            const fallback = rawFallback === "-" ? "" : rawFallback;
+            if (event.kind === "late") {
+                return fallback || "Uczniowie przychodzą później";
+            }
+            if (event.kind === "cancelled") {
+                return fallback || "Uczniowie zwolnieni do domu";
+            }
+            if (event.kind === "merge") {
+                return fallback || "Złączenie grup";
+            }
+            if (event.kind === "teacher_substitution") {
+                return normalize(fallback) === "zastepstwo" || !fallback ? "Zastępstwo" : fallback;
+            }
+            return fallback || "Zmiana organizacyjna";
+        }
+
+        function getSubstitutionBadge(event) {
+            return event.kind === "teacher_substitution" ? "Zastępstwo" : "Zmiana";
+        }
+
+        function formatTransferMoment(slot) {
+            const parts = [];
+            if (slot?.date) {
+                const [year, month, day] = slot.date.split("-");
+                parts.push(`${day}.${month}.${year}`);
+            }
+            if (slot?.period) {
+                parts.push(`lekcja ${slot.period}`);
+            }
+            const time = getPeriodTimeLabel(slot?.period || 0, slot?.timeFrom || "", slot?.timeTo || "");
+            if (time && time !== "-") {
+                parts.push(time);
+            }
+            return parts.join(", ");
+        }
+
+        function isInstantTransfer(event) {
+            return event.from?.date === event.to?.date && event.from?.period === event.to?.period;
+        }
+
+        function eventMatchesClassSelection(event, className) {
+            return CHANGES.normalizeBranchClass(className) === (event.branch?.classKey || "");
+        }
+
+        function teacherNameMatchesSelection(rawName, teacherId) {
+            const selectedName = DB.teachers[teacherId]?.name || "";
+            return Boolean(
+                rawName &&
+                selectedName &&
+                CHANGES.normalizePersonKey(rawName) === CHANGES.normalizePersonKey(selectedName)
+            );
+        }
+
+        function substitutionMatchesAbsentTeacher(event, teacherId) {
+            return event.absentTeacherId
+                ? event.absentTeacherId === teacherId
+                : teacherNameMatchesSelection(event.absentTeacherName, teacherId);
+        }
+
+        function substitutionMatchesSubstituteTeacher(event, teacherId) {
+            if (!event.substituteTeacherId && !event.substituteTeacherName) {
+                return false;
+            }
+            return event.substituteTeacherId
+                ? event.substituteTeacherId === teacherId
+                : teacherNameMatchesSelection(event.substituteTeacherName, teacherId);
+        }
+
+        function transferMatchesTeacher(event, teacherId) {
+            return event.teacherId
+                ? event.teacherId === teacherId
+                : teacherNameMatchesSelection(event.teacherName, teacherId);
+        }
+
+        function createLessonStubFromSubstitution(event) {
+            const period = getPeriodMeta(event.period);
+            return {
+                period: event.period,
+                subject: event.subject || event.replacementSubject || "Zmiana",
+                classNames: buildBranchLabel(event.branch) ? [buildBranchLabel(event.branch)] : [],
+                teacherNames: event.absentTeacherName ? [event.absentTeacherName] : [],
+                roomNames: event.room ? [event.room] : [],
+                groupNames: event.branch?.groupName ? [event.branch.groupName] : [],
+                start: padTime(event.timeFrom) || period?.start || "",
+                end: padTime(event.timeTo) || period?.end || "",
+                startMinutes: getPeriodStartMinutes(event.period, event.timeFrom)
+            };
+        }
+
+        function createLessonStubFromTransfer(event, phase) {
+            const slot = phase === "to" ? event.to : event.from;
+            const period = getPeriodMeta(slot?.period || 0);
+            const roomLabel = phase === "to" ? compactSpaces(event.to?.room) : compactSpaces(event.from?.room);
+            return {
+                period: slot?.period || 0,
+                subject: event.subject || "Przeniesienie",
+                classNames: buildBranchLabel(event.branch) ? [buildBranchLabel(event.branch)] : [],
+                teacherNames: event.teacherName ? [event.teacherName] : [],
+                roomNames: roomLabel ? [roomLabel] : [],
+                groupNames: event.branch?.groupName ? [event.branch.groupName] : [],
+                start: padTime(slot?.timeFrom || "") || period?.start || "",
+                end: padTime(slot?.timeTo || "") || period?.end || "",
+                startMinutes: getPeriodStartMinutes(slot?.period || 0, slot?.timeFrom || "")
+            };
+        }
+
+        function findMatchingSubstitution(lesson, dateKey) {
+            return DB.substitutions.find((event) => event.date === dateKey && CHANGES.lessonMatchesSubstitution(lesson, event));
+        }
+
+        function findMatchingTransfer(lesson, dateKey) {
+            return DB.transfers.find((event) => event.from.date === dateKey && CHANGES.lessonMatchesTransfer(lesson, event));
+        }
+
+        function getLessonClassLabel(lesson) {
+            return lesson?.classNames?.filter(Boolean).join(", ") || "";
+        }
+
+        function formatRoomBadge(roomLabel) {
+            return roomLabel ? `s.${roomLabel}` : "";
+        }
+
+        function buildSlotMeta(periodMeta, groupLabel = "") {
+            return `<span class="nr">${escapeHtml(periodMeta.nr)}</span> ${escapeHtml(periodMeta.start)}-${escapeHtml(periodMeta.end)}${groupLabel ? ` <span class="group-badge">${escapeHtml(groupLabel)}</span>` : ""}`;
+        }
+
+        function renderDetailLines(lines, className = "details") {
+            return lines.filter(Boolean).map((line) => `<div class="${className}">${escapeHtml(line)}</div>`).join("");
+        }
+
+        function createScheduleCard({ className = "card", metaHtml = "", title = "", subLine = "", noteRed = "", details = [], detailClass = "details", payBadge = "" }) {
+            const card = document.createElement("div");
+            card.className = className;
+            card.innerHTML = `
+                ${metaHtml ? `<div class="meta">${metaHtml}</div>` : ""}
+                <div class="main-info">${escapeHtml(title)}</div>
+                ${subLine ? `<div class="sub-line">${escapeHtml(subLine)}</div>` : ""}
+                ${noteRed ? `<span class="note-red">${escapeHtml(noteRed)}</span>` : ""}
+                ${renderDetailLines(details, detailClass)}
+                ${payBadge}
+            `;
+            return card;
+        }
+
+        function createEmptySlotCard(periodMeta) {
+            return createScheduleCard({
+                className: "card empty",
+                title: `${periodMeta.nr}. ${periodMeta.start}`
+            });
+        }
+
+        function getRegularLessonLine(mode, lesson) {
+            const roomLabel = formatRoomBadge(getLessonRoomLabel(lesson));
+            const teacherLabel = getLessonTeacherLabel(lesson);
+            const classLabel = getLessonClassLabel(lesson);
+
+            if (mode === "teacher") {
+                return [classLabel, roomLabel].filter(Boolean).join(" / ");
+            }
+            if (mode === "class") {
+                return [teacherLabel, roomLabel].filter(Boolean).join(" / ");
+            }
+            return [teacherLabel, classLabel].filter(Boolean).join(" / ");
+        }
+
+        function createRegularLessonCard(mode, periodMeta, lesson) {
+            return createScheduleCard({
+                metaHtml: buildSlotMeta(periodMeta, lesson.groupName),
+                title: lesson.subject,
+                subLine: getRegularLessonLine(mode, lesson)
+            });
+        }
+
+        function getSubstitutionBaseNote(event) {
+            if (event.kind === "teacher_substitution") {
+                return "Nieobecność";
+            }
+            return getSubstitutionStatusLabel(event);
+        }
+
+        function createSubstitutionBaseCard(periodMeta, lesson, event) {
+            const details = [];
+            if (event.reason) {
+                details.push(`Powód: ${event.reason}`);
+            }
+            if (event.note) {
+                details.push(`Uwagi: ${event.note}`);
+            }
+
+            return createScheduleCard({
+                className: "card is-sub",
+                metaHtml: buildSlotMeta(periodMeta, lesson.groupName),
+                title: lesson.subject,
+                noteRed: getSubstitutionBaseNote(event),
+                details
+            });
+        }
+
+        function createTransferOutCard(periodMeta, lesson, event) {
+            const targetRoom = getTransferTargetRoom(lesson, event);
+            const details = [`Przeniesiono na: ${formatTransferMoment(event.to)}`];
+            if (targetRoom) {
+                details.push(`Nowa sala: ${targetRoom}`);
+            }
+            if (event.note) {
+                details.push(`Uwagi: ${event.note}`);
+            }
+
+            return createScheduleCard({
+                className: "card is-transfer transfer-out",
+                metaHtml: buildSlotMeta(periodMeta, lesson.groupName),
+                title: lesson.subject,
+                details,
+                detailClass: "transfer-note"
+            });
+        }
+
+        function createDutyLeadCard(duty) {
+            const card = document.createElement("div");
+            card.className = "card morning-duty";
+            card.innerHTML = `
+                <div class="main-info">DYŻUR ${escapeHtml(duty.time)}</div>
+                <div class="sub-line">${escapeHtml(duty.locationLabel)}</div>
+            `;
+            return card;
+        }
+
+        function createDutyFollowCard(duty) {
+            const strip = document.createElement("div");
+            strip.className = "duty-section";
+            strip.innerHTML = `<b>${escapeHtml(duty.time)}</b> ${escapeHtml(duty.locationLabel)}`;
+            return strip;
+        }
+
+        function createDutyLocationCard(duty) {
+            return createScheduleCard({
+                className: "card",
+                metaHtml: escapeHtml(duty.time),
+                title: duty.teacherName || "Nieprzypisany dyżur",
+                subLine: duty.locationLabel
+            });
+        }
+
+        function createSubstitutionResultCard(mode, periodMeta, event) {
+            const stub = createLessonStubFromSubstitution(event);
+            const branchLabel = buildBranchLabel(event.branch) || getLessonClassLabel(stub);
+            const roomLabel = formatRoomBadge(getActualSubstitutionRoom(stub, event));
+            const teacherLabel = event.substituteTeacherName || "";
+            let subLine = "";
+
+            if (mode === "teacher") {
+                subLine = [roomLabel, branchLabel].filter(Boolean).join(" / ");
+            } else if (mode === "class") {
+                subLine = [teacherLabel, roomLabel].filter(Boolean).join(" / ") || roomLabel || branchLabel;
+            } else {
+                subLine = [teacherLabel || getSubstitutionStatusLabel(event), branchLabel].filter(Boolean).join(" / ");
+            }
+
+            const details = [];
+            const subjectLabel = event.replacementSubject || event.subject;
+            if (subjectLabel) {
+                details.push(`Przedmiot: ${subjectLabel}`);
+            }
+            if (mode === "teacher" && event.absentTeacherName) {
+                details.push(`Za: ${event.absentTeacherName}`);
+            } else if (mode !== "teacher" && event.substituteTeacherName && event.absentTeacherName) {
+                details.push(`Za: ${event.absentTeacherName}`);
+            } else if (mode !== "teacher" && event.absentTeacherName && !event.substituteTeacherName) {
+                details.push(`Prowadzący: ${event.absentTeacherName}`);
+            }
+            if (event.note) {
+                details.push(`Uwagi: ${event.note}`);
+            }
+
+            const title = event.kind === "teacher_substitution"
+                ? "ZASTĘPSTWO"
+                : getSubstitutionStatusLabel(event).toUpperCase();
+
+            const payBadge = mode === "teacher" && event.paymentForm
+                ? `<span class="pay-badge">${escapeHtml(event.paymentForm)}</span>`
+                : "";
+
+            return createScheduleCard({
+                className: "card is-new",
+                metaHtml: buildSlotMeta(periodMeta, event.branch?.groupName || stub.groupName),
+                title,
+                subLine,
+                details,
+                payBadge
+            });
+        }
+
+        function createTransferIncomingCard(mode, periodMeta, event) {
+            const stub = createLessonStubFromTransfer(event, "to");
+            const branchLabel = buildBranchLabel(event.branch) || getLessonClassLabel(stub);
+            const roomLabel = formatRoomBadge(getTransferTargetRoom(stub, event));
+            let subLine = "";
+
+            if (mode === "teacher") {
+                subLine = [branchLabel, roomLabel].filter(Boolean).join(" / ");
+            } else if (mode === "class") {
+                subLine = [event.teacherName, roomLabel].filter(Boolean).join(" / ");
+            } else {
+                subLine = [event.teacherName, branchLabel].filter(Boolean).join(" / ");
+            }
+
+            const details = [`Przeniesiono z: ${formatTransferMoment(event.from)}`];
+            const sourceRoom = getTransferSourceRoom(stub, event);
+            const targetRoom = getTransferTargetRoom(stub, event);
+            if (sourceRoom && targetRoom && normalize(sourceRoom) !== normalize(targetRoom)) {
+                details.push(`Poprzednia sala: ${sourceRoom}`);
+            }
+            if (event.note) {
+                details.push(`Uwagi: ${event.note}`);
+            }
+
+            return createScheduleCard({
+                className: "card is-transfer",
+                metaHtml: buildSlotMeta(periodMeta, event.branch?.groupName || stub.groupName),
+                title: event.subject || stub.subject || "Przeniesienie",
+                subLine,
+                details,
+                detailClass: "transfer-note"
+            });
+        }
+
+        function lessonMatchesSelectedClass(lesson, selection) {
+            const selectedKey = normalize(selection);
+            return lesson.classNames.some((className) => normalize(className) === selectedKey);
+        }
+
+        function getLessonsForSelection(mode, selection, dayIndex, periodNumber) {
+            if (mode === "teacher") {
+                return DB.lessons.filter((lesson) => lesson.day === dayIndex && lesson.period === periodNumber && lesson.teacherIds.includes(selection));
+            }
+            if (mode === "class") {
+                return DB.lessons.filter((lesson) => lesson.day === dayIndex && lesson.period === periodNumber && lessonMatchesSelectedClass(lesson, selection));
+            }
+            return DB.lessons.filter((lesson) => lesson.day === dayIndex && lesson.period === periodNumber && lessonHasRoom(lesson, selection));
+        }
+
+        function eventMatchesRoomSelection(event, roomName) {
+            const roomKey = normalize(roomName);
+            return normalize(getActualSubstitutionRoom(createLessonStubFromSubstitution(event), event)) === roomKey;
+        }
+
+        function getSubstitutionAdditionsForSlot(mode, selection, dateKey, periodNumber) {
+            return DB.substitutions.filter((event) => {
+                if (event.date !== dateKey || event.period !== periodNumber) {
+                    return false;
+                }
+                if (mode === "teacher") {
+                    return substitutionMatchesSubstituteTeacher(event, selection);
+                }
+                if (mode === "class") {
+                    return eventMatchesClassSelection(event, selection);
+                }
+                return eventMatchesRoomSelection(event, selection);
+            }).sort((left, right) => buildBranchLabel(left.branch).localeCompare(buildBranchLabel(right.branch), "pl"));
+        }
+
+        function getIncomingTransfersForSlot(mode, selection, dateKey, periodNumber) {
+            return DB.transfers.filter((event) => {
+                if (event.to?.date !== dateKey || event.to?.period !== periodNumber) {
+                    return false;
+                }
+                if (mode === "teacher") {
+                    return transferMatchesTeacher(event, selection);
+                }
+                if (mode === "class") {
+                    return eventMatchesClassSelection(event, selection);
+                }
+                return normalize(getTransferTargetRoom(createLessonStubFromTransfer(event, "to"), event)) === normalize(selection);
+            }).sort((left, right) => buildBranchLabel(left.branch).localeCompare(buildBranchLabel(right.branch), "pl"));
+        }
+
+        function getTeacherDutiesInRange(selection, dayIndex, startMin, endMin) {
+            return DB.duties
+                .filter((duty) => duty.day === dayIndex && duty.teacherId === selection && duty.startMin >= startMin && duty.startMin < endMin)
+                .sort((left, right) => left.startMin - right.startMin);
+        }
+
+        function appendPeriodCards(content, mode, selection, date, dayIndex, periodMeta) {
+            const wrapper = document.createElement("div");
+            wrapper.className = "slot-wrapper";
+            const dateKey = dateToIso(date);
+            const lessons = getLessonsForSelection(mode, selection, dayIndex, periodMeta.nr)
+                .sort((left, right) => (left.groupName || "").localeCompare(right.groupName || "", "pl"));
+
+            let cardCount = 0;
+
+            lessons.forEach((lesson) => {
+                const transfer = findMatchingTransfer(lesson, dateKey);
+                if (transfer) {
+                    wrapper.appendChild(createTransferOutCard(periodMeta, lesson, transfer));
+                    cardCount += 1;
+                    return;
+                }
+
+                const substitution = findMatchingSubstitution(lesson, dateKey);
+                if (substitution) {
+                    wrapper.appendChild(createSubstitutionBaseCard(periodMeta, lesson, substitution));
+                    cardCount += 1;
+                    return;
+                }
+
+                wrapper.appendChild(createRegularLessonCard(mode, periodMeta, lesson));
+                cardCount += 1;
+            });
+
+            getSubstitutionAdditionsForSlot(mode, selection, dateKey, periodMeta.nr).forEach((event) => {
+                wrapper.appendChild(createSubstitutionResultCard(mode, periodMeta, event));
+                cardCount += 1;
+            });
+
+            getIncomingTransfersForSlot(mode, selection, dateKey, periodMeta.nr).forEach((event) => {
+                wrapper.appendChild(createTransferIncomingCard(mode, periodMeta, event));
+                cardCount += 1;
+            });
+
+            if (cardCount === 0) {
+                wrapper.appendChild(createEmptySlotCard(periodMeta));
+            }
+
+            if (mode === "teacher") {
+                getTeacherDutiesInRange(selection, dayIndex, Math.max(0, periodMeta.endMinutes - 5), periodMeta.endMinutes + 15)
+                    .forEach((duty) => wrapper.appendChild(createDutyFollowCard(duty)));
+            }
+
+            content.appendChild(wrapper);
+        }
+
+        function renderDutyDay(content, selection, dayIndex) {
+            const duties = DB.duties
+                .filter((duty) => duty.day === dayIndex && duty.locationKey === selection)
+                .sort((left, right) => left.startMin - right.startMin);
+
+            if (!duties.length) {
+                content.appendChild(createScheduleCard({
+                    className: "card empty",
+                    title: "Brak dyżurów dla tego dnia."
+                }));
+                return;
+            }
+
+            duties.forEach((duty) => content.appendChild(createDutyLocationCard(duty)));
+        }
+
+        function renderSchedule() {
+            populateScheduleControls();
+            refs.selectionInfo.textContent = getSelectionLabel(STATE.currentMode, STATE.currentSelection);
+
+            const weekDates = getWeekDates(STATE.weekOffset);
+            refs.weekRangeText.textContent = `${formatDateShort(weekDates[0])} - ${formatDateShort(weekDates[4])}`;
+            refs.grid.innerHTML = "";
+
+            weekDates.forEach((date, index) => {
+                const dayIndex = index + 1;
+                const dayCol = document.createElement("div");
+                dayCol.className = "day-col";
+                dayCol.innerHTML = `<div class="day-header">${escapeHtml(DAY_NAMES[index])}<span class="day-date">${escapeHtml(formatDateLabel(date))}</span></div>`;
+
+                const content = document.createElement("div");
+                content.className = "day-content";
+
+                if (STATE.currentMode === "duty") {
+                    renderDutyDay(content, STATE.currentSelection, dayIndex);
+                } else {
+                    if (STATE.currentMode === "teacher" && DB.periods.length > 0) {
+                        getTeacherDutiesInRange(STATE.currentSelection, dayIndex, 0, DB.periods[0].startMinutes)
+                            .forEach((duty) => content.appendChild(createDutyLeadCard(duty)));
+                    }
+
+                    DB.periods.forEach((periodMeta) => {
+                        appendPeriodCards(content, STATE.currentMode, STATE.currentSelection, date, dayIndex, periodMeta);
+                    });
+                }
+
+                dayCol.appendChild(content);
+                refs.grid.appendChild(dayCol);
+            });
+
+            log(`Widok: ${refs.selectionInfo.textContent} • tydzień ${refs.weekRangeText.textContent}`);
+        }
+
+        function getCurrentSupervisoryDuty() {
+            const now = new Date();
+            const dayOfWeek = now.getDay();
+            if (dayOfWeek === 0 || dayOfWeek === 6) {
+                return null;
+            }
+
+            const currentMinutes = now.getHours() * 60 + now.getMinutes();
+            let shiftKey = "";
+            let isWednesdayExtended = false;
+
+            if (dayOfWeek === 3) {
+                if (currentMinutes > 940) {
+                    return null;
+                }
+                shiftKey = "08:00 - 13:15";
+                isWednesdayExtended = currentMinutes >= 795;
+            } else if (currentMinutes < 795) {
+                shiftKey = "08:00 - 13:15";
+            } else if (currentMinutes < 1140) {
+                shiftKey = "13:15 - 19:00";
+            } else {
+                return null;
+            }
+
+            const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+            let fallbackEntry = null;
+
+            for (const entry of DB.dutySchedule) {
+                if (entry.shift !== shiftKey) {
+                    continue;
+                }
+
+                if (!entry.range) {
+                    fallbackEntry = fallbackEntry || entry;
+                    continue;
+                }
+
+                const start = new Date(entry.range.start.getFullYear(), entry.range.start.getMonth(), entry.range.start.getDate());
+                const end = new Date(entry.range.end.getFullYear(), entry.range.end.getMonth(), entry.range.end.getDate());
+                if (today >= start && today <= end) {
+                    const name = compactSpaces(entry.days[dayOfWeek - 1]);
+                    if (!name || normalize(name).includes("brak")) {
+                        return null;
+                    }
+                    return { name, shift: shiftKey, isWednesdayExtended };
+                }
+            }
+
+            if (!fallbackEntry) {
+                return null;
+            }
+
+            const fallbackName = compactSpaces(fallbackEntry.days[dayOfWeek - 1]);
+            if (!fallbackName || normalize(fallbackName).includes("brak")) {
+                return null;
+            }
+
+            return { name: fallbackName, shift: shiftKey, isWednesdayExtended };
+        }
+
+        function getPhoneForDutyPerson(rawName) {
+            const cleanName = compactSpaces(rawName.split("/")[0].split("\n")[0]);
+            return DB.phoneNumbers[cleanName] || DB.phoneNumbers[normalize(cleanName)] || null;
+        }
+
+        function updateDutyBar() {
+            const now = new Date();
+            const dayOfWeek = now.getDay();
+
+            if (DB.supervisoryDutyError) {
+                refs.dutyBarContent.innerHTML = `<span class="duty-empty-msg">${escapeHtml(DB.supervisoryDutyError)}</span>`;
+                return;
+            }
+
+            if (dayOfWeek === 0 || dayOfWeek === 6) {
+                refs.dutyBarContent.innerHTML = `<span class="duty-empty-msg">Weekend - szkoła zamknięta.</span>`;
+                return;
+            }
+
+            const duty = getCurrentSupervisoryDuty();
+            if (!duty) {
+                const currentMinutes = now.getHours() * 60 + now.getMinutes();
+                let message = "Brak zaplanowanego dyżuru nadzoru w tym czasie.";
+                if (dayOfWeek === 3 && currentMinutes > 940) {
+                    message = "Zakończono dyżur nadzoru na dziś (po 15:40).";
+                } else if (dayOfWeek !== 3 && currentMinutes >= 1140) {
+                    message = "Zakończono dyżur nadzoru na dziś (po 19:00).";
+                }
+                refs.dutyBarContent.innerHTML = `<span class="duty-empty-msg">${escapeHtml(message)}</span>`;
+                return;
+            }
+
+            const rawName = compactSpaces(duty.name.split("/")[0].split("\n")[0]);
+            const phone = getPhoneForDutyPerson(rawName);
+            const shiftLabel = duty.isWednesdayExtended ? "Środa po 13:15" : duty.shift.replace(" - ", " – ");
+            const contactHtml = phone ? `
+                <div class="duty-contact-box">
+                    <a href="tel:${escapeHtml(phone.number.replace(/\s+/g, ""))}" class="duty-phone-btn">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 3.07 9.81 19.79 19.79 0 0 1 0 1.18 2 2 0 0 1 2 0h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L6.09 7.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 14.92z"></path>
+                        </svg>
+                        ${escapeHtml(phone.display)}
+                    </a>
+                    <div class="duty-ext-info">
+                        <span class="duty-ext-label">Wewnętrzny</span>
+                        <span class="duty-ext-num">${escapeHtml(phone.ext || "---")}</span>
+                    </div>
+                </div>
+            ` : `<div class="duty-empty-msg">Brak numeru telefonu w arkuszu nadzoru.</div>`;
+
+            refs.dutyBarContent.innerHTML = `
+                <div class="duty-time-badge">${escapeHtml(shiftLabel)}</div>
+                <div class="duty-person-name">${escapeHtml(rawName)}</div>
+                ${contactHtml}
+            `;
+        }
+
+        function updateMeta() {
+            const loadedAt = STATE.lastLoadedAt ? STATE.lastLoadedAt.toLocaleString("pl-PL") : "brak";
+            refs.summaryCounts.textContent = `${DB.substitutions.length} zastępstw • ${DB.transfers.length} przeniesień`;
+            refs.summarySources.textContent = `${DB.teacherOrder.length} nauczycieli • ${DB.classesList.length} oddziałów • ${DB.duties.length} dyżurów tygodniowo`;
+            refs.footerMeta.textContent = `Plan XML + dyżury + nadzór XLSX • Ostatni odczyt: ${loadedAt}`;
+            log(`Plan gotowy • Zastępstwa: ${DB.substitutions.length} • Przeniesienia: ${DB.transfers.length} • ${loadedAt}`);
+            updateDutyBar();
+        }
+
+        function showError(message) {
+            refs.summaryCounts.textContent = "Błąd ładowania danych";
+            refs.summarySources.textContent = message;
+            refs.dutyBarContent.innerHTML = `<span class="duty-empty-msg">${escapeHtml(message)}</span>`;
+            log(message, true);
+        }
+
+        async function refreshData() {
+            try {
+                if (!CHANGES?.loadChangeSets) {
+                    throw new Error("Brak modułu schedule-changes.js.");
+                }
+                resetDatabase();
+                await loadXMLData();
+                await loadDutyData();
+                try {
+                    await loadSupervisoryDutyData();
+                } catch (error) {
+                    DB.supervisoryDutyError = `Nie udało się wczytać pliku nadzoru: ${error instanceof Error ? error.message : String(error)}`;
+                }
+                const changeSets = await CHANGES.loadChangeSets(CONFIG, DB.teachers);
+                DB.substitutions = changeSets.substitutions;
+                DB.transfers = changeSets.transfers;
+                DB.changeSources = changeSets.sources;
+                STATE.lastLoadedAt = new Date();
+                updateMeta();
+                renderDashboard();
+                if (!STATE.isDashboardActive) {
+                    renderSchedule();
+                }
+            } catch (error) {
+                showError(error instanceof Error ? error.message : String(error));
+            }
+        }
+
+        function updateLessonStatus() {
+            if (!DB.periods.length) {
+                return;
+            }
+
+            const now = new Date();
+            const day = now.getDay();
+            if (day === 0 || day === 6) {
+                refs.desktopStatus.textContent = "Weekend";
+                refs.desktopStatus.style.color = "#94a3b8";
+                refs.mobileStatus.textContent = "Weekend";
+                refs.mobileStatus.style.color = "#94a3b8";
+                return;
+            }
+
+            const currentMinutes = now.getHours() * 60 + now.getMinutes();
+            let statusText = "Po lekcjach";
+            let color = "#94a3b8";
+
+            for (let index = 0; index < DB.periods.length; index += 1) {
+                const period = DB.periods[index];
+                if (currentMinutes >= period.startMinutes && currentMinutes < period.endMinutes) {
+                    statusText = `Trwa lekcja ${period.number} (${period.start} - ${period.end})`;
+                    color = "#fbbf24";
+                    break;
+                }
+
+                if (index < DB.periods.length - 1) {
+                    const next = DB.periods[index + 1];
+                    if (currentMinutes >= period.endMinutes && currentMinutes < next.startMinutes) {
+                        statusText = `Przerwa po lekcji ${period.number}`;
+                        color = "#4ade80";
+                        break;
+                    }
+                } else if (currentMinutes < period.startMinutes) {
+                    statusText = "Przed lekcjami";
+                    color = "#94a3b8";
+                }
+            }
+
+            refs.desktopStatus.textContent = statusText;
+            refs.desktopStatus.style.color = color;
+            refs.mobileStatus.textContent = statusText;
+            refs.mobileStatus.style.color = color;
         }
 
         function startClock() {
             const update = () => {
                 const now = new Date();
-                document.getElementById('clock').innerText = now.toLocaleString('pl-PL', { weekday: 'long', day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' });
-                updateLessonStatus();
-                updateDutyBar();
-            };
-            update();
-            setInterval(update, 1000);
-        }
-
-        function updateLessonStatus() {
-            if (!DB.periods || DB.periods.length === 0) return;
-            const now = new Date();
-            const currentMin = now.getHours() * 60 + now.getMinutes();
-            const dateStr = now.toISOString().split('T')[0];
-
-            let todayPeriods = JSON.parse(JSON.stringify(DB.periods));
-            if (DB.customHours[dateStr]) {
-                DB.customHours[dateStr].forEach(customP => {
-                    const idx = todayPeriods.findIndex(p => p.nr === customP.nr);
-                    if (idx !== -1) {
-                        todayPeriods[idx].start = customP.start;
-                        todayPeriods[idx].end = customP.end;
-                    }
+                refs.clock.textContent = now.toLocaleString("pl-PL", {
+                    weekday: "long",
+                    day: "numeric",
+                    month: "long",
+                    hour: "2-digit",
+                    minute: "2-digit"
                 });
-            }
+                updateLessonStatus();
+                if (STATE.isDashboardActive) {
+                    updateDutyBar();
+                }
+            };
 
-            const elDesktop = document.getElementById('desktop-status');
-            const elMobile = document.getElementById('mobile-status');
-
-            let statusText = ""; let color = "#94a3b8";
-
-            for (let i = 0; i < todayPeriods.length; i++) {
-                const p = todayPeriods[i]; const start = timeToMin(p.start); const end = timeToMin(p.end);
-                if (currentMin >= start && currentMin < end) { statusText = `🔴 TRWA LEKCJA ${p.nr} (${p.start} - ${p.end})`; color = "#fbbf24"; break; }
-                if (i < todayPeriods.length - 1) { const nextP = todayPeriods[i + 1]; const nextStart = timeToMin(nextP.start); if (currentMin >= end && currentMin < nextStart) { statusText = `🟢 PRZERWA (po lekcji ${p.nr})`; color = "#4ade80"; break; } }
-            }
-            if (!statusText && todayPeriods.length > 0) {
-                const firstStart = timeToMin(todayPeriods[0].start); const lastEnd = timeToMin(todayPeriods[todayPeriods.length - 1].end);
-                if (currentMin < firstStart) statusText = "Przed lekcjami"; else if (currentMin >= lastEnd) statusText = "Po lekcjach";
-            }
-
-            if (elDesktop) { elDesktop.innerText = statusText; elDesktop.style.color = color; }
-            if (elMobile) { elMobile.innerText = statusText; elMobile.style.color = color; }
+            update();
+            window.setInterval(update, 1000);
         }
 
-        function log(msg, err = false) { const el = document.getElementById('debug-bar'); el.innerText = msg; el.style.color = err ? '#ef4444' : '#64748b'; }
+        refs.modeSelect.addEventListener("change", (event) => {
+            STATE.currentMode = event.target.value;
+            STATE.currentSelection = "";
+            document.body.className = `mode-${STATE.currentMode}`;
+            renderSchedule();
+        });
+
+        refs.dataSelect.addEventListener("change", (event) => {
+            STATE.currentSelection = event.target.value;
+            renderSchedule();
+        });
+
+        window.addEventListener("load", async () => {
+            startClock();
+            await refreshData();
+            window.setInterval(refreshData, CONFIG.refreshInterval);
+        });
     </script>
 </body>
-
 </html>
