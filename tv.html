@@ -1,0 +1,1118 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=1080, initial-scale=1.0">
+    <title>ZSZ5 TV - Plan lekcji</title>
+    <link rel="icon" href="data:,">
+    <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
+    <script src="schedule-changes.js"></script>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background-color: #000000;
+            font-family: "Segoe UI", "Roboto", Helvetica, Arial, sans-serif;
+            width: 1080px;
+            height: 1920px;
+            overflow: hidden;
+            padding: 60px;
+            color: #e2e8f0;
+        }
+
+        #layout-wrapper {
+            background-color: #020617;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 0 50px rgba(0, 0, 0, 0.8);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        header {
+            height: 160px;
+            background: linear-gradient(to right, #4dff88 0%, #33cc66 30%, #020617 100%);
+            display: flex;
+            align-items: center;
+            padding: 0 30px;
+            border-bottom: 6px solid #22c55e;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+            flex-shrink: 0;
+            z-index: 10;
+        }
+
+        .logo-container {
+            margin-right: 30px;
+            height: 130px;
+            display: flex;
+            align-items: center;
+        }
+
+        .logo {
+            height: 100%;
+            width: auto;
+            object-fit: contain;
+            mix-blend-mode: multiply;
+            filter: contrast(1.1);
+        }
+
+        .header-text {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            flex: 1;
+        }
+
+        .header-text h1 {
+            font-size: 2.2rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin: 0;
+            color: #ffffff;
+            line-height: 1;
+            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.6);
+        }
+
+        .header-info-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 10px;
+            width: 100%;
+            gap: 20px;
+        }
+
+        .datetime {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #ffffff;
+            font-family: "Consolas", monospace;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+        }
+
+        .lesson-status-box {
+            background: rgba(0, 0, 0, 0.6);
+            padding: 5px 20px;
+            border-radius: 8px;
+            font-size: 1.3rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
+            border: 3px solid transparent;
+            text-align: center;
+            line-height: 1.2;
+        }
+
+        .status-active {
+            color: #fbbf24;
+            border-color: #d97706;
+            background: rgba(120, 53, 15, 0.6);
+            text-shadow: 0 0 10px rgba(251, 191, 36, 0.5);
+        }
+
+        .status-break {
+            color: #fde047;
+            border-color: #eab308;
+            background: rgba(202, 138, 4, 0.4);
+        }
+
+        .status-idle {
+            color: #94a3b8;
+            border-color: #475569;
+        }
+
+        .live-dot {
+            height: 14px;
+            width: 14px;
+            background-color: #22c55e;
+            border-radius: 50%;
+            display: inline-block;
+            box-shadow: 0 0 15px #22c55e;
+        }
+
+        #slide-container {
+            flex: 1;
+            padding: 20px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: 1fr 1fr;
+            gap: 20px;
+            background: radial-gradient(circle at center, #064e3b 0%, #020617 100%);
+            overflow: hidden;
+        }
+
+        .class-card {
+            background-color: #111827;
+            border-radius: 12px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            border-left: 8px solid #16a34a;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+            border: 1px solid #1f2937;
+            min-height: 0;
+        }
+
+        .class-header {
+            background: linear-gradient(90deg, #064e3b 0%, #065f46 100%);
+            padding: 8px 20px;
+            font-size: 2rem;
+            font-weight: 800;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-bottom: 2px solid #047857;
+            flex-shrink: 0;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .class-name {
+            color: #d1fae5;
+            text-shadow: 0 0 15px rgba(16, 185, 129, 0.5);
+        }
+
+        .grid-container {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            height: 100%;
+        }
+
+        .grid-row {
+            display: grid;
+            grid-template-columns: 60px 130px 1fr;
+            border-bottom: 1px solid #334155;
+            align-items: center;
+            min-height: 0;
+        }
+
+        .grid-row:last-child {
+            border-bottom: none;
+        }
+
+        .grid-row.substitution {
+            background: linear-gradient(90deg, rgba(245, 158, 11, 0.2), rgba(17, 24, 39, 0));
+        }
+
+        .grid-row.transfer {
+            background: linear-gradient(90deg, rgba(16, 185, 129, 0.18), rgba(17, 24, 39, 0));
+        }
+
+        .cell-nr {
+            background: rgba(0, 0, 0, 0.2);
+            border-right: 1px solid #334155;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+            padding: 6px 2px;
+        }
+
+        .nr-big {
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: #94a3b8;
+            line-height: 1;
+        }
+
+        .nr-time {
+            font-size: 0.75rem;
+            color: #64748b;
+            font-family: "Consolas", monospace;
+            margin-top: 2px;
+            text-align: center;
+            line-height: 1;
+        }
+
+        .cell-room {
+            color: #fbbf24;
+            border-right: 1px solid #334155;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 0 5px;
+            font-weight: 800;
+            line-height: 1.1;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        .cell-info {
+            padding: 4px 15px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            color: #f1f5f9;
+            height: 100%;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .info-subject {
+            font-weight: 700;
+            line-height: 1.1;
+            width: 100%;
+        }
+
+        .info-teacher {
+            font-size: 0.9rem;
+            color: #94a3b8;
+            font-style: italic;
+            text-align: right;
+            margin-top: 4px;
+            opacity: 0.8;
+            width: 100%;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .info-note {
+            font-size: 0.8rem;
+            color: #fef3c7;
+            margin-top: 3px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .group-badge {
+            display: inline-block;
+            font-size: 0.78rem;
+            background: #334155;
+            padding: 1px 5px;
+            border-radius: 4px;
+            margin-right: 6px;
+            vertical-align: middle;
+            transform: translateY(-2px);
+            color: #e2e8f0;
+        }
+
+        .status-chip {
+            display: inline-block;
+            margin-left: 8px;
+            padding: 2px 7px;
+            border-radius: 999px;
+            font-size: 0.68rem;
+            font-weight: 800;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            vertical-align: middle;
+            transform: translateY(-1px);
+        }
+
+        .status-chip.substitution {
+            background: rgba(245, 158, 11, 0.22);
+            color: #fde68a;
+        }
+
+        .status-chip.transfer {
+            background: rgba(16, 185, 129, 0.2);
+            color: #d1fae5;
+        }
+
+        footer {
+            height: 50px;
+            background-color: #064e3b;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 30px;
+            font-size: 1rem;
+            color: #a7f3d0;
+            border-top: 2px solid #047857;
+            flex-shrink: 0;
+        }
+
+        .fullscreen-msg {
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 3rem;
+            color: #4b5563;
+            flex-direction: column;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div id="layout-wrapper">
+        <header>
+            <div class="logo-container">
+                <img src="orzeł.png" alt="ZSZ5" class="logo" onerror="this.style.display='none'">
+            </div>
+
+            <div class="header-text">
+                <h1>Plan lekcji klas</h1>
+                <div class="header-info-row">
+                    <div id="header-datetime" class="datetime">
+                        <span class="live-dot"></span> ...
+                    </div>
+                    <div id="lesson-status" class="lesson-status-box status-idle">...</div>
+                </div>
+            </div>
+        </header>
+
+        <div id="slide-container">
+            <div class="fullscreen-msg">Ładowanie...</div>
+        </div>
+
+        <footer>
+            <div>ZSZ5 Wrocław • Panel informacyjny TV</div>
+            <div id="update-info">Ładowanie danych...</div>
+        </footer>
+    </div>
+
+    <script>
+        const CONFIG = {
+            xml: "./plan lekcji 4 maja.xml",
+            detailedChanges: ["./ZbiorczeZestawienieZmian.xlsx"],
+            substitutionsInfo: ["./InformacjeOZastepstwach.xlsx"],
+            transfersInfo: ["./InformacjeOPrzeniesieniach (1).xlsx"],
+            refreshInterval: 120000,
+            slideDuration: 10000,
+            classesPerSlide: 4
+        };
+
+        const DAYS_PL = ["niedziela", "poniedziałek", "wtorek", "środa", "czwartek", "piątek", "sobota"];
+
+        const DB = {
+            teachers: {},
+            classesById: {},
+            classesList: [],
+            groups: {},
+            periods: [],
+            lessons: [],
+            substitutions: [],
+            transfers: [],
+            changeSources: {
+                detailedChanges: "",
+                substitutionsInfo: "",
+                transfersInfo: ""
+            }
+        };
+
+        const CHANGES = window.ScheduleChanges;
+
+        let groupedClasses = [];
+        let currentSlideIndex = 0;
+        let carouselInterval = null;
+
+        function compactSpaces(value) {
+            return String(value || "").replace(/\s+/g, " ").trim();
+        }
+
+        function normalize(value) {
+            return compactSpaces(value).toLowerCase().replace(/\s+/g, "");
+        }
+
+        function escapeHtml(value) {
+            return String(value ?? "")
+                .replaceAll("&", "&amp;")
+                .replaceAll("<", "&lt;")
+                .replaceAll(">", "&gt;")
+                .replaceAll('"', "&quot;")
+                .replaceAll("'", "&#039;");
+        }
+
+        function splitCsv(value) {
+            return String(value || "")
+                .split(",")
+                .map((item) => item.trim())
+                .filter(Boolean);
+        }
+
+        function padTime(value) {
+            const text = String(value || "").trim();
+            if (!text) {
+                return "";
+            }
+            const [hours, minutes] = text.split(":");
+            if (!hours || !minutes) {
+                return text;
+            }
+            return `${hours.padStart(2, "0")}:${minutes.padStart(2, "0")}`;
+        }
+
+        function timeToMinutes(value) {
+            const [hours, minutes] = padTime(value).split(":").map(Number);
+            if (Number.isNaN(hours) || Number.isNaN(minutes)) {
+                return 0;
+            }
+            return hours * 60 + minutes;
+        }
+
+        function encodePath(url) {
+            return encodeURI(url).replace(/\+/g, "%2B");
+        }
+
+        async function fetchDecodedText(url, encoding) {
+            const response = await fetch(`${encodePath(url)}?t=${Date.now()}`, { cache: "no-store" });
+            if (!response.ok) {
+                throw new Error(`Nie można wczytać pliku ${url} (HTTP ${response.status})`);
+            }
+            const buffer = await response.arrayBuffer();
+            return new TextDecoder(encoding).decode(buffer);
+        }
+
+        function resetDatabase() {
+            DB.teachers = {};
+            DB.classesById = {};
+            DB.classesList = [];
+            DB.groups = {};
+            DB.periods = [];
+            DB.lessons = [];
+            DB.substitutions = [];
+            DB.transfers = [];
+            DB.changeSources = {
+                detailedChanges: "",
+                substitutionsInfo: "",
+                transfersInfo: ""
+            };
+        }
+
+        function getRoomStyle(name) {
+            const len = (name || "").length;
+            if (len <= 3) return "font-size: 1.6rem;";
+            if (len <= 6) return "font-size: 1.3rem;";
+            if (len <= 10) return "font-size: 1.1rem; line-height:1;";
+            return "font-size: 0.9rem; line-height:1; word-break:break-word;";
+        }
+
+        function getSubjectStyle(name) {
+            const len = (name || "").length;
+            if (len <= 15) return "font-size: 1.3rem;";
+            if (len <= 25) return "font-size: 1.1rem;";
+            return "font-size: 0.95rem; line-height:1.1; white-space:normal;";
+        }
+
+        function getPeriodTime(periodNumber) {
+            const period = DB.periods.find((entry) => entry.number === periodNumber);
+            return period ? `${period.start}-${period.end}` : "";
+        }
+
+        async function loadXMLData() {
+            const xmlText = await fetchDecodedText(CONFIG.xml, "windows-1250");
+            const xml = new DOMParser().parseFromString(xmlText, "text/xml");
+            const roomsById = {};
+            const subjectsById = {};
+            const lessonDefs = {};
+
+            xml.querySelectorAll("groups group").forEach((node) => {
+                const id = node.getAttribute("id");
+                const name = compactSpaces(node.getAttribute("name"));
+                if (id && name) {
+                    DB.groups[id] = name;
+                }
+            });
+
+            xml.querySelectorAll("periods period").forEach((node) => {
+                const number = Number(node.getAttribute("period"));
+                const start = padTime(node.getAttribute("starttime"));
+                const end = padTime(node.getAttribute("endtime"));
+                DB.periods.push({
+                    number,
+                    start,
+                    end,
+                    startMinutes: timeToMinutes(start),
+                    endMinutes: timeToMinutes(end)
+                });
+            });
+            DB.periods.sort((left, right) => left.number - right.number);
+
+            xml.querySelectorAll("teachers teacher").forEach((node) => {
+                const id = node.getAttribute("id");
+                if (!id) {
+                    return;
+                }
+                const firstName = compactSpaces(node.getAttribute("firstname"));
+                const lastName = compactSpaces(node.getAttribute("lastname") || node.getAttribute("name"));
+                const name = compactSpaces(`${firstName} ${lastName}`) || compactSpaces(node.getAttribute("name"));
+                DB.teachers[id] = { id, name };
+            });
+
+            xml.querySelectorAll("classrooms classroom").forEach((node) => {
+                const id = node.getAttribute("id");
+                const name = compactSpaces(node.getAttribute("name"));
+                if (id && name) {
+                    roomsById[id] = name;
+                }
+            });
+
+            xml.querySelectorAll("subjects subject").forEach((node) => {
+                const id = node.getAttribute("id");
+                const name = compactSpaces(node.getAttribute("name"));
+                if (id && name) {
+                    subjectsById[id] = name;
+                }
+            });
+
+            xml.querySelectorAll("classes class").forEach((node) => {
+                const id = node.getAttribute("id");
+                const name = compactSpaces(node.getAttribute("name"));
+                if (id && name) {
+                    DB.classesById[id] = name;
+                    DB.classesList.push(name);
+                }
+            });
+            DB.classesList = [...new Set(DB.classesList)].sort((left, right) => left.localeCompare(right, "pl"));
+
+            xml.querySelectorAll("lessons lesson").forEach((node) => {
+                const id = node.getAttribute("id");
+                if (!id) {
+                    return;
+                }
+                lessonDefs[id] = {
+                    subject: subjectsById[node.getAttribute("subjectid")] || "Lekcja",
+                    classIds: splitCsv(node.getAttribute("classids")),
+                    roomIds: splitCsv(node.getAttribute("classroomids")),
+                    teacherIds: splitCsv(node.getAttribute("teacherids")),
+                    groupIds: splitCsv(node.getAttribute("groupids"))
+                };
+            });
+
+            xml.querySelectorAll("cards card").forEach((node) => {
+                const lessonDef = lessonDefs[node.getAttribute("lessonid")];
+                if (!lessonDef) {
+                    return;
+                }
+
+                const dayBits = compactSpaces(node.getAttribute("days"));
+                const dayIndex = dayBits.indexOf("1") + 1;
+                if (dayIndex < 1 || dayIndex > 5) {
+                    return;
+                }
+
+                const periodNumber = Number(node.getAttribute("period"));
+                const periodMeta = DB.periods.find((period) => period.number === periodNumber);
+                const roomIds = splitCsv(node.getAttribute("classroomids"));
+                const effectiveRooms = (roomIds.length > 0 ? roomIds : lessonDef.roomIds)
+                    .map((roomId) => roomsById[roomId])
+                    .filter(Boolean);
+                const teacherIds = lessonDef.teacherIds
+                    .filter((teacherId) => DB.teachers[teacherId]);
+                const teacherNames = teacherIds
+                    .map((teacherId) => DB.teachers[teacherId].name)
+                    .filter(Boolean);
+                const groupNames = lessonDef.groupIds
+                    .map((groupId) => DB.groups[groupId])
+                    .filter(Boolean);
+
+                lessonDef.classIds.forEach((classId) => {
+                    const className = DB.classesById[classId];
+                    if (!className) {
+                        return;
+                    }
+                    DB.lessons.push({
+                        className,
+                        day: dayIndex,
+                        period: periodNumber,
+                        subject: lessonDef.subject,
+                        roomNames: effectiveRooms,
+                        teacherIds,
+                        teacherNames,
+                        groupNames,
+                        start: periodMeta?.start || "",
+                        end: periodMeta?.end || "",
+                        startMinutes: periodMeta?.startMinutes || 0
+                    });
+                });
+            });
+        }
+
+        function renderEmpty(message, detail = "") {
+            const detailHtml = detail ? `<span style="font-size:2rem;color:#64748b">${detail}</span>` : "";
+            document.getElementById("slide-container").innerHTML = `<div class="fullscreen-msg">${message}<br>${detailHtml}</div>`;
+        }
+
+        function dateToIso(date) {
+            return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+        }
+
+        function getPeriodMeta(periodNumber) {
+            return DB.periods.find((period) => period.number === periodNumber) || null;
+        }
+
+        function getPeriodStartMinutes(periodNumber, fallbackStart = "") {
+            if (fallbackStart) {
+                return timeToMinutes(fallbackStart);
+            }
+            return getPeriodMeta(periodNumber)?.startMinutes || 0;
+        }
+
+        function buildBranchLabel(branch) {
+            return compactSpaces(branch?.className || "");
+        }
+
+        function getLessonRoomLabel(lesson) {
+            return lesson.roomNames.join(" / ") || "-";
+        }
+
+        function getLessonTeacherLabel(lesson) {
+            return lesson.teacherNames.join(" / ") || "-";
+        }
+
+        function getSubstitutionStatusLabel(event) {
+            const rawFallback = compactSpaces(event.effectLabel || event.rawSubstituteLabel || event.substituteTeacherName || "");
+            const fallback = rawFallback === "-" ? "" : rawFallback;
+            if (event.kind === "late") {
+                return fallback || "Uczniowie przychodzą później";
+            }
+            if (event.kind === "cancelled") {
+                return fallback || "Uczniowie zwolnieni do domu";
+            }
+            if (event.kind === "merge") {
+                return fallback || "Złączenie grup";
+            }
+            if (event.kind === "teacher_substitution") {
+                return normalize(fallback) === "zastepstwo" || !fallback ? "Zastępstwo" : fallback;
+            }
+            return fallback || "Zmiana organizacyjna";
+        }
+
+        function getSubstitutionBadge(event) {
+            return event.kind === "teacher_substitution" ? "Zastępstwo" : "Zmiana";
+        }
+
+        function formatTransferMoment(slot) {
+            const parts = [];
+            if (slot?.date) {
+                const [year, month, day] = slot.date.split("-");
+                parts.push(`${day}.${month}.${year}`);
+            }
+            if (slot?.period) {
+                parts.push(`lekcja ${slot.period}`);
+            }
+            const time = getPeriodTime(slot?.period || 0);
+            if (time) {
+                parts.push(time);
+            }
+            return parts.join(", ");
+        }
+
+        function isInstantTransfer(event) {
+            return event.from?.date === event.to?.date && event.from?.period === event.to?.period;
+        }
+
+        function eventMatchesClassSelection(event, className) {
+            return CHANGES.normalizeBranchClass(className) === (event.branch?.classKey || "");
+        }
+
+        function buildGroupBadges(groupNames) {
+            return [...new Set((groupNames || []).filter((groupName) => groupName && normalize(groupName) !== "calaklasa"))];
+        }
+
+        function createLessonStubFromSubstitution(event) {
+            const period = getPeriodMeta(event.period);
+            return {
+                className: buildBranchLabel(event.branch),
+                day: event.day,
+                period: event.period,
+                subject: event.subject || event.replacementSubject || "Zmiana",
+                roomNames: event.room ? [event.room] : [],
+                teacherIds: event.absentTeacherId ? [event.absentTeacherId] : [],
+                teacherNames: event.absentTeacherName ? [event.absentTeacherName] : [],
+                groupNames: event.branch?.groupName ? [event.branch.groupName] : [],
+                start: padTime(event.timeFrom) || period?.start || "",
+                end: padTime(event.timeTo) || period?.end || "",
+                startMinutes: getPeriodStartMinutes(event.period, event.timeFrom)
+            };
+        }
+
+        function createLessonStubFromTransfer(event, phase) {
+            const slot = phase === "to" ? event.to : event.from;
+            const period = getPeriodMeta(slot?.period || 0);
+            const roomLabel = phase === "to" ? compactSpaces(event.to?.room) : compactSpaces(event.from?.room);
+            return {
+                className: buildBranchLabel(event.branch),
+                day: slot?.day || 0,
+                period: slot?.period || 0,
+                subject: event.subject || "Przeniesienie",
+                roomNames: roomLabel ? [roomLabel] : [],
+                teacherIds: event.teacherId ? [event.teacherId] : [],
+                teacherNames: event.teacherName ? [event.teacherName] : [],
+                groupNames: event.branch?.groupName ? [event.branch.groupName] : [],
+                start: padTime(slot?.timeFrom || "") || period?.start || "",
+                end: padTime(slot?.timeTo || "") || period?.end || "",
+                startMinutes: getPeriodStartMinutes(slot?.period || 0, slot?.timeFrom || "")
+            };
+        }
+
+        function findMatchingSubstitution(lesson, dateKey) {
+            return DB.substitutions.find((event) => event.date === dateKey && CHANGES.lessonMatchesSubstitution(lesson, event));
+        }
+
+        function findMatchingTransfer(lesson, dateKey) {
+            return DB.transfers.find((event) => event.from.date === dateKey && CHANGES.lessonMatchesTransfer(lesson, event));
+        }
+
+        function buildLessonRow(lesson) {
+            return {
+                period: lesson.period,
+                time: getPeriodTime(lesson.period),
+                room: getLessonRoomLabel(lesson),
+                subject: lesson.subject,
+                teacher: getLessonTeacherLabel(lesson),
+                note: "",
+                badges: buildGroupBadges(lesson.groupNames),
+                kind: "lesson",
+                chip: "",
+                startMinutes: lesson.startMinutes,
+                sortOrder: 30
+            };
+        }
+
+        function buildSubstitutionRow(lesson, event) {
+            const baseLesson = lesson || createLessonStubFromSubstitution(event);
+            const teacher = event.substituteTeacherName || getLessonTeacherLabel(baseLesson) || event.absentTeacherName || "-";
+            const noteParts = [];
+            const status = getSubstitutionStatusLabel(event);
+
+            if (event.substituteTeacherName && event.absentTeacherName) {
+                noteParts.push(`Za: ${event.absentTeacherName}`);
+            }
+            if (!event.substituteTeacherName || status !== "Zastępstwo") {
+                noteParts.push(status);
+            }
+            if (event.note) {
+                noteParts.push(event.note);
+            }
+
+            return {
+                period: baseLesson.period,
+                time: getPeriodTime(baseLesson.period),
+                room: compactSpaces(event.room) || getLessonRoomLabel(baseLesson),
+                subject: event.replacementSubject || event.subject || baseLesson.subject || "Zmiana",
+                teacher,
+                note: noteParts.join(" • "),
+                badges: buildGroupBadges(event.branch?.groupName ? [event.branch.groupName] : baseLesson.groupNames),
+                kind: "substitution",
+                chip: getSubstitutionBadge(event),
+                startMinutes: getPeriodStartMinutes(baseLesson.period, event.timeFrom || baseLesson.start),
+                sortOrder: 20
+            };
+        }
+
+        function buildTransferAdjustedRow(lesson, event) {
+            const baseLesson = lesson || createLessonStubFromTransfer(event, "to");
+            const sourceRoom = compactSpaces(event.from?.room) || getLessonRoomLabel(baseLesson);
+            const targetRoom = compactSpaces(event.to?.room) || sourceRoom;
+            const note = normalize(sourceRoom) !== normalize(targetRoom)
+                ? `Zmiana sali z ${sourceRoom}`
+                : "Przeniesienie w tym samym terminie";
+
+            return {
+                period: baseLesson.period,
+                time: getPeriodTime(baseLesson.period),
+                room: targetRoom || "-",
+                subject: event.subject || baseLesson.subject || "Przeniesienie",
+                teacher: event.teacherName || getLessonTeacherLabel(baseLesson),
+                note: event.note ? `${note} • ${event.note}` : note,
+                badges: buildGroupBadges(event.branch?.groupName ? [event.branch.groupName] : baseLesson.groupNames),
+                kind: "transfer",
+                chip: normalize(sourceRoom) !== normalize(targetRoom) ? "Zmiana sali" : "Przeniesienie",
+                startMinutes: getPeriodStartMinutes(event.to?.period || baseLesson.period, event.to?.timeFrom || baseLesson.start),
+                sortOrder: 15
+            };
+        }
+
+        function buildTransferMovedOutRow(lesson, event) {
+            const baseLesson = lesson || createLessonStubFromTransfer(event, "from");
+            const targetRoom = compactSpaces(event.to?.room) || compactSpaces(event.from?.room) || getLessonRoomLabel(baseLesson);
+            const note = `Przeniesiono na ${formatTransferMoment(event.to)}`;
+
+            return {
+                period: baseLesson.period,
+                time: getPeriodTime(baseLesson.period),
+                room: targetRoom || "-",
+                subject: event.subject || baseLesson.subject || "Przeniesienie",
+                teacher: event.teacherName || getLessonTeacherLabel(baseLesson),
+                note: event.note ? `${note} • ${event.note}` : note,
+                badges: buildGroupBadges(event.branch?.groupName ? [event.branch.groupName] : baseLesson.groupNames),
+                kind: "transfer",
+                chip: "Przeniesienie",
+                startMinutes: getPeriodStartMinutes(event.from?.period || baseLesson.period, event.from?.timeFrom || baseLesson.start),
+                sortOrder: 12
+            };
+        }
+
+        function buildTransferIncomingRow(event) {
+            const baseLesson = createLessonStubFromTransfer(event, "to");
+            const targetRoom = compactSpaces(event.to?.room) || compactSpaces(event.from?.room) || getLessonRoomLabel(baseLesson);
+            const sourceRoom = compactSpaces(event.from?.room);
+            const noteParts = [`Przeniesiono z ${formatTransferMoment(event.from)}`];
+            if (sourceRoom && targetRoom && normalize(sourceRoom) !== normalize(targetRoom)) {
+                noteParts.push(`wcześniej sala ${sourceRoom}`);
+            }
+            if (event.note) {
+                noteParts.push(event.note);
+            }
+
+            return {
+                period: baseLesson.period,
+                time: getPeriodTime(baseLesson.period),
+                room: targetRoom || "-",
+                subject: event.subject || baseLesson.subject || "Przeniesienie",
+                teacher: event.teacherName || getLessonTeacherLabel(baseLesson),
+                note: noteParts.join(" • "),
+                badges: buildGroupBadges(event.branch?.groupName ? [event.branch.groupName] : baseLesson.groupNames),
+                kind: "transfer",
+                chip: "Przeniesione",
+                startMinutes: getPeriodStartMinutes(event.to?.period || baseLesson.period, event.to?.timeFrom || baseLesson.start),
+                sortOrder: 10
+            };
+        }
+
+        function mergeDisplayRows(rows) {
+            const grouped = new Map();
+
+            rows.forEach((row) => {
+                const key = [row.period, row.kind, row.chip, row.room, row.subject, row.teacher, row.note].join("|");
+                if (!grouped.has(key)) {
+                    grouped.set(key, { ...row, badges: [...row.badges] });
+                    return;
+                }
+                const existing = grouped.get(key);
+                row.badges.forEach((badge) => {
+                    if (!existing.badges.includes(badge)) {
+                        existing.badges.push(badge);
+                    }
+                });
+            });
+
+            return [...grouped.values()].sort((left, right) => {
+                if (left.startMinutes !== right.startMinutes) {
+                    return left.startMinutes - right.startMinutes;
+                }
+                if ((left.sortOrder || 50) !== (right.sortOrder || 50)) {
+                    return (left.sortOrder || 50) - (right.sortOrder || 50);
+                }
+                return left.subject.localeCompare(right.subject, "pl");
+            });
+        }
+
+        function buildRowsForClass(className, dayIndex, dateKey) {
+            const rows = [];
+            const matchedSubstitutions = new Set();
+            const matchedTransfers = new Set();
+
+            DB.lessons
+                .filter((lesson) => lesson.day === dayIndex && normalize(lesson.className) === normalize(className))
+                .forEach((lesson) => {
+                    const transfer = findMatchingTransfer(lesson, dateKey);
+                    if (transfer && eventMatchesClassSelection(transfer, className)) {
+                        matchedTransfers.add(transfer);
+                        rows.push(isInstantTransfer(transfer)
+                            ? buildTransferAdjustedRow(lesson, transfer)
+                            : buildTransferMovedOutRow(lesson, transfer));
+                        return;
+                    }
+
+                    const substitution = findMatchingSubstitution(lesson, dateKey);
+                    if (substitution && eventMatchesClassSelection(substitution, className)) {
+                        matchedSubstitutions.add(substitution);
+                        rows.push(buildSubstitutionRow(lesson, substitution));
+                        return;
+                    }
+
+                    rows.push(buildLessonRow(lesson));
+                });
+
+            DB.substitutions
+                .filter((event) => event.date === dateKey && eventMatchesClassSelection(event, className) && !matchedSubstitutions.has(event))
+                .forEach((event) => rows.push(buildSubstitutionRow(createLessonStubFromSubstitution(event), event)));
+
+            DB.transfers
+                .filter((event) => event.from.date === dateKey && eventMatchesClassSelection(event, className) && !matchedTransfers.has(event) && !isInstantTransfer(event))
+                .forEach((event) => rows.push(buildTransferMovedOutRow(createLessonStubFromTransfer(event, "from"), event)));
+
+            DB.transfers
+                .filter((event) => event.to.date === dateKey && eventMatchesClassSelection(event, className))
+                .forEach((event) => {
+                    if (isInstantTransfer(event)) {
+                        if (!matchedTransfers.has(event)) {
+                            rows.push(buildTransferAdjustedRow(createLessonStubFromTransfer(event, "to"), event));
+                        }
+                        return;
+                    }
+                    rows.push(buildTransferIncomingRow(event));
+                });
+
+            return mergeDisplayRows(rows);
+        }
+
+        function renderSlide() {
+            const container = document.getElementById("slide-container");
+            const classesToShow = groupedClasses[currentSlideIndex] || [];
+            const today = new Date();
+            const dayOfWeek = today.getDay();
+            const dateKey = dateToIso(today);
+
+            let html = "";
+            classesToShow.forEach((className) => {
+                const rows = buildRowsForClass(className, dayOfWeek, dateKey);
+                html += `<div class="class-card">`;
+                html += `<div class="class-header"><span class="class-name">${escapeHtml(className)}</span></div>`;
+                html += `<div class="grid-container">`;
+
+                if (rows.length === 0) {
+                    html += `<div class="fullscreen-msg" style="font-size:1.6rem;color:#475569">Brak zajęć dla oddziału</div>`;
+                } else {
+                    rows.forEach((row) => {
+                        const badges = row.badges.map((groupName) => `<span class="group-badge">${escapeHtml(groupName)}</span>`).join("");
+                        const chip = row.chip ? `<span class="status-chip ${row.kind}">${escapeHtml(row.chip)}</span>` : "";
+                        const note = row.note ? `<div class="info-note">${escapeHtml(row.note)}</div>` : "";
+                        html += `
+                            <div class="grid-row ${row.kind}">
+                                <div class="cell-nr">
+                                    <span class="nr-big">${escapeHtml(row.period)}</span>
+                                    <span class="nr-time">${escapeHtml(row.time)}</span>
+                                </div>
+                                <div class="cell-room" style="${getRoomStyle(row.room)}">${escapeHtml(row.room)}</div>
+                                <div class="cell-info">
+                                    <div class="info-subject" style="${getSubjectStyle(row.subject)}">${badges}${escapeHtml(row.subject)}${chip}</div>
+                                    <div class="info-teacher">${escapeHtml(row.teacher)}</div>
+                                    ${note}
+                                </div>
+                            </div>`;
+                    });
+                }
+
+                html += `</div></div>`;
+            });
+
+            container.innerHTML = html || `<div class="fullscreen-msg">Brak danych do wyświetlenia</div>`;
+        }
+
+        function initCarousel() {
+            const today = new Date();
+            const dayOfWeek = today.getDay();
+            const dateKey = dateToIso(today);
+
+            if (dayOfWeek === 0 || dayOfWeek === 6) {
+                renderEmpty("WEEKEND", "Szkoła zamknięta");
+                return;
+            }
+
+            const activeClasses = [...new Set([
+                ...DB.lessons.filter((lesson) => lesson.day === dayOfWeek).map((lesson) => lesson.className),
+                ...DB.substitutions.filter((event) => event.date === dateKey && event.branch?.className).map((event) => event.branch.className),
+                ...DB.transfers
+                    .filter((event) => (event.from.date === dateKey || event.to.date === dateKey) && event.branch?.className)
+                    .map((event) => event.branch.className)
+            ])]
+                .sort((left, right) => left.localeCompare(right, "pl"));
+
+            if (activeClasses.length === 0) {
+                renderEmpty("BRAK ZAJĘĆ", "W dniu dzisiejszym");
+                return;
+            }
+
+            groupedClasses = [];
+            for (let index = 0; index < activeClasses.length; index += CONFIG.classesPerSlide) {
+                groupedClasses.push(activeClasses.slice(index, index + CONFIG.classesPerSlide));
+            }
+
+            currentSlideIndex = 0;
+            renderSlide();
+
+            if (carouselInterval) {
+                clearInterval(carouselInterval);
+            }
+
+            carouselInterval = setInterval(() => {
+                currentSlideIndex = (currentSlideIndex + 1) % groupedClasses.length;
+                renderSlide();
+            }, CONFIG.slideDuration);
+        }
+
+        function updateLessonStatus() {
+            const statusBox = document.getElementById("lesson-status");
+            if (!DB.periods.length) {
+                return;
+            }
+
+            const now = new Date();
+            const currentMinutes = now.getHours() * 60 + now.getMinutes();
+            let found = false;
+
+            for (const period of DB.periods) {
+                if (currentMinutes >= period.startMinutes && currentMinutes <= period.endMinutes) {
+                    statusBox.innerHTML = `TRWA LEKCJA ${period.number}<br><span style="font-size:0.7em">(${period.start} - ${period.end})</span>`;
+                    statusBox.className = "lesson-status-box status-active";
+                    found = true;
+                    break;
+                }
+
+                if (currentMinutes < period.startMinutes) {
+                    statusBox.innerHTML = `PRZERWA. ZA CHWILE: LEKCJA ${period.number}<br><span style="font-size:0.7em">(${period.start})</span>`;
+                    statusBox.className = "lesson-status-box status-break";
+                    found = true;
+                    break;
+                }
+            }
+
+            if (!found) {
+                statusBox.textContent = "PO LEKCJACH";
+                statusBox.className = "lesson-status-box status-idle";
+            }
+        }
+
+        function startClock() {
+            const update = () => {
+                const now = new Date();
+                const dayName = DAYS_PL[now.getDay()];
+                const dateString = now.toLocaleDateString("pl-PL");
+                const timeString = now.toLocaleTimeString("pl-PL", {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                    second: "2-digit"
+                });
+
+                document.getElementById("header-datetime").innerHTML = `<span class="live-dot"></span> ${dayName.toUpperCase()}, ${dateString} ${timeString}`;
+                updateLessonStatus();
+            };
+
+            update();
+            setInterval(update, 1000);
+        }
+
+        async function reloadData() {
+            try {
+                if (!CHANGES?.loadChangeSets) {
+                    throw new Error("Brak modułu schedule-changes.js.");
+                }
+                resetDatabase();
+                await loadXMLData();
+                const changeSets = await CHANGES.loadChangeSets(CONFIG, DB.teachers);
+                DB.substitutions = changeSets.substitutions;
+                DB.transfers = changeSets.transfers;
+                DB.changeSources = changeSets.sources;
+                initCarousel();
+                updateLessonStatus();
+                document.getElementById("update-info").textContent = `Plan: ${CONFIG.xml} • Zastępstwa: ${DB.substitutions.length} • Przeniesienia: ${DB.transfers.length} • ${new Date().toLocaleTimeString("pl-PL")}`;
+            } catch (error) {
+                renderEmpty("BLAD DANYCH", error instanceof Error ? error.message : String(error));
+                document.getElementById("update-info").textContent = "Blad odczytu danych";
+            }
+        }
+
+        window.addEventListener("load", async () => {
+            startClock();
+            await reloadData();
+            setInterval(reloadData, CONFIG.refreshInterval);
+        });
+    </script>
+</body>
+</html>
