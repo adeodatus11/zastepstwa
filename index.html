@@ -609,12 +609,104 @@
         }
 
         .personal-countdown {
+            margin-top: 6px;
+        }
+
+        .flip-clock {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            align-items: flex-start;
+        }
+
+        .flip-unit {
+            min-width: 78px;
+        }
+
+        .flip-unit.days {
+            min-width: 96px;
+        }
+
+        .flip-value {
+            position: relative;
+            height: 84px;
+            border-radius: 18px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             font-family: Consolas, "SFMono-Regular", monospace;
-            font-size: 2.3rem;
-            color: #14532d;
-            font-weight: bold;
-            line-height: 1.05;
-            text-wrap: balance;
+            font-size: 2.25rem;
+            font-weight: 900;
+            color: #f8fafc;
+            background: linear-gradient(180deg, #14532d 0%, #0f3f24 48%, #0b2f1b 100%);
+            box-shadow: 0 18px 28px rgba(20, 83, 45, 0.18);
+            transform-origin: center center;
+            backface-visibility: hidden;
+        }
+
+        .flip-value::before {
+            content: "";
+            position: absolute;
+            inset: 0 0 50% 0;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0.04));
+        }
+
+        .flip-value::after {
+            content: "";
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: calc(50% - 1px);
+            height: 2px;
+            background: rgba(255, 255, 255, 0.12);
+            box-shadow: 0 1px 0 rgba(4, 12, 8, 0.22);
+        }
+
+        .flip-value.is-flipping {
+            animation: flipTick 0.72s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        .flip-label {
+            display: block;
+            margin-top: 8px;
+            text-align: center;
+            color: #166534;
+            font-size: 0.72rem;
+            font-weight: 800;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+        }
+
+        .countdown-finished {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 84px;
+            padding: 0 20px;
+            border-radius: 18px;
+            background: linear-gradient(135deg, #14532d, #166534);
+            color: #f8fafc;
+            font-size: 1.3rem;
+            font-weight: 900;
+            box-shadow: 0 18px 28px rgba(20, 83, 45, 0.18);
+        }
+
+        @keyframes flipTick {
+            0% {
+                transform: rotateX(0deg);
+                filter: brightness(1);
+            }
+
+            35% {
+                transform: rotateX(-78deg);
+                filter: brightness(1.12);
+            }
+
+            100% {
+                transform: rotateX(0deg);
+                filter: brightness(1);
+            }
         }
 
         .summary-sub {
@@ -1259,7 +1351,31 @@
             }
 
             .personal-countdown {
-                font-size: 1.8rem;
+                margin-top: 2px;
+            }
+
+            .flip-clock {
+                gap: 8px;
+            }
+
+            .flip-unit {
+                min-width: calc(50% - 4px);
+            }
+
+            .flip-unit.days {
+                min-width: calc(50% - 4px);
+            }
+
+            .flip-value {
+                height: 72px;
+                font-size: 1.85rem;
+                border-radius: 16px;
+            }
+
+            .countdown-finished {
+                width: 100%;
+                min-height: 72px;
+                font-size: 1.1rem;
             }
 
             .summary-sub {
@@ -1541,7 +1657,8 @@
             currentSelection: "",
             lastLoadedAt: null,
             isDashboardActive: true,
-            idleTimerId: null
+            idleTimerId: null,
+            holidayCountdownSignature: ""
         };
 
         const refs = {
@@ -2923,10 +3040,55 @@
             `;
         }
 
+        function formatCountdownValue(value, padTo = 2) {
+            return String(value).padStart(padTo, "0");
+        }
+
+        function renderHolidayCountdown(parts) {
+            const signature = `${parts.days}|${parts.hours}|${parts.minutes}|${parts.seconds}`;
+            const previousSignature = STATE.holidayCountdownSignature;
+
+            refs.summaryCounts.innerHTML = `
+                <div class="flip-clock" aria-label="Odliczanie do powrotu do szkoły">
+                    <div class="flip-unit days" data-unit="days">
+                        <div class="flip-value">${escapeHtml(String(parts.days))}</div>
+                        <span class="flip-label">dni</span>
+                    </div>
+                    <div class="flip-unit" data-unit="hours">
+                        <div class="flip-value">${escapeHtml(formatCountdownValue(parts.hours))}</div>
+                        <span class="flip-label">godz.</span>
+                    </div>
+                    <div class="flip-unit" data-unit="minutes">
+                        <div class="flip-value">${escapeHtml(formatCountdownValue(parts.minutes))}</div>
+                        <span class="flip-label">min.</span>
+                    </div>
+                    <div class="flip-unit" data-unit="seconds">
+                        <div class="flip-value">${escapeHtml(formatCountdownValue(parts.seconds))}</div>
+                        <span class="flip-label">sek.</span>
+                    </div>
+                </div>
+            `;
+
+            if (previousSignature) {
+                const previousParts = previousSignature.split("|");
+                ["days", "hours", "minutes", "seconds"].forEach((unitName, index) => {
+                    if (String(Object.values(parts)[index]) === previousParts[index]) {
+                        return;
+                    }
+                    refs.summaryCounts
+                        .querySelector(`[data-unit="${unitName}"] .flip-value`)
+                        ?.classList.add("is-flipping");
+                });
+            }
+
+            STATE.holidayCountdownSignature = signature;
+        }
+
         function updateHolidayCountdown() {
             const diffMs = HOLIDAY_RETURN_AT.getTime() - Date.now();
             if (diffMs <= 0) {
-                refs.summaryCounts.textContent = "Wracamy dziś o 9:00";
+                refs.summaryCounts.innerHTML = `<div class="countdown-finished">Wracamy dziś o 9:00</div>`;
+                STATE.holidayCountdownSignature = "";
                 refs.summarySources.textContent = "Wtorek, 25 sierpnia 2026, godz. 9:00.";
                 return;
             }
@@ -2935,8 +3097,9 @@
             const days = Math.floor(totalSeconds / 86400);
             const hours = Math.floor((totalSeconds % 86400) / 3600);
             const minutes = Math.floor((totalSeconds % 3600) / 60);
+            const seconds = totalSeconds % 60;
 
-            refs.summaryCounts.textContent = `${days} dni • ${hours} godz. • ${minutes} min.`;
+            renderHolidayCountdown({ days, hours, minutes, seconds });
             refs.summarySources.textContent = "Do wtorku, 25 sierpnia 2026, godz. 9:00.";
         }
 
