@@ -8,10 +8,14 @@
     <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
     <script src="schedule-changes.js"></script>
     <style>
+        html {
+            scroll-behavior: smooth;
+        }
+
         :root {
-            --bg: #020617;
-            --text-main: #e2e8f0;
-            --card-bg: #111827;
+            --bg: #f4faf3;
+            --text-main: #16332b;
+            --card-bg: #ffffff;
             --accent-teacher: #22c55e;
             --accent-class: #38bdf8;
             --accent-room: #fbbf24;
@@ -48,7 +52,9 @@
 
         body {
             font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: var(--bg);
+            background:
+                radial-gradient(circle at top left, rgba(134, 239, 172, 0.28), transparent 22%),
+                linear-gradient(180deg, #f7fcf5 0%, #eef8f2 100%);
             margin: 0;
             padding: 0;
             color: var(--text-main);
@@ -62,14 +68,14 @@
         }
 
         header {
-            background: linear-gradient(to right, #4dff88 0%, #33cc66 30%, #020617 100%);
-            color: white;
+            background: linear-gradient(135deg, #ffffff 0%, #edfff4 42%, #d8f8ee 100%);
+            color: #16332b;
             padding: 10px 30px;
             position: sticky;
             top: 0;
             z-index: 1000;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
-            border-bottom: 4px solid #22c55e;
+            box-shadow: 0 12px 28px rgba(20, 83, 45, 0.12);
+            border-bottom: 4px solid #86efac;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -106,7 +112,7 @@
             font-size: 1.6rem;
             font-weight: 900;
             text-transform: uppercase;
-            text-shadow: 0 3px 6px rgba(0, 0, 0, 0.5);
+            color: #14532d;
             white-space: nowrap;
             letter-spacing: 1px;
             line-height: 1.1;
@@ -115,30 +121,28 @@
         .sub-title {
             font-size: 1rem;
             font-weight: 600;
-            color: #dcfce7;
-            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+            color: #166534;
             margin-bottom: 5px;
         }
 
         .clock {
             font-family: "Segoe UI", sans-serif;
             font-size: 1.3rem;
-            color: #fff;
+            color: #14532d;
             font-weight: 700;
             text-transform: capitalize;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.6);
-            background: rgba(0, 0, 0, 0.2);
+            background: rgba(255, 255, 255, 0.82);
             padding: 2px 10px;
             border-radius: 6px;
             display: inline-block;
+            border: 1px solid rgba(20, 83, 45, 0.12);
         }
 
         .selection-info {
             font-size: 1.4rem;
             font-weight: 800;
-            color: #fbbf24;
+            color: #92400e;
             margin: 5px 0;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.9);
             display: none;
             text-transform: uppercase;
             white-space: nowrap;
@@ -159,10 +163,10 @@
             display: flex;
             align-items: center;
             gap: 15px;
-            background: rgba(0, 0, 0, 0.25);
+            background: rgba(255, 255, 255, 0.78);
             padding: 8px 20px;
             border-radius: 20px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(20, 83, 45, 0.14);
             backdrop-filter: blur(5px);
             white-space: nowrap;
         }
@@ -193,7 +197,7 @@
         .week-label {
             font-size: 0.7rem;
             text-transform: uppercase;
-            color: #a7f3d0;
+            color: #166534;
             letter-spacing: 1px;
         }
 
@@ -201,7 +205,7 @@
             font-family: Consolas, "SFMono-Regular", monospace;
             font-size: 1.2rem;
             font-weight: 700;
-            color: #fff;
+            color: #14532d;
         }
 
         .h-col-right {
@@ -222,32 +226,31 @@
         #desktop-status {
             font-size: 1.2rem;
             font-weight: 800;
-            color: #fbbf24;
+            color: #166534;
             text-transform: uppercase;
-            text-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
             white-space: nowrap;
             text-align: right;
-            background: rgba(0, 0, 0, 0.3);
+            background: rgba(255, 255, 255, 0.82);
             padding: 8px 15px;
             border-radius: 8px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(20, 83, 45, 0.12);
         }
 
         .qr-wrapper {
             display: flex;
             align-items: center;
             gap: 10px;
-            background: rgba(0, 0, 0, 0.25);
+            background: rgba(255, 255, 255, 0.74);
             padding: 5px 10px;
             border-radius: 8px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(20, 83, 45, 0.12);
         }
 
         .qr-text {
             text-align: right;
             font-size: 0.75rem;
             line-height: 1.2;
-            color: #e2e8f0;
+            color: #166534;
             font-weight: 600;
         }
 
@@ -300,11 +303,11 @@
         }
 
         #debug-bar {
-            background: #111827;
+            background: rgba(255, 255, 255, 0.84);
             font-size: 0.75rem;
             padding: 4px 20px;
-            color: #64748b;
-            border-bottom: 1px solid #1f2937;
+            color: #4b5563;
+            border-bottom: 1px solid rgba(20, 83, 45, 0.08);
             text-align: center;
             letter-spacing: 1px;
         }
@@ -323,6 +326,63 @@
             grid-template-columns: repeat(4, 1fr);
             gap: 30px;
             margin-bottom: 40px;
+        }
+
+        .holiday-hero {
+            position: relative;
+            margin-bottom: 30px;
+            padding: 40px 36px;
+            border-radius: 28px;
+            overflow: hidden;
+            text-align: left;
+            border: 1px solid rgba(20, 83, 45, 0.12);
+            background:
+                radial-gradient(circle at top left, rgba(134, 239, 172, 0.38), transparent 32%),
+                radial-gradient(circle at 88% 18%, rgba(45, 212, 191, 0.18), transparent 24%),
+                linear-gradient(135deg, #ffffff 0%, #effcf4 48%, #dbf7eb 100%);
+            box-shadow: 0 22px 54px rgba(20, 83, 45, 0.12);
+        }
+
+        .holiday-badge {
+            display: inline-block;
+            margin-bottom: 18px;
+            padding: 10px 16px;
+            border-radius: 999px;
+            background: rgba(220, 252, 231, 0.92);
+            border: 1px solid rgba(20, 83, 45, 0.12);
+            color: #166534;
+            font-size: 0.82rem;
+            font-weight: 900;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+        }
+
+        .holiday-headline {
+            margin: 0 0 12px;
+            color: #14532d;
+            font-size: clamp(2.2rem, 5vw, 4.4rem);
+            line-height: 1.02;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            text-wrap: balance;
+        }
+
+        .holiday-subtext {
+            max-width: 760px;
+            margin: 0;
+            color: #35584d;
+            font-size: 1.15rem;
+            line-height: 1.7;
+            text-wrap: pretty;
+        }
+
+        .holiday-hidden {
+            display: none !important;
+        }
+
+        .mobile-scroll-cue {
+            display: none;
         }
 
         .selection-card {
@@ -397,21 +457,20 @@
         }
 
         #announcements-container {
-            background: rgba(15, 23, 42, 0.9);
-            border-radius: 16px;
-            border: 1px solid #334155;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.97) 0%, rgba(246, 252, 247, 0.96) 100%);
+            border-radius: 28px;
+            border: 1px solid rgba(20, 83, 45, 0.1);
             padding: 0;
             min-height: 250px;
-            display: flex;
-            flex-direction: row;
+            display: grid;
+            grid-template-columns: minmax(0, 1.35fr) minmax(280px, 0.9fr);
             overflow: hidden;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+            box-shadow: 0 18px 42px rgba(20, 83, 45, 0.1);
         }
 
         .anno-left {
-            flex: 6;
-            padding: 30px;
-            border-right: 1px solid #334155;
+            padding: 34px;
+            border-right: 1px solid rgba(20, 83, 45, 0.08);
             display: flex;
             flex-direction: column;
             justify-content: flex-start;
@@ -419,85 +478,180 @@
         }
 
         .anno-right {
-            flex: 4;
             position: relative;
         }
 
         .anno-title {
-            font-size: 1.4rem;
-            color: #94a3b8;
-            margin-bottom: 15px;
+            font-size: 0.78rem;
+            color: #166534;
+            margin-bottom: 22px;
             text-transform: uppercase;
-            letter-spacing: 2px;
-            font-weight: 700;
+            letter-spacing: 0.24em;
+            font-weight: 800;
         }
 
         #announcement-list {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
+            display: grid;
+            gap: 14px;
         }
 
         .anno-btn {
-            background: #1e293b;
-            color: #e2e8f0;
-            border: 1px solid #334155;
-            padding: 12px 15px;
+            position: relative;
+            background: #ffffff;
+            color: #16332b;
+            border: 1px solid rgba(20, 83, 45, 0.1);
+            padding: 20px 20px 18px;
             text-align: left;
-            font-size: 1.1rem;
-            border-radius: 8px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            border-radius: 20px;
+            display: block;
+            box-shadow: 0 10px 24px rgba(20, 83, 45, 0.06);
         }
 
-        .anno-btn strong {
-            color: white;
-            font-size: 1.05rem;
+        .anno-btn::before {
+            content: "";
+            position: absolute;
+            left: 20px;
+            top: 0;
+            width: 52px;
+            height: 3px;
+            border-radius: 999px;
+            background: linear-gradient(90deg, #4ade80, #2dd4bf);
+        }
+
+        .notice-kicker {
+            display: inline-block;
+            margin-bottom: 10px;
+            color: #15803d;
+            font-size: 0.72rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.18em;
+        }
+
+        .notice-title {
+            margin: 0 0 10px;
+            color: #14532d;
+            font-size: 1.28rem;
+            line-height: 1.2;
+            font-weight: 850;
+            text-wrap: balance;
+        }
+
+        .notice-body {
+            margin: 0;
+            color: #426357;
+            font-size: 1rem;
+            line-height: 1.72;
+            text-wrap: pretty;
+        }
+
+        .notice-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 16px;
+        }
+
+        .notice-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 46px;
+            padding: 0 18px;
+            border-radius: 999px;
+            background: linear-gradient(135deg, #4ade80, #2dd4bf);
+            color: #052e16;
+            font-size: 0.95rem;
+            font-weight: 900;
+            text-decoration: none;
+            box-shadow: 0 14px 28px rgba(16, 185, 129, 0.22);
+            transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
+        }
+
+        .notice-link:hover {
+            transform: translateY(-1px);
+            filter: brightness(1.03);
+            box-shadow: 0 18px 32px rgba(16, 185, 129, 0.28);
+        }
+
+        .notice-link.secondary {
+            background: transparent;
+            color: #d1fae5;
+            border: 1px solid rgba(74, 222, 128, 0.28);
+            box-shadow: none;
         }
 
         .holiday-vibes {
             background:
-                linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.72)),
-                url("https://images.unsplash.com/photo-1490750967868-88cb44cb2720?q=80&w=800&auto=format&fit=crop") center/cover no-repeat;
+                radial-gradient(circle at top right, rgba(134, 239, 172, 0.26), transparent 24%),
+                linear-gradient(180deg, #effcf5 0%, #dcf7ea 100%);
             display: flex;
             flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            border-left: 1px solid #334155;
-            padding: 20px;
+            align-items: stretch;
+            justify-content: flex-start;
+            border-left: 1px solid rgba(20, 83, 45, 0.08);
+            padding: 34px 30px;
         }
 
         .holiday-content {
             z-index: 2;
-            text-align: center;
+            text-align: left;
             width: 100%;
         }
 
         .question-text {
-            font-size: 1.2rem;
-            color: #e2e8f0;
-            margin-bottom: 15px;
-            font-weight: 700;
+            font-size: 0.8rem;
+            color: #166534;
+            margin-bottom: 12px;
+            font-weight: 800;
             text-transform: uppercase;
-            letter-spacing: 2px;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+            letter-spacing: 0.22em;
         }
 
         .personal-countdown {
             font-family: Consolas, "SFMono-Regular", monospace;
-            font-size: 2rem;
-            color: #4ade80;
+            font-size: 2.3rem;
+            color: #14532d;
             font-weight: bold;
-            text-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
-            margin-top: 10px;
+            line-height: 1.05;
+            text-wrap: balance;
         }
 
         .summary-sub {
-            color: #cbd5e1;
-            line-height: 1.5;
+            color: #35584d;
+            line-height: 1.7;
+            font-size: 0.98rem;
+            margin-top: 14px;
+            max-width: 32ch;
+        }
+
+        .milestone-list {
+            display: grid;
+            gap: 12px;
+            margin-top: 24px;
+        }
+
+        .milestone-item {
+            display: grid;
+            gap: 6px;
+            padding: 14px 16px;
+            border-radius: 18px;
+            background: rgba(255, 255, 255, 0.8);
+            border: 1px solid rgba(20, 83, 45, 0.1);
+        }
+
+        .milestone-date {
+            color: #15803d;
+            font-size: 0.8rem;
+            font-weight: 900;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+        }
+
+        .milestone-copy {
+            color: #35584d;
             font-size: 0.95rem;
-            margin-top: 12px;
+            line-height: 1.55;
         }
 
         #duty-bar {
@@ -888,17 +1042,17 @@
         }
 
         footer {
-            background: #064e3b;
-            color: #a7f3d0;
+            background: #e8f8ef;
+            color: #166534;
             text-align: center;
             padding: 15px;
             font-size: 0.9rem;
-            border-top: 1px solid #047857;
+            border-top: 1px solid rgba(20, 83, 45, 0.12);
             margin-top: auto;
         }
 
         footer a {
-            color: #fff;
+            color: #14532d;
             text-decoration: none;
             font-weight: bold;
         }
@@ -916,7 +1070,7 @@
                 padding: 10px;
                 gap: 5px;
                 height: auto;
-                background: linear-gradient(to bottom, #33cc66 20%, #020617 100%);
+                background: linear-gradient(180deg, #ffffff 0%, #e7fbf1 100%);
             }
 
             .h-col-left {
@@ -985,14 +1139,15 @@
                 display: block;
                 width: 100%;
                 text-align: center;
-                background: rgba(0, 0, 0, 0.2);
+                background: rgba(255, 255, 255, 0.78);
                 border-radius: 6px;
                 padding: 4px;
                 margin-top: 5px;
+                border: 1px solid rgba(20, 83, 45, 0.1);
             }
 
             #mobile-status {
-                color: #fbbf24;
+                color: #166534;
                 font-weight: 800;
                 font-size: 1rem;
                 text-transform: uppercase;
@@ -1019,20 +1174,96 @@
                 padding: 20px 12px;
             }
 
+            .holiday-hero {
+                padding: 26px 18px 24px;
+                margin-bottom: 20px;
+                border-radius: 22px;
+            }
+
+            .holiday-badge {
+                letter-spacing: 3px;
+            }
+
+            .holiday-headline {
+                font-size: 2.2rem;
+            }
+
+            .holiday-subtext {
+                font-size: 1rem;
+                line-height: 1.6;
+            }
+
+            .mobile-scroll-cue {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                width: 100%;
+                min-height: 52px;
+                margin: 0 0 18px;
+                padding: 0 16px;
+                border-radius: 18px;
+                background: linear-gradient(135deg, rgba(255, 255, 255, 0.92), rgba(232, 250, 239, 0.95));
+                border: 1px solid rgba(20, 83, 45, 0.14);
+                color: #14532d;
+                text-decoration: none;
+                font-size: 0.95rem;
+                font-weight: 800;
+                letter-spacing: 0.02em;
+                box-shadow: 0 12px 26px rgba(20, 83, 45, 0.1);
+            }
+
             #announcements-container {
-                flex-direction: column;
+                grid-template-columns: 1fr;
+                border-radius: 22px;
             }
 
             .anno-left {
+                padding: 24px 18px;
                 border-right: none;
-                border-bottom: 1px solid #334155;
-                text-align: center;
+                border-bottom: 1px solid rgba(74, 222, 128, 0.12);
+                text-align: left;
             }
 
             .holiday-vibes {
                 border-left: none;
-                border-top: 1px solid #334155;
-                min-height: 250px;
+                border-top: 1px solid rgba(74, 222, 128, 0.12);
+                min-height: auto;
+                padding: 24px 18px;
+            }
+
+            .anno-btn {
+                padding: 18px 16px 16px;
+                border-radius: 18px;
+            }
+
+            .anno-btn::before {
+                left: 16px;
+            }
+
+            .notice-title {
+                font-size: 1.14rem;
+            }
+
+            .notice-body {
+                font-size: 0.96rem;
+                line-height: 1.64;
+            }
+
+            .notice-actions {
+                margin-top: 14px;
+            }
+
+            .notice-link {
+                width: 100%;
+                padding: 0 14px;
+            }
+
+            .personal-countdown {
+                font-size: 1.8rem;
+            }
+
+            .summary-sub {
+                max-width: none;
             }
 
             .selection-grid {
@@ -1115,7 +1346,7 @@
             <img src="orzeł.png" alt="ZSZ5 Logo" class="logo" onerror="this.style.display='none'">
             <div class="header-text">
                 <h1 class="main-title">INTERAKTYWNY PULPIT NAUCZYCIELA</h1>
-                <div class="sub-title">ZSZ5 we Wrocławiu</div>
+                <div class="sub-title">ZSZ5 we Wrocławiu • wakacyjne informacje organizacyjne</div>
                 <div id="selection-info" class="selection-info"></div>
                 <div id="clock" class="clock">--:--</div>
             </div>
@@ -1140,7 +1371,7 @@
             <div class="status-qr-container">
                 <div id="desktop-status">Ładowanie...</div>
                 <div class="qr-wrapper">
-                    <div class="qr-text">strona z planem<br>na telefon</div>
+                    <div class="qr-text">strona nauczyciela<br>na telefon</div>
                     <img src="qr_nauczyciel.png" class="qr-img" alt="QR" onerror="this.parentElement.style.display='none'">
                 </div>
             </div>
@@ -1161,9 +1392,20 @@
     <div id="debug-bar">Ładowanie systemu...</div>
 
     <div id="dashboard-view">
-        <div id="selection-grid" class="selection-grid"></div>
+        <div class="holiday-hero">
+            <div class="holiday-badge">SĄ WAKACJE</div>
+            <h2 class="holiday-headline">Rok szkolny 2025-2026 jest zakończony</h2>
+            <p class="holiday-subtext">
+                Dziękujemy za wspólną pracę. Ten widok pokazuje teraz tylko najważniejsze informacje organizacyjne na koniec wakacji
+                i przygotowanie do startu roku szkolnego 2026-2027.
+            </p>
+        </div>
 
-        <div id="duty-bar">
+        <a class="mobile-scroll-cue" href="#announcements-container">Przewiń niżej po komunikaty i ważne linki ↓</a>
+
+        <div id="selection-grid" class="selection-grid holiday-hidden"></div>
+
+        <div id="duty-bar" class="holiday-hidden">
             <div class="duty-label-box">
                 <div class="duty-label-icon">🛡️</div>
                 <div class="duty-label-text">
@@ -1178,25 +1420,69 @@
 
         <div id="announcements-container">
             <div class="anno-left">
-                <div class="anno-title">📢 Komunikaty</div>
+                <div class="anno-title">Wiadomości na wakacje</div>
                 <div id="announcement-list">
-                    <div class="anno-btn">
-                        <span>
-                            <strong>12 czerwca - termin wystawienia ocen klasyfikacyjnych rocznych.</strong><br>
-                            Rada klasyfikacyjna - środa 17 czerwca w sali kinowej.<br>
-                            Druga część rady - czwartek 18 czerwca.<br>
-                            Egzaminy klasyfikacyjne: 22 i 23 czerwca.<br>
-                            Rada po egzaminach klasyfikacyjnych - 24 czerwca.<br>
-                            Zakończenie roku szkolnego: 26 czerwca.
-                        </span>
-                    </div>
+                    <article class="anno-btn">
+                        <span class="notice-kicker">Podziękowanie</span>
+                        <h3 class="notice-title">Dziękujemy za pracę w roku szkolnym 2025-2026</h3>
+                        <p class="notice-body">Życzymy miłych wakacji. Do zobaczenia w sierpniu podczas przygotowań i egzaminów poprawkowych.</p>
+                    </article>
+                    <article class="anno-btn">
+                        <span class="notice-kicker">Klasyfikacja roczna</span>
+                        <h3 class="notice-title">Podsumowanie ocen, zachowania i trendów frekwencji</h3>
+                        <p class="notice-body">Zestawienie klasyfikacji rocznej 2026 jest dostępne online.</p>
+                        <div class="notice-actions">
+                            <a class="notice-link" href="https://klasyfikacja2026.szkolamistrzow.info" target="_blank" rel="noreferrer">Otwórz klasyfikację 2026</a>
+                        </div>
+                    </article>
+                    <article class="anno-btn">
+                        <span class="notice-kicker">Egzaminy poprawkowe</span>
+                        <h3 class="notice-title">25-27 sierpnia, godz. 9:00-13:00</h3>
+                        <p class="notice-body">Harmonogram jest dostępny przez dziennik, w pokoju nauczycielskim w formie papierowej oraz online.</p>
+                        <div class="notice-actions">
+                            <a class="notice-link" href="https://zespolszkolzawodowychnr5-my.sharepoint.com/:x:/g/personal/admin_zsz5_edupage_org/IQD3yrOU8E4ITrWLDUIsfTK4AWYfi5hC7vHUQnrn3t0phNU?e=hBkgsq" target="_blank" rel="noreferrer">Otwórz harmonogram</a>
+                        </div>
+                    </article>
+                    <article class="anno-btn">
+                        <span class="notice-kicker">Przygotowanie szkoły</span>
+                        <h3 class="notice-title">25-27 sierpnia, godz. 9:00-13:00: prace przygotowawcze do roku szkolnego 2026-2027</h3>
+                        <p class="notice-body">Rozkłady nauczania, planowanie pracy oraz porządkowanie gabinetów lekcyjnych.</p>
+                    </article>
+                    <article class="anno-btn">
+                        <span class="notice-kicker">Ważne</span>
+                        <h3 class="notice-title">Możliwa reorganizacja gabinetów lekcyjnych</h3>
+                        <p class="notice-body">Proszę być przygotowanym na zmianę stałych sal lekcyjnych w związku z nowym sprzętem i reorganizacją przestrzeni szkolnej.</p>
+                    </article>
+                    <article class="anno-btn">
+                        <span class="notice-kicker">Szkolenia i rady</span>
+                        <h3 class="notice-title">28 i 31 sierpnia</h3>
+                        <p class="notice-body">28 sierpnia odbędą się szkolenia z obsługi dziennika VULCAN i SharePointa. 31 sierpnia o 9:00 odbędzie się rada plenarna podsumowująca rok szkolny 2025-2026, a o 11:00 rada otwierająca rok szkolny 2026-2027.</p>
+                    </article>
                 </div>
             </div>
             <div class="anno-right holiday-vibes">
                 <div class="holiday-content">
-                    <div class="question-text">AKTYWNE DANE PLANU</div>
-                    <div class="personal-countdown" id="summaryCounts">Ładowanie...</div>
-                    <div class="summary-sub" id="summarySources">Plan, dyżury, zastępstwa i przeniesienia.</div>
+                    <div class="question-text">Powrót do szkoły</div>
+                    <div class="personal-countdown" id="summaryCounts">Odliczanie...</div>
+                    <div class="summary-sub" id="summarySources">Do wtorku, 25 sierpnia 2026, godz. 9:00.</div>
+                    <div class="milestone-list">
+                        <div class="milestone-item">
+                            <div class="milestone-date">25-27.08 • 9:00-13:00</div>
+                            <div class="milestone-copy">Egzaminy poprawkowe oraz prace przygotowawcze do nowego roku szkolnego.</div>
+                        </div>
+                        <div class="milestone-item">
+                            <div class="milestone-date">28.08</div>
+                            <div class="milestone-copy">Szkolenie z obsługi dziennika VULCAN i szkolenie z SharePointa.</div>
+                        </div>
+                        <div class="milestone-item">
+                            <div class="milestone-date">31.08 • 9:00</div>
+                            <div class="milestone-copy">Rada plenarna podsumowująca rok szkolny 2025-2026.</div>
+                        </div>
+                        <div class="milestone-item">
+                            <div class="milestone-date">31.08 • 11:00</div>
+                            <div class="milestone-copy">Rada plenarna otwierająca rok szkolny 2026-2027.</div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1280,6 +1566,8 @@
         };
 
         const CHANGES = window.ScheduleChanges;
+        const HOLIDAY_MODE = true;
+        const HOLIDAY_RETURN_AT = new Date("2026-08-25T09:00:00+02:00");
 
         function splitCsv(value) {
             return String(value || "")
@@ -1853,6 +2141,10 @@
 
         function renderDashboard() {
             refs.selectionGrid.innerHTML = "";
+            if (HOLIDAY_MODE) {
+                return;
+            }
+
             const createCard = (title, items, type, icon) => {
                 const card = document.createElement("div");
                 card.className = `selection-card ${type}`;
@@ -2631,7 +2923,40 @@
             `;
         }
 
+        function updateHolidayCountdown() {
+            const diffMs = HOLIDAY_RETURN_AT.getTime() - Date.now();
+            if (diffMs <= 0) {
+                refs.summaryCounts.textContent = "Wracamy dziś o 9:00";
+                refs.summarySources.textContent = "Wtorek, 25 sierpnia 2026, godz. 9:00.";
+                return;
+            }
+
+            const totalSeconds = Math.floor(diffMs / 1000);
+            const days = Math.floor(totalSeconds / 86400);
+            const hours = Math.floor((totalSeconds % 86400) / 3600);
+            const minutes = Math.floor((totalSeconds % 3600) / 60);
+
+            refs.summaryCounts.textContent = `${days} dni • ${hours} godz. • ${minutes} min.`;
+            refs.summarySources.textContent = "Do wtorku, 25 sierpnia 2026, godz. 9:00.";
+        }
+
+        function applyHolidayMode() {
+            updateHolidayCountdown();
+            refs.footerMeta.textContent = "Tryb wakacyjny • Rok szkolny 2025-2026 został zakończony • Do zobaczenia w sierpniu";
+            refs.desktopStatus.textContent = "Tryb wakacyjny";
+            refs.desktopStatus.style.color = "#4ade80";
+            refs.mobileStatus.textContent = "Tryb wakacyjny";
+            refs.mobileStatus.style.color = "#4ade80";
+            refs.dutyBarContent.innerHTML = `<span class="duty-empty-msg">Tryb wakacyjny - dyżury wrócą w sierpniu.</span>`;
+            log("Tryb wakacyjny aktywny");
+        }
+
         function updateMeta() {
+            if (HOLIDAY_MODE) {
+                applyHolidayMode();
+                return;
+            }
+
             const loadedAt = STATE.lastLoadedAt ? STATE.lastLoadedAt.toLocaleString("pl-PL") : "brak";
             refs.summaryCounts.textContent = `${DB.substitutions.length} zastępstw • ${DB.transfers.length} przeniesień`;
             refs.summarySources.textContent = `${DB.teacherOrder.length} nauczycieli • ${DB.classesList.length} oddziałów • ${DB.duties.length} dyżurów tygodniowo`;
@@ -2641,6 +2966,11 @@
         }
 
         function showError(message) {
+            if (HOLIDAY_MODE) {
+                applyHolidayMode();
+                return;
+            }
+
             refs.summaryCounts.textContent = "Błąd ładowania danych";
             refs.summarySources.textContent = message;
             refs.dutyBarContent.innerHTML = `<span class="duty-empty-msg">${escapeHtml(message)}</span>`;
@@ -2648,6 +2978,13 @@
         }
 
         async function refreshData() {
+            if (HOLIDAY_MODE) {
+                STATE.lastLoadedAt = new Date();
+                renderDashboard();
+                applyHolidayMode();
+                return;
+            }
+
             try {
                 if (!CHANGES?.loadChangeSets) {
                     throw new Error("Brak modułu schedule-changes.js.");
@@ -2676,6 +3013,15 @@
         }
 
         function updateLessonStatus() {
+            if (HOLIDAY_MODE) {
+                refs.desktopStatus.textContent = "Tryb wakacyjny";
+                refs.desktopStatus.style.color = "#4ade80";
+                refs.mobileStatus.textContent = "Tryb wakacyjny";
+                refs.mobileStatus.style.color = "#4ade80";
+                updateHolidayCountdown();
+                return;
+            }
+
             if (!DB.periods.length) {
                 return;
             }
@@ -2732,7 +3078,7 @@
                     minute: "2-digit"
                 });
                 updateLessonStatus();
-                if (STATE.isDashboardActive) {
+                if (!HOLIDAY_MODE && STATE.isDashboardActive) {
                     updateDutyBar();
                 }
             };
