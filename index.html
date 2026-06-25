@@ -3017,7 +3017,7 @@
 
             const rawName = compactSpaces(duty.name.split("/")[0].split("\n")[0]);
             const phone = getPhoneForDutyPerson(rawName);
-            const shiftLabel = duty.isWednesdayExtended ? "Środa po 13:15" : duty.shift.replace(" - ", " – ");
+            const shiftLabel = duty.isWednesdayExtended ? "Środa po 13:15" : duty.shift.replace(" - ", " - ");
             const contactHtml = phone ? `
                 <div class="duty-contact-box">
                     <a href="tel:${escapeHtml(phone.number.replace(/\s+/g, ""))}" class="duty-phone-btn">
