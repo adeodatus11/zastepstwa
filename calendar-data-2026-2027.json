@@ -1,24 +1,23 @@
 {
   "meta": {
     "schoolYear": "2026/2027",
-    "generatedAt": "2026-08-23T18:56:33",
-    "sourceWorkbook": "/Users/maciejnajwer/Library/CloudStorage/OneDrive-ZESPÓŁSZKÓŁZAWODOWYCHNR5/rok szkolny 2026_2027/kalendarz 2026-2027 (stan na 2026.08.23) wysłane do NajwerM.xlsx",
+    "generatedAt": "2026-08-23T20:33:08",
+    "sourceWorkbook": "/Users/maciejnajwer/Library/CloudStorage/OneDrive-ZESPÓŁSZKÓŁZAWODOWYCHNR5/zastepstwa-main/kalendarz_dzienny_role_2026_2027.xlsx",
     "totalEvents": 77,
     "confirmationCount": 2,
     "categoryCounts": {
-      "classification": 17,
-      "council": 6,
-      "exam": 11,
-      "general": 22,
-      "holiday": 10,
+      "classification": 18,
+      "council": 5,
+      "exam": 15,
+      "general": 21,
+      "holiday": 9,
       "meeting": 7,
-      "practice": 4
+      "practice": 2
     },
     "notes": [
-      "Źródłem prawdy jest XLSX z 2026-08-23, z ręcznymi korektami wskazanymi przez użytkownika.",
-      "Rada pedagogiczna wrześniowa została ustawiona na 2026-09-09.",
-      "Wpis rady z 2027-08-31 został wydzielony z wiersza 2027-06-28, a 2027-06-28 pozostaje jako punkt do doprecyzowania.",
-      "Wpis BS II z 2027-06-17 został oznaczony jako wymagający doprecyzowania."
+      "Źródłem prawdy jest plik kalendarz_dzienny_role_2026_2027.xlsx.",
+      "Wpis BS II z 2027-06-17 pozostaje oznaczony jako wymagający doprecyzowania.",
+      "Wpis z 2027-06-28 pozostaje zachowany jako punkt do wyjaśnienia."
     ]
   },
   "events": [
@@ -39,7 +38,7 @@
     },
     {
       "id": "evt-0002",
-      "title": "rozpoczęcie roku szkolnego",
+      "title": "rozpoczęcie roku szkolnego 2026/2027",
       "start": "2026-09-01",
       "allDay": true,
       "category": "general",
@@ -49,15 +48,49 @@
       "priority": "high",
       "audience": "wszyscy",
       "extendedProps": {
-        "description": "rozpoczęcie roku szkolnego",
+        "description": "rozpoczęcie roku szkolnego 2026/2027",
         "needsConfirmation": false,
         "sourceNote": ""
       }
     },
     {
       "id": "evt-0003",
-      "title": "KLASY 1: zebranie dla rodziców - godz. 16:00",
-      "start": "2026-09-02T16:00:00",
+      "title": "1, 3 SEMESTR BS II st.: pierwsze zajęcia",
+      "start": "2026-09-03",
+      "allDay": true,
+      "category": "general",
+      "tags": [
+        "bs2"
+      ],
+      "priority": "normal",
+      "audience": "bs ii stopnia",
+      "extendedProps": {
+        "description": "1, 3 SEMESTR BS II st.: pierwsze zajęcia",
+        "needsConfirmation": false,
+        "sourceNote": ""
+      }
+    },
+    {
+      "id": "evt-0004",
+      "title": "1 SEMESTR BS II st.: zrobić spotkanie informacyjne z I semestrem",
+      "start": "2026-09-03",
+      "allDay": true,
+      "category": "general",
+      "tags": [
+        "bs2"
+      ],
+      "priority": "normal",
+      "audience": "bs ii stopnia",
+      "extendedProps": {
+        "description": "1 SEMESTR BS II st.: zrobić spotkanie informacyjne z I semestrem",
+        "needsConfirmation": false,
+        "sourceNote": ""
+      }
+    },
+    {
+      "id": "evt-0005",
+      "title": "16:00 - KLASY 1: zebranie dla rodziców",
+      "start": "2026-09-04T16:00:00",
       "allDay": false,
       "category": "meeting",
       "tags": [
@@ -66,49 +99,15 @@
       "priority": "normal",
       "audience": "rodzice i wychowawcy",
       "extendedProps": {
-        "description": "KLASY 1: zebranie dla rodziców - godz. 16:00",
+        "description": "16:00 - KLASY 1: zebranie dla rodziców",
         "needsConfirmation": false,
         "sourceNote": ""
       },
-      "end": "2026-09-02T17:30:00"
-    },
-    {
-      "id": "evt-0004",
-      "title": "1, 3 SEMESTR BS2st: pierwsze zajęcia",
-      "start": "2026-09-03",
-      "allDay": true,
-      "category": "general",
-      "tags": [
-        "bs2"
-      ],
-      "priority": "normal",
-      "audience": "bs ii stopnia",
-      "extendedProps": {
-        "description": "1, 3 SEMESTR BS2st: pierwsze zajęcia",
-        "needsConfirmation": false,
-        "sourceNote": ""
-      }
-    },
-    {
-      "id": "evt-0005",
-      "title": "I SEMESTR BS2st: zrobić spotkanie informacyjne z I semestrem",
-      "start": "2026-09-03",
-      "allDay": true,
-      "category": "general",
-      "tags": [
-        "bs2"
-      ],
-      "priority": "normal",
-      "audience": "bs ii stopnia",
-      "extendedProps": {
-        "description": "I SEMESTR BS2st: zrobić spotkanie informacyjne z I semestrem",
-        "needsConfirmation": false,
-        "sourceNote": ""
-      }
+      "end": "2026-09-04T17:30:00"
     },
     {
       "id": "evt-0006",
-      "title": "RADA PEDAGOGICZNA: godz. 15:00 - przedstawienie planu nadzoru pedagogicznego na rok s...",
+      "title": "15:00/16:00 - RADA PEDAGOGICZNA: przedstawienie planu nadzoru pedagogicznego na rok s...",
       "start": "2026-09-09T15:00:00",
       "allDay": false,
       "category": "council",
@@ -118,34 +117,16 @@
       "priority": "high",
       "audience": "nauczyciele",
       "extendedProps": {
-        "description": "RADA PEDAGOGICZNA: godz. 15:00 - przedstawienie planu nadzoru pedagogicznego na rok szkolny 2026/2027",
+        "description": "15:00/16:00 - RADA PEDAGOGICZNA: przedstawienie planu nadzoru pedagogicznego na rok szkolny 2026/2027",
         "needsConfirmation": false,
-        "sourceNote": "Ręczna korekta użytkownika: rada pedagogiczna przeniesiona na 9.09.2026."
+        "sourceNote": ""
       },
       "end": "2026-09-09T16:30:00"
     },
     {
       "id": "evt-0007",
-      "title": "KLASY 2-5 TECHNIKUM, 2-3 BS1st: wychowawcy klas - zebrania z rodzicami - godz. 16:30",
-      "start": "2026-09-10T16:30:00",
-      "allDay": false,
-      "category": "meeting",
-      "tags": [
-        "spotkania"
-      ],
-      "priority": "normal",
-      "audience": "klasy maturalne",
-      "extendedProps": {
-        "description": "KLASY 2-5 TECHNIKUM, 2-3 BS1st: wychowawcy klas - zebrania z rodzicami - godz. 16:30",
-        "needsConfirmation": false,
-        "sourceNote": ""
-      },
-      "end": "2026-09-10T18:00:00"
-    },
-    {
-      "id": "evt-0008",
-      "title": "zebranie Rady Rodziców - godz. 18:00",
-      "start": "2026-09-10T18:00:00",
+      "title": "16:30 - KLASY 2-5 TECHNIKUM, KLASY 2-3 BS I st.: wychowawcy klas - zebrania z rodzicami",
+      "start": "2026-09-09T16:30:00",
       "allDay": false,
       "category": "meeting",
       "tags": [
@@ -154,11 +135,29 @@
       "priority": "normal",
       "audience": "rodzice i wychowawcy",
       "extendedProps": {
-        "description": "zebranie Rady Rodziców - godz. 18:00",
+        "description": "16:30 - KLASY 2-5 TECHNIKUM, KLASY 2-3 BS I st.: wychowawcy klas - zebrania z rodzicami",
         "needsConfirmation": false,
         "sourceNote": ""
       },
-      "end": "2026-09-10T19:30:00"
+      "end": "2026-09-09T18:00:00"
+    },
+    {
+      "id": "evt-0008",
+      "title": "18:00 - zebranie Rady Rodziców",
+      "start": "2026-09-09T18:00:00",
+      "allDay": false,
+      "category": "meeting",
+      "tags": [
+        "spotkania"
+      ],
+      "priority": "normal",
+      "audience": "rodzice i wychowawcy",
+      "extendedProps": {
+        "description": "18:00 - zebranie Rady Rodziców",
+        "needsConfirmation": false,
+        "sourceNote": ""
+      },
+      "end": "2026-09-09T19:30:00"
     },
     {
       "id": "evt-0009",
@@ -195,7 +194,7 @@
     },
     {
       "id": "evt-0011",
-      "title": "KLASY 3 TECHNIKUM: praktyki 5.10.2026 r. - 30.10.2026 r.",
+      "title": "Praktyki zawodowe - klasy 3 technikum",
       "start": "2026-10-05",
       "allDay": true,
       "category": "practice",
@@ -208,62 +207,27 @@
         "description": "KLASY 3 TECHNIKUM: praktyki 5.10.2026 r. - 30.10.2026 r.",
         "needsConfirmation": false,
         "sourceNote": ""
-      }
-    },
-    {
-      "id": "evt-0012",
-      "title": "Praktyki zawodowe - klasy 3 technikum",
-      "start": "2026-10-05",
-      "allDay": true,
-      "category": "practice",
-      "tags": [
-        "kluczowe",
-        "praktyki"
-      ],
-      "priority": "important",
-      "audience": "wybrane klasy",
-      "extendedProps": {
-        "description": "Zakres zgodnie z XLSX: 5.10.2026 - 30.10.2026.",
-        "needsConfirmation": false,
-        "sourceNote": ""
       },
       "end": "2026-10-31"
     },
     {
-      "id": "evt-0013",
+      "id": "evt-0012",
       "title": "Dzień Edukacji Narodowej",
-      "start": "2026-10-14",
-      "allDay": true,
-      "category": "general",
-      "tags": [
-        "bs2"
-      ],
-      "priority": "normal",
-      "audience": "klasy maturalne",
-      "extendedProps": {
-        "description": "Dzień Edukacji Narodowej \nKLASY 1-5 TECHNIKUM: dzień wolny od zajęć dydaktycznych\nKLASY 1-3 BS1st: u pracodawców\n1, 3 SEMESTR BS2st: wg planu zajęć",
-        "needsConfirmation": false,
-        "sourceNote": ""
-      }
-    },
-    {
-      "id": "evt-0014",
-      "title": "dzień wolny od zajęć dydaktyczno-wychowawczych",
       "start": "2026-10-14",
       "allDay": true,
       "category": "general",
       "tags": [],
       "priority": "normal",
-      "audience": "wszyscy",
+      "audience": "klasy maturalne",
       "extendedProps": {
-        "description": "dzień wolny od zajęć dydaktyczno-wychowawczych",
+        "description": "Dzień Edukacji Narodowej\nKLASY 1-5 TECHNIKUM: dzień wolny od zajęć dydaktycznych\nKLASY 1-3 BS I st.: u pracodawców\ndzień wolny od zajęć dydaktyczno-wychowawczych",
         "needsConfirmation": false,
         "sourceNote": ""
       }
     },
     {
-      "id": "evt-0015",
-      "title": "3 SEMESTR BS2st: poinformowanie słuchaczy (w tym rodziców niepełnoletnich słuchaczy),...",
+      "id": "evt-0013",
+      "title": "3 SEMESTR BS II st.: poinformowanie słuchaczy (w tym rodziców niepełnoletnich słuchac...",
       "start": "2026-10-30",
       "allDay": true,
       "category": "exam",
@@ -272,16 +236,16 @@
         "egzaminy"
       ],
       "priority": "high",
-      "audience": "bs ii stopnia",
+      "audience": "rodzice i wychowawcy",
       "extendedProps": {
-        "description": "3 SEMESTR BS2st: poinformowanie słuchaczy (w tym rodziców niepełnoletnich słuchaczy), poprzez wpis do dziennika KOLUMNA \"egzamin semestralny\" - tak/nie, czy spełniają warunki dopuszczenia do egzaminu semestralnego (co najmniej 50% obecności oraz pozytwne oceny bieżące)",
+        "description": "3 SEMESTR BS II st.: poinformowanie słuchaczy (w tym rodziców niepełnoletnich słuchaczy), poprzez wpis do dziennika KOLUMNA \"egzamin semestralny\" - tak/nie, czy spełniają warunki dopuszczenia do egzaminu semestralnego (co najmniej 50% obecności oraz pozytywne oceny bieżące)",
         "needsConfirmation": false,
         "sourceNote": ""
       }
     },
     {
-      "id": "evt-0016",
-      "title": "Wszystkich Świętych",
+      "id": "evt-0014",
+      "title": "Wszystkich Świętych - dzień wolny",
       "start": "2026-11-01",
       "allDay": true,
       "category": "general",
@@ -289,14 +253,14 @@
       "priority": "normal",
       "audience": "wszyscy",
       "extendedProps": {
-        "description": "Wszystkich Świętych",
+        "description": "Wszystkich Świętych - dzień wolny",
         "needsConfirmation": false,
         "sourceNote": ""
       }
     },
     {
-      "id": "evt-0017",
-      "title": "Narodowe Święto Niepodległości",
+      "id": "evt-0015",
+      "title": "Narodowe Święto Niepodległości - dzień wolny",
       "start": "2026-11-11",
       "allDay": true,
       "category": "holiday",
@@ -306,14 +270,14 @@
       "priority": "normal",
       "audience": "wszyscy",
       "extendedProps": {
-        "description": "Narodowe Święto Niepodległości",
+        "description": "Narodowe Święto Niepodległości - dzień wolny",
         "needsConfirmation": false,
         "sourceNote": ""
       }
     },
     {
-      "id": "evt-0018",
-      "title": "3 SEMESTR BS2st: egzaminy semestralne 30.11.2026 r. - 7.12.2026 r. (szczegółowy harmo...",
+      "id": "evt-0016",
+      "title": "3 SEMESTR BS II st.: egzaminy semestralne 30.11.2026 r. - 7.12.2026 r. (szczegółowy h...",
       "start": "2026-11-30",
       "allDay": true,
       "category": "exam",
@@ -322,16 +286,16 @@
         "egzaminy"
       ],
       "priority": "high",
-      "audience": "bs ii stopnia",
+      "audience": "nauczyciele",
       "extendedProps": {
-        "description": "3 SEMESTR BS2st: egzaminy semestralne 30.11.2026 r. - 7.12.2026 r. (szczegółowy harmonogram egzaminów z poszczególnych przedmiotów zostanie podany na początku listopada 2026 r.)",
+        "description": "3 SEMESTR BS II st.: egzaminy semestralne 30.11.2026 r. - 7.12.2026 r. (szczegółowy harmonogram egzaminów z poszczególnych przedmiotów zostanie podany na początku listopada 2026 r.)",
         "needsConfirmation": false,
         "sourceNote": ""
       }
     },
     {
-      "id": "evt-0019",
-      "title": "1 SEMESTR BS2st: poinformowanie słuchaczy (w tym rodziców niepełnoletnich słuchaczy)...",
+      "id": "evt-0017",
+      "title": "1 SEMESTR BS II st.: poinformowanie słuchaczy (w tym rodziców niepełnoletnich słuchac...",
       "start": "2026-12-01",
       "allDay": true,
       "category": "exam",
@@ -340,15 +304,15 @@
         "egzaminy"
       ],
       "priority": "high",
-      "audience": "bs ii stopnia",
+      "audience": "rodzice i wychowawcy",
       "extendedProps": {
-        "description": "1 SEMESTR BS2st: poinformowanie słuchaczy (w tym rodziców niepełnoletnich słuchaczy) poprzez wpis do dziennika KOLUMNA \"egzamin semestralny\" - tak/nie, czy spełniają warunki dopuszczenia do egzaminu semestralnego (co najmniej 50% obecności oraz pozytwne oceny bieżące)",
+        "description": "1 SEMESTR BS II st.: poinformowanie słuchaczy (w tym rodziców niepełnoletnich słuchaczy) poprzez wpis do dziennika KOLUMNA \"egzamin semestralny\" - tak/nie, czy spełniają warunki dopuszczenia do egzaminu semestralnego (co najmniej 50% obecności oraz pozytywne oceny bieżące)",
         "needsConfirmation": false,
         "sourceNote": ""
       }
     },
     {
-      "id": "evt-0020",
+      "id": "evt-0018",
       "title": "KLASY 5 TECHNIKUM: wystawienie ocen półrocznych",
       "start": "2026-12-03",
       "allDay": true,
@@ -365,8 +329,8 @@
       }
     },
     {
-      "id": "evt-0021",
-      "title": "3 SEMESTR BS2st: złożenie dokumentacji z egzaminów semestralnych; wystawienie ocen se...",
+      "id": "evt-0019",
+      "title": "3 SEMESTR BS II st.: złożenie dokumentacji z egzaminów semestralnych; wystawienie oce...",
       "start": "2026-12-07",
       "allDay": true,
       "category": "classification",
@@ -376,15 +340,15 @@
         "klasyfikacja"
       ],
       "priority": "high",
-      "audience": "bs ii stopnia",
+      "audience": "nauczyciele",
       "extendedProps": {
-        "description": "3 SEMESTR BS2st: złożenie dokumentacji z egzaminów semestralnych; wystawienie ocen semestralnych",
+        "description": "3 SEMESTR BS II st.: złożenie dokumentacji z egzaminów semestralnych; wystawienie ocen semestralnych",
         "needsConfirmation": false,
         "sourceNote": ""
       }
     },
     {
-      "id": "evt-0022",
+      "id": "evt-0020",
       "title": "KLASY 5 TECHNIKUM: wychowawcy klas - złożenie zestawień klasyfikacyjnych",
       "start": "2026-12-08",
       "allDay": true,
@@ -394,16 +358,16 @@
         "klasyfikacja"
       ],
       "priority": "high",
-      "audience": "klasy maturalne",
+      "audience": "wychowawcy",
       "extendedProps": {
-        "description": "KLASY 5 TECHNIKUM: wychowawcy klas - złożenie zestawień klasyfikacyjnych \n3 SEMESTR BS2st: złożenie zestawienia klasyfikacyjnego",
+        "description": "KLASY 5 TECHNIKUM: wychowawcy klas - złożenie zestawień klasyfikacyjnych\n3 SEMESTR BS II st.: złożenie zestawienia klasyfikacyjnego",
         "needsConfirmation": false,
         "sourceNote": ""
       }
     },
     {
-      "id": "evt-0023",
-      "title": "RADA PEDAGOGICZNA: godz. 15:00",
+      "id": "evt-0021",
+      "title": "15:00 - RADA PEDAGOGICZNA: 1) klasyfikacyjna: KLASY 5 TECHNIKUM oraz 3 SEMESTR BS II st.",
       "start": "2026-12-09T15:00:00",
       "allDay": false,
       "category": "classification",
@@ -416,14 +380,14 @@
       "priority": "high",
       "audience": "nauczyciele",
       "extendedProps": {
-        "description": "RADA PEDAGOGICZNA: godz. 15:00\n1) klasyfikacyjna: KLASY 5 TECHNIKUM oraz 3 SEMESTR BS2st\n2) szkoleniowa: szkolenie z procedur egzaminu zawodowego",
+        "description": "15:00 - RADA PEDAGOGICZNA: 1) klasyfikacyjna: KLASY 5 TECHNIKUM oraz 3 SEMESTR BS II st.\n2) szkoleniowa: szkolenie z procedur egzaminu zawodowego",
         "needsConfirmation": false,
         "sourceNote": ""
       },
       "end": "2026-12-09T16:30:00"
     },
     {
-      "id": "evt-0024",
+      "id": "evt-0022",
       "title": "KLASY 5 TECHNIKUM: zakończenie I półrocza",
       "start": "2026-12-11",
       "allDay": true,
@@ -434,14 +398,14 @@
       "priority": "normal",
       "audience": "klasy maturalne",
       "extendedProps": {
-        "description": "KLASY 5 TECHNIKUM: zakończenie I półrocza;\n3 SEMESTR BS2st: zakończenie semestru",
+        "description": "KLASY 5 TECHNIKUM: zakończenie I półrocza;\n3 SEMESTR BS II st.: zakończenie semestru",
         "needsConfirmation": false,
         "sourceNote": ""
       }
     },
     {
-      "id": "evt-0025",
-      "title": "KLASY 5 TECHNIKUM: wychowawcy klas - zebrania z rodzicami na zakończenie I półrocza -...",
+      "id": "evt-0023",
+      "title": "16:30 - KLASY 5 TECHNIKUM: wychowawcy klas - zebrania z rodzicami na zakończenie I pó...",
       "start": "2026-12-11T16:30:00",
       "allDay": false,
       "category": "meeting",
@@ -450,37 +414,35 @@
         "spotkania"
       ],
       "priority": "normal",
-      "audience": "nauczyciele",
+      "audience": "rodzice i wychowawcy",
       "extendedProps": {
-        "description": "KLASY 5 TECHNIKUM: wychowawcy klas - zebrania z rodzicami na zakończenie I półrocza - godz. 16:30\nPOZOSTAŁE KLASY: wszyscy nauczyciele - konsultacje dla uczniów, w tym słuchaczy BS2st, i rodziców - godz. 16:30 - 17:30",
+        "description": "16:30 - KLASY 5 TECHNIKUM: wychowawcy klas - zebrania z rodzicami na zakończenie I półrocza\nPOZOSTAŁE KLASY: wszyscy nauczyciele - konsultacje dla uczniów, w tym słuchaczy BS II st., i rodziców - godz. 16:30 - 17:30",
         "needsConfirmation": false,
         "sourceNote": ""
       },
       "end": "2026-12-11T18:00:00"
     },
     {
-      "id": "evt-0026",
+      "id": "evt-0024",
       "title": "Zimowa przerwa świąteczna",
       "start": "2026-12-23",
       "allDay": true,
       "category": "holiday",
       "tags": [
-        "kluczowe",
-        "przerwa",
         "wolne"
       ],
-      "priority": "high",
+      "priority": "normal",
       "audience": "wszyscy",
       "extendedProps": {
-        "description": "Zakres wygenerowany z dziennych wpisów XLSX.",
+        "description": "Zimowa przerwa świąteczna - 23.12.2026 - 03.01.2027",
         "needsConfirmation": false,
         "sourceNote": ""
       },
-      "end": "2027-01-02"
+      "end": "2027-01-04"
     },
     {
-      "id": "evt-0027",
-      "title": "1 SEMESTR BS2st: egzaminy semestralne 2.01.2027 r. - 12.01.2027 r. (szczegółowy harmo...",
+      "id": "evt-0025",
+      "title": "1 SEMESTR BS II st.: egzaminy semestralne 2.01.2027 r. - 12.01.2027 r. (szczegółowy h...",
       "start": "2027-01-04",
       "allDay": true,
       "category": "exam",
@@ -489,16 +451,33 @@
         "egzaminy"
       ],
       "priority": "high",
-      "audience": "bs ii stopnia",
+      "audience": "nauczyciele",
       "extendedProps": {
-        "description": "1 SEMESTR BS2st: egzaminy semestralne 2.01.2027 r. - 12.01.2027 r. (szczegółowy harmonogram egzaminów z poszczególnych przedmiotów zostanie podany na początku grudnia 2026 r.)",
+        "description": "1 SEMESTR BS II st.: egzaminy semestralne 2.01.2027 r. - 12.01.2027 r. (szczegółowy harmonogram egzaminów z poszczególnych przedmiotów zostanie podany na początku grudnia 2026 r.)",
         "needsConfirmation": false,
         "sourceNote": ""
       }
     },
     {
-      "id": "evt-0028",
-      "title": "Trzech Króli",
+      "id": "evt-0026",
+      "title": "EGZAMIN ZAWODOWY - sesja zimowa: termin główny 5.01.2027 r. - 21.01.2027 r.",
+      "start": "2027-01-05",
+      "allDay": true,
+      "category": "exam",
+      "tags": [
+        "egzaminy"
+      ],
+      "priority": "high",
+      "audience": "wszyscy",
+      "extendedProps": {
+        "description": "EGZAMIN ZAWODOWY - sesja zimowa: termin główny 5.01.2027 r. - 21.01.2027 r.",
+        "needsConfirmation": false,
+        "sourceNote": ""
+      }
+    },
+    {
+      "id": "evt-0027",
+      "title": "Trzech Króli - dzień wolny",
       "start": "2027-01-06",
       "allDay": true,
       "category": "general",
@@ -506,14 +485,14 @@
       "priority": "normal",
       "audience": "wszyscy",
       "extendedProps": {
-        "description": "Trzech Króli",
+        "description": "Trzech Króli - dzień wolny",
         "needsConfirmation": false,
         "sourceNote": ""
       }
     },
     {
-      "id": "evt-0029",
-      "title": "KLASY 1-4 TECHNIKUM, 1-3 BS1st: wystawienie ocen śródrocznych",
+      "id": "evt-0028",
+      "title": "KLASY 1-4 TECHNIKUM, KLASY 1-3 BS I st.: wystawienie ocen śródrocznych",
       "start": "2027-01-07",
       "allDay": true,
       "category": "classification",
@@ -521,16 +500,16 @@
         "klasyfikacja"
       ],
       "priority": "high",
-      "audience": "technikum i bs i",
+      "audience": "wszyscy",
       "extendedProps": {
-        "description": "KLASY 1-4 TECHNIKUM, 1-3 BS1st: wystawienie ocen śródrocznych",
+        "description": "KLASY 1-4 TECHNIKUM, KLASY 1-3 BS I st.: wystawienie ocen śródrocznych",
         "needsConfirmation": false,
         "sourceNote": ""
       }
     },
     {
-      "id": "evt-0030",
-      "title": "KLASY 1-4 TECHNIKUM, 1-3 BS1st: wychowawcy klas - złożenie zestawień klasyfikacyjnych",
+      "id": "evt-0029",
+      "title": "KLASY 1-4 TECHNIKUM, KLASY 1-3 BS I st.: wychowawcy klas - złożenie zestawień klasyfi...",
       "start": "2027-01-11",
       "allDay": true,
       "category": "classification",
@@ -540,16 +519,16 @@
         "klasyfikacja"
       ],
       "priority": "high",
-      "audience": "bs ii stopnia",
+      "audience": "wychowawcy",
       "extendedProps": {
-        "description": "KLASY 1-4 TECHNIKUM, 1-3 BS1st: wychowawcy klas - złożenie zestawień klasyfikacyjnych\n1 SEMESTR BS2st: złożenie dokumentacji z egzaminów semestralnych; wystawienie ocen semestralnych",
+        "description": "KLASY 1-4 TECHNIKUM, KLASY 1-3 BS I st.: wychowawcy klas - złożenie zestawień klasyfikacyjnych\n1 SEMESTR BS II st.: złożenie dokumentacji z egzaminów semestralnych; wystawienie ocen semestralnych",
         "needsConfirmation": false,
         "sourceNote": ""
       }
     },
     {
-      "id": "evt-0031",
-      "title": "1 SEMESTR BS2st: złożenie zestawienia klasyfikacyjnego",
+      "id": "evt-0030",
+      "title": "1 SEMESTR BS II st.: złożenie zestawienia klasyfikacyjnego",
       "start": "2027-01-12",
       "allDay": true,
       "category": "general",
@@ -557,16 +536,16 @@
         "bs2"
       ],
       "priority": "normal",
-      "audience": "bs ii stopnia",
+      "audience": "wychowawcy",
       "extendedProps": {
-        "description": "1 SEMESTR BS2st: złożenie zestawienia klasyfikacyjnego",
+        "description": "1 SEMESTR BS II st.: złożenie zestawienia klasyfikacyjnego",
         "needsConfirmation": false,
         "sourceNote": ""
       }
     },
     {
-      "id": "evt-0032",
-      "title": "RADA PEDAGOGICZNA: godz. 15:00",
+      "id": "evt-0031",
+      "title": "15:00 - RADA PEDAGOGICZNA: 1) klasyfikacyjna: KLASY 1-4 TECHNIKUM, KLASY 1-3 BS I st....",
       "start": "2027-01-13T15:00:00",
       "allDay": false,
       "category": "classification",
@@ -578,15 +557,15 @@
       "priority": "high",
       "audience": "nauczyciele",
       "extendedProps": {
-        "description": "RADA PEDAGOGICZNA: godz. 15:00\n1) klasyfikacyjna: KLASY 1-4 TECHNIKUM, 1-3 BS1st, 1 SEMESTR BS2st",
+        "description": "15:00 - RADA PEDAGOGICZNA: 1) klasyfikacyjna: KLASY 1-4 TECHNIKUM, KLASY 1-3 BS I st., 1 SEMESTR BS II st.",
         "needsConfirmation": false,
         "sourceNote": ""
       },
       "end": "2027-01-13T16:30:00"
     },
     {
-      "id": "evt-0033",
-      "title": "KLASY 1-4 TECHNIKUM, 1-3 BS1st: zakończenie I półrocza",
+      "id": "evt-0032",
+      "title": "KLASY 1-4 TECHNIKUM, KLASY 1-3 BS I st.: zakończenie I półrocza",
       "start": "2027-01-15",
       "allDay": true,
       "category": "general",
@@ -594,16 +573,16 @@
         "bs2"
       ],
       "priority": "normal",
-      "audience": "bs ii stopnia",
+      "audience": "wychowawcy",
       "extendedProps": {
-        "description": "KLASY 1-4 TECHNIKUM, 1-3 BS1st: zakończenie I półrocza\n1 SEMESTR BS2st: zakończenie semestru",
+        "description": "KLASY 1-4 TECHNIKUM, KLASY 1-3 BS I st.: zakończenie I półrocza\n1 SEMESTR BS II st.: zakończenie semestru",
         "needsConfirmation": false,
         "sourceNote": ""
       }
     },
     {
-      "id": "evt-0034",
-      "title": "KLASY 1-4 TECHNIKUM, 1-3 BS1st: wychowawcy klas - zebrania z rodzicami na zakończenie...",
+      "id": "evt-0033",
+      "title": "16:30 - KLASY 1-4 TECHNIKUM, KLASY 1-3 BS I st.: wychowawcy klas - zebrania z rodzica...",
       "start": "2027-01-15T16:30:00",
       "allDay": false,
       "category": "meeting",
@@ -611,38 +590,52 @@
         "spotkania"
       ],
       "priority": "normal",
-      "audience": "technikum i bs i",
+      "audience": "rodzice i wychowawcy",
       "extendedProps": {
-        "description": "KLASY 1-4 TECHNIKUM, 1-3 BS1st: wychowawcy klas - zebrania z rodzicami na zakończenie I półrocza - godz. 16:30",
+        "description": "16:30 - KLASY 1-4 TECHNIKUM, KLASY 1-3 BS I st.: wychowawcy klas - zebrania z rodzicami na zakończenie I półrocza",
         "needsConfirmation": false,
         "sourceNote": ""
       },
       "end": "2027-01-15T18:00:00"
     },
     {
-      "id": "evt-0035",
-      "title": "Ferie zimowe",
+      "id": "evt-0034",
+      "title": "Ferie zimowe 16.01-31.01.2027",
       "start": "2027-01-16",
       "allDay": true,
       "category": "holiday",
       "tags": [
-        "ferie",
-        "kluczowe",
         "wolne"
+      ],
+      "priority": "normal",
+      "audience": "wszyscy",
+      "extendedProps": {
+        "description": "Ferie zimowe 16.01-31.01.2027",
+        "needsConfirmation": false,
+        "sourceNote": ""
+      }
+    },
+    {
+      "id": "evt-0035",
+      "title": "EGZAMIN ZAWODOWY - sesja zimowa: ostatni dzień terminu głównego (5.01.2027 r. - 21.01...",
+      "start": "2027-01-21",
+      "allDay": true,
+      "category": "exam",
+      "tags": [
+        "egzaminy"
       ],
       "priority": "high",
       "audience": "wszyscy",
       "extendedProps": {
-        "description": "Zakres wygenerowany z dziennych wpisów XLSX.",
+        "description": "EGZAMIN ZAWODOWY - sesja zimowa: ostatni dzień terminu głównego (5.01.2027 r. - 21.01.2027 r.)",
         "needsConfirmation": false,
         "sourceNote": ""
-      },
-      "end": "2027-02-01"
+      }
     },
     {
       "id": "evt-0036",
-      "title": "KLASY 4 TECHNIKUM: praktyki 2.02.2027 r. - 26.02.2027 r.",
-      "start": "2027-02-01",
+      "title": "Praktyki zawodowe - klasy 4 technikum",
+      "start": "2027-02-02",
       "allDay": true,
       "category": "practice",
       "tags": [
@@ -654,30 +647,12 @@
         "description": "KLASY 4 TECHNIKUM: praktyki 2.02.2027 r. - 26.02.2027 r.",
         "needsConfirmation": false,
         "sourceNote": ""
-      }
-    },
-    {
-      "id": "evt-0037",
-      "title": "Praktyki zawodowe - klasy 4 technikum",
-      "start": "2027-02-02",
-      "allDay": true,
-      "category": "practice",
-      "tags": [
-        "kluczowe",
-        "praktyki"
-      ],
-      "priority": "important",
-      "audience": "wybrane klasy",
-      "extendedProps": {
-        "description": "Zakres zgodnie z XLSX: 2.02.2027 - 26.02.2027.",
-        "needsConfirmation": false,
-        "sourceNote": ""
       },
       "end": "2027-02-27"
     },
     {
-      "id": "evt-0038",
-      "title": "RADA PEDAGOGICZNA: godz. 15:00",
+      "id": "evt-0037",
+      "title": "15:00 - RADA PEDAGOGICZNA: 1) plenarna: podsumowanie I półrocza",
       "start": "2027-02-03T15:00:00",
       "allDay": false,
       "category": "council",
@@ -687,15 +662,15 @@
       "priority": "high",
       "audience": "nauczyciele",
       "extendedProps": {
-        "description": "RADA PEDAGOGICZNA: godz. 15:00\n1) plenarna: podsumowanie I półrocza",
+        "description": "15:00 - RADA PEDAGOGICZNA: 1) plenarna: podsumowanie I półrocza",
         "needsConfirmation": false,
         "sourceNote": ""
       },
       "end": "2027-02-03T16:30:00"
     },
     {
-      "id": "evt-0039",
-      "title": "RADA PEDAGOGICZNA: godz. 15:00",
+      "id": "evt-0038",
+      "title": "15:00 - RADA PEDAGOGICZNA: 1) szkoleniowa",
       "start": "2027-03-17T15:00:00",
       "allDay": false,
       "category": "council",
@@ -705,15 +680,15 @@
       "priority": "high",
       "audience": "nauczyciele",
       "extendedProps": {
-        "description": "RADA PEDAGOGICZNA: godz. 15:00\n1) szkoleniowa",
+        "description": "15:00 - RADA PEDAGOGICZNA: 1) szkoleniowa",
         "needsConfirmation": false,
         "sourceNote": ""
       },
       "end": "2027-03-17T16:30:00"
     },
     {
-      "id": "evt-0040",
-      "title": "4 SEMESTR BS2st: poinformowanie słuchaczy (w tym rodziców niepełnoletnich słuchaczy)...",
+      "id": "evt-0039",
+      "title": "4 SEMESTR BS II st.: poinformowanie słuchaczy (w tym rodziców niepełnoletnich słuchac...",
       "start": "2027-03-19",
       "allDay": true,
       "category": "exam",
@@ -722,35 +697,15 @@
         "egzaminy"
       ],
       "priority": "high",
-      "audience": "bs ii stopnia",
+      "audience": "rodzice i wychowawcy",
       "extendedProps": {
-        "description": "4 SEMESTR BS2st: poinformowanie słuchaczy (w tym rodziców niepełnoletnich słuchaczy) poprzez wpis do dziennika KOLUMNA \"egzamin semestralny\" - tak/nie, czy spełniają warunki dopuszczenia do egzaminu semestralnego (co najmniej 50% obecności oraz pozytwne oceny bieżące)",
+        "description": "4 SEMESTR BS II st.: poinformowanie słuchaczy (w tym rodziców niepełnoletnich słuchaczy) poprzez wpis do dziennika KOLUMNA \"egzamin semestralny\" - tak/nie, czy spełniają warunki dopuszczenia do egzaminu semestralnego (co najmniej 50% obecności oraz pozytywne oceny bieżące)",
         "needsConfirmation": false,
         "sourceNote": ""
       }
     },
     {
-      "id": "evt-0041",
-      "title": "Wiosenna przerwa świąteczna",
-      "start": "2027-03-25",
-      "allDay": true,
-      "category": "holiday",
-      "tags": [
-        "kluczowe",
-        "przerwa",
-        "wolne"
-      ],
-      "priority": "high",
-      "audience": "wszyscy",
-      "extendedProps": {
-        "description": "Zakres wygenerowany z dziennych wpisów XLSX.",
-        "needsConfirmation": false,
-        "sourceNote": ""
-      },
-      "end": "2027-03-31"
-    },
-    {
-      "id": "evt-0042",
+      "id": "evt-0040",
       "title": "wiosenna przerwa świąteczna | Wielkanoc",
       "start": "2027-03-28",
       "allDay": true,
@@ -767,7 +722,7 @@
       }
     },
     {
-      "id": "evt-0043",
+      "id": "evt-0041",
       "title": "wiosenna przerwa świąteczna | Poniedziałek Wielkanocny",
       "start": "2027-03-29",
       "allDay": true,
@@ -784,8 +739,8 @@
       }
     },
     {
-      "id": "evt-0044",
-      "title": "KLASY 5 TECHNIKUM: wystawienie proponowanych ocen końcowych (maksymalnie do godz. 16:00)",
+      "id": "evt-0042",
+      "title": "16:00 - KLASY 5 TECHNIKUM: wystawienie proponowanych ocen końcowych (maksymalnie do g...",
       "start": "2027-04-09T16:00:00",
       "allDay": false,
       "category": "classification",
@@ -795,15 +750,15 @@
       "priority": "high",
       "audience": "klasy maturalne",
       "extendedProps": {
-        "description": "KLASY 5 TECHNIKUM: wystawienie proponowanych ocen końcowych (maksymalnie do godz. 16:00)",
+        "description": "16:00 - KLASY 5 TECHNIKUM: wystawienie proponowanych ocen końcowych (maksymalnie do godz. 16:00)",
         "needsConfirmation": false,
         "sourceNote": ""
       },
       "end": "2027-04-09T17:30:00"
     },
     {
-      "id": "evt-0045",
-      "title": "KLASY 5 TECHNIKUM: wychowawcy klas - zebrania z rodzicami - godz. 16:30",
+      "id": "evt-0043",
+      "title": "16:30 - KLASY 5 TECHNIKUM: wychowawcy klas - zebrania z rodzicami",
       "start": "2027-04-09T16:30:00",
       "allDay": false,
       "category": "meeting",
@@ -812,17 +767,17 @@
         "spotkania"
       ],
       "priority": "normal",
-      "audience": "nauczyciele",
+      "audience": "rodzice i wychowawcy",
       "extendedProps": {
-        "description": "KLASY 5 TECHNIKUM: wychowawcy klas - zebrania z rodzicami - godz. 16:30\nPOZOSTAŁE KLASY: wszyscy nauczyciele - konsultacje dla uczniów, w tym słuchaczy BS2st, i rodziców - godz. 16:30 - 17:30",
+        "description": "16:30 - KLASY 5 TECHNIKUM: wychowawcy klas - zebrania z rodzicami\nPOZOSTAŁE KLASY: wszyscy nauczyciele - konsultacje dla uczniów, w tym słuchaczy BS II st., i rodziców - godz. 16:30 - 17:30",
         "needsConfirmation": false,
         "sourceNote": ""
       },
       "end": "2027-04-09T18:00:00"
     },
     {
-      "id": "evt-0046",
-      "title": "4 SEMESTR BS2st: egzaminy semestralne 19.04.2027 r. - 27.04.2027 r. (szczegółowy harm...",
+      "id": "evt-0044",
+      "title": "4 SEMESTR BS II st.: egzaminy semestralne 19.04.2027 r. - 27.04.2027 r. (szczegółowy...",
       "start": "2027-04-19",
       "allDay": true,
       "category": "exam",
@@ -831,15 +786,15 @@
         "egzaminy"
       ],
       "priority": "high",
-      "audience": "bs ii stopnia",
+      "audience": "nauczyciele",
       "extendedProps": {
-        "description": "4 SEMESTR BS2st: egzaminy semestralne 19.04.2027 r. - 27.04.2027 r. (szczegółowy harmonogram egzaminów z poszczególnych przedmiotów zostanie podany na początku kwietnia 2027 r.)",
+        "description": "4 SEMESTR BS II st.: egzaminy semestralne 19.04.2027 r. - 27.04.2027 r. (szczegółowy harmonogram egzaminów z poszczególnych przedmiotów zostanie podany na początku kwietnia 2027 r.)",
         "needsConfirmation": false,
         "sourceNote": ""
       }
     },
     {
-      "id": "evt-0047",
+      "id": "evt-0045",
       "title": "KLASY 5 TECHNIKUM: wystawienie ocen końcowych",
       "start": "2027-04-22",
       "allDay": true,
@@ -856,7 +811,7 @@
       }
     },
     {
-      "id": "evt-0048",
+      "id": "evt-0046",
       "title": "KLASY 5 TECHNIKUM: wychowawcy klas - złożenie zestawienia klasyfikacyjnego",
       "start": "2027-04-26",
       "allDay": true,
@@ -867,16 +822,16 @@
         "klasyfikacja"
       ],
       "priority": "high",
-      "audience": "klasy maturalne",
+      "audience": "wychowawcy",
       "extendedProps": {
-        "description": "KLASY 5 TECHNIKUM: wychowawcy klas - złożenie zestawienia klasyfikacyjnego\n4 SEMESTR BS2st: złożenie dokumentacji z egzaminów semestralnych; wystawienie ocen semestralnych",
+        "description": "KLASY 5 TECHNIKUM: wychowawcy klas - złożenie zestawienia klasyfikacyjnego\n4 SEMESTR BS II st.: złożenie dokumentacji z egzaminów semestralnych; wystawienie ocen semestralnych",
         "needsConfirmation": false,
         "sourceNote": ""
       }
     },
     {
-      "id": "evt-0049",
-      "title": "4 SEMESTR BS2st: złożenie zestawienia klasyfikacyjnego",
+      "id": "evt-0047",
+      "title": "4 SEMESTR BS II st.: złożenie zestawienia klasyfikacyjnego",
       "start": "2027-04-27",
       "allDay": true,
       "category": "general",
@@ -886,14 +841,14 @@
       "priority": "normal",
       "audience": "bs ii stopnia",
       "extendedProps": {
-        "description": "4 SEMESTR BS2st: złożenie zestawienia klasyfikacyjnego",
+        "description": "4 SEMESTR BS II st.: złożenie zestawienia klasyfikacyjnego",
         "needsConfirmation": false,
         "sourceNote": ""
       }
     },
     {
-      "id": "evt-0050",
-      "title": "RADA PEDAGOGICZNA: godz. 15:00",
+      "id": "evt-0048",
+      "title": "15:00 - RADA PEDAGOGICZNA: 1) klasyfikacyjna: KLASY 5 TECHNIKUM oraz 4 SEMESTR BS II st.",
       "start": "2027-04-28T15:00:00",
       "allDay": false,
       "category": "classification",
@@ -906,15 +861,15 @@
       "priority": "high",
       "audience": "nauczyciele",
       "extendedProps": {
-        "description": "RADA PEDAGOGICZNA: godz. 15:00\n1) klasyfikacyjna: KLASY 5 TECHNIKUM oraz 4 SEMESTR BS2st\n2) szkoleniowa: szkolenie z procedur egzaminu maturalnego",
+        "description": "15:00 - RADA PEDAGOGICZNA: 1) klasyfikacyjna: KLASY 5 TECHNIKUM oraz 4 SEMESTR BS II st.\n2) szkoleniowa: szkolenie z procedur egzaminu maturalnego",
         "needsConfirmation": false,
         "sourceNote": ""
       },
       "end": "2027-04-28T16:30:00"
     },
     {
-      "id": "evt-0051",
-      "title": "KLASY 5 TECHNIKUM oraz 4 SEMESTR BS2st: zakończenie roku szkolnego",
+      "id": "evt-0049",
+      "title": "KLASY 5 TECHNIKUM oraz 4 SEMESTR BS II st.: zakończenie roku szkolnego",
       "start": "2027-04-30",
       "allDay": true,
       "category": "general",
@@ -925,13 +880,13 @@
       "priority": "high",
       "audience": "klasy maturalne",
       "extendedProps": {
-        "description": "KLASY 5 TECHNIKUM oraz 4 SEMESTR BS2st: zakończenie roku szkolnego",
+        "description": "KLASY 5 TECHNIKUM oraz 4 SEMESTR BS II st.: zakończenie roku szkolnego",
         "needsConfirmation": false,
         "sourceNote": ""
       }
     },
     {
-      "id": "evt-0052",
+      "id": "evt-0050",
       "title": "Międzynarodowe Święto Pracy",
       "start": "2027-05-01",
       "allDay": true,
@@ -948,7 +903,7 @@
       }
     },
     {
-      "id": "evt-0053",
+      "id": "evt-0051",
       "title": "Święto Konstytucji 3 Maja",
       "start": "2027-05-03",
       "allDay": true,
@@ -965,9 +920,42 @@
       }
     },
     {
-      "id": "evt-0054",
+      "id": "evt-0052",
       "title": "dzień wolny od zajęć dydaktyczno-wychowawczych",
       "start": "2027-05-04",
+      "allDay": true,
+      "category": "general",
+      "tags": [],
+      "priority": "normal",
+      "audience": "wszyscy",
+      "extendedProps": {
+        "description": "dzień wolny od zajęć dydaktyczno-wychowawczych",
+        "needsConfirmation": false,
+        "sourceNote": ""
+      }
+    },
+    {
+      "id": "evt-0053",
+      "title": "matura - język polski",
+      "start": "2027-05-04",
+      "allDay": true,
+      "category": "exam",
+      "tags": [
+        "bs2",
+        "egzaminy"
+      ],
+      "priority": "high",
+      "audience": "nauczyciele",
+      "extendedProps": {
+        "description": "matura - język polski\nKLASY 1-4 TECHNIKUM: dzień wolny od zajęć dydaktycznych\nKLASY 1-3 BS I st.: u pracodawców\n2 SEMESTR BS II st.: wg planu zajęć",
+        "needsConfirmation": false,
+        "sourceNote": ""
+      }
+    },
+    {
+      "id": "evt-0054",
+      "title": "dzień wolny od zajęć dydaktyczno-wychowawczych",
+      "start": "2027-05-05",
       "allDay": true,
       "category": "general",
       "tags": [],
@@ -981,8 +969,8 @@
     },
     {
       "id": "evt-0055",
-      "title": "matura - język polski",
-      "start": "2027-05-04",
+      "title": "matura - matematyka",
+      "start": "2027-05-05",
       "allDay": true,
       "category": "exam",
       "tags": [
@@ -990,9 +978,9 @@
         "egzaminy"
       ],
       "priority": "high",
-      "audience": "bs ii stopnia",
+      "audience": "nauczyciele",
       "extendedProps": {
-        "description": "matura - język polski\nKLASY 1-4 TECHNIKUM: dzień wolny od zajęć dydaktycznych\nKLASY 1-3 BS1st: u pracodawców\n2 SEMESTR BS2st: wg planu zajęć",
+        "description": "matura - matematyka\nKLASY 1-4 TECHNIKUM: dzień wolny od zajęć dydaktycznych\nKLASY 1-3 BS I st.: u pracodawców\n2 SEMESTR BS II st.: wg planu zajęć",
         "needsConfirmation": false,
         "sourceNote": ""
       }
@@ -1000,7 +988,7 @@
     {
       "id": "evt-0056",
       "title": "dzień wolny od zajęć dydaktyczno-wychowawczych",
-      "start": "2027-05-05",
+      "start": "2027-05-06",
       "allDay": true,
       "category": "general",
       "tags": [],
@@ -1014,39 +1002,6 @@
     },
     {
       "id": "evt-0057",
-      "title": "matura - matematyka",
-      "start": "2027-05-05",
-      "allDay": true,
-      "category": "exam",
-      "tags": [
-        "bs2",
-        "egzaminy"
-      ],
-      "priority": "high",
-      "audience": "bs ii stopnia",
-      "extendedProps": {
-        "description": "matura - matematyka\nKLASY 1-4 TECHNIKUM: dzień wolny od zajęć dydaktycznych\nKLASY 1-3 BS1st: u pracodawców\n2 SEMESTR BS2st: wg planu zajęć",
-        "needsConfirmation": false,
-        "sourceNote": ""
-      }
-    },
-    {
-      "id": "evt-0058",
-      "title": "dzień wolny od zajęć dydaktyczno-wychowawczych",
-      "start": "2027-05-06",
-      "allDay": true,
-      "category": "general",
-      "tags": [],
-      "priority": "normal",
-      "audience": "wszyscy",
-      "extendedProps": {
-        "description": "dzień wolny od zajęć dydaktyczno-wychowawczych",
-        "needsConfirmation": false,
-        "sourceNote": ""
-      }
-    },
-    {
-      "id": "evt-0059",
       "title": "matura - języki obce nowożytne",
       "start": "2027-05-06",
       "allDay": true,
@@ -1056,16 +1011,16 @@
         "egzaminy"
       ],
       "priority": "high",
-      "audience": "bs ii stopnia",
+      "audience": "nauczyciele",
       "extendedProps": {
-        "description": "matura - języki obce nowożytne\nKLASY 1-4 TECHNIKUM: dzień wolny od zajęć dydaktycznych\nKLASY 1-3 BS1st: u pracodawców\n2 SEMESTR BS2st: wg planu zajęć",
+        "description": "matura - języki obce nowożytne\nKLASY 1-4 TECHNIKUM: dzień wolny od zajęć dydaktycznych\nKLASY 1-3 BS I st.: u pracodawców\n2 SEMESTR BS II st.: wg planu zajęć",
         "needsConfirmation": false,
         "sourceNote": ""
       }
     },
     {
-      "id": "evt-0060",
-      "title": "2 SEMESTR BS2st: poinformowanie słuchaczy (w tym rodziców niepełnoletnich słuchaczy)...",
+      "id": "evt-0058",
+      "title": "2 SEMESTR BS II st.: poinformowanie słuchaczy (w tym rodziców niepełnoletnich słuchac...",
       "start": "2027-05-07",
       "allDay": true,
       "category": "exam",
@@ -1074,16 +1029,16 @@
         "egzaminy"
       ],
       "priority": "high",
-      "audience": "bs ii stopnia",
+      "audience": "rodzice i wychowawcy",
       "extendedProps": {
-        "description": "2 SEMESTR BS2st: poinformowanie słuchaczy (w tym rodziców niepełnoletnich słuchaczy) poprzez wpis do dziennika KOLUMNA \"egzamin semestralny\" - tak/nie, czy spełniają warunki dopuszczenia do egzaminu semestralnego (co najmniej 50% obecności oraz pozytwne oceny bieżące)",
+        "description": "2 SEMESTR BS II st.: poinformowanie słuchaczy (w tym rodziców niepełnoletnich słuchaczy) poprzez wpis do dziennika KOLUMNA \"egzamin semestralny\" - tak/nie, czy spełniają warunki dopuszczenia do egzaminu semestralnego (co najmniej 50% obecności oraz pozytywne oceny bieżące)",
         "needsConfirmation": false,
         "sourceNote": ""
       }
     },
     {
-      "id": "evt-0061",
-      "title": "RADA PEDAGOGICZNA: godz. 15:00",
+      "id": "evt-0059",
+      "title": "15:00 - RADA PEDAGOGICZNA: 1) szkoleniowa: szkolenie z procedur egzaminów zawodowych",
       "start": "2027-05-19T15:00:00",
       "allDay": false,
       "category": "council",
@@ -1094,14 +1049,14 @@
       "priority": "high",
       "audience": "nauczyciele",
       "extendedProps": {
-        "description": "RADA PEDAGOGICZNA: godz. 15:00\n1) szkoleniowa: szkolenie z procedur egzaminów zawodowych",
+        "description": "15:00 - RADA PEDAGOGICZNA: 1) szkoleniowa: szkolenie z procedur egzaminów zawodowych",
         "needsConfirmation": false,
         "sourceNote": ""
       },
       "end": "2027-05-19T16:30:00"
     },
     {
-      "id": "evt-0062",
+      "id": "evt-0060",
       "title": "zajęcia wg planu z 28 maja 2027 r.",
       "start": "2027-05-22",
       "allDay": true,
@@ -1116,8 +1071,8 @@
       }
     },
     {
-      "id": "evt-0063",
-      "title": "KLASY 1-4 TECHNIKUM, 1-3 BS1st: wystawienie proponowanych ocen rocznych",
+      "id": "evt-0061",
+      "title": "KLASY 1-4 TECHNIKUM, KLASY 1-3 BS I st.: wystawienie proponowanych ocen rocznych",
       "start": "2027-05-24",
       "allDay": true,
       "category": "classification",
@@ -1125,16 +1080,16 @@
         "klasyfikacja"
       ],
       "priority": "high",
-      "audience": "technikum i bs i",
+      "audience": "wszyscy",
       "extendedProps": {
-        "description": "KLASY 1-4 TECHNIKUM, 1-3 BS1st: wystawienie proponowanych ocen rocznych",
+        "description": "KLASY 1-4 TECHNIKUM, KLASY 1-3 BS I st.: wystawienie proponowanych ocen rocznych",
         "needsConfirmation": false,
         "sourceNote": ""
       }
     },
     {
-      "id": "evt-0064",
-      "title": "KLASY 1-4 TECHNIKUM, 1-3 BS1st: wychowawcy klas - zebrania z rodzicami - godz. 16:30",
+      "id": "evt-0062",
+      "title": "16:30 - KLASY 1-4 TECHNIKUM, KLASY 1-3 BS I st.: wychowawcy klas - zebrania z rodzicami",
       "start": "2027-05-25T16:30:00",
       "allDay": false,
       "category": "meeting",
@@ -1142,16 +1097,16 @@
         "spotkania"
       ],
       "priority": "normal",
-      "audience": "technikum i bs i",
+      "audience": "rodzice i wychowawcy",
       "extendedProps": {
-        "description": "KLASY 1-4 TECHNIKUM, 1-3 BS1st: wychowawcy klas - zebrania z rodzicami - godz. 16:30",
+        "description": "16:30 - KLASY 1-4 TECHNIKUM, KLASY 1-3 BS I st.: wychowawcy klas - zebrania z rodzicami",
         "needsConfirmation": false,
         "sourceNote": ""
       },
       "end": "2027-05-25T18:00:00"
     },
     {
-      "id": "evt-0065",
+      "id": "evt-0063",
       "title": "Boże Ciało",
       "start": "2027-05-27",
       "allDay": true,
@@ -1168,8 +1123,8 @@
       }
     },
     {
-      "id": "evt-0066",
-      "title": "dzień do odpracowania: SOBOTA 22 maja 2027 r.",
+      "id": "evt-0064",
+      "title": "dzień wolny do odpracowania: SOBOTA 22 maja 2027 r.",
       "start": "2027-05-28",
       "allDay": true,
       "category": "general",
@@ -1177,14 +1132,31 @@
       "priority": "normal",
       "audience": "wszyscy",
       "extendedProps": {
-        "description": "dzień do odpracowania: SOBOTA 22 maja 2027 r.",
+        "description": "dzień wolny do odpracowania: SOBOTA 22 maja 2027 r.",
         "needsConfirmation": false,
         "sourceNote": ""
       }
     },
     {
-      "id": "evt-0067",
-      "title": "2 SEMESTR BS2st: egzaminy semestralne 8.06.2027 r. - 17.06.2027 r. (szczegółowy harmo...",
+      "id": "evt-0065",
+      "title": "EGZAMIN ZAWODOWY - sesja letnia: termin główny 1.06.2027 r. - 21.06.2027 r.",
+      "start": "2027-06-01",
+      "allDay": true,
+      "category": "exam",
+      "tags": [
+        "egzaminy"
+      ],
+      "priority": "high",
+      "audience": "wszyscy",
+      "extendedProps": {
+        "description": "EGZAMIN ZAWODOWY - sesja letnia: termin główny 1.06.2027 r. - 21.06.2027 r.",
+        "needsConfirmation": false,
+        "sourceNote": ""
+      }
+    },
+    {
+      "id": "evt-0066",
+      "title": "2 SEMESTR BS II st.: egzaminy semestralne 8.06.2027 r. - 17.06.2027 r. (szczegółowy h...",
       "start": "2027-06-08",
       "allDay": true,
       "category": "exam",
@@ -1193,16 +1165,16 @@
         "egzaminy"
       ],
       "priority": "high",
-      "audience": "bs ii stopnia",
+      "audience": "nauczyciele",
       "extendedProps": {
-        "description": "2 SEMESTR BS2st: egzaminy semestralne 8.06.2027 r. - 17.06.2027 r. (szczegółowy harmonogram egzaminów z poszczególnych przedmiotów zostanie podany na początku maja 2027 r.)",
+        "description": "2 SEMESTR BS II st.: egzaminy semestralne 8.06.2027 r. - 17.06.2027 r. (szczegółowy harmonogram egzaminów z poszczególnych przedmiotów zostanie podany na początku maja 2027 r.)",
         "needsConfirmation": false,
         "sourceNote": ""
       }
     },
     {
-      "id": "evt-0068",
-      "title": "KLASY 1-4 TECHNIKUM, 1-3 BS1st: wystawienie ocen rocznych/końcowych",
+      "id": "evt-0067",
+      "title": "KLASY 1-4 TECHNIKUM, KLASY 1-3 BS I st.: wystawienie ocen rocznych/końcowych",
       "start": "2027-06-15",
       "allDay": true,
       "category": "classification",
@@ -1210,16 +1182,16 @@
         "klasyfikacja"
       ],
       "priority": "high",
-      "audience": "technikum i bs i",
+      "audience": "wszyscy",
       "extendedProps": {
-        "description": "KLASY 1-4 TECHNIKUM, 1-3 BS1st: wystawienie ocen rocznych/końcowych",
+        "description": "KLASY 1-4 TECHNIKUM, KLASY 1-3 BS I st.: wystawienie ocen rocznych/końcowych",
         "needsConfirmation": false,
         "sourceNote": ""
       }
     },
     {
-      "id": "evt-0069",
-      "title": "KLASY 1-4 TECHNIKUM, 1-3 BS1st: wychowawcy klas - złożenie zestawień klasyfikacyjnych",
+      "id": "evt-0068",
+      "title": "KLASY 1-4 TECHNIKUM, KLASY 1-3 BS I st.: wychowawcy klas - złożenie zestawień klasyfi...",
       "start": "2027-06-17",
       "allDay": true,
       "category": "classification",
@@ -1229,16 +1201,16 @@
         "klasyfikacja"
       ],
       "priority": "high",
-      "audience": "bs ii stopnia",
+      "audience": "wychowawcy",
       "extendedProps": {
-        "description": "KLASY 1-4 TECHNIKUM, 1-3 BS1st: wychowawcy klas - złożenie zestawień klasyfikacyjnych\n3 SEMESTR BS2st: złożenie dokumentacji z egzaminów semestralnych; wystawienie ocen semestralnych",
+        "description": "KLASY 1-4 TECHNIKUM, KLASY 1-3 BS I st.: wychowawcy klas - złożenie zestawień klasyfikacyjnych\n3 SEMESTR BS II st.: złożenie dokumentacji z egzaminów semestralnych; wystawienie ocen semestralnych",
         "needsConfirmation": true,
-        "sourceNote": "Użytkownik wskazał, że wpis BS II przy 17.06.2027 wymaga doprecyzowania."
+        "sourceNote": "Wpis BS II przy 17.06.2027 pozostaje do doprecyzowania zgodnie z uwagą użytkownika."
       }
     },
     {
-      "id": "evt-0070",
-      "title": "2 SEMESTR BS2st: złożenie zestawienia semestralnego",
+      "id": "evt-0069",
+      "title": "2 SEMESTR BS II st.: złożenie zestawienia semestralnego",
       "start": "2027-06-18",
       "allDay": true,
       "category": "general",
@@ -1248,7 +1220,24 @@
       "priority": "normal",
       "audience": "bs ii stopnia",
       "extendedProps": {
-        "description": "2 SEMESTR BS2st: złożenie zestawienia semestralnego",
+        "description": "2 SEMESTR BS II st.: złożenie zestawienia semestralnego",
+        "needsConfirmation": false,
+        "sourceNote": ""
+      }
+    },
+    {
+      "id": "evt-0070",
+      "title": "EGZAMIN ZAWODOWY - sesja letnia: ostatni dzień terminu głównego (1.06.2027 r. - 21.06...",
+      "start": "2027-06-21",
+      "allDay": true,
+      "category": "exam",
+      "tags": [
+        "egzaminy"
+      ],
+      "priority": "high",
+      "audience": "wszyscy",
+      "extendedProps": {
+        "description": "EGZAMIN ZAWODOWY - sesja letnia: ostatni dzień terminu głównego (1.06.2027 r. - 21.06.2027 r.)",
         "needsConfirmation": false,
         "sourceNote": ""
       }
@@ -1267,7 +1256,7 @@
       "priority": "high",
       "audience": "nauczyciele",
       "extendedProps": {
-        "description": "RADA PEDAGOGICZNA: godz. do ustalenia\n1) klasyfikacyjna: KLASY 1-4 TECHNIKUM, 1-3 BS1st, 2 SEMESTR BS2st",
+        "description": "RADA PEDAGOGICZNA: godz. do ustalenia\n1) klasyfikacyjna: KLASY 1-4 TECHNIKUM, KLASY 1-3 BS I st., 2 SEMESTR BS II st.",
         "needsConfirmation": false,
         "sourceNote": ""
       }
@@ -1345,22 +1334,24 @@
       "title": "Rada pedagogiczna - wpis wymaga doprecyzowania",
       "start": "2027-06-28",
       "allDay": true,
-      "category": "council",
+      "category": "classification",
       "tags": [
         "doprecyzowanie",
+        "egzaminy",
+        "klasyfikacja",
         "rady"
       ],
       "priority": "important",
       "audience": "nauczyciele",
       "extendedProps": {
-        "description": "Arkusz XLSX zawiera pod datą 28.06.2027 treść odnoszącą się do 31.08.2027. Zostawiono ten punkt jako osobny wpis wymagający wyjaśnienia.\n\nOryginalna treść:\nRADA PEDAGOGICZNA: 31 sierpnia 2027 r. godz. 9:00\n1) klasyfikacyjna: klasyfikacja uczniów po egzaminach poprawkowych\n2) plenarna: podsumowanie roku szkolnego 2026/2027\n3) inauguracyjna: rozpoczynająca rok szkolny 2026/2027",
+        "description": "Arkusz XLSX zawiera pod datą 28.06.2027 treść odnoszącą się do 31.08.2027. Zostawiono ten punkt jako osobny wpis wymagający wyjaśnienia.\nOryginalna treść:\nRADA PEDAGOGICZNA: 31 sierpnia 2027 r. godz. 9:00\n1) klasyfikacyjna: klasyfikacja uczniów po egzaminach poprawkowych\n2) plenarna: podsumowanie roku szkolnego 2026/2027\n3) inauguracyjna: rozpoczynająca rok szkolny 2026/2027",
         "needsConfirmation": true,
-        "sourceNote": "Ręczna interpretacja: 28.06.2027 i 31.08.2027 to dwa różne terminy rad."
+        "sourceNote": "Wpis z 28.06.2027 pozostaje oznaczony do wyjaśnienia zgodnie z treścią arkusza."
       }
     },
     {
       "id": "evt-0077",
-      "title": "RADA PEDAGOGICZNA: 31 sierpnia 2027 r. godz. 9:00",
+      "title": "09:00 - RADA PEDAGOGICZNA: 31 sierpnia 2027 r.",
       "start": "2027-08-31T09:00:00",
       "allDay": false,
       "category": "classification",
@@ -1372,9 +1363,9 @@
       "priority": "high",
       "audience": "nauczyciele",
       "extendedProps": {
-        "description": "RADA PEDAGOGICZNA: 31 sierpnia 2027 r. godz. 9:00\n1) klasyfikacyjna: klasyfikacja uczniów po egzaminach poprawkowych\n2) plenarna: podsumowanie roku szkolnego 2026/2027\n3) inauguracyjna: rozpoczynająca rok szkolny 2027/2028",
+        "description": "09:00 - RADA PEDAGOGICZNA: 31 sierpnia 2027 r.\n1) klasyfikacyjna: klasyfikacja uczniów po egzaminach poprawkowych\n2) plenarna: podsumowanie roku szkolnego 2026/2027\n3) inauguracyjna: rozpoczynająca rok szkolny 2027/2028",
         "needsConfirmation": false,
-        "sourceNote": "Ręczna interpretacja na podstawie wpisu z 28.06.2027 i uwagi użytkownika."
+        "sourceNote": ""
       },
       "end": "2027-08-31T10:30:00"
     }

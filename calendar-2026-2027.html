@@ -607,6 +607,7 @@
     }
 
     .drawer-backdrop {
+      display: none;
       position: fixed;
       inset: 0;
       background: rgba(10, 18, 14, 0.42);
@@ -757,6 +758,10 @@
     }
 
     @media (max-width: 860px) {
+      .drawer-backdrop {
+        display: block;
+      }
+
       .shell {
         width: min(100% - 18px, 100%);
       }
@@ -835,11 +840,6 @@
         </div>
       </div>
       <div class="hero-side">
-        <article class="fact-card">
-          <span class="fact-label">Źródło danych</span>
-          <h2 class="fact-value" id="fact-source">XLSX</h2>
-          <p class="fact-copy" id="fact-source-copy">Ładowanie informacji o źródle...</p>
-        </article>
         <article class="fact-card">
           <span class="fact-label">Najbliższy kluczowy termin</span>
           <h2 class="fact-value" id="fact-next-date">-</h2>
@@ -1130,9 +1130,6 @@
       document.getElementById('summary-councils').textContent = String(councilCount);
       document.getElementById('summary-holidays').textContent = String(holidayCount);
       document.getElementById('summary-confirmation').textContent = String(confirmationCount);
-
-      document.getElementById('fact-source').textContent = 'XLSX -> JSON';
-      document.getElementById('fact-source-copy').textContent = 'Dane wygenerowane lokalnie z arkusza roboczego i przygotowane pod kalendarz webowy.';
 
       const futureImportant = state.rawEvents
         .filter((event) => isFutureEvent(event))

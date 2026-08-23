@@ -7,17 +7,33 @@ from collections import defaultdict
 from dataclasses import dataclass
 from datetime import date, datetime, timedelta
 from pathlib import Path
-from typing import Iterable
 
 from openpyxl import load_workbook
 
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
-DEFAULT_SOURCE = Path(
-    "/Users/maciejnajwer/Library/CloudStorage/OneDrive-ZESPÓŁSZKÓŁZAWODOWYCHNR5/rok szkolny 2026_2027/"
-    "kalendarz 2026-2027 (stan na 2026.08.23) wysłane do NajwerM.xlsx"
-)
+DEFAULT_SOURCE = REPO_ROOT / "kalendarz_dzienny_role_2026_2027.xlsx"
 DEFAULT_OUTPUT = REPO_ROOT / "calendar-data-2026-2027.json"
+
+ROLE_COLUMNS = ["opis1", "opis2", "opis3", "opis4"]
+ROLE_AUDIENCE = {
+    "opis1": "wszyscy",
+    "opis2": "wychowawcy",
+    "opis3": "nauczyciele",
+    "opis4": "dyrekcja",
+}
+PLACEHOLDER_LINES = {
+    "Zakres wygenerowany z dziennych wpisów XLSX.",
+    "Zakres zgodnie z XLSX: 5.10.2026 - 30.10.2026.",
+    "Zakres zgodnie z XLSX: 2.02.2027 - 26.02.2027.",
+}
+KNOWN_RANGE_TITLES = {
+    ("2026-10-05", "2026-10-30"): "Praktyki zawodowe - klasy 3 technikum",
+    ("2026-12-23", "2027-01-03"): "Zimowa przerwa świąteczna",
+    ("2027-01-18", "2027-01-31"): "Ferie zimowe",
+    ("2027-02-02", "2027-02-26"): "Praktyki zawodowe - klasy 4 technikum",
+    ("2027-04-01", "2027-04-06"): "Wiosenna przerwa świąteczna",
+}
 
 
 @dataclass
@@ -33,7 +49,6 @@ class EventDraft:
     audience: str
     needs_confirmation: bool = False
     source_note: str | None = None
-    display: str | None = None
 
     def to_dict(self, idx: int) -> dict:
         payload = {
@@ -53,8 +68,6 @@ class EventDraft:
         }
         if self.end:
             payload["end"] = self.end
-        if self.display:
-            payload["display"] = self.display
         return payload
 
 
@@ -78,16 +91,7 @@ def slug(text: str) -> str:
         .replace("ź", "z")
         .replace("ż", "z")
     )
-    lowered = re.sub(r"[^a-z0-9]+", "-", lowered).strip("-")
-    return lowered
-
-
-def iso_day(value: datetime | date) -> str:
-    return value.strftime("%Y-%m-%d")
-
-
-def next_day_iso(day: date) -> str:
-    return (day + timedelta(days=1)).strftime("%Y-%m-%d")
+    return re.sub(r"[^a-z0-9]+", "-", lowered).strip("-")
 
 
 def split_chunks(text: str) -> list[str]:
@@ -97,6 +101,46 @@ def split_chunks(text: str) -> list[str]:
     if not normalized:
         return []
     return [chunk.strip() for chunk in re.split(r"\n\s*\n", normalized) if chunk.strip()]
+
+
+def normalize_chunk_text(text: str) -> str:
+    return compact(text).replace(" / ", "\n")
+
+
+def short_title(text: str, fallback: str) -> str:
+    normalized = normalize_chunk_text(text)
+    first_line = normalized.split("\n")[0].strip(" -;")
+    title = first_line or fallback
+    if len(title) > 88:
+        title = title[:85].rstrip() + "..."
+    return title
+
+
+def parse_time(text: str) -> str | None:
+    match = re.search(r"(\d{1,2}:\d{2})", text)
+    if not match:
+        return None
+    hour, minute = match.group(1).split(":")
+    return f"{int(hour):02d}:{minute}"
+
+
+def parse_polish_day(text: str) -> date | None:
+    match = re.search(r"(\d{1,2})\.(\d{1,2})\.(\d{4})", text)
+    if not match:
+        return None
+    day, month, year = [int(part) for part in match.groups()]
+    return date(year, month, day)
+
+
+def parse_range_dates(text: str) -> tuple[date, date] | None:
+    matches = re.findall(r"(\d{1,2}\.\d{1,2}\.\d{4})", text)
+    if len(matches) < 2:
+        return None
+    start = parse_polish_day(matches[0])
+    end = parse_polish_day(matches[1])
+    if not start or not end:
+        return None
+    return start, end
 
 
 def detect_category(text: str) -> tuple[str, list[str], str]:
@@ -109,11 +153,21 @@ def detect_category(text: str) -> tuple[str, list[str], str]:
         category = "council"
         tags.add("rady")
         priority = "high"
-    if any(token in lower for token in ["wystawienie ocen", "zestawień klasyfikacyjnych", "klasyfikacyjna", "proponowanych ocen", "ocen rocznych", "ocen końcowych"]):
+    if any(
+        token in lower
+        for token in [
+            "wystawienie ocen",
+            "zestawień klasyfikacyjnych",
+            "klasyfikacyjna",
+            "proponowanych ocen",
+            "ocen rocznych",
+            "ocen końcowych",
+        ]
+    ):
         category = "classification"
         tags.add("klasyfikacja")
         priority = "high"
-    if any(token in lower for token in ["matura", "egzamin", "egzaminy", "egzaminu semestralnego"]):
+    if any(token in lower for token in ["matura", "egzamin", "egzaminy", "egzaminu semestralnego", "egzamin zawodowy"]):
         if category == "general":
             category = "exam"
         tags.add("egzaminy")
@@ -130,12 +184,11 @@ def detect_category(text: str) -> tuple[str, list[str], str]:
         if category == "general":
             category = "holiday"
         tags.add("wolne")
-    if "bs2st" in lower or "semestr bs2" in lower or "semestr bs ii" in lower:
+    if "bs ii" in lower or "bs2st" in lower or "bs ii st." in lower:
         tags.add("bs2")
-    if "do doprecyzowania" in lower or "wymaga doprecyzowania" in lower:
+    if any(token in lower for token in ["wymagający wyjaśnienia", "wymaga doprecyzowania", "wymagający doprecyzowania"]):
         tags.add("doprecyzowanie")
         priority = "important"
-
     if any(token in lower for token in ["jubileusz", "święto szkoły", "rozpoczęcie roku", "zakończenie roku"]):
         priority = "high"
         tags.add("kluczowe")
@@ -143,52 +196,92 @@ def detect_category(text: str) -> tuple[str, list[str], str]:
     return category, sorted(tags), priority
 
 
-def detect_audience(text: str) -> str:
+def detect_audience(text: str, role_key: str) -> str:
     lower = text.lower()
-    if "wszyscy nauczyciele" in lower or "rada pedagogiczna" in lower:
+    if role_key == "opis4":
+        return "dyrekcja"
+    if role_key == "opis3":
         return "nauczyciele"
+    if role_key == "opis2":
+        return "rodzice i wychowawcy" if "rodzic" in lower else "wychowawcy"
     if "5 technikum" in lower or "klasy 5" in lower:
         return "klasy maturalne"
-    if "bs2st" in lower:
+    if "bs ii" in lower or "bs2st" in lower:
         return "bs ii stopnia"
-    if "1-4 technikum" in lower or "1-3 bs1st" in lower or "pozostałe klasy" in lower:
-        return "technikum i bs i"
     if "praktyki" in lower:
         return "wybrane klasy"
-    if "rodzic" in lower:
-        return "rodzice i wychowawcy"
-    return "wszyscy"
+    return ROLE_AUDIENCE[role_key]
 
 
-def short_title(text: str, fallback: str) -> str:
-    first_line = compact(text).split("\n")[0].strip(" -;")
-    if first_line:
-        title = first_line
-    else:
-        title = fallback
-    if len(title) > 88:
-        title = title[:85].rstrip() + "..."
-    return title
+def rows_from_sheet(source_path: Path) -> list[dict]:
+    wb = load_workbook(source_path, data_only=True)
+    ws = wb[wb.sheetnames[0]]
+    rows = []
+    for values in ws.iter_rows(min_row=2, values_only=True):
+        dt = values[0]
+        if not dt:
+            continue
+        rows.append(
+            {
+                "date": dt.date() if isinstance(dt, datetime) else dt,
+                "opis1": compact(str(values[2])) if values[2] not in (None, "") else "",
+                "opis2": compact(str(values[3])) if values[3] not in (None, "") else "",
+                "opis3": compact(str(values[4])) if values[4] not in (None, "") else "",
+                "opis4": compact(str(values[5])) if values[5] not in (None, "") else "",
+            }
+        )
+    return rows
 
 
-def parse_time(text: str) -> str | None:
-    match = re.search(r"(\d{1,2}:\d{2})", text)
-    if not match:
-        return None
-    hour, minute = match.group(1).split(":")
-    return f"{int(hour):02d}:{minute}"
+def is_placeholder_only(chunk: str) -> bool:
+    return compact(chunk) in PLACEHOLDER_LINES
 
 
-def build_timed_event(day: date, chunk: str, source_note: str | None = None, needs_confirmation: bool = False) -> EventDraft:
-    category, tags, priority = detect_category(chunk)
-    audience = detect_audience(chunk)
-    title = short_title(chunk, "Wydarzenie")
-    time_text = parse_time(chunk)
-    if time_text and "do ustalenia" not in chunk.lower():
+def is_range_chunk(chunk: str) -> bool:
+    normalized = normalize_chunk_text(chunk)
+    return (
+        "Zakres wygenerowany z dziennych wpisów XLSX." in normalized
+        or "Zakres zgodnie z XLSX:" in normalized
+        or normalized.startswith("Zimowa przerwa świąteczna - ")
+        or normalized.startswith("Wiosenna przerwa świąteczna - ")
+        or normalized.startswith("KLASY 3 TECHNIKUM: praktyki")
+        or normalized.startswith("KLASY 4 TECHNIKUM: praktyki")
+    )
+
+
+def next_day_iso(day: date) -> str:
+    return (day + timedelta(days=1)).strftime("%Y-%m-%d")
+
+
+def event_flags(day: date, text: str) -> tuple[bool, str | None]:
+    lower = text.lower()
+    if day == date(2027, 6, 17) and "3 semestr bs ii" in lower:
+        return True, "Wpis BS II przy 17.06.2027 pozostaje do doprecyzowania zgodnie z uwagą użytkownika."
+    if day == date(2027, 6, 28) and "wymagający wyjaśnienia" in lower:
+        return True, "Wpis z 28.06.2027 pozostaje oznaczony do wyjaśnienia zgodnie z treścią arkusza."
+    return False, None
+
+
+def build_single_day_event(day: date, chunk: str, role_key: str) -> EventDraft:
+    description = normalize_chunk_text(chunk)
+    category, tags, priority = detect_category(description)
+    audience = detect_audience(description, role_key)
+    title = short_title(description, "Wydarzenie")
+    needs_confirmation, source_note = event_flags(day, description)
+    if day == date(2027, 6, 28) and "Arkusz XLSX zawiera pod datą 28.06.2027" in description:
+        title = "Rada pedagogiczna - wpis wymaga doprecyzowania"
+    time_text = parse_time(description)
+
+    if (
+        time_text
+        and "do ustalenia" not in description.lower()
+        and not (day == date(2027, 6, 28) and needs_confirmation)
+    ):
         start = f"{day.strftime('%Y-%m-%d')}T{time_text}:00"
         hour, minute = [int(part) for part in time_text.split(":")]
-        end_dt = datetime(day.year, day.month, day.day, hour, minute) + timedelta(minutes=90)
-        end = end_dt.strftime("%Y-%m-%dT%H:%M:%S")
+        end = (
+            datetime(day.year, day.month, day.day, hour, minute) + timedelta(minutes=90)
+        ).strftime("%Y-%m-%dT%H:%M:%S")
         all_day = False
     else:
         start = day.strftime("%Y-%m-%d")
@@ -200,7 +293,7 @@ def build_timed_event(day: date, chunk: str, source_note: str | None = None, nee
         end=end,
         all_day=all_day,
         title=title,
-        description=chunk,
+        description=description,
         category=category,
         tags=tags,
         priority=priority,
@@ -210,7 +303,29 @@ def build_timed_event(day: date, chunk: str, source_note: str | None = None, nee
     )
 
 
-def make_range_event(start_day: date, end_day: date, title: str, description: str, category: str, tags: Iterable[str], priority: str, audience: str, source_note: str | None = None) -> EventDraft:
+def build_range_event(chunk: str, role_key: str) -> EventDraft | None:
+    normalized = normalize_chunk_text(chunk)
+    parsed_range = parse_range_dates(normalized)
+    if not parsed_range:
+        return None
+    start_day, end_day = parsed_range
+    preferred_title = KNOWN_RANGE_TITLES.get(
+        (start_day.strftime("%Y-%m-%d"), end_day.strftime("%Y-%m-%d"))
+    )
+    title_lines = []
+    for line in normalized.split("\n"):
+        stripped = line.strip()
+        if not stripped or stripped in PLACEHOLDER_LINES or stripped.startswith("Zakres zgodnie z XLSX:"):
+            continue
+        title_lines.append(stripped)
+
+    title = preferred_title or title_lines[0] if title_lines else preferred_title or "Wydarzenie wielodniowe"
+    description = "\n".join(title_lines) if title_lines else title
+    category, tags, priority = detect_category(title)
+    audience = detect_audience(title, role_key)
+    if preferred_title and not title_lines:
+        description = title
+
     return EventDraft(
         start=start_day.strftime("%Y-%m-%d"),
         end=next_day_iso(end_day),
@@ -218,216 +333,41 @@ def make_range_event(start_day: date, end_day: date, title: str, description: st
         title=title,
         description=description,
         category=category,
-        tags=sorted(set(tags)),
+        tags=tags,
         priority=priority,
         audience=audience,
-        source_note=source_note,
     )
-
-
-def rows_from_sheet(source_path: Path) -> list[dict]:
-    wb = load_workbook(source_path, data_only=True)
-    ws = wb[wb.sheetnames[0]]
-    rows = []
-    for values in ws.iter_rows(min_row=2, values_only=True):
-        dt, _, _, _, opis1, opis2, praktyki, inne = values
-        if not dt:
-            continue
-        rows.append(
-            {
-                "date": dt.date() if isinstance(dt, datetime) else dt,
-                "opis1": compact(str(opis1)) if opis1 not in (None, "") else "",
-                "opis2": compact(str(opis2)) if opis2 not in (None, "") else "",
-                "praktyki": compact(str(praktyki)) if praktyki not in (None, "") else "",
-                "inne": compact(str(inne)) if inne not in (None, "") else "",
-            }
-        )
-    return rows
-
-
-def collect_ranges(rows: list[dict], label: str) -> list[tuple[date, date]]:
-    dates = [row["date"] for row in rows if label in " | ".join([row["opis1"], row["opis2"], row["praktyki"], row["inne"]]).lower()]
-    if not dates:
-        return []
-    dates = sorted(dates)
-    groups: list[tuple[date, date]] = []
-    start = dates[0]
-    prev = dates[0]
-    for current in dates[1:]:
-        if current == prev + timedelta(days=1):
-            prev = current
-            continue
-        groups.append((start, prev))
-        start = current
-        prev = current
-    groups.append((start, prev))
-    return groups
 
 
 def build_events(rows: list[dict]) -> list[EventDraft]:
     events: list[EventDraft] = []
-
-    # Range events from XLSX recurring daily markers.
-    winter_break = collect_ranges(rows, "zimowa przewa świąteczna")
-    spring_break = collect_ranges(rows, "wiosenna przerwa świąteczna")
-    winter_holidays = collect_ranges(rows, "ferie")
-
-    if winter_break:
-        start, end = winter_break[0]
-        events.append(
-            make_range_event(
-                start,
-                end,
-                "Zimowa przerwa świąteczna",
-                "Zakres wygenerowany z dziennych wpisów XLSX.",
-                "holiday",
-                ["wolne", "przerwa", "kluczowe"],
-                "high",
-                "wszyscy",
-            )
-        )
-    if winter_holidays:
-        start, end = winter_holidays[0]
-        events.append(
-            make_range_event(
-                start,
-                end,
-                "Ferie zimowe",
-                "Zakres wygenerowany z dziennych wpisów XLSX.",
-                "holiday",
-                ["wolne", "ferie", "kluczowe"],
-                "high",
-                "wszyscy",
-            )
-        )
-    if spring_break:
-        start, end = spring_break[0]
-        events.append(
-            make_range_event(
-                start,
-                end,
-                "Wiosenna przerwa świąteczna",
-                "Zakres wygenerowany z dziennych wpisów XLSX.",
-                "holiday",
-                ["wolne", "przerwa", "kluczowe"],
-                "high",
-                "wszyscy",
-            )
-        )
-
-    practice_3_start = date(2026, 10, 5)
-    practice_3_end = date(2026, 10, 30)
-    practice_4_start = date(2027, 2, 2)
-    practice_4_end = date(2027, 2, 26)
-    events.append(
-        make_range_event(
-            practice_3_start,
-            practice_3_end,
-            "Praktyki zawodowe - klasy 3 technikum",
-            "Zakres zgodnie z XLSX: 5.10.2026 - 30.10.2026.",
-            "practice",
-            ["praktyki", "kluczowe"],
-            "important",
-            "wybrane klasy",
-        )
-    )
-    events.append(
-        make_range_event(
-            practice_4_start,
-            practice_4_end,
-            "Praktyki zawodowe - klasy 4 technikum",
-            "Zakres zgodnie z XLSX: 2.02.2027 - 26.02.2027.",
-            "practice",
-            ["praktyki", "kluczowe"],
-            "important",
-            "wybrane klasy",
-        )
-    )
-
-    skip_exact_chunks = {
-        "wolne",
-        "ferie",
-        "zimowa przewa świąteczna",
-        "wiosenna przerwa świąteczna",
-        "praktyki: klasy 3 technikum",
-        "praktyki: klasy 4 technikum",
-    }
+    seen_range_keys: set[tuple[str, str, str, str]] = set()
 
     for row in rows:
         day = row["date"]
-        cell_chunks: list[str] = []
-        for key in ("opis1", "opis2", "praktyki", "inne"):
-            cell_chunks.extend(split_chunks(row[key]))
-
-        for chunk in cell_chunks:
-            normalized = chunk.lower().strip()
-            if normalized in skip_exact_chunks:
-                continue
-
-            # Manual correction: Rada pedagogiczna on 9 Sep 2026, not 10 Sep.
-            if day == date(2026, 9, 10) and normalized.startswith("rada pedagogiczna"):
-                events.append(
-                    build_timed_event(
-                        date(2026, 9, 9),
-                        chunk,
-                        source_note="Ręczna korekta użytkownika: rada pedagogiczna przeniesiona na 9.09.2026.",
-                    )
-                )
-                continue
-
-            # Manual split: Aug 31 council is embedded under Jun 28 in XLSX.
-            if day == date(2027, 6, 28) and normalized.startswith("rada pedagogiczna"):
-                events.append(
-                    EventDraft(
-                        start="2027-06-28",
-                        end=None,
-                        all_day=True,
-                        title="Rada pedagogiczna - wpis wymaga doprecyzowania",
-                        description=(
-                            "Arkusz XLSX zawiera pod datą 28.06.2027 treść odnoszącą się do 31.08.2027. "
-                            "Zostawiono ten punkt jako osobny wpis wymagający wyjaśnienia.\n\n"
-                            f"Oryginalna treść:\n{chunk}"
-                        ),
-                        category="council",
-                        tags=["doprecyzowanie", "rady"],
-                        priority="important",
-                        audience="nauczyciele",
-                        needs_confirmation=True,
-                        source_note="Ręczna interpretacja: 28.06.2027 i 31.08.2027 to dwa różne terminy rad.",
-                    )
-                )
-                august_chunk = (
-                    "RADA PEDAGOGICZNA: 31 sierpnia 2027 r. godz. 9:00\n"
-                    "1) klasyfikacyjna: klasyfikacja uczniów po egzaminach poprawkowych\n"
-                    "2) plenarna: podsumowanie roku szkolnego 2026/2027\n"
-                    "3) inauguracyjna: rozpoczynająca rok szkolny 2027/2028"
-                )
-                events.append(
-                    build_timed_event(
-                        date(2027, 8, 31),
-                        august_chunk,
-                        source_note="Ręczna interpretacja na podstawie wpisu z 28.06.2027 i uwagi użytkownika.",
-                    )
-                )
-                continue
-
-            needs_confirmation = False
-            source_note = None
-            if day == date(2027, 6, 17) and "3 semestr bs2st" in normalized:
-                needs_confirmation = True
-                source_note = "Użytkownik wskazał, że wpis BS II przy 17.06.2027 wymaga doprecyzowania."
-
-            events.append(build_timed_event(day, chunk, source_note=source_note, needs_confirmation=needs_confirmation))
+        for role_key in ROLE_COLUMNS:
+            for chunk in split_chunks(row[role_key]):
+                if is_placeholder_only(chunk):
+                    continue
+                if is_range_chunk(chunk):
+                    range_event = build_range_event(chunk, role_key)
+                    if range_event:
+                        range_key = (
+                            role_key,
+                            range_event.start,
+                            range_event.end or "",
+                        )
+                        if range_key not in seen_range_keys:
+                            seen_range_keys.add(range_key)
+                            events.append(range_event)
+                        continue
+                events.append(build_single_day_event(day, chunk, role_key))
 
     return events
 
 
 def sort_key(event: EventDraft) -> tuple[str, int, str]:
-    return (
-        event.start,
-        0 if not event.all_day else 1,
-        slug(event.title),
-    )
+    return (event.start, 0 if not event.all_day else 1, slug(event.title))
 
 
 def main() -> None:
@@ -450,10 +390,9 @@ def main() -> None:
             "confirmationCount": confirmation_count,
             "categoryCounts": dict(sorted(category_counts.items())),
             "notes": [
-                "Źródłem prawdy jest XLSX z 2026-08-23, z ręcznymi korektami wskazanymi przez użytkownika.",
-                "Rada pedagogiczna wrześniowa została ustawiona na 2026-09-09.",
-                "Wpis rady z 2027-08-31 został wydzielony z wiersza 2027-06-28, a 2027-06-28 pozostaje jako punkt do doprecyzowania.",
-                "Wpis BS II z 2027-06-17 został oznaczony jako wymagający doprecyzowania.",
+                "Źródłem prawdy jest plik kalendarz_dzienny_role_2026_2027.xlsx.",
+                "Wpis BS II z 2027-06-17 pozostaje oznaczony jako wymagający doprecyzowania.",
+                "Wpis z 2027-06-28 pozostaje zachowany jako punkt do wyjaśnienia.",
             ],
         },
         "events": [event.to_dict(idx + 1) for idx, event in enumerate(events)],
