@@ -518,6 +518,18 @@
             background: linear-gradient(90deg, #4ade80, #2dd4bf);
         }
 
+        .anno-btn.is-forecast {
+            border-color: rgba(180, 83, 9, 0.18);
+            background:
+                linear-gradient(180deg, rgba(255, 251, 235, 0.96), rgba(255, 255, 255, 0.98));
+            box-shadow: 0 12px 30px rgba(180, 83, 9, 0.08);
+        }
+
+        .anno-btn.is-forecast::before {
+            width: 92px;
+            background: linear-gradient(90deg, #f59e0b, #f97316);
+        }
+
         .notice-kicker {
             display: inline-block;
             margin-bottom: 10px;
@@ -526,6 +538,10 @@
             font-weight: 800;
             text-transform: uppercase;
             letter-spacing: 0.18em;
+        }
+
+        .anno-btn.is-forecast .notice-kicker {
+            color: #b45309;
         }
 
         .notice-title {
@@ -579,6 +595,16 @@
             color: #d1fae5;
             border: 1px solid rgba(74, 222, 128, 0.28);
             box-shadow: none;
+        }
+
+        .notice-link.forecast {
+            background: linear-gradient(135deg, #f59e0b, #fb923c);
+            color: #431407;
+            box-shadow: 0 14px 28px rgba(245, 158, 11, 0.22);
+        }
+
+        .notice-link.forecast:hover {
+            box-shadow: 0 18px 32px rgba(245, 158, 11, 0.28);
         }
 
         .holiday-vibes {
@@ -1549,6 +1575,14 @@
                         <p class="notice-body">Zestawienie klasyfikacji rocznej 2026 jest dostępne online.</p>
                         <div class="notice-actions">
                             <a class="notice-link" href="https://klasyfikacja2026.szkolamistrzow.info" target="_blank" rel="noreferrer">Otwórz klasyfikację 2026</a>
+                        </div>
+                    </article>
+                    <article class="anno-btn is-forecast">
+                        <span class="notice-kicker">Przewidywany kalendarz</span>
+                        <h3 class="notice-title">Roboczy kalendarz roku szkolnego 2026/2027</h3>
+                        <p class="notice-body">Osobna strona z widokami dzień, tydzień, miesiąc, rok szkolny i lista. To wersja przewidywana, przygotowana na podstawie aktualnego arkusza roboczego.</p>
+                        <div class="notice-actions">
+                            <a class="notice-link forecast" href="calendar-2026-2027.html">Otwórz przewidywany kalendarz</a>
                         </div>
                     </article>
                     <article class="anno-btn">

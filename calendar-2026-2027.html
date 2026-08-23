@@ -1,0 +1,1294 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kalendarz roku szkolnego 2026/2027 - ZSZ5</title>
+  <link rel="icon" href="data:,">
+  <script src="https://cdn.jsdelivr.net/npm/fullcalendar@7.0.2/all/global.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/fullcalendar@7.0.2/themes/classic/global.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/fullcalendar@7.0.2/locales/pl/global.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fullcalendar@7.0.2/skeleton.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fullcalendar@7.0.2/themes/classic/theme.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fullcalendar@7.0.2/themes/classic/palette.css">
+  <style>
+    :root {
+      --bg: #eff7f0;
+      --bg-soft: #f8fcf6;
+      --surface: rgba(255, 255, 255, 0.92);
+      --surface-strong: #ffffff;
+      --line: rgba(22, 51, 43, 0.12);
+      --line-strong: rgba(22, 51, 43, 0.2);
+      --text: #16332b;
+      --muted: #53756a;
+      --accent: #1f8f56;
+      --accent-strong: #12613a;
+      --accent-soft: #dff5e7;
+      --holiday: #1d7f65;
+      --classification: #c77b16;
+      --council: #0f766e;
+      --meeting: #2563eb;
+      --exam: #b42318;
+      --practice: #7c3aed;
+      --general: #35564b;
+      --warning: #b45309;
+      --shadow: 0 22px 60px rgba(23, 60, 45, 0.11);
+      --radius-xl: 28px;
+      --radius-lg: 20px;
+      --radius-md: 14px;
+      --radius-sm: 999px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100dvh;
+      color: var(--text);
+      font-family: "Aptos", "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(64, 201, 117, 0.18), transparent 28vw),
+        radial-gradient(circle at top right, rgba(16, 185, 129, 0.1), transparent 26vw),
+        linear-gradient(180deg, #f8fdf7 0%, var(--bg) 38%, #e8f3ec 100%);
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    button,
+    input {
+      font: inherit;
+    }
+
+    .shell {
+      width: min(1440px, calc(100% - 28px));
+      margin: 0 auto;
+      padding: 18px 0 46px;
+    }
+
+    .hero {
+      position: relative;
+      overflow: hidden;
+      display: grid;
+      grid-template-columns: minmax(0, 1.35fr) minmax(300px, 0.75fr);
+      gap: 22px;
+      padding: 30px;
+      border: 1px solid rgba(31, 143, 86, 0.18);
+      border-radius: var(--radius-xl);
+      background:
+        linear-gradient(135deg, rgba(255, 255, 255, 0.97), rgba(235, 252, 242, 0.92) 62%, rgba(215, 244, 225, 0.88)),
+        rgba(255, 255, 255, 0.9);
+      box-shadow: var(--shadow);
+    }
+
+    .hero::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, rgba(31, 143, 86, 0.05), transparent 34%, rgba(31, 143, 86, 0.08));
+      pointer-events: none;
+    }
+
+    .hero-main,
+    .hero-side {
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero-main {
+      display: grid;
+      gap: 18px;
+      align-content: start;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      width: fit-content;
+      padding: 10px 15px;
+      border-radius: var(--radius-sm);
+      background: rgba(31, 143, 86, 0.08);
+      border: 1px solid rgba(31, 143, 86, 0.14);
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      font-size: 11px;
+      font-weight: 800;
+      color: var(--accent-strong);
+    }
+
+    .hero-title {
+      margin: 0;
+      font-size: clamp(34px, 6vw, 68px);
+      line-height: 0.96;
+      letter-spacing: -0.04em;
+      max-width: 12ch;
+    }
+
+    .hero-copy {
+      margin: 0;
+      max-width: 64ch;
+      font-size: 18px;
+      line-height: 1.6;
+      color: var(--muted);
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .hero-link,
+    .hero-button,
+    .chip,
+    .confirm-toggle {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-height: 48px;
+      padding: 0 18px;
+      border-radius: var(--radius-sm);
+      border: 1px solid transparent;
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+    }
+
+    .hero-link,
+    .hero-button.primary {
+      background: linear-gradient(135deg, #1f8f56, #34c47a);
+      color: #ffffff;
+      box-shadow: 0 16px 28px rgba(31, 143, 86, 0.22);
+      font-weight: 750;
+    }
+
+    .hero-button.secondary,
+    .confirm-toggle,
+    .chip,
+    .search-input {
+      background: rgba(255, 255, 255, 0.85);
+      color: var(--text);
+      border-color: var(--line);
+      box-shadow: 0 12px 24px rgba(22, 51, 43, 0.06);
+    }
+
+    .hero-link:hover,
+    .hero-button:hover,
+    .chip:hover,
+    .confirm-toggle:hover {
+      transform: translateY(-1px);
+    }
+
+    .hero-side {
+      display: grid;
+      gap: 14px;
+      align-content: start;
+    }
+
+    .fact-card {
+      padding: 18px 18px 16px;
+      border-radius: var(--radius-lg);
+      background: rgba(255, 255, 255, 0.8);
+      border: 1px solid rgba(31, 143, 86, 0.14);
+    }
+
+    .fact-label {
+      display: block;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      font-size: 11px;
+      font-weight: 800;
+      color: var(--muted);
+    }
+
+    .fact-value {
+      margin: 0;
+      font-size: clamp(26px, 4vw, 42px);
+      line-height: 1;
+      letter-spacing: -0.04em;
+    }
+
+    .fact-copy {
+      margin: 10px 0 0;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px;
+      margin: 18px 0 0;
+    }
+
+    .summary-card {
+      padding: 18px;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--line);
+      background: var(--surface);
+      box-shadow: 0 14px 32px rgba(22, 51, 43, 0.05);
+    }
+
+    .summary-card h2 {
+      margin: 0 0 10px;
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: var(--muted);
+    }
+
+    .summary-card .summary-value {
+      font-size: clamp(24px, 4vw, 38px);
+      line-height: 1;
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      margin: 0;
+    }
+
+    .summary-card .summary-copy {
+      margin: 10px 0 0;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+
+    .notice-banner {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 12px;
+      margin: 18px 0 0;
+      padding: 16px 18px;
+      border-radius: var(--radius-lg);
+      border: 1px solid rgba(180, 83, 9, 0.2);
+      background: linear-gradient(135deg, rgba(255, 244, 214, 0.96), rgba(255, 249, 234, 0.92));
+      color: #6b3f04;
+    }
+
+    .toolbar-strip {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 14px;
+      margin: 18px 0 0;
+      padding: 18px;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--line);
+      background: var(--surface);
+      box-shadow: 0 14px 28px rgba(22, 51, 43, 0.05);
+    }
+
+    .toolbar-left {
+      display: grid;
+      gap: 12px;
+    }
+
+    .toolbar-title {
+      margin: 0;
+      font-size: 18px;
+    }
+
+    .toolbar-copy {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+
+    .search-wrap {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .search-input {
+      width: 100%;
+      min-height: 50px;
+      padding: 0 16px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--line);
+      outline: none;
+    }
+
+    .search-input:focus {
+      border-color: rgba(31, 143, 86, 0.38);
+      box-shadow: 0 0 0 4px rgba(31, 143, 86, 0.08);
+    }
+
+    .chip-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .chip.active,
+    .confirm-toggle.active {
+      background: rgba(31, 143, 86, 0.12);
+      border-color: rgba(31, 143, 86, 0.26);
+      color: var(--accent-strong);
+      box-shadow: 0 12px 24px rgba(31, 143, 86, 0.08);
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(300px, 0.36fr) minmax(0, 1fr);
+      gap: 18px;
+      margin: 18px 0 0;
+      align-items: start;
+    }
+
+    .panel,
+    .calendar-card {
+      border-radius: var(--radius-xl);
+      border: 1px solid var(--line);
+      background: var(--surface);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .panel {
+      display: grid;
+      gap: 0;
+      position: sticky;
+      top: 18px;
+    }
+
+    .panel-section {
+      padding: 20px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .panel-section:last-child {
+      border-bottom: none;
+    }
+
+    .panel-section h3 {
+      margin: 0 0 12px;
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: var(--muted);
+    }
+
+    .upcoming-list,
+    .legend-list,
+    .note-list {
+      display: grid;
+      gap: 10px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .upcoming-item {
+      display: grid;
+      gap: 6px;
+      padding: 12px 14px;
+      border-radius: var(--radius-md);
+      border: 1px solid rgba(22, 51, 43, 0.08);
+      background: rgba(255, 255, 255, 0.76);
+      cursor: pointer;
+      transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .upcoming-item:hover {
+      transform: translateY(-1px);
+      border-color: rgba(31, 143, 86, 0.22);
+      box-shadow: 0 12px 22px rgba(22, 51, 43, 0.08);
+    }
+
+    .upcoming-date {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .upcoming-title {
+      font-size: 15px;
+      font-weight: 750;
+      line-height: 1.4;
+    }
+
+    .upcoming-meta,
+    .note-item,
+    .legend-item {
+      color: var(--muted);
+      line-height: 1.55;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .legend-swatch {
+      width: 14px;
+      height: 14px;
+      border-radius: 999px;
+      flex: 0 0 auto;
+    }
+
+    .calendar-card {
+      padding: 18px;
+    }
+
+    #calendar {
+      min-height: 860px;
+    }
+
+    #calendar {
+      --fc-border-color: rgba(22, 51, 43, 0.1);
+      --fc-page-bg-color: transparent;
+      --fc-neutral-bg-color: rgba(240, 248, 243, 0.82);
+      --fc-neutral-text-color: var(--muted);
+      --fc-button-bg-color: #ffffff;
+      --fc-button-border-color: rgba(22, 51, 43, 0.12);
+      --fc-button-hover-bg-color: rgba(31, 143, 86, 0.12);
+      --fc-button-hover-border-color: rgba(31, 143, 86, 0.28);
+      --fc-button-active-bg-color: rgba(31, 143, 86, 0.14);
+      --fc-button-active-border-color: rgba(31, 143, 86, 0.34);
+      --fc-today-bg-color: rgba(31, 143, 86, 0.08);
+      color: var(--text);
+    }
+
+    #calendar .fc-toolbar {
+      flex-wrap: wrap;
+      gap: 14px;
+      margin-bottom: 18px;
+    }
+
+    #calendar .fc-toolbar-title {
+      font-size: clamp(22px, 3vw, 34px);
+      letter-spacing: -0.04em;
+    }
+
+    #calendar .fc-button {
+      min-height: 42px;
+      padding: 0 14px;
+      border-radius: 999px;
+      box-shadow: none;
+      font-weight: 700;
+      text-transform: none;
+    }
+
+    #calendar .fc-button-primary:not(:disabled).fc-button-active,
+    #calendar .fc-button-primary:not(:disabled):active {
+      color: var(--accent-strong);
+    }
+
+    #calendar .fc-scrollgrid,
+    #calendar .fc-daygrid-day-frame,
+    #calendar .fc-list,
+    #calendar .fc-list-table {
+      border-radius: 20px;
+    }
+
+    #calendar .fc-col-header-cell-cushion,
+    #calendar .fc-daygrid-day-number,
+    #calendar .fc-list-day-text,
+    #calendar .fc-list-day-side-text {
+      color: var(--text);
+      font-weight: 700;
+    }
+
+    #calendar .fc-daygrid-day-number {
+      padding: 8px 10px;
+      border-radius: 999px;
+    }
+
+    #calendar .fc-event {
+      border: none;
+      border-radius: 14px;
+      padding: 2px;
+      box-shadow: 0 10px 16px rgba(22, 51, 43, 0.08);
+    }
+
+    #calendar .fc-event-main {
+      padding: 8px 10px;
+      border-radius: 12px;
+      font-size: 12px;
+      line-height: 1.35;
+      white-space: normal;
+    }
+
+    #calendar .fc-list-event-title,
+    #calendar .fc-list-event-time {
+      white-space: normal;
+    }
+
+    #calendar .fc-event-confirmation,
+    #calendar .fc-list-event.fc-event-confirmation td {
+      background-image: linear-gradient(135deg, rgba(180, 83, 9, 0.16), rgba(255, 244, 214, 0.3));
+      outline: 2px dashed rgba(180, 83, 9, 0.3);
+      outline-offset: 2px;
+    }
+
+    #calendar .cat-classification,
+    #calendar .fc-list-event.cat-classification td {
+      background: rgba(199, 123, 22, 0.18) !important;
+      border-color: rgba(199, 123, 22, 0.24) !important;
+      color: #7b4b07 !important;
+    }
+
+    #calendar .cat-council,
+    #calendar .fc-list-event.cat-council td {
+      background: rgba(15, 118, 110, 0.18) !important;
+      border-color: rgba(15, 118, 110, 0.24) !important;
+      color: #0f4e49 !important;
+    }
+
+    #calendar .cat-meeting,
+    #calendar .fc-list-event.cat-meeting td {
+      background: rgba(37, 99, 235, 0.14) !important;
+      border-color: rgba(37, 99, 235, 0.2) !important;
+      color: #1845a8 !important;
+    }
+
+    #calendar .cat-exam,
+    #calendar .fc-list-event.cat-exam td {
+      background: rgba(180, 35, 24, 0.16) !important;
+      border-color: rgba(180, 35, 24, 0.22) !important;
+      color: #7d2019 !important;
+    }
+
+    #calendar .cat-practice,
+    #calendar .fc-list-event.cat-practice td {
+      background: rgba(124, 58, 237, 0.16) !important;
+      border-color: rgba(124, 58, 237, 0.22) !important;
+      color: #5d30ae !important;
+    }
+
+    #calendar .cat-holiday,
+    #calendar .fc-list-event.cat-holiday td {
+      background: rgba(29, 127, 101, 0.18) !important;
+      border-color: rgba(29, 127, 101, 0.24) !important;
+      color: #165d4b !important;
+    }
+
+    #calendar .cat-general,
+    #calendar .fc-list-event.cat-general td {
+      background: rgba(53, 86, 75, 0.16) !important;
+      border-color: rgba(53, 86, 75, 0.22) !important;
+      color: #244239 !important;
+    }
+
+    #calendar .cat-classification *,
+    #calendar .cat-council *,
+    #calendar .cat-meeting *,
+    #calendar .cat-exam *,
+    #calendar .cat-practice *,
+    #calendar .cat-holiday *,
+    #calendar .cat-general * {
+      color: inherit !important;
+    }
+
+    #calendar .fc-list-event:hover td {
+      background: rgba(31, 143, 86, 0.05);
+    }
+
+    .empty-state {
+      color: var(--muted);
+      padding: 12px 0;
+      line-height: 1.6;
+    }
+
+    .drawer-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(10, 18, 14, 0.42);
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.22s ease, visibility 0.22s ease;
+      z-index: 40;
+    }
+
+    .drawer {
+      position: fixed;
+      right: 18px;
+      top: 18px;
+      bottom: 18px;
+      width: min(440px, calc(100vw - 26px));
+      padding: 24px;
+      border-radius: 28px;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      background: rgba(255, 255, 255, 0.96);
+      box-shadow: 0 26px 80px rgba(8, 23, 17, 0.28);
+      transform: translateX(calc(100% + 24px));
+      transition: transform 0.22s ease;
+      z-index: 41;
+      overflow: auto;
+    }
+
+    .drawer.open,
+    .drawer-backdrop.open {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .drawer.open {
+      transform: translateX(0);
+    }
+
+    .drawer-top {
+      display: flex;
+      align-items: start;
+      justify-content: space-between;
+      gap: 14px;
+      margin-bottom: 18px;
+    }
+
+    .drawer-kicker {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      min-height: 34px;
+      padding: 0 12px;
+      border-radius: 999px;
+      background: rgba(31, 143, 86, 0.1);
+      color: var(--accent-strong);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .drawer-close {
+      border: 1px solid var(--line);
+      background: #ffffff;
+      border-radius: 999px;
+      width: 42px;
+      height: 42px;
+      cursor: pointer;
+      color: var(--text);
+      box-shadow: 0 10px 18px rgba(22, 51, 43, 0.08);
+    }
+
+    .drawer h2 {
+      margin: 0;
+      font-size: clamp(26px, 4vw, 42px);
+      line-height: 1.04;
+      letter-spacing: -0.04em;
+    }
+
+    .drawer-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin: 14px 0 18px;
+      padding: 0;
+      list-style: none;
+    }
+
+    .drawer-meta li {
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(22, 51, 43, 0.06);
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .drawer-body {
+      display: grid;
+      gap: 18px;
+    }
+
+    .drawer-section h3 {
+      margin: 0 0 8px;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: var(--muted);
+    }
+
+    .drawer-section p {
+      margin: 0;
+      line-height: 1.65;
+      color: var(--text);
+      white-space: pre-line;
+    }
+
+    .status-note {
+      padding: 14px 16px;
+      border-radius: 18px;
+      background: rgba(255, 244, 214, 0.95);
+      border: 1px solid rgba(180, 83, 9, 0.18);
+      color: #7c4a06;
+    }
+
+    .category-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 999px;
+      background: currentColor;
+      flex: 0 0 auto;
+    }
+
+    .muted {
+      color: var(--muted);
+    }
+
+    @media (max-width: 1080px) {
+      .summary-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      .panel {
+        position: static;
+      }
+    }
+
+    @media (max-width: 860px) {
+      .shell {
+        width: min(100% - 18px, 100%);
+      }
+
+      .hero {
+        grid-template-columns: 1fr;
+        padding: 20px;
+      }
+
+      .toolbar-strip {
+        grid-template-columns: 1fr;
+      }
+
+      .search-wrap {
+        grid-template-columns: 1fr;
+      }
+
+      .summary-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .calendar-card {
+        padding: 12px;
+      }
+
+      #calendar {
+        min-height: 620px;
+      }
+
+      #calendar .fc-toolbar {
+        align-items: start;
+      }
+
+      #calendar .fc-toolbar-chunk {
+        width: 100%;
+      }
+
+      #calendar .fc-toolbar-chunk:last-child .fc-button-group,
+      #calendar .fc-toolbar-chunk:first-child .fc-button-group {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+
+      #calendar .fc-toolbar-chunk:last-child .fc-button-group > .fc-button,
+      #calendar .fc-toolbar-chunk:first-child .fc-button-group > .fc-button {
+        border-radius: 999px;
+        margin: 0;
+      }
+
+      .drawer {
+        top: auto;
+        right: 9px;
+        left: 9px;
+        bottom: 9px;
+        width: auto;
+        padding: 20px;
+        border-radius: 24px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <section class="hero">
+      <div class="hero-main">
+        <span class="eyebrow">Kalendarz szkoły 2026/2027</span>
+        <h1 class="hero-title">Interaktywny kalendarz dla nauczycieli ZSZ5</h1>
+        <p class="hero-copy">
+          Widok oparty na arkuszu roboczym szkoły. Masz tu przełączanie dzień - tydzień - miesiąc - rok - lista,
+          filtry po typie wydarzeń oraz osobne oznaczenie punktów wymagających doprecyzowania.
+        </p>
+        <div class="hero-actions">
+          <a class="hero-link" href="index.html">Wróć do pulpitu nauczyciela</a>
+          <button class="hero-button secondary" type="button" id="jump-today-btn">Pokaż dziś</button>
+        </div>
+      </div>
+      <div class="hero-side">
+        <article class="fact-card">
+          <span class="fact-label">Źródło danych</span>
+          <h2 class="fact-value" id="fact-source">XLSX</h2>
+          <p class="fact-copy" id="fact-source-copy">Ładowanie informacji o źródle...</p>
+        </article>
+        <article class="fact-card">
+          <span class="fact-label">Najbliższy kluczowy termin</span>
+          <h2 class="fact-value" id="fact-next-date">-</h2>
+          <p class="fact-copy" id="fact-next-copy">Ładowanie najbliższego terminu...</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="summary-grid" aria-label="Podsumowanie kalendarza">
+      <article class="summary-card">
+        <h2>Wszystkie wydarzenia</h2>
+        <p class="summary-value" id="summary-total">-</p>
+        <p class="summary-copy">Liczba wpisów po wygenerowaniu z arkusza roboczego.</p>
+      </article>
+      <article class="summary-card">
+        <h2>Rady i klasyfikacje</h2>
+        <p class="summary-value" id="summary-councils">-</p>
+        <p class="summary-copy">Łącznie rady pedagogiczne, klasyfikacyjne i plenarne.</p>
+      </article>
+      <article class="summary-card">
+        <h2>Dni wolne i przerwy</h2>
+        <p class="summary-value" id="summary-holidays">-</p>
+        <p class="summary-copy">Święta, ferie, przerwy świąteczne i dni bez zajęć dydaktycznych.</p>
+      </article>
+      <article class="summary-card">
+        <h2>Do doprecyzowania</h2>
+        <p class="summary-value" id="summary-confirmation">-</p>
+        <p class="summary-copy">Wpisy zachowane na liście, ale oznaczone do sprawdzenia.</p>
+      </article>
+    </section>
+
+    <section class="notice-banner" id="notice-banner" aria-live="polite">
+      <strong>Uwaga redakcyjna:</strong>
+      <span id="notice-banner-copy">Ładowanie notatek z generatora...</span>
+    </section>
+
+    <section class="toolbar-strip">
+      <div class="toolbar-left">
+        <h2 class="toolbar-title">Filtrowanie i szybkie wejście w ważne terminy</h2>
+        <p class="toolbar-copy">
+          Filtry działają jednocześnie z wyszukiwaniem. Kliknięcie wydarzenia w kalendarzu albo na liście po lewej otwiera pełne szczegóły.
+        </p>
+        <div class="search-wrap">
+          <input class="search-input" id="search-input" type="search" placeholder="Szukaj po nazwie, klasie, BS II, maturze, radzie..." aria-label="Szukaj wydarzeń">
+          <button class="confirm-toggle" type="button" id="confirm-toggle">Tylko do doprecyzowania</button>
+        </div>
+        <div class="chip-row" id="category-filters"></div>
+      </div>
+      <div class="toolbar-right muted" id="source-meta"></div>
+    </section>
+
+    <section class="layout">
+      <aside class="panel" aria-label="Panel boczny kalendarza">
+        <section class="panel-section">
+          <h3>Najbliższe terminy</h3>
+          <ul class="upcoming-list" id="upcoming-list"></ul>
+        </section>
+        <section class="panel-section">
+          <h3>Legenda</h3>
+          <ul class="legend-list" id="legend-list"></ul>
+        </section>
+        <section class="panel-section">
+          <h3>Notatki do sprawdzenia</h3>
+          <ul class="note-list" id="confirmation-list"></ul>
+        </section>
+      </aside>
+
+      <section class="calendar-card" aria-label="Kalendarz roku szkolnego">
+        <div id="calendar"></div>
+      </section>
+    </section>
+  </main>
+
+  <div class="drawer-backdrop" id="drawer-backdrop"></div>
+  <aside class="drawer" id="event-drawer" aria-live="polite" aria-label="Szczegóły wydarzenia">
+    <div class="drawer-top">
+      <div>
+        <span class="drawer-kicker" id="drawer-kicker">Wydarzenie</span>
+      </div>
+      <button class="drawer-close" type="button" id="drawer-close" aria-label="Zamknij szczegóły">✕</button>
+    </div>
+    <h2 id="drawer-title">Wybierz wydarzenie</h2>
+    <ul class="drawer-meta" id="drawer-meta"></ul>
+    <div class="drawer-body">
+      <section class="drawer-section" id="drawer-status-wrap" hidden>
+        <h3>Status</h3>
+        <div class="status-note" id="drawer-status"></div>
+      </section>
+      <section class="drawer-section">
+        <h3>Opis</h3>
+        <p id="drawer-description">Kliknij dowolny punkt w kalendarzu, aby zobaczyć pełną treść wpisu.</p>
+      </section>
+      <section class="drawer-section" id="drawer-source-wrap" hidden>
+        <h3>Źródło i uwaga techniczna</h3>
+        <p id="drawer-source"></p>
+      </section>
+    </div>
+  </aside>
+
+  <script>
+    const DATA_URL = './calendar-data-2026-2027.json';
+    const INITIAL_DATE = '2026-09-01';
+    const state = {
+      meta: null,
+      rawEvents: [],
+      filteredEvents: [],
+      calendar: null,
+      activeCategories: new Set(),
+      searchTerm: '',
+      confirmationOnly: false,
+    };
+
+    const categoryMeta = {
+      classification: { label: 'Klasyfikacja', color: 'var(--classification)' },
+      council: { label: 'Rady', color: 'var(--council)' },
+      meeting: { label: 'Spotkania', color: 'var(--meeting)' },
+      exam: { label: 'Egzaminy', color: 'var(--exam)' },
+      practice: { label: 'Praktyki', color: 'var(--practice)' },
+      holiday: { label: 'Wolne i przerwy', color: 'var(--holiday)' },
+      general: { label: 'Pozostałe', color: 'var(--general)' },
+    };
+
+    function parseDateValue(value) {
+      if (!value) return null;
+      return new Date(value);
+    }
+
+    function normalizeEvent(event) {
+      const props = { ...(event.extendedProps || {}) };
+      props.category = event.category || props.category || 'general';
+      props.tags = event.tags || props.tags || [];
+      props.priority = event.priority || props.priority || 'normal';
+      props.audience = event.audience || props.audience || 'wszyscy';
+      return { ...event, extendedProps: props };
+    }
+
+    function formatDate(dateLike, includeTime = false) {
+      const options = includeTime
+        ? { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }
+        : { day: '2-digit', month: '2-digit', year: 'numeric' };
+      return new Intl.DateTimeFormat('pl-PL', options).format(dateLike);
+    }
+
+    function formatRelativeEvent(event) {
+      const start = parseDateValue(event.start);
+      if (!start) return '';
+      const hasTime = !event.allDay && event.start.includes('T');
+      return formatDate(start, hasTime);
+    }
+
+    function isFutureEvent(event) {
+      const now = new Date();
+      const end = parseDateValue(event.end || event.start);
+      return end >= new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    }
+
+    function applyFilters() {
+      const term = state.searchTerm.trim().toLowerCase();
+      state.filteredEvents = state.rawEvents.filter((event) => {
+        const props = event.extendedProps || {};
+        const category = props.category || 'general';
+        const inCategory = state.activeCategories.size === 0 || state.activeCategories.has(category);
+        const matchesConfirmation = !state.confirmationOnly || Boolean(props.needsConfirmation);
+        const haystack = [event.title, props.description, props.audience, ...(props.tags || [])].join(' ').toLowerCase();
+        const matchesSearch = !term || haystack.includes(term);
+        return inCategory && matchesConfirmation && matchesSearch;
+      });
+
+      if (state.calendar) {
+        state.calendar.removeAllEvents();
+        state.calendar.addEventSource(state.filteredEvents);
+      }
+
+      renderUpcoming();
+      renderConfirmationList();
+      syncFilterButtons();
+    }
+
+    function syncFilterButtons() {
+      document.querySelectorAll('[data-category-filter]').forEach((button) => {
+        const key = button.dataset.categoryFilter;
+        button.classList.toggle('active', state.activeCategories.has(key));
+      });
+      document.getElementById('confirm-toggle').classList.toggle('active', state.confirmationOnly);
+    }
+
+    function buildCalendar() {
+      const calendarEl = document.getElementById('calendar');
+      const compactMode = window.matchMedia('(max-width: 860px)').matches;
+      state.calendar = new FullCalendar.Calendar(calendarEl, {
+        locale: 'pl',
+        firstDay: 1,
+        initialDate: INITIAL_DATE,
+        initialView: compactMode ? 'listMonth' : 'schoolYear',
+        headerToolbar: {
+          left: 'today prev,next',
+          center: 'title',
+          right: 'timeGridDay,timeGridWeek,dayGridMonth,schoolYear,listMonth',
+        },
+        buttons: {
+          today: { text: 'Dziś' },
+          timeGridDay: { text: 'Dzień' },
+          timeGridWeek: { text: 'Tydzień' },
+          dayGridMonth: { text: 'Miesiąc' },
+          schoolYear: { text: 'Rok szkolny' },
+          listMonth: { text: 'Lista' },
+        },
+        views: {
+          schoolYear: {
+            type: 'multiMonth',
+            duration: { months: 12 },
+            dateAlignment: 'month',
+            titleFormat: { month: 'long', year: 'numeric' },
+            multiMonthMaxColumns: compactMode ? 1 : 2,
+            singleMonthMinWidth: compactMode ? 280 : 320,
+          },
+          dayGridMonth: {
+            dayMaxEventRows: 4,
+          },
+          listMonth: {
+            noEventsContent: 'Brak wydarzeń dla bieżących filtrów.',
+          },
+        },
+        height: 'auto',
+        nowIndicator: true,
+        navLinks: true,
+        eventTimeFormat: {
+          hour: '2-digit',
+          minute: '2-digit',
+          meridiem: false,
+          hour12: false,
+        },
+        events: state.filteredEvents,
+        eventClass(info) {
+          const props = info.event.extendedProps || {};
+          const classes = [`cat-${props.category || 'general'}`];
+          if (props.needsConfirmation) classes.push('fc-event-confirmation');
+          return classes.join(' ');
+        },
+        eventClick(info) {
+          info.jsEvent.preventDefault();
+          openDrawer(info.event);
+        },
+      });
+      state.calendar.render();
+    }
+
+    function renderFilterButtons() {
+      const wrap = document.getElementById('category-filters');
+      wrap.innerHTML = '';
+      Object.entries(categoryMeta).forEach(([key, meta]) => {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'chip';
+        button.dataset.categoryFilter = key;
+        button.innerHTML = `<span class="category-dot" style="color:${meta.color}"></span>${meta.label}`;
+        button.addEventListener('click', () => {
+          if (state.activeCategories.has(key)) {
+            state.activeCategories.delete(key);
+          } else {
+            state.activeCategories.add(key);
+          }
+          applyFilters();
+        });
+        wrap.appendChild(button);
+      });
+      syncFilterButtons();
+    }
+
+    function renderLegend() {
+      const list = document.getElementById('legend-list');
+      list.innerHTML = '';
+      Object.values(categoryMeta).forEach((meta) => {
+        const item = document.createElement('li');
+        item.className = 'legend-item';
+        item.innerHTML = `<span class="legend-swatch" style="background:${meta.color}"></span><span>${meta.label}</span>`;
+        list.appendChild(item);
+      });
+    }
+
+    function renderSummary() {
+      const total = state.rawEvents.length;
+      const councilCount = state.rawEvents.filter((event) => ['council', 'classification'].includes(event.extendedProps.category)).length;
+      const holidayCount = state.rawEvents.filter((event) => event.extendedProps.category === 'holiday').length;
+      const confirmationCount = state.rawEvents.filter((event) => event.extendedProps.needsConfirmation).length;
+
+      document.getElementById('summary-total').textContent = String(total);
+      document.getElementById('summary-councils').textContent = String(councilCount);
+      document.getElementById('summary-holidays').textContent = String(holidayCount);
+      document.getElementById('summary-confirmation').textContent = String(confirmationCount);
+
+      document.getElementById('fact-source').textContent = 'XLSX -> JSON';
+      document.getElementById('fact-source-copy').textContent = 'Dane wygenerowane lokalnie z arkusza roboczego i przygotowane pod kalendarz webowy.';
+
+      const futureImportant = state.rawEvents
+        .filter((event) => isFutureEvent(event))
+        .sort((a, b) => new Date(a.start) - new Date(b.start));
+      const nextEvent = futureImportant[0];
+      if (nextEvent) {
+        document.getElementById('fact-next-date').textContent = formatRelativeEvent(nextEvent);
+        document.getElementById('fact-next-copy').textContent = nextEvent.title;
+      }
+
+      document.getElementById('notice-banner-copy').textContent = (state.meta.notes || []).join(' ');
+      document.getElementById('source-meta').textContent = `Wygenerowano: ${state.meta.generatedAt.replace('T', ' ')} • Wydarzeń: ${state.meta.totalEvents}`;
+    }
+
+    function renderUpcoming() {
+      const upcoming = state.filteredEvents
+        .filter((event) => isFutureEvent(event))
+        .sort((a, b) => new Date(a.start) - new Date(b.start))
+        .slice(0, 10);
+      const list = document.getElementById('upcoming-list');
+      list.innerHTML = '';
+
+      if (!upcoming.length) {
+        list.innerHTML = '<li class="empty-state">Brak wydarzeń dla bieżących filtrów.</li>';
+        return;
+      }
+
+      upcoming.forEach((event) => {
+        const props = event.extendedProps || {};
+        const item = document.createElement('li');
+        item.className = 'upcoming-item';
+        item.innerHTML = `
+          <span class="upcoming-date">${formatRelativeEvent(event)} • ${categoryMeta[props.category]?.label || 'Wydarzenie'}</span>
+          <span class="upcoming-title">${event.title}</span>
+          <span class="upcoming-meta">${props.audience || 'wszyscy'}${props.needsConfirmation ? ' • wymaga doprecyzowania' : ''}</span>
+        `;
+        item.addEventListener('click', () => {
+          if (state.calendar) {
+            state.calendar.gotoDate(event.start);
+            openDrawer(event);
+          }
+        });
+        list.appendChild(item);
+      });
+    }
+
+    function renderConfirmationList() {
+      const list = document.getElementById('confirmation-list');
+      const confirmationEvents = state.rawEvents.filter((event) => event.extendedProps.needsConfirmation);
+      list.innerHTML = '';
+      if (!confirmationEvents.length) {
+        list.innerHTML = '<li class="empty-state">Brak punktów oznaczonych do sprawdzenia.</li>';
+        return;
+      }
+      confirmationEvents.forEach((event) => {
+        const item = document.createElement('li');
+        item.className = 'note-item';
+        item.innerHTML = `<strong>${formatRelativeEvent(event)}</strong><br>${event.title}`;
+        list.appendChild(item);
+      });
+    }
+
+    function openDrawer(eventLike) {
+      const event = eventLike.extendedProps ? eventLike : { ...eventLike, extendedProps: eventLike.extendedProps || {} };
+      const props = event.extendedProps || {};
+      const meta = categoryMeta[props.category] || categoryMeta.general;
+      document.getElementById('drawer-kicker').textContent = meta.label;
+      document.getElementById('drawer-kicker').style.color = meta.color;
+      document.getElementById('drawer-title').textContent = event.title;
+
+      const metaList = document.getElementById('drawer-meta');
+      metaList.innerHTML = '';
+      [formatRelativeEvent(event), props.audience || 'wszyscy', ...(props.tags || [])].forEach((value) => {
+        const item = document.createElement('li');
+        item.textContent = value;
+        metaList.appendChild(item);
+      });
+
+      const statusWrap = document.getElementById('drawer-status-wrap');
+      if (props.needsConfirmation) {
+        statusWrap.hidden = false;
+        document.getElementById('drawer-status').textContent = 'Ten wpis został zachowany w kalendarzu, ale oznaczony jako wymagający doprecyzowania.';
+      } else {
+        statusWrap.hidden = true;
+      }
+
+      document.getElementById('drawer-description').textContent = props.description || 'Brak dodatkowego opisu.';
+      const sourceWrap = document.getElementById('drawer-source-wrap');
+      if (props.sourceNote) {
+        sourceWrap.hidden = false;
+        document.getElementById('drawer-source').textContent = props.sourceNote;
+      } else {
+        sourceWrap.hidden = true;
+      }
+
+      document.getElementById('drawer-backdrop').classList.add('open');
+      document.getElementById('event-drawer').classList.add('open');
+    }
+
+    function closeDrawer() {
+      document.getElementById('drawer-backdrop').classList.remove('open');
+      document.getElementById('event-drawer').classList.remove('open');
+    }
+
+    async function loadData() {
+      const response = await fetch(DATA_URL, { cache: 'no-store' });
+      if (!response.ok) {
+        throw new Error(`Nie udało się pobrać danych kalendarza: ${response.status}`);
+      }
+      const payload = await response.json();
+      state.meta = payload.meta;
+      state.rawEvents = payload.events.map(normalizeEvent);
+      state.filteredEvents = [...state.rawEvents];
+    }
+
+    async function init() {
+      try {
+        await loadData();
+        renderFilterButtons();
+        renderLegend();
+        renderSummary();
+        renderConfirmationList();
+        renderUpcoming();
+        buildCalendar();
+        applyFilters();
+      } catch (error) {
+        document.getElementById('calendar').innerHTML = `<div class="empty-state">${error.message}</div>`;
+        document.getElementById('upcoming-list').innerHTML = '<li class="empty-state">Nie udało się załadować danych.</li>';
+      }
+    }
+
+    document.getElementById('search-input').addEventListener('input', (event) => {
+      state.searchTerm = event.target.value;
+      applyFilters();
+    });
+
+    document.getElementById('confirm-toggle').addEventListener('click', () => {
+      state.confirmationOnly = !state.confirmationOnly;
+      applyFilters();
+    });
+
+    document.getElementById('jump-today-btn').addEventListener('click', () => {
+      if (state.calendar) {
+        state.calendar.today();
+      }
+    });
+
+    document.getElementById('drawer-close').addEventListener('click', closeDrawer);
+    document.getElementById('drawer-backdrop').addEventListener('click', closeDrawer);
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape') {
+        closeDrawer();
+      }
+    });
+
+    window.addEventListener('DOMContentLoaded', init);
+  </script>
+</body>
+</html>
