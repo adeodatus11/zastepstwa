@@ -34,6 +34,15 @@ KNOWN_RANGE_TITLES = {
     ("2027-02-02", "2027-02-26"): "Praktyki zawodowe - klasy 4 technikum",
     ("2027-04-01", "2027-04-06"): "Wiosenna przerwa świąteczna",
 }
+SERIES_LINE_PREFIXES = (
+    "Zimowa przerwa świąteczna",
+    "Wiosenna przerwa świąteczna",
+    "Ferie zimowe",
+    "KLASY 3 TECHNIKUM: praktyki",
+    "KLASY 4 TECHNIKUM: praktyki",
+    "Praktyki zawodowe - klasy 3 technikum",
+    "Praktyki zawodowe - klasy 4 technikum",
+)
 
 
 @dataclass
@@ -100,17 +109,41 @@ def split_chunks(text: str) -> list[str]:
     normalized = compact(text)
     if not normalized:
         return []
-    return [chunk.strip() for chunk in re.split(r"\n\s*\n", normalized) if chunk.strip()]
+    chunks: list[str] = []
+    for chunk in re.split(r"\n\s*\n", normalized):
+        stripped_chunk = chunk.strip()
+        if not stripped_chunk:
+            continue
+        lines = [line.strip() for line in stripped_chunk.split("\n") if line.strip()]
+        if (
+            len(lines) >= 2
+            and "dzień ustawowo wolny" in lines[0].lower()
+            and any(lines[1].startswith(prefix) for prefix in SERIES_LINE_PREFIXES)
+        ):
+            chunks.append(lines[0])
+            chunks.append("\n".join(lines[1:]))
+            continue
+        chunks.append(stripped_chunk)
+    return chunks
 
 
 def normalize_chunk_text(text: str) -> str:
     return compact(text).replace(" / ", "\n")
 
 
+def strip_leading_time_prefix(text: str) -> str:
+    cleaned = re.sub(
+        r"^\s*\d{1,2}:\d{2}(?:\s*[/-]\s*\d{1,2}:\d{2})?\s*[-–:]\s*",
+        "",
+        text.strip(),
+    )
+    return cleaned or text.strip()
+
+
 def short_title(text: str, fallback: str) -> str:
     normalized = normalize_chunk_text(text)
     first_line = normalized.split("\n")[0].strip(" -;")
-    title = first_line or fallback
+    title = strip_leading_time_prefix(first_line) or fallback
     if len(title) > 88:
         title = title[:85].rstrip() + "..."
     return title
@@ -216,18 +249,33 @@ def detect_audience(text: str, role_key: str) -> str:
 def rows_from_sheet(source_path: Path) -> list[dict]:
     wb = load_workbook(source_path, data_only=True)
     ws = wb[wb.sheetnames[0]]
+    headers = [compact(str(value)).lower() if value not in (None, "") else "" for value in next(ws.iter_rows(min_row=1, max_row=1, values_only=True))]
+
+    def find_index(*candidates: str, default: int) -> int:
+        for idx, header in enumerate(headers):
+            for candidate in candidates:
+                if header.startswith(candidate):
+                    return idx
+        return default
+
+    date_idx = find_index("data", default=0)
+    opis1_idx = find_index("opis 1", "opis1", default=2)
+    opis2_idx = find_index("opis 2", "opis2", default=3)
+    opis3_idx = find_index("opis 3", "opis3", default=4)
+    opis4_idx = find_index("opis 4", "opis4", default=5)
+
     rows = []
     for values in ws.iter_rows(min_row=2, values_only=True):
-        dt = values[0]
+        dt = values[date_idx]
         if not dt:
             continue
         rows.append(
             {
                 "date": dt.date() if isinstance(dt, datetime) else dt,
-                "opis1": compact(str(values[2])) if values[2] not in (None, "") else "",
-                "opis2": compact(str(values[3])) if values[3] not in (None, "") else "",
-                "opis3": compact(str(values[4])) if values[4] not in (None, "") else "",
-                "opis4": compact(str(values[5])) if values[5] not in (None, "") else "",
+                "opis1": compact(str(values[opis1_idx])) if values[opis1_idx] not in (None, "") else "",
+                "opis2": compact(str(values[opis2_idx])) if values[opis2_idx] not in (None, "") else "",
+                "opis3": compact(str(values[opis3_idx])) if values[opis3_idx] not in (None, "") else "",
+                "opis4": compact(str(values[opis4_idx])) if values[opis4_idx] not in (None, "") else "",
             }
         )
     return rows
@@ -251,6 +299,10 @@ def is_range_chunk(chunk: str) -> bool:
 
 def next_day_iso(day: date) -> str:
     return (day + timedelta(days=1)).strftime("%Y-%m-%d")
+
+
+def parse_iso_day(value: str) -> date:
+    return date.fromisoformat(value[:10])
 
 
 def event_flags(day: date, text: str) -> tuple[bool, str | None]:
@@ -366,13 +418,95 @@ def build_events(rows: list[dict]) -> list[EventDraft]:
     return events
 
 
+def normalize_series_text(text: str) -> str:
+    normalized_lines: list[str] = []
+    for raw_line in compact(text).split("\n"):
+        line = raw_line.strip()
+        if not line:
+            continue
+        line = re.sub(r"\s*\(dzień\s+\d+\s+z\s+\d+\)", "", line, flags=re.IGNORECASE)
+        line = re.sub(r"\s*·\s*weekend\s*$", "", line, flags=re.IGNORECASE)
+        if line.startswith("Dodatkowo:"):
+            continue
+        line = re.sub(r"\s{2,}", " ", line).strip()
+        if line:
+            normalized_lines.append(line)
+    return "\n".join(normalized_lines)
+
+
+def merge_signature(event: EventDraft) -> tuple:
+    return (
+        normalize_series_text(event.title),
+        normalize_series_text(event.description),
+        event.category,
+        tuple(event.tags),
+        event.priority,
+        event.audience,
+        event.needs_confirmation,
+        event.source_note or "",
+    )
+
+
+def is_mergeable_single_day_event(event: EventDraft) -> bool:
+    return event.all_day and not event.end and not event.needs_confirmation
+
+
+def collapse_run(run: list[EventDraft]) -> list[EventDraft]:
+    if len(run) == 1:
+        return run
+    first = run[0]
+    last = run[-1]
+    return [
+        EventDraft(
+            start=first.start,
+            end=next_day_iso(parse_iso_day(last.start)),
+            all_day=True,
+            title=normalize_series_text(first.title),
+            description=normalize_series_text(first.description),
+            category=first.category,
+            tags=first.tags,
+            priority=first.priority,
+            audience=first.audience,
+            needs_confirmation=first.needs_confirmation,
+            source_note=first.source_note,
+        )
+    ]
+
+
+def merge_consecutive_single_day_events(events: list[EventDraft]) -> list[EventDraft]:
+    grouped: dict[tuple, list[EventDraft]] = defaultdict(list)
+    passthrough: list[EventDraft] = []
+
+    for event in events:
+        if is_mergeable_single_day_event(event):
+            grouped[merge_signature(event)].append(event)
+        else:
+            passthrough.append(event)
+
+    merged: list[EventDraft] = []
+    for group_events in grouped.values():
+        ordered = sorted(group_events, key=lambda event: event.start)
+        run: list[EventDraft] = [ordered[0]]
+        for event in ordered[1:]:
+            previous_day = parse_iso_day(run[-1].start)
+            current_day = parse_iso_day(event.start)
+            if current_day == previous_day + timedelta(days=1):
+                run.append(event)
+            else:
+                merged.extend(collapse_run(run))
+                run = [event]
+        merged.extend(collapse_run(run))
+
+    return sorted(passthrough + merged, key=sort_key)
+
+
 def sort_key(event: EventDraft) -> tuple[str, int, str]:
     return (event.start, 0 if not event.all_day else 1, slug(event.title))
 
 
 def main() -> None:
     rows = rows_from_sheet(DEFAULT_SOURCE)
-    events = sorted(build_events(rows), key=sort_key)
+    events = merge_consecutive_single_day_events(sorted(build_events(rows), key=sort_key))
 
     category_counts: dict[str, int] = defaultdict(int)
     confirmation_count = 0

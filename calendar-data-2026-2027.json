@@ -1,16 +1,16 @@
 {
   "meta": {
     "schoolYear": "2026/2027",
-    "generatedAt": "2026-08-24T10:10:36",
+    "generatedAt": "2026-08-24T20:36:13",
     "sourceWorkbook": "/Users/maciejnajwer/Library/CloudStorage/OneDrive-ZESPÓŁSZKÓŁZAWODOWYCHNR5/zastepstwa-main/kalendarz_dzienny_role_2026_2027.xlsx",
-    "totalEvents": 105,
+    "totalEvents": 78,
     "confirmationCount": 2,
     "categoryCounts": {
       "classification": 18,
       "council": 5,
-      "exam": 15,
-      "general": 20,
-      "holiday": 38,
+      "exam": 14,
+      "general": 21,
+      "holiday": 11,
       "meeting": 7,
       "practice": 2
     },
@@ -89,7 +89,7 @@
     },
     {
       "id": "evt-0005",
-      "title": "16:00 - KLASY 1: zebranie dla rodziców",
+      "title": "KLASY 1: zebranie dla rodziców",
       "start": "2026-09-04T16:00:00",
       "allDay": false,
       "category": "meeting",
@@ -107,7 +107,7 @@
     },
     {
       "id": "evt-0006",
-      "title": "15:00/16:00 - RADA PEDAGOGICZNA: przedstawienie planu nadzoru pedagogicznego na rok s...",
+      "title": "RADA PEDAGOGICZNA: przedstawienie planu nadzoru pedagogicznego na rok szkolny 2026/2027",
       "start": "2026-09-09T15:00:00",
       "allDay": false,
       "category": "council",
@@ -125,7 +125,7 @@
     },
     {
       "id": "evt-0007",
-      "title": "16:30 - KLASY 2-5 TECHNIKUM, KLASY 2-3 BS I st.: wychowawcy klas - zebrania z rodzicami",
+      "title": "KLASY 2-5 TECHNIKUM, KLASY 2-3 BS I st.: wychowawcy klas - zebrania z rodzicami",
       "start": "2026-09-09T16:30:00",
       "allDay": false,
       "category": "meeting",
@@ -143,7 +143,7 @@
     },
     {
       "id": "evt-0008",
-      "title": "18:00 - zebranie Rady Rodziców",
+      "title": "zebranie Rady Rodziców",
       "start": "2026-09-09T18:00:00",
       "allDay": false,
       "category": "meeting",
@@ -352,7 +352,7 @@
     },
     {
       "id": "evt-0020",
-      "title": "15:00 - RADA PEDAGOGICZNA: 1) klasyfikacyjna: KLASY 5 TECHNIKUM oraz 3 SEMESTR BS II st.",
+      "title": "RADA PEDAGOGICZNA:",
       "start": "2026-12-09T15:00:00",
       "allDay": false,
       "category": "classification",
@@ -365,7 +365,7 @@
       "priority": "high",
       "audience": "nauczyciele",
       "extendedProps": {
-        "description": "15:00 - RADA PEDAGOGICZNA: 1) klasyfikacyjna: KLASY 5 TECHNIKUM oraz 3 SEMESTR BS II st.\n2) szkoleniowa: szkolenie z procedur egzaminu zawodowego",
+        "description": "15:00 - RADA PEDAGOGICZNA:\n1) klasyfikacyjna: KLASY 5 TECHNIKUM oraz 3 SEMESTR BS II st.\n2) szkoleniowa: szkolenie z procedur egzaminu zawodowego",
         "needsConfirmation": false,
         "sourceNote": ""
       },
@@ -390,7 +390,7 @@
     },
     {
       "id": "evt-0022",
-      "title": "16:30 - KLASY 5 TECHNIKUM: wychowawcy klas - zebrania z rodzicami na zakończenie I pó...",
+      "title": "KLASY 5 TECHNIKUM: wychowawcy klas - zebrania z rodzicami na zakończenie I półrocza",
       "start": "2026-12-11T16:30:00",
       "allDay": false,
       "category": "meeting",
@@ -409,7 +409,7 @@
     },
     {
       "id": "evt-0023",
-      "title": "Zimowa przerwa świąteczna – 23.12.2026–3.01.2027 (dzień 1 z 12)",
+      "title": "Zimowa przerwa świąteczna – 23.12.2026–31.12.2026",
       "start": "2026-12-23",
       "allDay": true,
       "category": "holiday",
@@ -419,200 +419,59 @@
       "priority": "normal",
       "audience": "wszyscy",
       "extendedProps": {
-        "description": "Zimowa przerwa świąteczna – 23.12.2026–3.01.2027 (dzień 1 z 12)\nPowód: przerwa świąteczna przewidziana w organizacji roku szkolnego – brak zajęć dydaktyczno-wychowawczych dla wszystkich klas.",
+        "description": "Zimowa przerwa świąteczna – 23.12.2026–31.12.2026\nPowód: przerwa świąteczna przewidziana w organizacji roku szkolnego – brak zajęć dydaktyczno-wychowawczych dla wszystkich klas.",
         "needsConfirmation": false,
         "sourceNote": ""
-      }
+      },
+      "end": "2027-01-01"
     },
     {
       "id": "evt-0024",
-      "title": "Zimowa przerwa świąteczna – 23.12.2026–3.01.2027 (dzień 2 z 12)",
-      "start": "2026-12-24",
+      "title": "Boże Narodzenie (pierwszy dzień) - dzień ustawowo wolny",
+      "start": "2026-12-25",
       "allDay": true,
-      "category": "holiday",
-      "tags": [
-        "wolne"
-      ],
+      "category": "general",
+      "tags": [],
       "priority": "normal",
       "audience": "wszyscy",
       "extendedProps": {
-        "description": "Zimowa przerwa świąteczna – 23.12.2026–3.01.2027 (dzień 2 z 12)\nPowód: przerwa świąteczna przewidziana w organizacji roku szkolnego – brak zajęć dydaktyczno-wychowawczych dla wszystkich klas.",
+        "description": "Boże Narodzenie (pierwszy dzień) - dzień ustawowo wolny",
         "needsConfirmation": false,
         "sourceNote": ""
       }
     },
     {
       "id": "evt-0025",
-      "title": "Zimowa przerwa świąteczna – 23.12.2026–3.01.2027 (dzień 3 z 12)",
-      "start": "2026-12-25",
+      "title": "Boże Narodzenie (drugi dzień) - dzień ustawowo wolny",
+      "start": "2026-12-26",
       "allDay": true,
-      "category": "holiday",
-      "tags": [
-        "wolne"
-      ],
+      "category": "general",
+      "tags": [],
       "priority": "normal",
       "audience": "wszyscy",
       "extendedProps": {
-        "description": "Zimowa przerwa świąteczna – 23.12.2026–3.01.2027 (dzień 3 z 12)\nPowód: przerwa świąteczna przewidziana w organizacji roku szkolnego – brak zajęć dydaktyczno-wychowawczych dla wszystkich klas.",
+        "description": "Boże Narodzenie (drugi dzień) - dzień ustawowo wolny",
         "needsConfirmation": false,
         "sourceNote": ""
       }
     },
     {
       "id": "evt-0026",
-      "title": "Zimowa przerwa świąteczna – 23.12.2026–3.01.2027 (dzień 4 z 12) · weekend",
-      "start": "2026-12-26",
+      "title": "Nowy Rok - dzień ustawowo wolny",
+      "start": "2027-01-01",
       "allDay": true,
-      "category": "holiday",
-      "tags": [
-        "wolne"
-      ],
+      "category": "general",
+      "tags": [],
       "priority": "normal",
       "audience": "wszyscy",
       "extendedProps": {
-        "description": "Zimowa przerwa świąteczna – 23.12.2026–3.01.2027 (dzień 4 z 12) · weekend\nPowód: przerwa świąteczna przewidziana w organizacji roku szkolnego – brak zajęć dydaktyczno-wychowawczych dla wszystkich klas.",
+        "description": "Nowy Rok - dzień ustawowo wolny",
         "needsConfirmation": false,
         "sourceNote": ""
       }
     },
     {
       "id": "evt-0027",
-      "title": "Zimowa przerwa świąteczna – 23.12.2026–3.01.2027 (dzień 5 z 12) · weekend",
-      "start": "2026-12-27",
-      "allDay": true,
-      "category": "holiday",
-      "tags": [
-        "wolne"
-      ],
-      "priority": "normal",
-      "audience": "wszyscy",
-      "extendedProps": {
-        "description": "Zimowa przerwa świąteczna – 23.12.2026–3.01.2027 (dzień 5 z 12) · weekend\nPowód: przerwa świąteczna przewidziana w organizacji roku szkolnego – brak zajęć dydaktyczno-wychowawczych dla wszystkich klas.",
-        "needsConfirmation": false,
-        "sourceNote": ""
-      }
-    },
-    {
-      "id": "evt-0028",
-      "title": "Zimowa przerwa świąteczna – 23.12.2026–3.01.2027 (dzień 6 z 12)",
-      "start": "2026-12-28",
-      "allDay": true,
-      "category": "holiday",
-      "tags": [
-        "wolne"
-      ],
-      "priority": "normal",
-      "audience": "wszyscy",
-      "extendedProps": {
-        "description": "Zimowa przerwa świąteczna – 23.12.2026–3.01.2027 (dzień 6 z 12)\nPowód: przerwa świąteczna przewidziana w organizacji roku szkolnego – brak zajęć dydaktyczno-wychowawczych dla wszystkich klas.",
-        "needsConfirmation": false,
-        "sourceNote": ""
-      }
-    },
-    {
-      "id": "evt-0029",
-      "title": "Zimowa przerwa świąteczna – 23.12.2026–3.01.2027 (dzień 7 z 12)",
-      "start": "2026-12-29",
-      "allDay": true,
-      "category": "holiday",
-      "tags": [
-        "wolne"
-      ],
-      "priority": "normal",
-      "audience": "wszyscy",
-      "extendedProps": {
-        "description": "Zimowa przerwa świąteczna – 23.12.2026–3.01.2027 (dzień 7 z 12)\nPowód: przerwa świąteczna przewidziana w organizacji roku szkolnego – brak zajęć dydaktyczno-wychowawczych dla wszystkich klas.",
-        "needsConfirmation": false,
-        "sourceNote": ""
-      }
-    },
-    {
-      "id": "evt-0030",
-      "title": "Zimowa przerwa świąteczna – 23.12.2026–3.01.2027 (dzień 8 z 12)",
-      "start": "2026-12-30",
-      "allDay": true,
-      "category": "holiday",
-      "tags": [
-        "wolne"
-      ],
-      "priority": "normal",
-      "audience": "wszyscy",
-      "extendedProps": {
-        "description": "Zimowa przerwa świąteczna – 23.12.2026–3.01.2027 (dzień 8 z 12)\nPowód: przerwa świąteczna przewidziana w organizacji roku szkolnego – brak zajęć dydaktyczno-wychowawczych dla wszystkich klas.",
-        "needsConfirmation": false,
-        "sourceNote": ""
-      }
-    },
-    {
-      "id": "evt-0031",
-      "title": "Zimowa przerwa świąteczna – 23.12.2026–3.01.2027 (dzień 9 z 12)",
-      "start": "2026-12-31",
-      "allDay": true,
-      "category": "holiday",
-      "tags": [
-        "wolne"
-      ],
-      "priority": "normal",
-      "audience": "wszyscy",
-      "extendedProps": {
-        "description": "Zimowa przerwa świąteczna – 23.12.2026–3.01.2027 (dzień 9 z 12)\nPowód: przerwa świąteczna przewidziana w organizacji roku szkolnego – brak zajęć dydaktyczno-wychowawczych dla wszystkich klas.",
-        "needsConfirmation": false,
-        "sourceNote": ""
-      }
-    },
-    {
-      "id": "evt-0032",
-      "title": "Zimowa przerwa świąteczna – 23.12.2026–3.01.2027 (dzień 10 z 12)",
-      "start": "2027-01-01",
-      "allDay": true,
-      "category": "holiday",
-      "tags": [
-        "wolne"
-      ],
-      "priority": "normal",
-      "audience": "wszyscy",
-      "extendedProps": {
-        "description": "Zimowa przerwa świąteczna – 23.12.2026–3.01.2027 (dzień 10 z 12)\nPowód: przerwa świąteczna przewidziana w organizacji roku szkolnego – brak zajęć dydaktyczno-wychowawczych dla wszystkich klas.",
-        "needsConfirmation": false,
-        "sourceNote": ""
-      }
-    },
-    {
-      "id": "evt-0033",
-      "title": "Zimowa przerwa świąteczna – 23.12.2026–3.01.2027 (dzień 11 z 12) · weekend",
-      "start": "2027-01-02",
-      "allDay": true,
-      "category": "holiday",
-      "tags": [
-        "wolne"
-      ],
-      "priority": "normal",
-      "audience": "wszyscy",
-      "extendedProps": {
-        "description": "Zimowa przerwa świąteczna – 23.12.2026–3.01.2027 (dzień 11 z 12) · weekend\nPowód: przerwa świąteczna przewidziana w organizacji roku szkolnego – brak zajęć dydaktyczno-wychowawczych dla wszystkich klas.",
-        "needsConfirmation": false,
-        "sourceNote": ""
-      }
-    },
-    {
-      "id": "evt-0034",
-      "title": "Zimowa przerwa świąteczna – 23.12.2026–3.01.2027 (dzień 12 z 12) · weekend",
-      "start": "2027-01-03",
-      "allDay": true,
-      "category": "holiday",
-      "tags": [
-        "wolne"
-      ],
-      "priority": "normal",
-      "audience": "wszyscy",
-      "extendedProps": {
-        "description": "Zimowa przerwa świąteczna – 23.12.2026–3.01.2027 (dzień 12 z 12) · weekend\nPowód: przerwa świąteczna przewidziana w organizacji roku szkolnego – brak zajęć dydaktyczno-wychowawczych dla wszystkich klas.",
-        "needsConfirmation": false,
-        "sourceNote": ""
-      }
-    },
-    {
-      "id": "evt-0035",
       "title": "1 SEMESTR BS II st.: egzaminy semestralne 2.01.2027 r. - 12.01.2027 r. (szczegółowy h...",
       "start": "2027-01-04",
       "allDay": true,
@@ -630,7 +489,7 @@
       }
     },
     {
-      "id": "evt-0036",
+      "id": "evt-0028",
       "title": "EGZAMIN ZAWODOWY - sesja zimowa: termin główny 5.01.2027 r. - 21.01.2027 r.",
       "start": "2027-01-05",
       "allDay": true,
@@ -647,7 +506,7 @@
       }
     },
     {
-      "id": "evt-0037",
+      "id": "evt-0029",
       "title": "Trzech Króli - dzień wolny",
       "start": "2027-01-06",
       "allDay": true,
@@ -662,7 +521,7 @@
       }
     },
     {
-      "id": "evt-0038",
+      "id": "evt-0030",
       "title": "KLASY 1-4 TECHNIKUM, KLASY 1-3 BS I st.: wystawienie ocen śródrocznych",
       "start": "2027-01-07",
       "allDay": true,
@@ -679,7 +538,7 @@
       }
     },
     {
-      "id": "evt-0039",
+      "id": "evt-0031",
       "title": "KLASY 1-4 TECHNIKUM, KLASY 1-3 BS I st.: wychowawcy klas - złożenie zestawień klasyfi...",
       "start": "2027-01-11",
       "allDay": true,
@@ -698,7 +557,7 @@
       }
     },
     {
-      "id": "evt-0040",
+      "id": "evt-0032",
       "title": "1 SEMESTR BS II st.: złożenie zestawienia klasyfikacyjnego",
       "start": "2027-01-12",
       "allDay": true,
@@ -715,8 +574,8 @@
       }
     },
     {
-      "id": "evt-0041",
-      "title": "15:00 - RADA PEDAGOGICZNA: 1) klasyfikacyjna: KLASY 1-4 TECHNIKUM, KLASY 1-3 BS I st....",
+      "id": "evt-0033",
+      "title": "RADA PEDAGOGICZNA:",
       "start": "2027-01-13T15:00:00",
       "allDay": false,
       "category": "classification",
@@ -728,14 +587,14 @@
       "priority": "high",
       "audience": "nauczyciele",
       "extendedProps": {
-        "description": "15:00 - RADA PEDAGOGICZNA: 1) klasyfikacyjna: KLASY 1-4 TECHNIKUM, KLASY 1-3 BS I st., 1 SEMESTR BS II st.",
+        "description": "15:00 - RADA PEDAGOGICZNA:\n1) klasyfikacyjna: KLASY 1-4 TECHNIKUM, KLASY 1-3 BS I st., 1 SEMESTR BS II st.",
         "needsConfirmation": false,
         "sourceNote": ""
       },
       "end": "2027-01-13T16:30:00"
     },
     {
-      "id": "evt-0042",
+      "id": "evt-0034",
       "title": "KLASY 1-4 TECHNIKUM, KLASY 1-3 BS I st.: zakończenie I półrocza",
       "start": "2027-01-15",
       "allDay": true,
@@ -752,8 +611,8 @@
       }
     },
     {
-      "id": "evt-0043",
-      "title": "16:30 - KLASY 1-4 TECHNIKUM, KLASY 1-3 BS I st.: wychowawcy klas - zebrania z rodzica...",
+      "id": "evt-0035",
+      "title": "KLASY 1-4 TECHNIKUM, KLASY 1-3 BS I st.: wychowawcy klas - zebrania z rodzicami na za...",
       "start": "2027-01-15T16:30:00",
       "allDay": false,
       "category": "meeting",
@@ -770,42 +629,8 @@
       "end": "2027-01-15T18:00:00"
     },
     {
-      "id": "evt-0044",
-      "title": "Ferie zimowe – 16.01.2027–31.01.2027 (dzień 1 z 16) · weekend",
-      "start": "2027-01-16",
-      "allDay": true,
-      "category": "holiday",
-      "tags": [
-        "wolne"
-      ],
-      "priority": "normal",
-      "audience": "wszyscy",
-      "extendedProps": {
-        "description": "Ferie zimowe – 16.01.2027–31.01.2027 (dzień 1 z 16) · weekend\nPowód: ferie zimowe – brak zajęć dydaktyczno-wychowawczych dla wszystkich klas.",
-        "needsConfirmation": false,
-        "sourceNote": ""
-      }
-    },
-    {
-      "id": "evt-0045",
-      "title": "Ferie zimowe – 16.01.2027–31.01.2027 (dzień 2 z 16) · weekend",
-      "start": "2027-01-17",
-      "allDay": true,
-      "category": "holiday",
-      "tags": [
-        "wolne"
-      ],
-      "priority": "normal",
-      "audience": "wszyscy",
-      "extendedProps": {
-        "description": "Ferie zimowe – 16.01.2027–31.01.2027 (dzień 2 z 16) · weekend\nPowód: ferie zimowe – brak zajęć dydaktyczno-wychowawczych dla wszystkich klas.",
-        "needsConfirmation": false,
-        "sourceNote": ""
-      }
-    },
-    {
-      "id": "evt-0046",
-      "title": "Ferie zimowe – 16.01.2027–31.01.2027 (dzień 3 z 16)",
+      "id": "evt-0036",
+      "title": "Ferie zimowe – 18.01.2027–31.01.2027",
       "start": "2027-01-18",
       "allDay": true,
       "category": "holiday",
@@ -815,235 +640,14 @@
       "priority": "normal",
       "audience": "wszyscy",
       "extendedProps": {
-        "description": "Ferie zimowe – 16.01.2027–31.01.2027 (dzień 3 z 16)\nPowód: ferie zimowe – brak zajęć dydaktyczno-wychowawczych dla wszystkich klas.",
+        "description": "Ferie zimowe – 18.01.2027–31.01.2027\nPowód: ferie zimowe (tura: podkarpackie, podlaskie, dolnośląskie, łódzkie, śląskie, opolskie) – brak zajęć dydaktyczno-wychowawczych dla wszystkich klas.",
         "needsConfirmation": false,
         "sourceNote": ""
-      }
+      },
+      "end": "2027-02-01"
     },
     {
-      "id": "evt-0047",
-      "title": "Ferie zimowe – 16.01.2027–31.01.2027 (dzień 4 z 16)",
-      "start": "2027-01-19",
-      "allDay": true,
-      "category": "holiday",
-      "tags": [
-        "wolne"
-      ],
-      "priority": "normal",
-      "audience": "wszyscy",
-      "extendedProps": {
-        "description": "Ferie zimowe – 16.01.2027–31.01.2027 (dzień 4 z 16)\nPowód: ferie zimowe – brak zajęć dydaktyczno-wychowawczych dla wszystkich klas.",
-        "needsConfirmation": false,
-        "sourceNote": ""
-      }
-    },
-    {
-      "id": "evt-0048",
-      "title": "Ferie zimowe – 16.01.2027–31.01.2027 (dzień 5 z 16)",
-      "start": "2027-01-20",
-      "allDay": true,
-      "category": "holiday",
-      "tags": [
-        "wolne"
-      ],
-      "priority": "normal",
-      "audience": "wszyscy",
-      "extendedProps": {
-        "description": "Ferie zimowe – 16.01.2027–31.01.2027 (dzień 5 z 16)\nPowód: ferie zimowe – brak zajęć dydaktyczno-wychowawczych dla wszystkich klas.",
-        "needsConfirmation": false,
-        "sourceNote": ""
-      }
-    },
-    {
-      "id": "evt-0049",
-      "title": "Ferie zimowe – 16.01.2027–31.01.2027 (dzień 6 z 16)",
-      "start": "2027-01-21",
-      "allDay": true,
-      "category": "exam",
-      "tags": [
-        "egzaminy",
-        "wolne"
-      ],
-      "priority": "high",
-      "audience": "wszyscy",
-      "extendedProps": {
-        "description": "Ferie zimowe – 16.01.2027–31.01.2027 (dzień 6 z 16)\nPowód: ferie zimowe – brak zajęć dydaktyczno-wychowawczych dla wszystkich klas.\nDodatkowo: EGZAMIN ZAWODOWY – sesja zimowa: ostatni dzień terminu głównego (5.01.2027 r. – 21.01.2027 r.).",
-        "needsConfirmation": false,
-        "sourceNote": ""
-      }
-    },
-    {
-      "id": "evt-0050",
-      "title": "Ferie zimowe – 16.01.2027–31.01.2027 (dzień 7 z 16)",
-      "start": "2027-01-22",
-      "allDay": true,
-      "category": "holiday",
-      "tags": [
-        "wolne"
-      ],
-      "priority": "normal",
-      "audience": "wszyscy",
-      "extendedProps": {
-        "description": "Ferie zimowe – 16.01.2027–31.01.2027 (dzień 7 z 16)\nPowód: ferie zimowe – brak zajęć dydaktyczno-wychowawczych dla wszystkich klas.",
-        "needsConfirmation": false,
-        "sourceNote": ""
-      }
-    },
-    {
-      "id": "evt-0051",
-      "title": "Ferie zimowe – 16.01.2027–31.01.2027 (dzień 8 z 16) · weekend",
-      "start": "2027-01-23",
-      "allDay": true,
-      "category": "holiday",
-      "tags": [
-        "wolne"
-      ],
-      "priority": "normal",
-      "audience": "wszyscy",
-      "extendedProps": {
-        "description": "Ferie zimowe – 16.01.2027–31.01.2027 (dzień 8 z 16) · weekend\nPowód: ferie zimowe – brak zajęć dydaktyczno-wychowawczych dla wszystkich klas.",
-        "needsConfirmation": false,
-        "sourceNote": ""
-      }
-    },
-    {
-      "id": "evt-0052",
-      "title": "Ferie zimowe – 16.01.2027–31.01.2027 (dzień 9 z 16) · weekend",
-      "start": "2027-01-24",
-      "allDay": true,
-      "category": "holiday",
-      "tags": [
-        "wolne"
-      ],
-      "priority": "normal",
-      "audience": "wszyscy",
-      "extendedProps": {
-        "description": "Ferie zimowe – 16.01.2027–31.01.2027 (dzień 9 z 16) · weekend\nPowód: ferie zimowe – brak zajęć dydaktyczno-wychowawczych dla wszystkich klas.",
-        "needsConfirmation": false,
-        "sourceNote": ""
-      }
-    },
-    {
-      "id": "evt-0053",
-      "title": "Ferie zimowe – 16.01.2027–31.01.2027 (dzień 10 z 16)",
-      "start": "2027-01-25",
-      "allDay": true,
-      "category": "holiday",
-      "tags": [
-        "wolne"
-      ],
-      "priority": "normal",
-      "audience": "wszyscy",
-      "extendedProps": {
-        "description": "Ferie zimowe – 16.01.2027–31.01.2027 (dzień 10 z 16)\nPowód: ferie zimowe – brak zajęć dydaktyczno-wychowawczych dla wszystkich klas.",
-        "needsConfirmation": false,
-        "sourceNote": ""
-      }
-    },
-    {
-      "id": "evt-0054",
-      "title": "Ferie zimowe – 16.01.2027–31.01.2027 (dzień 11 z 16)",
-      "start": "2027-01-26",
-      "allDay": true,
-      "category": "holiday",
-      "tags": [
-        "wolne"
-      ],
-      "priority": "normal",
-      "audience": "wszyscy",
-      "extendedProps": {
-        "description": "Ferie zimowe – 16.01.2027–31.01.2027 (dzień 11 z 16)\nPowód: ferie zimowe – brak zajęć dydaktyczno-wychowawczych dla wszystkich klas.",
-        "needsConfirmation": false,
-        "sourceNote": ""
-      }
-    },
-    {
-      "id": "evt-0055",
-      "title": "Ferie zimowe – 16.01.2027–31.01.2027 (dzień 12 z 16)",
-      "start": "2027-01-27",
-      "allDay": true,
-      "category": "holiday",
-      "tags": [
-        "wolne"
-      ],
-      "priority": "normal",
-      "audience": "wszyscy",
-      "extendedProps": {
-        "description": "Ferie zimowe – 16.01.2027–31.01.2027 (dzień 12 z 16)\nPowód: ferie zimowe – brak zajęć dydaktyczno-wychowawczych dla wszystkich klas.",
-        "needsConfirmation": false,
-        "sourceNote": ""
-      }
-    },
-    {
-      "id": "evt-0056",
-      "title": "Ferie zimowe – 16.01.2027–31.01.2027 (dzień 13 z 16)",
-      "start": "2027-01-28",
-      "allDay": true,
-      "category": "holiday",
-      "tags": [
-        "wolne"
-      ],
-      "priority": "normal",
-      "audience": "wszyscy",
-      "extendedProps": {
-        "description": "Ferie zimowe – 16.01.2027–31.01.2027 (dzień 13 z 16)\nPowód: ferie zimowe – brak zajęć dydaktyczno-wychowawczych dla wszystkich klas.",
-        "needsConfirmation": false,
-        "sourceNote": ""
-      }
-    },
-    {
-      "id": "evt-0057",
-      "title": "Ferie zimowe – 16.01.2027–31.01.2027 (dzień 14 z 16)",
-      "start": "2027-01-29",
-      "allDay": true,
-      "category": "holiday",
-      "tags": [
-        "wolne"
-      ],
-      "priority": "normal",
-      "audience": "wszyscy",
-      "extendedProps": {
-        "description": "Ferie zimowe – 16.01.2027–31.01.2027 (dzień 14 z 16)\nPowód: ferie zimowe – brak zajęć dydaktyczno-wychowawczych dla wszystkich klas.",
-        "needsConfirmation": false,
-        "sourceNote": ""
-      }
-    },
-    {
-      "id": "evt-0058",
-      "title": "Ferie zimowe – 16.01.2027–31.01.2027 (dzień 15 z 16) · weekend",
-      "start": "2027-01-30",
-      "allDay": true,
-      "category": "holiday",
-      "tags": [
-        "wolne"
-      ],
-      "priority": "normal",
-      "audience": "wszyscy",
-      "extendedProps": {
-        "description": "Ferie zimowe – 16.01.2027–31.01.2027 (dzień 15 z 16) · weekend\nPowód: ferie zimowe – brak zajęć dydaktyczno-wychowawczych dla wszystkich klas.",
-        "needsConfirmation": false,
-        "sourceNote": ""
-      }
-    },
-    {
-      "id": "evt-0059",
-      "title": "Ferie zimowe – 16.01.2027–31.01.2027 (dzień 16 z 16) · weekend",
-      "start": "2027-01-31",
-      "allDay": true,
-      "category": "holiday",
-      "tags": [
-        "wolne"
-      ],
-      "priority": "normal",
-      "audience": "wszyscy",
-      "extendedProps": {
-        "description": "Ferie zimowe – 16.01.2027–31.01.2027 (dzień 16 z 16) · weekend\nPowód: ferie zimowe – brak zajęć dydaktyczno-wychowawczych dla wszystkich klas.",
-        "needsConfirmation": false,
-        "sourceNote": ""
-      }
-    },
-    {
-      "id": "evt-0060",
+      "id": "evt-0037",
       "title": "Praktyki zawodowe - klasy 4 technikum",
       "start": "2027-02-02",
       "allDay": true,
@@ -1061,8 +665,8 @@
       "end": "2027-02-27"
     },
     {
-      "id": "evt-0061",
-      "title": "15:00 - RADA PEDAGOGICZNA: 1) plenarna: podsumowanie I półrocza",
+      "id": "evt-0038",
+      "title": "RADA PEDAGOGICZNA:",
       "start": "2027-02-03T15:00:00",
       "allDay": false,
       "category": "council",
@@ -1072,15 +676,15 @@
       "priority": "high",
       "audience": "nauczyciele",
       "extendedProps": {
-        "description": "15:00 - RADA PEDAGOGICZNA: 1) plenarna: podsumowanie I półrocza",
+        "description": "15:00 - RADA PEDAGOGICZNA:\n1) plenarna: podsumowanie I półrocza",
         "needsConfirmation": false,
         "sourceNote": ""
       },
       "end": "2027-02-03T16:30:00"
     },
     {
-      "id": "evt-0062",
-      "title": "15:00 - RADA PEDAGOGICZNA: 1) szkoleniowa",
+      "id": "evt-0039",
+      "title": "RADA PEDAGOGICZNA:",
       "start": "2027-03-17T15:00:00",
       "allDay": false,
       "category": "council",
@@ -1090,14 +694,14 @@
       "priority": "high",
       "audience": "nauczyciele",
       "extendedProps": {
-        "description": "15:00 - RADA PEDAGOGICZNA: 1) szkoleniowa",
+        "description": "15:00 - RADA PEDAGOGICZNA:\n1) szkoleniowa",
         "needsConfirmation": false,
         "sourceNote": ""
       },
       "end": "2027-03-17T16:30:00"
     },
     {
-      "id": "evt-0063",
+      "id": "evt-0040",
       "title": "4 SEMESTR BS II st.: poinformowanie słuchaczy (w tym rodziców niepełnoletnich słuchac...",
       "start": "2027-03-19",
       "allDay": true,
@@ -1115,8 +719,8 @@
       }
     },
     {
-      "id": "evt-0064",
-      "title": "Wiosenna przerwa świąteczna – 25.03.2027–30.03.2027 (dzień 1 z 6)",
+      "id": "evt-0041",
+      "title": "Wiosenna przerwa świąteczna – 25.03.2027–30.03.2027",
       "start": "2027-03-25",
       "allDay": true,
       "category": "holiday",
@@ -1126,48 +730,15 @@
       "priority": "normal",
       "audience": "wszyscy",
       "extendedProps": {
-        "description": "Wiosenna przerwa świąteczna – 25.03.2027–30.03.2027 (dzień 1 z 6)\nPowód: wiosenna przerwa świąteczna (Wielkanoc 28.03, Poniedziałek Wielkanocny 29.03.2027) – brak zajęć dydaktyczno-wychowawczych.",
+        "description": "Wiosenna przerwa świąteczna – 25.03.2027–30.03.2027\nPowód: wiosenna przerwa świąteczna (Wielkanoc 28.03, Poniedziałek Wielkanocny 29.03.2027) – brak zajęć dydaktyczno-wychowawczych.",
         "needsConfirmation": false,
         "sourceNote": ""
-      }
+      },
+      "end": "2027-03-31"
     },
     {
-      "id": "evt-0065",
-      "title": "Wiosenna przerwa świąteczna – 25.03.2027–30.03.2027 (dzień 2 z 6)",
-      "start": "2027-03-26",
-      "allDay": true,
-      "category": "holiday",
-      "tags": [
-        "wolne"
-      ],
-      "priority": "normal",
-      "audience": "wszyscy",
-      "extendedProps": {
-        "description": "Wiosenna przerwa świąteczna – 25.03.2027–30.03.2027 (dzień 2 z 6)\nPowód: wiosenna przerwa świąteczna (Wielkanoc 28.03, Poniedziałek Wielkanocny 29.03.2027) – brak zajęć dydaktyczno-wychowawczych.",
-        "needsConfirmation": false,
-        "sourceNote": ""
-      }
-    },
-    {
-      "id": "evt-0066",
-      "title": "Wiosenna przerwa świąteczna – 25.03.2027–30.03.2027 (dzień 3 z 6) · weekend",
-      "start": "2027-03-27",
-      "allDay": true,
-      "category": "holiday",
-      "tags": [
-        "wolne"
-      ],
-      "priority": "normal",
-      "audience": "wszyscy",
-      "extendedProps": {
-        "description": "Wiosenna przerwa świąteczna – 25.03.2027–30.03.2027 (dzień 3 z 6) · weekend\nPowód: wiosenna przerwa świąteczna (Wielkanoc 28.03, Poniedziałek Wielkanocny 29.03.2027) – brak zajęć dydaktyczno-wychowawczych.",
-        "needsConfirmation": false,
-        "sourceNote": ""
-      }
-    },
-    {
-      "id": "evt-0067",
-      "title": "Wiosenna przerwa świąteczna – 25.03.2027–30.03.2027 (dzień 4 z 6) · weekend",
+      "id": "evt-0042",
+      "title": "Wielkanoc (Niedziela Wielkanocna) - dzień ustawowo wolny",
       "start": "2027-03-28",
       "allDay": true,
       "category": "holiday",
@@ -1177,14 +748,14 @@
       "priority": "normal",
       "audience": "wszyscy",
       "extendedProps": {
-        "description": "Wiosenna przerwa świąteczna – 25.03.2027–30.03.2027 (dzień 4 z 6) · weekend\nPowód: wiosenna przerwa świąteczna (Wielkanoc 28.03, Poniedziałek Wielkanocny 29.03.2027) – brak zajęć dydaktyczno-wychowawczych.\nDodatkowo: Wielkanoc.",
+        "description": "Wielkanoc (Niedziela Wielkanocna) - dzień ustawowo wolny",
         "needsConfirmation": false,
         "sourceNote": ""
       }
     },
     {
-      "id": "evt-0068",
-      "title": "Wiosenna przerwa świąteczna – 25.03.2027–30.03.2027 (dzień 5 z 6)",
+      "id": "evt-0043",
+      "title": "Poniedziałek Wielkanocny - dzień ustawowo wolny",
       "start": "2027-03-29",
       "allDay": true,
       "category": "holiday",
@@ -1194,31 +765,14 @@
       "priority": "normal",
       "audience": "wszyscy",
       "extendedProps": {
-        "description": "Wiosenna przerwa świąteczna – 25.03.2027–30.03.2027 (dzień 5 z 6)\nPowód: wiosenna przerwa świąteczna (Wielkanoc 28.03, Poniedziałek Wielkanocny 29.03.2027) – brak zajęć dydaktyczno-wychowawczych.\nDodatkowo: Poniedziałek Wielkanocny.",
+        "description": "Poniedziałek Wielkanocny - dzień ustawowo wolny",
         "needsConfirmation": false,
         "sourceNote": ""
       }
     },
     {
-      "id": "evt-0069",
-      "title": "Wiosenna przerwa świąteczna – 25.03.2027–30.03.2027 (dzień 6 z 6)",
-      "start": "2027-03-30",
-      "allDay": true,
-      "category": "holiday",
-      "tags": [
-        "wolne"
-      ],
-      "priority": "normal",
-      "audience": "wszyscy",
-      "extendedProps": {
-        "description": "Wiosenna przerwa świąteczna – 25.03.2027–30.03.2027 (dzień 6 z 6)\nPowód: wiosenna przerwa świąteczna (Wielkanoc 28.03, Poniedziałek Wielkanocny 29.03.2027) – brak zajęć dydaktyczno-wychowawczych.",
-        "needsConfirmation": false,
-        "sourceNote": ""
-      }
-    },
-    {
-      "id": "evt-0070",
-      "title": "16:00 - KLASY 5 TECHNIKUM: wystawienie proponowanych ocen końcowych (maksymalnie do g...",
+      "id": "evt-0044",
+      "title": "KLASY 5 TECHNIKUM: wystawienie proponowanych ocen końcowych (maksymalnie do godz. 16:00)",
       "start": "2027-04-09T16:00:00",
       "allDay": false,
       "category": "classification",
@@ -1235,8 +789,8 @@
       "end": "2027-04-09T17:30:00"
     },
     {
-      "id": "evt-0071",
-      "title": "16:30 - KLASY 5 TECHNIKUM: wychowawcy klas - zebrania z rodzicami",
+      "id": "evt-0045",
+      "title": "KLASY 5 TECHNIKUM: wychowawcy klas - zebrania z rodzicami",
       "start": "2027-04-09T16:30:00",
       "allDay": false,
       "category": "meeting",
@@ -1254,7 +808,7 @@
       "end": "2027-04-09T18:00:00"
     },
     {
-      "id": "evt-0072",
+      "id": "evt-0046",
       "title": "4 SEMESTR BS II st.: egzaminy semestralne 19.04.2027 r. - 27.04.2027 r. (szczegółowy...",
       "start": "2027-04-19",
       "allDay": true,
@@ -1272,7 +826,7 @@
       }
     },
     {
-      "id": "evt-0073",
+      "id": "evt-0047",
       "title": "KLASY 5 TECHNIKUM: wystawienie ocen końcowych",
       "start": "2027-04-22",
       "allDay": true,
@@ -1289,7 +843,7 @@
       }
     },
     {
-      "id": "evt-0074",
+      "id": "evt-0048",
       "title": "KLASY 5 TECHNIKUM: wychowawcy klas - złożenie zestawienia klasyfikacyjnego",
       "start": "2027-04-26",
       "allDay": true,
@@ -1308,7 +862,7 @@
       }
     },
     {
-      "id": "evt-0075",
+      "id": "evt-0049",
       "title": "4 SEMESTR BS II st.: złożenie zestawienia klasyfikacyjnego",
       "start": "2027-04-27",
       "allDay": true,
@@ -1325,8 +879,8 @@
       }
     },
     {
-      "id": "evt-0076",
-      "title": "15:00 - RADA PEDAGOGICZNA: 1) klasyfikacyjna: KLASY 5 TECHNIKUM oraz 4 SEMESTR BS II st.",
+      "id": "evt-0050",
+      "title": "RADA PEDAGOGICZNA:",
       "start": "2027-04-28T15:00:00",
       "allDay": false,
       "category": "classification",
@@ -1339,14 +893,14 @@
       "priority": "high",
       "audience": "nauczyciele",
       "extendedProps": {
-        "description": "15:00 - RADA PEDAGOGICZNA: 1) klasyfikacyjna: KLASY 5 TECHNIKUM oraz 4 SEMESTR BS II st.\n2) szkoleniowa: szkolenie z procedur egzaminu maturalnego",
+        "description": "15:00 - RADA PEDAGOGICZNA:\n1) klasyfikacyjna: KLASY 5 TECHNIKUM oraz 4 SEMESTR BS II st.\n2) szkoleniowa: szkolenie z procedur egzaminu maturalnego",
         "needsConfirmation": false,
         "sourceNote": ""
       },
       "end": "2027-04-28T16:30:00"
     },
     {
-      "id": "evt-0077",
+      "id": "evt-0051",
       "title": "KLASY 5 TECHNIKUM oraz 4 SEMESTR BS II st.: zakończenie roku szkolnego",
       "start": "2027-04-30",
       "allDay": true,
@@ -1364,7 +918,7 @@
       }
     },
     {
-      "id": "evt-0078",
+      "id": "evt-0052",
       "title": "Międzynarodowe Święto Pracy",
       "start": "2027-05-01",
       "allDay": true,
@@ -1381,7 +935,7 @@
       }
     },
     {
-      "id": "evt-0079",
+      "id": "evt-0053",
       "title": "Święto Konstytucji 3 Maja",
       "start": "2027-05-03",
       "allDay": true,
@@ -1398,7 +952,7 @@
       }
     },
     {
-      "id": "evt-0080",
+      "id": "evt-0054",
       "title": "dzień wolny od zajęć dydaktyczno-wychowawczych",
       "start": "2027-05-04",
       "allDay": true,
@@ -1410,10 +964,11 @@
         "description": "dzień wolny od zajęć dydaktyczno-wychowawczych",
         "needsConfirmation": false,
         "sourceNote": ""
-      }
+      },
+      "end": "2027-05-07"
     },
     {
-      "id": "evt-0081",
+      "id": "evt-0055",
       "title": "matura - język polski",
       "start": "2027-05-04",
       "allDay": true,
@@ -1431,22 +986,7 @@
       }
     },
     {
-      "id": "evt-0082",
-      "title": "dzień wolny od zajęć dydaktyczno-wychowawczych",
-      "start": "2027-05-05",
-      "allDay": true,
-      "category": "general",
-      "tags": [],
-      "priority": "normal",
-      "audience": "wszyscy",
-      "extendedProps": {
-        "description": "dzień wolny od zajęć dydaktyczno-wychowawczych",
-        "needsConfirmation": false,
-        "sourceNote": ""
-      }
-    },
-    {
-      "id": "evt-0083",
+      "id": "evt-0056",
       "title": "matura - matematyka",
       "start": "2027-05-05",
       "allDay": true,
@@ -1464,22 +1004,7 @@
       }
     },
     {
-      "id": "evt-0084",
-      "title": "dzień wolny od zajęć dydaktyczno-wychowawczych",
-      "start": "2027-05-06",
-      "allDay": true,
-      "category": "general",
-      "tags": [],
-      "priority": "normal",
-      "audience": "wszyscy",
-      "extendedProps": {
-        "description": "dzień wolny od zajęć dydaktyczno-wychowawczych",
-        "needsConfirmation": false,
-        "sourceNote": ""
-      }
-    },
-    {
-      "id": "evt-0085",
+      "id": "evt-0057",
       "title": "matura - języki obce nowożytne",
       "start": "2027-05-06",
       "allDay": true,
@@ -1497,7 +1022,7 @@
       }
     },
     {
-      "id": "evt-0086",
+      "id": "evt-0058",
       "title": "2 SEMESTR BS II st.: poinformowanie słuchaczy (w tym rodziców niepełnoletnich słuchac...",
       "start": "2027-05-07",
       "allDay": true,
@@ -1515,8 +1040,8 @@
       }
     },
     {
-      "id": "evt-0087",
-      "title": "15:00 - RADA PEDAGOGICZNA: 1) szkoleniowa: szkolenie z procedur egzaminów zawodowych",
+      "id": "evt-0059",
+      "title": "RADA PEDAGOGICZNA:",
       "start": "2027-05-19T15:00:00",
       "allDay": false,
       "category": "council",
@@ -1527,14 +1052,14 @@
       "priority": "high",
       "audience": "nauczyciele",
       "extendedProps": {
-        "description": "15:00 - RADA PEDAGOGICZNA: 1) szkoleniowa: szkolenie z procedur egzaminów zawodowych",
+        "description": "15:00 - RADA PEDAGOGICZNA:\n1) szkoleniowa: szkolenie z procedur egzaminów zawodowych",
         "needsConfirmation": false,
         "sourceNote": ""
       },
       "end": "2027-05-19T16:30:00"
     },
     {
-      "id": "evt-0088",
+      "id": "evt-0060",
       "title": "zajęcia wg planu z 28 maja 2027 r.",
       "start": "2027-05-22",
       "allDay": true,
@@ -1549,7 +1074,7 @@
       }
     },
     {
-      "id": "evt-0089",
+      "id": "evt-0061",
       "title": "KLASY 1-4 TECHNIKUM, KLASY 1-3 BS I st.: wystawienie proponowanych ocen rocznych",
       "start": "2027-05-24",
       "allDay": true,
@@ -1566,8 +1091,8 @@
       }
     },
     {
-      "id": "evt-0090",
-      "title": "16:30 - KLASY 1-4 TECHNIKUM, KLASY 1-3 BS I st.: wychowawcy klas - zebrania z rodzicami",
+      "id": "evt-0062",
+      "title": "KLASY 1-4 TECHNIKUM, KLASY 1-3 BS I st.: wychowawcy klas - zebrania z rodzicami",
       "start": "2027-05-25T16:30:00",
       "allDay": false,
       "category": "meeting",
@@ -1584,7 +1109,7 @@
       "end": "2027-05-25T18:00:00"
     },
     {
-      "id": "evt-0091",
+      "id": "evt-0063",
       "title": "Boże Ciało",
       "start": "2027-05-27",
       "allDay": true,
@@ -1601,7 +1126,7 @@
       }
     },
     {
-      "id": "evt-0092",
+      "id": "evt-0064",
       "title": "dzień wolny do odpracowania: SOBOTA 22 maja 2027 r.",
       "start": "2027-05-28",
       "allDay": true,
@@ -1616,7 +1141,7 @@
       }
     },
     {
-      "id": "evt-0093",
+      "id": "evt-0065",
       "title": "EGZAMIN ZAWODOWY - sesja letnia: termin główny 1.06.2027 r. - 21.06.2027 r.",
       "start": "2027-06-01",
       "allDay": true,
@@ -1633,7 +1158,7 @@
       }
     },
     {
-      "id": "evt-0094",
+      "id": "evt-0066",
       "title": "2 SEMESTR BS II st.: egzaminy semestralne 8.06.2027 r. - 17.06.2027 r. (szczegółowy h...",
       "start": "2027-06-08",
       "allDay": true,
@@ -1651,7 +1176,7 @@
       }
     },
     {
-      "id": "evt-0095",
+      "id": "evt-0067",
       "title": "KLASY 1-4 TECHNIKUM, KLASY 1-3 BS I st.: wystawienie ocen rocznych/końcowych",
       "start": "2027-06-15",
       "allDay": true,
@@ -1668,7 +1193,7 @@
       }
     },
     {
-      "id": "evt-0096",
+      "id": "evt-0068",
       "title": "KLASY 1-4 TECHNIKUM, KLASY 1-3 BS I st.: wychowawcy klas - złożenie zestawień klasyfi...",
       "start": "2027-06-17",
       "allDay": true,
@@ -1687,7 +1212,7 @@
       }
     },
     {
-      "id": "evt-0097",
+      "id": "evt-0069",
       "title": "2 SEMESTR BS II st.: złożenie zestawienia semestralnego",
       "start": "2027-06-18",
       "allDay": true,
@@ -1704,7 +1229,7 @@
       }
     },
     {
-      "id": "evt-0098",
+      "id": "evt-0070",
       "title": "EGZAMIN ZAWODOWY - sesja letnia: ostatni dzień terminu głównego (1.06.2027 r. - 21.06...",
       "start": "2027-06-21",
       "allDay": true,
@@ -1721,7 +1246,7 @@
       }
     },
     {
-      "id": "evt-0099",
+      "id": "evt-0071",
       "title": "RADA PEDAGOGICZNA: godz. do ustalenia",
       "start": "2027-06-21",
       "allDay": true,
@@ -1740,7 +1265,7 @@
       }
     },
     {
-      "id": "evt-0100",
+      "id": "evt-0072",
       "title": "RADA PEDAGOGICZNA: godz. do ustalenia",
       "start": "2027-06-23",
       "allDay": true,
@@ -1759,7 +1284,7 @@
       }
     },
     {
-      "id": "evt-0101",
+      "id": "evt-0073",
       "title": "RADA PEDAGOGICZNA: godz. do ustalenia",
       "start": "2027-06-24",
       "allDay": true,
@@ -1776,7 +1301,7 @@
       }
     },
     {
-      "id": "evt-0102",
+      "id": "evt-0074",
       "title": "dzień wolny od zajęć dydaktyczno-wychowawczych",
       "start": "2027-06-25",
       "allDay": true,
@@ -1791,7 +1316,7 @@
       }
     },
     {
-      "id": "evt-0103",
+      "id": "evt-0075",
       "title": "zakończenie roku szkolnego",
       "start": "2027-06-25",
       "allDay": true,
@@ -1808,7 +1333,7 @@
       }
     },
     {
-      "id": "evt-0104",
+      "id": "evt-0076",
       "title": "Rada pedagogiczna - wpis wymaga doprecyzowania",
       "start": "2027-06-28",
       "allDay": true,
@@ -1828,8 +1353,25 @@
       }
     },
     {
-      "id": "evt-0105",
-      "title": "09:00 - RADA PEDAGOGICZNA: 31 sierpnia 2027 r.",
+      "id": "evt-0077",
+      "title": "Wniebowzięcie NMP",
+      "start": "2027-08-15",
+      "allDay": true,
+      "category": "holiday",
+      "tags": [
+        "wolne"
+      ],
+      "priority": "normal",
+      "audience": "wszyscy",
+      "extendedProps": {
+        "description": "Wniebowzięcie NMP\nŚwięto Wojska Polskiego - dzień ustawowo wolny",
+        "needsConfirmation": false,
+        "sourceNote": ""
+      }
+    },
+    {
+      "id": "evt-0078",
+      "title": "RADA PEDAGOGICZNA: 31 sierpnia 2027 r.",
       "start": "2027-08-31T09:00:00",
       "allDay": false,
       "category": "classification",

@@ -515,6 +515,7 @@
       border-radius: 14px;
       padding: 2px;
       box-shadow: 0 10px 16px rgba(22, 51, 43, 0.08);
+      cursor: pointer;
     }
 
     #calendar .fc-event-main {
@@ -523,6 +524,20 @@
       font-size: 12px;
       line-height: 1.35;
       white-space: normal;
+    }
+
+    #calendar .fc-multimonth .fc-event-main,
+    #calendar .fc-dayGridMonth-view .fc-event-main {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    #calendar .fc-multimonth .fc-event-title,
+    #calendar .fc-dayGridMonth-view .fc-event-title {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
 
     #calendar .fc-list-event-title,
@@ -614,7 +629,7 @@
       opacity: 0;
       visibility: hidden;
       transition: opacity 0.22s ease, visibility 0.22s ease;
-      z-index: 40;
+      z-index: 5000;
     }
 
     .drawer {
@@ -630,7 +645,7 @@
       box-shadow: 0 26px 80px rgba(8, 23, 17, 0.28);
       transform: translateX(calc(100% + 24px));
       transition: transform 0.22s ease;
-      z-index: 41;
+      z-index: 5001;
       overflow: auto;
     }
 
@@ -1148,6 +1163,62 @@
       return end >= new Date(now.getFullYear(), now.getMonth(), now.getDate());
     }
 
+    function buildCompactEventLabel(event) {
+      const props = event.extendedProps || {};
+      const source = (event.title || '').trim();
+      const description = (props.description || '').trim();
+      const category = props.category || 'general';
+
+      if (/^Zimowa przerwa świąteczna/i.test(source)) return 'Przerwa świąteczna';
+      if (/^Wiosenna przerwa świąteczna/i.test(source)) return 'Przerwa wiosenna';
+      if (/^Ferie zimowe/i.test(source)) return 'Ferie zimowe';
+
+      const practiceMatch = source.match(/^Praktyki zawodowe - klasy (\d+) technikum/i);
+      if (practiceMatch) return `Praktyki kl. ${practiceMatch[1]} T`;
+
+      if (/^RADA PEDAGOGICZNA:/i.test(source)) return 'Rada pedagogiczna';
+      if (/^zebranie Rady Rodziców/i.test(source)) return 'Rada Rodziców';
+      if (/^KLASY .*: wychowawcy klas - zebrania z rodzicami/i.test(source)) return 'Zebrania z rodzicami';
+      if (/^KLASY 1: zebranie dla rodziców/i.test(source)) return 'Zebranie kl. 1';
+
+      if (category === 'classification' && /wystawienie/i.test(source)) {
+        return 'Wystawienie ocen';
+      }
+      if (category === 'meeting' && /zebran/i.test(description)) {
+        return 'Zebranie';
+      }
+      if (category === 'holiday') {
+        return source.split(' – ')[0].trim();
+      }
+
+      const stripped = source
+        .replace(/\s*–\s*\d{1,2}\.\d{1,2}\.\d{4}[–-]\d{1,2}\.\d{1,2}\.\d{4}.*/i, '')
+        .replace(/:\s.*$/, (match) => (source.length > 34 ? '' : match))
+        .trim();
+
+      if (stripped.length <= 28) {
+        return stripped;
+      }
+      return `${stripped.slice(0, 25).trimEnd()}...`;
+    }
+
+    function applyCompactLabelIfNeeded(info) {
+      if (!['schoolYear', 'dayGridMonth'].includes(info.view.type)) return;
+      const titleEl = info.el.querySelector('.fc-event-title');
+      if (!titleEl) return;
+      titleEl.textContent = buildCompactEventLabel(info.event);
+      info.el.title = info.event.title;
+    }
+
+    function closeCalendarPopovers() {
+      document.querySelectorAll('.fc-popover-close').forEach((button) => {
+        button.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+      });
+      document.querySelectorAll('.fc-popover').forEach((popover) => {
+        popover.remove();
+      });
+    }
+
     function applyFilters() {
       const term = state.searchTerm.trim().toLowerCase();
       state.filteredEvents = state.rawEvents.filter((event) => {
@@ -1230,6 +1301,10 @@
           const classes = [`cat-${props.category || 'general'}`];
           if (props.needsConfirmation) classes.push('fc-event-confirmation');
           return classes.join(' ');
+        },
+        eventDidMount(info) {
+          info.el.dataset.calendarEventId = info.event.id;
+          applyCompactLabelIfNeeded(info);
         },
         eventClick(info) {
           info.jsEvent.preventDefault();
@@ -1350,6 +1425,7 @@
       const event = eventLike.extendedProps ? eventLike : { ...eventLike, extendedProps: eventLike.extendedProps || {} };
       const props = event.extendedProps || {};
       const meta = categoryMeta[props.category] || categoryMeta.general;
+      closeCalendarPopovers();
       document.getElementById('drawer-kicker').textContent = meta.label;
       document.getElementById('drawer-kicker').style.color = meta.color;
       document.getElementById('drawer-title').textContent = event.title;
@@ -1445,6 +1521,16 @@
         state.calendar.today();
       }
     });
+
+    document.getElementById('calendar').addEventListener('click', (event) => {
+      const eventEl = event.target.closest('.fc-popover [data-calendar-event-id]');
+      if (!eventEl || !state.calendar) return;
+      const calendarEvent = state.calendar.getEventById(eventEl.dataset.calendarEventId);
+      if (!calendarEvent) return;
+      event.preventDefault();
+      event.stopPropagation();
+      openDrawer(calendarEvent);
+    }, true);
 
     document.getElementById('drawer-close').addEventListener('click', closeDrawer);
     document.getElementById('drawer-backdrop').addEventListener('click', closeDrawer);
