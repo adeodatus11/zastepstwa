@@ -723,6 +723,35 @@
       white-space: pre-line;
     }
 
+    .drawer-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .drawer-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 48px;
+      padding: 0 16px;
+      border-radius: 999px;
+      border: 1px solid rgba(31, 143, 86, 0.16);
+      text-align: center;
+      background: linear-gradient(135deg, #f8fffb, #e6f8ee);
+      color: var(--accent-strong);
+      font-size: 14px;
+      font-weight: 800;
+      box-shadow: 0 12px 22px rgba(22, 51, 43, 0.08);
+      transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+    }
+
+    .drawer-link:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 16px 28px rgba(22, 51, 43, 0.1);
+      border-color: rgba(31, 143, 86, 0.28);
+    }
+
     .status-note {
       padding: 14px 16px;
       border-radius: 18px;
@@ -932,6 +961,13 @@
         <h3>Opis</h3>
         <p id="drawer-description">Kliknij dowolny punkt w kalendarzu, aby zobaczyć pełną treść wpisu.</p>
       </section>
+      <section class="drawer-section" id="drawer-calendar-wrap" hidden>
+        <h3>Dodaj do swojego kalendarza</h3>
+        <div class="drawer-actions">
+          <a class="drawer-link" id="drawer-google-link" href="#" target="_blank" rel="noreferrer">Google Calendar</a>
+          <a class="drawer-link" id="drawer-apple-link" href="#" download="wydarzenie.ics">Apple / iPhone (.ics)</a>
+        </div>
+      </section>
       <section class="drawer-section" id="drawer-source-wrap" hidden>
         <h3>Źródło i uwaga techniczna</h3>
         <p id="drawer-source"></p>
@@ -950,6 +986,8 @@
       activeCategories: new Set(),
       searchTerm: '',
       confirmationOnly: false,
+      currentIcsUrl: null,
+      currentIcsNeedsRevoke: false,
     };
 
     const categoryMeta = {
@@ -964,6 +1002,16 @@
 
     function parseDateValue(value) {
       if (!value) return null;
+      if (/^\d{4}-\d{2}-\d{2}$/.test(value)) {
+        const [year, month, day] = value.split('-').map(Number);
+        return new Date(year, month - 1, day);
+      }
+      if (/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}$/.test(value)) {
+        const [datePart, timePart] = value.split('T');
+        const [year, month, day] = datePart.split('-').map(Number);
+        const [hour, minute, second] = timePart.split(':').map(Number);
+        return new Date(year, month - 1, day, hour, minute, second);
+      }
       return new Date(value);
     }
 
@@ -988,6 +1036,110 @@
       if (!start) return '';
       const hasTime = !event.allDay && event.start.includes('T');
       return formatDate(start, hasTime);
+    }
+
+    function slug(value) {
+      return String(value || '')
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, '');
+    }
+
+    function padCalendar(value) {
+      return String(value).padStart(2, '0');
+    }
+
+    function formatDateForGoogle(dateLike) {
+      return dateLike.toISOString().replace(/[-:]/g, '').replace(/\.\d{3}Z$/, 'Z');
+    }
+
+    function formatDateForGoogleAllDay(dateLike) {
+      return `${dateLike.getFullYear()}${padCalendar(dateLike.getMonth() + 1)}${padCalendar(dateLike.getDate())}`;
+    }
+
+    function buildGoogleCalendarUrl(event) {
+      const props = event.extendedProps || {};
+      const start = parseDateValue(event.start);
+      const explicitEnd = parseDateValue(event.end || '');
+      const end = explicitEnd || (event.allDay
+        ? new Date(start.getFullYear(), start.getMonth(), start.getDate() + 1)
+        : new Date(start.getTime() + (90 * 60 * 1000)));
+
+      const params = new URLSearchParams({
+        action: 'TEMPLATE',
+        text: event.title,
+        details: props.description || event.title,
+        ctz: 'Europe/Warsaw',
+      });
+
+      if (event.allDay) {
+        params.set('dates', `${formatDateForGoogleAllDay(start)}/${formatDateForGoogleAllDay(end)}`);
+      } else {
+        params.set('dates', `${formatDateForGoogle(start)}/${formatDateForGoogle(end)}`);
+      }
+
+      return `https://calendar.google.com/calendar/render?${params.toString()}`;
+    }
+
+    function escapeIcsText(value) {
+      return String(value || '')
+        .replace(/\\/g, '\\\\')
+        .replace(/\n/g, '\\n')
+        .replace(/,/g, '\\,')
+        .replace(/;/g, '\\;');
+    }
+
+    function formatDateForIcsUtc(dateLike) {
+      return dateLike.toISOString().replace(/[-:]/g, '').replace(/\.\d{3}Z$/, 'Z');
+    }
+
+    function formatDateForIcsAllDay(dateLike) {
+      return `${dateLike.getFullYear()}${padCalendar(dateLike.getMonth() + 1)}${padCalendar(dateLike.getDate())}`;
+    }
+
+    function buildIcsContent(event) {
+      const props = event.extendedProps || {};
+      const start = parseDateValue(event.start);
+      const explicitEnd = parseDateValue(event.end || '');
+      const end = explicitEnd || (event.allDay
+        ? new Date(start.getFullYear(), start.getMonth(), start.getDate() + 1)
+        : new Date(start.getTime() + (90 * 60 * 1000)));
+      const nowStamp = formatDateForIcsUtc(new Date());
+      const uid = `${event.id || slug(event.title)}@nauczyciel.szkolamistrzow.info`;
+
+      const lines = [
+        'BEGIN:VCALENDAR',
+        'VERSION:2.0',
+        'PRODID:-//ZSZ5//Kalendarz nauczyciela//PL',
+        'CALSCALE:GREGORIAN',
+        'BEGIN:VEVENT',
+        `UID:${uid}`,
+        `DTSTAMP:${nowStamp}`,
+        `SUMMARY:${escapeIcsText(event.title)}`,
+        `DESCRIPTION:${escapeIcsText(props.description || event.title)}`,
+      ];
+
+      if (event.allDay) {
+        lines.push(`DTSTART;VALUE=DATE:${formatDateForIcsAllDay(start)}`);
+        lines.push(`DTEND;VALUE=DATE:${formatDateForIcsAllDay(end)}`);
+      } else {
+        lines.push(`DTSTART:${formatDateForIcsUtc(start)}`);
+        lines.push(`DTEND:${formatDateForIcsUtc(end)}`);
+      }
+
+      lines.push('END:VEVENT', 'END:VCALENDAR');
+      return `${lines.join('\r\n')}\r\n`;
+    }
+
+    function createIcsDownload(event) {
+      const content = buildIcsContent(event);
+      if (typeof Blob !== 'undefined' && typeof URL !== 'undefined' && typeof URL.createObjectURL === 'function') {
+        const blob = new Blob([content], { type: 'text/calendar;charset=utf-8' });
+        return { url: URL.createObjectURL(blob), needsRevoke: true };
+      }
+      return { url: `data:text/calendar;charset=utf-8,${encodeURIComponent(content)}`, needsRevoke: false };
     }
 
     function isFutureEvent(event) {
@@ -1169,8 +1321,10 @@
         item.addEventListener('click', () => {
           if (state.calendar) {
             state.calendar.gotoDate(event.start);
-            openDrawer(event);
+            window.requestAnimationFrame(() => openDrawer(event));
+            return;
           }
+          openDrawer(event);
         });
         list.appendChild(item);
       });
@@ -1227,6 +1381,21 @@
 
       document.getElementById('drawer-backdrop').classList.add('open');
       document.getElementById('event-drawer').classList.add('open');
+
+      if (state.currentIcsUrl && state.currentIcsNeedsRevoke && typeof URL !== 'undefined' && typeof URL.revokeObjectURL === 'function') {
+        URL.revokeObjectURL(state.currentIcsUrl);
+      }
+      const googleLink = document.getElementById('drawer-google-link');
+      const appleLink = document.getElementById('drawer-apple-link');
+      const icsDownload = createIcsDownload(event);
+      state.currentIcsUrl = icsDownload.url;
+      state.currentIcsNeedsRevoke = icsDownload.needsRevoke;
+      googleLink.href = buildGoogleCalendarUrl(event);
+      appleLink.href = state.currentIcsUrl;
+      appleLink.download = `${slug(event.title) || 'wydarzenie'}.ics`;
+      const calendarWrap = document.getElementById('drawer-calendar-wrap');
+      calendarWrap.hidden = false;
+      calendarWrap.removeAttribute('hidden');
     }
 
     function closeDrawer() {
