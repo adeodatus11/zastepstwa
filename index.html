@@ -561,6 +561,70 @@
             text-wrap: pretty;
         }
 
+        .notice-body + .notice-body {
+            margin-top: 10px;
+        }
+
+        .notice-emphasis {
+            color: #14532d;
+            font-weight: 850;
+        }
+
+        .notice-subtitle {
+            margin: 18px 0 8px;
+            color: #14532d;
+            font-size: 1.02rem;
+            font-weight: 850;
+        }
+
+        .notice-list {
+            margin: 10px 0 0;
+            padding-left: 20px;
+            color: #426357;
+            font-size: 1rem;
+            line-height: 1.68;
+        }
+
+        .notice-list li + li {
+            margin-top: 6px;
+        }
+
+        .notice-list + .notice-body {
+            margin-top: 10px;
+        }
+
+        .meeting-details {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 12px;
+            margin-top: 16px;
+        }
+
+        .meeting-detail {
+            border: 1px solid rgba(20, 83, 45, 0.1);
+            border-radius: 14px;
+            padding: 12px;
+            background: rgba(240, 253, 244, 0.76);
+        }
+
+        .meeting-label {
+            display: block;
+            margin-bottom: 4px;
+            color: #15803d;
+            font-size: 0.72rem;
+            font-weight: 850;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+        }
+
+        .meeting-value {
+            display: block;
+            color: #14532d;
+            font-size: 1rem;
+            font-weight: 850;
+            line-height: 1.32;
+        }
+
         .notice-actions {
             display: flex;
             flex-wrap: wrap;
@@ -605,6 +669,72 @@
 
         .notice-link.forecast:hover {
             box-shadow: 0 18px 32px rgba(245, 158, 11, 0.28);
+        }
+
+        .holiday-popup {
+            position: fixed;
+            inset: 0;
+            z-index: 1000;
+            display: grid;
+            place-items: center;
+            padding: 24px;
+            background: rgba(6, 24, 16, 0.58);
+            backdrop-filter: blur(8px);
+        }
+
+        .holiday-popup[hidden] {
+            display: none;
+        }
+
+        .holiday-popup-card {
+            position: relative;
+            width: min(620px, 100%);
+            max-height: calc(100vh - 48px);
+            overflow: auto;
+            padding: 30px;
+            border-radius: 22px;
+            background: #ffffff;
+            border: 1px solid rgba(20, 83, 45, 0.14);
+            box-shadow: 0 28px 72px rgba(6, 24, 16, 0.28);
+        }
+
+        .holiday-popup-close {
+            position: absolute;
+            top: 14px;
+            right: 14px;
+            width: 42px;
+            height: 42px;
+            border: 0;
+            border-radius: 50%;
+            background: #e8f8ef;
+            color: #14532d;
+            font-size: 1.8rem;
+            line-height: 1;
+            cursor: pointer;
+        }
+
+        .holiday-popup-close:hover {
+            background: #d7f5e4;
+        }
+
+        .holiday-popup-title {
+            margin: 4px 44px 12px 0;
+            color: #14532d;
+            font-size: 1.65rem;
+            line-height: 1.18;
+            font-weight: 900;
+            text-wrap: balance;
+        }
+
+        .holiday-popup-body {
+            margin: 0;
+            color: #426357;
+            font-size: 1rem;
+            line-height: 1.68;
+        }
+
+        .holiday-popup-body + .meeting-details {
+            margin-top: 18px;
         }
 
         .holiday-vibes {
@@ -1367,6 +1497,31 @@
                 line-height: 1.64;
             }
 
+            .notice-list {
+                font-size: 0.96rem;
+                line-height: 1.58;
+            }
+
+            .meeting-details {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+
+            .holiday-popup {
+                padding: 14px;
+            }
+
+            .holiday-popup-card {
+                max-height: calc(100vh - 28px);
+                padding: 24px 18px 20px;
+                border-radius: 18px;
+            }
+
+            .holiday-popup-title {
+                margin-right: 48px;
+                font-size: 1.34rem;
+            }
+
             .notice-actions {
                 margin-top: 14px;
             }
@@ -1533,6 +1688,33 @@
 
     <div id="debug-bar">Ładowanie systemu...</div>
 
+    <div class="holiday-popup" id="firstClassMeetingPopup" role="dialog" aria-modal="true" aria-labelledby="firstClassMeetingTitle" hidden>
+        <div class="holiday-popup-card">
+            <button class="holiday-popup-close" type="button" id="firstClassMeetingClose" aria-label="Zamknij komunikat">&times;</button>
+            <span class="notice-kicker">Klasy pierwsze</span>
+            <h2 class="holiday-popup-title" id="firstClassMeetingTitle">Zebranie rodziców i opiekunów</h2>
+            <p class="holiday-popup-body">Spotkanie dotyczy rodziców i opiekunów uczniów klas pierwszych Branżowej Szkoły I stopnia oraz Technikum nr 5. To bardzo ważne spotkanie organizacyjne.</p>
+            <div class="meeting-details">
+                <div class="meeting-detail">
+                    <span class="meeting-label">Termin</span>
+                    <span class="meeting-value">4 września 2026 r.</span>
+                </div>
+                <div class="meeting-detail">
+                    <span class="meeting-label">Godzina</span>
+                    <span class="meeting-value">16:00</span>
+                </div>
+                <div class="meeting-detail">
+                    <span class="meeting-label">Miejsce</span>
+                    <span class="meeting-value">Zostanie przekazane osobnym komunikatem.</span>
+                </div>
+                <div class="meeting-detail">
+                    <span class="meeting-label">Informacja</span>
+                    <span class="meeting-value">Oficjalny komunikat szkoły lub VULCAN.</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div id="dashboard-view">
         <div class="holiday-hero">
             <div class="holiday-badge">SĄ WAKACJE</div>
@@ -1562,75 +1744,82 @@
 
         <div id="announcements-container">
             <div class="anno-left">
-                <div class="anno-title">Wiadomości na wakacje</div>
+                <div class="anno-title">Komunikaty organizacyjne</div>
                 <div id="announcement-list">
                     <article class="anno-btn">
-                        <span class="notice-kicker">Podziękowanie</span>
-                        <h3 class="notice-title">Dziękujemy za pracę w roku szkolnym 2025-2026</h3>
-                        <p class="notice-body">Życzymy miłych wakacji. Do zobaczenia w sierpniu podczas przygotowań i egzaminów poprawkowych.</p>
-                    </article>
-                    <article class="anno-btn">
-                        <span class="notice-kicker">Klasyfikacja roczna</span>
-                        <h3 class="notice-title">Podsumowanie ocen, zachowania i trendów frekwencji</h3>
-                        <p class="notice-body">Zestawienie klasyfikacji rocznej 2026 jest dostępne online.</p>
-                        <div class="notice-actions">
-                            <a class="notice-link" href="https://klasyfikacja2026.szkolamistrzow.info" target="_blank" rel="noreferrer">Otwórz klasyfikację 2026</a>
-                        </div>
+                        <span class="notice-kicker">Nauczyciele</span>
+                        <h3 class="notice-title">25-27 sierpnia: praca w szkole i egzaminy poprawkowe</h3>
+                        <p class="notice-body">Szanowni Państwo, zgodnie z wcześniejszymi komunikatami Pana Dyrektora Wiesława Filipiaka przypominam, że <span class="notice-emphasis">w dniach 25-27 sierpnia wszyscy nauczyciele pracują w szkole w godzinach 9:00-13:00</span>, przygotowując materiały oraz organizując pracę na rok szkolny 2026/2027.</p>
+                        <p class="notice-body">Jednocześnie, zgodnie z ustalonym harmonogramem, w tych dniach odbywają się <span class="notice-emphasis">egzaminy poprawkowe</span>.</p>
                     </article>
                     <article class="anno-btn is-forecast">
-                        <span class="notice-kicker">Przewidywany kalendarz</span>
-                        <h3 class="notice-title">Roboczy kalendarz roku szkolnego 2026/2027</h3>
-                        <p class="notice-body">Osobna strona z widokami dzień, tydzień, miesiąc, rok szkolny i lista. To wersja przewidywana, przygotowana na podstawie aktualnego arkusza roboczego.</p>
+                        <span class="notice-kicker">Rozkłady materiału</span>
+                        <h3 class="notice-title">Dotychczasowe rozkłady zostaną usunięte 29 sierpnia</h3>
+                        <p class="notice-body">Przypominam, że przed rozpoczęciem nowego roku szkolnego <span class="notice-emphasis">dziennik zostanie oczyszczony z dotychczasowych rozkładów materiału</span>.</p>
+                        <div class="notice-subtitle">Proszę już teraz o:</div>
+                        <ul class="notice-list">
+                            <li>przygotowanie rozkładów materiału na rok szkolny 2026/2027,</li>
+                            <li>pobranie z dziennika aktualnych rozkładów, jeżeli planują Państwo wykorzystać je również w kolejnych latach szkolnych,</li>
+                            <li>zapisanie pobranych rozkładów w bezpiecznym miejscu.</li>
+                        </ul>
+                        <p class="notice-body"><span class="notice-emphasis">Wszystkie dotychczasowe rozkłady materiału zostaną usunięte z dziennika w sobotę, 29 sierpnia 2026 r.</span> Do tego czasu można je pobierać i zapisywać. Nowe rozkłady będzie można dodawać od sobotniego popołudnia.</p>
+                        <p class="notice-body">W najbliższych dniach prześlę również <span class="notice-emphasis">ujednolicony szablon rozkładu materiału w Excelu</span>, o którego uzupełnienie poproszę każdego z Państwa.</p>
                         <div class="notice-actions">
-                            <a class="notice-link forecast" href="calendar-2026-2027.html">Otwórz przewidywany kalendarz</a>
+                            <a class="notice-link forecast" href="https://www.bazawiedzy.vulcan.edu.pl/bazawiedzy.php/show/771" target="_blank" rel="noreferrer">Instrukcja VULCAN</a>
                         </div>
                     </article>
                     <article class="anno-btn">
-                        <span class="notice-kicker">Egzaminy poprawkowe</span>
-                        <h3 class="notice-title">25-27 sierpnia, godz. 9:00-13:00</h3>
-                        <p class="notice-body">Harmonogram jest dostępny przez dziennik, w pokoju nauczycielskim w formie papierowej oraz online.</p>
-                        <div class="notice-actions">
-                            <a class="notice-link" href="https://zespolszkolzawodowychnr5-my.sharepoint.com/:x:/g/personal/admin_zsz5_edupage_org/IQD3yrOU8E4ITrWLDUIsfTK4AWYfi5hC7vHUQnrn3t0phNU?e=hBkgsq" target="_blank" rel="noreferrer">Otwórz harmonogram</a>
+                        <span class="notice-kicker">Programy nauczania</span>
+                        <h3 class="notice-title">Nowe numery szkolnych zestawów programów nauczania</h3>
+                        <p class="notice-body">Informuję, że <span class="notice-emphasis">w roku szkolnym 2026/2027 będą obowiązywały nowe numery szkolnych zestawów programów nauczania</span>. Zmiana ta ma na celu uporządkowanie i ujednolicenie dokumentacji szkolnej.</p>
+                        <p class="notice-body">Szczegółowe informacje dotyczące numeracji oraz sposobu przygotowania dokumentacji przekażę w najbliższych dniach.</p>
+                    </article>
+                    <article class="anno-btn is-forecast">
+                        <span class="notice-kicker">Klasy pierwsze</span>
+                        <h3 class="notice-title">Zebranie rodziców i opiekunów - 4 września, godz. 16:00</h3>
+                        <p class="notice-body">Spotkanie dotyczy rodziców i opiekunów uczniów klas pierwszych Branżowej Szkoły I stopnia oraz Technikum nr 5. To bardzo ważne spotkanie organizacyjne.</p>
+                        <div class="meeting-details">
+                            <div class="meeting-detail">
+                                <span class="meeting-label">Termin</span>
+                                <span class="meeting-value">4 września 2026 r.</span>
+                            </div>
+                            <div class="meeting-detail">
+                                <span class="meeting-label">Godzina</span>
+                                <span class="meeting-value">16:00</span>
+                            </div>
+                            <div class="meeting-detail">
+                                <span class="meeting-label">Miejsce</span>
+                                <span class="meeting-value">Zostanie przekazane osobnym komunikatem.</span>
+                            </div>
+                            <div class="meeting-detail">
+                                <span class="meeting-label">Informacja</span>
+                                <span class="meeting-value">Oficjalny komunikat szkoły lub VULCAN.</span>
+                            </div>
                         </div>
-                    </article>
-                    <article class="anno-btn">
-                        <span class="notice-kicker">Przygotowanie szkoły</span>
-                        <h3 class="notice-title">25-27 sierpnia, godz. 9:00-13:00: prace przygotowawcze do roku szkolnego 2026-2027</h3>
-                        <p class="notice-body">Rozkłady nauczania, planowanie pracy oraz porządkowanie gabinetów lekcyjnych.</p>
-                    </article>
-                    <article class="anno-btn">
-                        <span class="notice-kicker">Ważne</span>
-                        <h3 class="notice-title">Możliwa reorganizacja gabinetów lekcyjnych</h3>
-                        <p class="notice-body">Proszę być przygotowanym na zmianę stałych sal lekcyjnych w związku z nowym sprzętem i reorganizacją przestrzeni szkolnej.</p>
-                    </article>
-                    <article class="anno-btn">
-                        <span class="notice-kicker">Szkolenia i rady</span>
-                        <h3 class="notice-title">28 i 31 sierpnia</h3>
-                        <p class="notice-body">28 sierpnia odbędą się szkolenia z obsługi dziennika VULCAN i SharePointa. 31 sierpnia o 9:00 odbędzie się rada plenarna podsumowująca rok szkolny 2025-2026, a o 11:00 rada otwierająca rok szkolny 2026-2027.</p>
                     </article>
                 </div>
             </div>
             <div class="anno-right holiday-vibes">
                 <div class="holiday-content">
-                    <div class="question-text">Powrót do szkoły</div>
+                    <div class="question-text">Najważniejsze terminy</div>
                     <div class="personal-countdown" id="summaryCounts">Odliczanie...</div>
                     <div class="summary-sub" id="summarySources">Do wtorku, 25 sierpnia 2026, godz. 9:00.</div>
                     <div class="milestone-list">
                         <div class="milestone-item">
-                            <div class="milestone-date">25-27.08 • 9:00-13:00</div>
-                            <div class="milestone-copy">Egzaminy poprawkowe oraz prace przygotowawcze do nowego roku szkolnego.</div>
+                            <div class="milestone-date">1.09 • 8:00</div>
+                            <div class="milestone-copy">Klasy starsze BS I i technikum - sale lekcyjne, spotkania z wychowawcami.</div>
                         </div>
                         <div class="milestone-item">
-                            <div class="milestone-date">28.08</div>
-                            <div class="milestone-copy">Szkolenie z obsługi dziennika VULCAN i szkolenie z SharePointa.</div>
+                            <div class="milestone-date">1.09 • 9:00</div>
+                            <div class="milestone-copy">Klasy pierwsze BS I i technikum - boisko szkolne.</div>
                         </div>
                         <div class="milestone-item">
-                            <div class="milestone-date">31.08 • 9:00</div>
-                            <div class="milestone-copy">Rada plenarna podsumowująca rok szkolny 2025-2026.</div>
+                            <div class="milestone-date">3.09 • 14:00</div>
+                            <div class="milestone-copy">Semestr 1 i 3 BS II stopnia - pierwsze zajęcia i spotkanie organizacyjne.</div>
                         </div>
                         <div class="milestone-item">
-                            <div class="milestone-date">31.08 • 11:00</div>
-                            <div class="milestone-copy">Rada plenarna otwierająca rok szkolny 2026-2027.</div>
+                            <div class="milestone-date">4.09 • 16:00</div>
+                            <div class="milestone-copy">Zebranie rodziców klas pierwszych - szczegóły w popupie i osobnym komunikacie.</div>
                         </div>
                     </div>
                 </div>
@@ -1713,7 +1902,9 @@
             summarySources: document.getElementById("summarySources"),
             scheduleView: document.getElementById("schedule-view"),
             grid: document.getElementById("grid"),
-            footerMeta: document.getElementById("footer-meta")
+            footerMeta: document.getElementById("footer-meta"),
+            firstClassMeetingPopup: document.getElementById("firstClassMeetingPopup"),
+            firstClassMeetingClose: document.getElementById("firstClassMeetingClose")
         };
 
         const CHANGES = window.ScheduleChanges;
@@ -3137,6 +3328,28 @@
             refs.summarySources.textContent = "Do wtorku, 25 sierpnia 2026, godz. 9:00.";
         }
 
+        function closeFirstClassMeetingPopup() {
+            refs.firstClassMeetingPopup?.setAttribute("hidden", "");
+        }
+
+        function showFirstClassMeetingPopup() {
+            if (!HOLIDAY_MODE || !refs.firstClassMeetingPopup) {
+                return;
+            }
+
+            try {
+                if (sessionStorage.getItem("firstClassMeetingPopupSeen") === "true") {
+                    return;
+                }
+                sessionStorage.setItem("firstClassMeetingPopupSeen", "true");
+            } catch (error) {
+                // Popup can still be shown if sessionStorage is unavailable.
+            }
+
+            refs.firstClassMeetingPopup.removeAttribute("hidden");
+            refs.firstClassMeetingClose?.focus();
+        }
+
         function applyHolidayMode() {
             updateHolidayCountdown();
             refs.footerMeta.textContent = "Tryb wakacyjny • Rok szkolny 2025-2026 został zakończony • Do zobaczenia w sierpniu";
@@ -3298,9 +3511,24 @@
             resetIdleReturnTimer();
         });
 
+        refs.firstClassMeetingClose?.addEventListener("click", closeFirstClassMeetingPopup);
+
+        refs.firstClassMeetingPopup?.addEventListener("click", (event) => {
+            if (event.target === refs.firstClassMeetingPopup) {
+                closeFirstClassMeetingPopup();
+            }
+        });
+
+        document.addEventListener("keydown", (event) => {
+            if (event.key === "Escape") {
+                closeFirstClassMeetingPopup();
+            }
+        });
+
         window.addEventListener("load", async () => {
             startClock();
             await refreshData();
+            showFirstClassMeetingPopup();
             window.setInterval(refreshData, CONFIG.refreshInterval);
         });
 
