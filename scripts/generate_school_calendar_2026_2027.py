@@ -150,7 +150,15 @@ def short_title(text: str, fallback: str) -> str:
 
 
 def parse_time(text: str) -> str | None:
-    match = re.search(r"(\d{1,2}:\d{2})", text)
+    match = re.match(r"^\s*(\d{1,2}:\d{2})", text)
+    if not match:
+        return None
+    hour, minute = match.group(1).split(":")
+    return f"{int(hour):02d}:{minute}"
+
+
+def parse_end_time(text: str) -> str | None:
+    match = re.match(r"^\s*\d{1,2}:\d{2}\s*[-–]\s*(\d{1,2}:\d{2})\s*[-–:]", text)
     if not match:
         return None
     hour, minute = match.group(1).split(":")
@@ -334,6 +342,7 @@ def build_single_day_event(day: date, chunk: str, role_key: str) -> EventDraft:
     if day == date(2027, 6, 28) and "Arkusz XLSX zawiera pod datą 28.06.2027" in description:
         title = "Rada pedagogiczna - wpis wymaga doprecyzowania"
     time_text = parse_time(description)
+    end_time_text = parse_end_time(description)
 
     if (
         time_text
@@ -342,9 +351,15 @@ def build_single_day_event(day: date, chunk: str, role_key: str) -> EventDraft:
     ):
         start = f"{day.strftime('%Y-%m-%d')}T{time_text}:00"
         hour, minute = [int(part) for part in time_text.split(":")]
-        end = (
-            datetime(day.year, day.month, day.day, hour, minute) + timedelta(minutes=90)
-        ).strftime("%Y-%m-%dT%H:%M:%S")
+        start_dt = datetime(day.year, day.month, day.day, hour, minute)
+        if end_time_text:
+            end_hour, end_minute = [int(part) for part in end_time_text.split(":")]
+            end_dt = datetime(day.year, day.month, day.day, end_hour, end_minute)
+            if end_dt <= start_dt:
+                end_dt += timedelta(days=1)
+        else:
+            end_dt = start_dt + timedelta(minutes=90)
+        end = end_dt.strftime("%Y-%m-%dT%H:%M:%S")
         all_day = False
     else:
         start = day.strftime("%Y-%m-%d")
