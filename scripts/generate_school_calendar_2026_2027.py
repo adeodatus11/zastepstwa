@@ -24,14 +24,14 @@ ROLE_AUDIENCE = {
 }
 PLACEHOLDER_LINES = {
     "Zakres wygenerowany z dziennych wpisów XLSX.",
-    "Zakres zgodnie z XLSX: 5.10.2026 - 30.10.2026.",
-    "Zakres zgodnie z XLSX: 2.02.2027 - 26.02.2027.",
+    "Zakres zgodnie z XLSX: 16.11.2026 - 11.12.2026.",
+    "Zakres zgodnie z XLSX: 22.02.2027 - 19.03.2027.",
 }
 KNOWN_RANGE_TITLES = {
-    ("2026-10-05", "2026-10-30"): "Praktyki zawodowe - klasy 3 technikum",
+    ("2026-11-16", "2026-12-11"): "Praktyki zawodowe - klasy 3 technikum",
     ("2026-12-23", "2027-01-03"): "Zimowa przerwa świąteczna",
     ("2027-01-18", "2027-01-31"): "Ferie zimowe",
-    ("2027-02-02", "2027-02-26"): "Praktyki zawodowe - klasy 4 technikum",
+    ("2027-02-22", "2027-03-19"): "Praktyki zawodowe - klasy 4 technikum",
     ("2027-04-01", "2027-04-06"): "Wiosenna przerwa świąteczna",
 }
 SERIES_LINE_PREFIXES = (
@@ -181,6 +181,7 @@ def detect_category(text: str) -> tuple[str, list[str], str]:
     tags: set[str] = set()
     category = "general"
     priority = "normal"
+    is_school_day = "dzień zajęć szkolnych" in lower
 
     if "rada pedagogiczna" in lower or "rada " in lower:
         category = "council"
@@ -213,7 +214,9 @@ def detect_category(text: str) -> tuple[str, list[str], str]:
         if category == "general":
             category = "meeting"
         tags.add("spotkania")
-    if any(token in lower for token in ["wolne", "ferie", "przerwa świąteczna", "święto", "boże ciało", "wielkanoc"]):
+    if not is_school_day and any(
+        token in lower for token in ["wolny", "wolne", "ferie", "przerwa świąteczna", "święto", "boże ciało", "wielkanoc"]
+    ):
         if category == "general":
             category = "holiday"
         tags.add("wolne")
@@ -231,6 +234,14 @@ def detect_category(text: str) -> tuple[str, list[str], str]:
 
 def detect_audience(text: str, role_key: str) -> str:
     lower = text.lower()
+    if "5tfb" in lower and "bs ii" in lower:
+        return "5TFB i BS II stopnia"
+    if "klasy 1-5 technikum" in lower and "klasy 1-3 bs i st." in lower:
+        return "technikum i BS I stopnia"
+    if "klasy 1-4 technikum" in lower and "klasy 1-3 bs i st." in lower:
+        return "technikum i BS I stopnia"
+    if "klasy 1-4 technikum" in lower or "klasy 1-5 technikum" in lower:
+        return "technikum"
     if role_key == "opis4":
         return "dyrekcja"
     if role_key == "opis3":
