@@ -5,8 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Próbna wersja planu lekcji od 1 września 2026 r.</title>
     <style>
-        body { font-family: sans-serif; background: white;
-			   width: 100%; height: 100%; margin: 0; padding: 0; }
+        body {
+            font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background: #f5f7f8;
+            color: #1f2933;
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
         nav {
             background: #f8f8f8; box-shadow: 0 0 2em 0 #a0a0a0; border-right: 1px solid #f0f0f0;
             position: fixed; top: 0; left: 0; width: 17em; height: 100%; padding-left: 1em; padding-right: 2em;
@@ -23,14 +30,22 @@
             > div:nth-child(2) { flex-grow: 1; }
         }
         main {
-            margin-left: 20em; padding-inline: 1em;
+            margin-left: 20em; padding: 1rem 1rem 2rem;
             footer { margin: 1em 0 .5em; font-size: 85%; color: #606060; }
+        }
+        .plan-shell {
+            overflow-x: auto;
+            background: #fff;
+            border: 1px solid #d8dee4;
+            border-radius: .5rem;
+            box-shadow: 0 .4rem 1.2rem rgba(15, 23, 42, .06);
         }
         table.plan {
             display: none;
+            min-width: 72rem;
             width: 100%;
             border-collapse: collapse;
-            caption { font-weight: bold; font-size: 150%; padding: .5em 0; }
+            caption { font-weight: bold; font-size: 150%; padding: .75em 0; }
             td { padding: 5px; }
             tbody { border: 1px solid gray; }
             tbody td { border-width: 1px 0 0 1px; border-style: solid; border-color: lightgray; }
@@ -47,17 +62,55 @@
         }
         .trial-notice {
             max-width: 76rem;
-            margin: 1rem 0 1.25rem;
-            padding: 1rem 1.15rem;
+            margin: 0 0 1rem;
             border-left: 6px solid #b45309;
             background: #fff7ed;
             color: #3f2f1c;
             box-shadow: 0 0.2rem 0.8rem rgba(120, 53, 15, 0.08);
+            border-radius: .45rem;
+            overflow: hidden;
         }
-        .trial-notice h1 {
-            margin: 0 0 .55rem;
-            font-size: 1.45rem;
+        .trial-notice summary {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            padding: 1rem 1.15rem;
+            cursor: pointer;
+            list-style: none;
+        }
+        .trial-notice summary::-webkit-details-marker {
+            display: none;
+        }
+        .trial-notice summary::after {
+            content: "Zwiń";
+            flex: 0 0 auto;
+            border: 1px solid #d6a85d;
+            border-radius: .35rem;
+            background: #fff;
+            color: #78350f;
+            font-size: .9rem;
+            font-weight: 700;
+            padding: .4rem .6rem;
+        }
+        .trial-notice:not([open]) summary::after {
+            content: "Rozwiń";
+        }
+        .trial-notice-title {
+            display: block;
+            font-size: 1.35rem;
+            font-weight: 800;
             line-height: 1.25;
+        }
+        .trial-notice-lead {
+            display: block;
+            margin-top: .2rem;
+            font-size: .95rem;
+            line-height: 1.35;
+        }
+        .trial-notice-body {
+            padding: 0 1.15rem 1rem;
+            border-top: 1px solid rgba(180, 83, 9, .18);
         }
         .trial-notice p {
             margin: .45rem 0;
@@ -90,6 +143,73 @@
             text-decoration: none;
             font-weight: 700;
         }
+        .notice-modal-backdrop {
+            position: fixed;
+            inset: 0;
+            z-index: 2000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+            background: rgba(15, 23, 42, .58);
+        }
+        .notice-modal-backdrop[hidden] {
+            display: none;
+        }
+        .notice-modal {
+            width: min(42rem, 100%);
+            max-height: min(44rem, calc(100vh - 2rem));
+            overflow: auto;
+            border-radius: .75rem;
+            background: #fffdf8;
+            color: #2f261d;
+            border: 1px solid #f0c27a;
+            box-shadow: 0 1.6rem 4rem rgba(15, 23, 42, .28);
+        }
+        .notice-modal-header {
+            padding: 1.1rem 1.25rem .8rem;
+            border-left: 7px solid #b45309;
+            background: #fff7ed;
+        }
+        .notice-modal-kicker {
+            display: block;
+            margin-bottom: .35rem;
+            color: #9a3412;
+            font-size: .78rem;
+            font-weight: 800;
+            letter-spacing: .08em;
+            text-transform: uppercase;
+        }
+        .notice-modal-title {
+            margin: 0;
+            font-size: 1.45rem;
+            line-height: 1.2;
+        }
+        .notice-modal-content {
+            padding: 1rem 1.25rem 1.25rem;
+        }
+        .notice-modal-content p {
+            margin: .55rem 0;
+            line-height: 1.5;
+        }
+        .notice-modal-button {
+            width: 100%;
+            min-height: 3rem;
+            margin-top: .85rem;
+            border: 0;
+            border-radius: .45rem;
+            background: #9a3412;
+            color: #fff;
+            font: inherit;
+            font-weight: 800;
+            cursor: pointer;
+        }
+        .notice-modal-button:hover {
+            background: #7c2d12;
+        }
+        body.modal-open {
+            overflow: hidden;
+        }
         @media (max-width: 900px) {
             body {
                 display: flex;
@@ -116,8 +236,27 @@
             main {
                 margin-left: 0;
                 padding-inline: .75rem;
-                overflow-x: auto;
                 order: 1;
+            }
+            .trial-notice {
+                margin-top: .75rem;
+            }
+            .trial-notice summary {
+                align-items: flex-start;
+                padding: .9rem;
+            }
+            .trial-notice-title {
+                font-size: 1.05rem;
+            }
+            .trial-notice-lead {
+                font-size: .88rem;
+            }
+            .trial-notice-body {
+                padding: 0 .9rem .9rem;
+            }
+            .plan-shell {
+                border-radius: .35rem;
+                margin-bottom: 1rem;
             }
             table.plan {
                 font-size: .85rem;
@@ -127,6 +266,21 @@
     </style>
 </head>
 <body>
+<div class="notice-modal-backdrop" id="trialNoticeModal" role="dialog" aria-modal="true" aria-labelledby="trialNoticeModalTitle">
+    <div class="notice-modal">
+        <div class="notice-modal-header">
+            <span class="notice-modal-kicker">Ważna informacja</span>
+            <h1 class="notice-modal-title" id="trialNoticeModalTitle">Próbna wersja planu lekcji</h1>
+        </div>
+        <div class="notice-modal-content">
+            <p><strong>To jest wersja próbna planu lekcji i może jeszcze ulec zmianie.</strong></p>
+            <p><strong>To nie jest wersja planu przeznaczona dla uczniów i rodziców.</strong> Uczniowie i rodzice otrzymają plan lekcji 1 września.</p>
+            <p>Plan został przygotowany z perspektywy całej szkoły. Nie jest układany pod kogokolwiek, dla kogokolwiek ani przeciwko komukolwiek.</p>
+            <p>Jeżeli z ważnego i niedającego się zmienić powodu plan jest dla Państwa niemożliwy do realizacji, proszę o informację SMS-em bezpośrednio do mnie.</p>
+            <button class="notice-modal-button" type="button" id="trialNoticeAccept">Przeczytałem/am - zamknij komunikat</button>
+        </div>
+    </div>
+</div>
 <nav><div>
     <a href="https://dobryplan.edu.pl" target="_blank"><svg viewBox="0 0 23.655 4.068" xmlns="http://www.w3.org/2000/svg">
         <title>dobryplan</title>
@@ -286,8 +440,14 @@
     <div></div>
 </nav>
 <main>
-<section class="trial-notice" aria-labelledby="trial-plan-title">
-    <h1 id="trial-plan-title">Próbna wersja planu lekcji od 1 września 2026 r.</h1>
+<details class="trial-notice">
+    <summary>
+        <span>
+            <span class="trial-notice-title">Próbna wersja planu lekcji od 1 września 2026 r.</span>
+            <span class="trial-notice-lead">Ważny komunikat dla nauczycieli. Kliknij, aby zwinąć lub rozwinąć treść.</span>
+        </span>
+    </summary>
+    <div class="trial-notice-body">
     <p><strong>To jest wersja próbna planu lekcji i może jeszcze ulec zmianie.</strong> Proszę traktować ją jako materiał roboczy do sprawdzenia organizacji zajęć.</p>
     <p><strong>To nie jest wersja planu przeznaczona dla uczniów i rodziców.</strong> Uczniowie i rodzice otrzymają plan lekcji 1 września.</p>
     <p>Plan został przygotowany z perspektywy całej szkoły, przede wszystkim z uwzględnieniem warunków pracy uczniów i organizacji zajęć. Nie jest układany pod kogokolwiek, dla kogokolwiek ani przeciwko komukolwiek.</p>
@@ -301,7 +461,9 @@
     <div class="trial-actions">
         <a class="trial-link" href="index.html">Wróć do pulpitu nauczyciela</a>
     </div>
-</section>
+    </div>
+</details>
+<div class="plan-shell" aria-label="Tabele planu lekcji">
 <table class="plan" id="1B">
     <caption>1B</caption>
     <thead>
@@ -25728,10 +25890,23 @@
     </tr>
     </tbody>
 </table>
+</div>
 <footer>Plan obowiązuje od: 01.09.2026</footer>
 <script type="text/javascript">
 (function() {
     const plans = document.getElementsByClassName("plan");
+    const modal = document.getElementById("trialNoticeModal");
+    const modalButton = document.getElementById("trialNoticeAccept");
+
+    if (modal && modalButton) {
+        document.body.classList.add("modal-open");
+        modalButton.focus();
+        modalButton.addEventListener("click", () => {
+            modal.hidden = true;
+            document.body.classList.remove("modal-open");
+        });
+    }
+
     function nav() {
         const h = window.location.hash.substring(1) || plans[0]?.id;
         for (let p of plans)
