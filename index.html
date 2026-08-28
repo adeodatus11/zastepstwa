@@ -383,6 +383,71 @@
             margin-top: 22px;
         }
 
+        .sharepoint-panel {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 24px;
+            margin: 0 0 30px;
+            padding: 26px 30px;
+            border-radius: 22px;
+            border: 1px solid rgba(2, 132, 199, 0.22);
+            background:
+                linear-gradient(135deg, rgba(239, 246, 255, 0.98), rgba(236, 253, 245, 0.96));
+            color: #0f3a4a;
+            text-decoration: none;
+            box-shadow: 0 18px 42px rgba(14, 116, 144, 0.1);
+        }
+
+        .sharepoint-panel:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 22px 48px rgba(14, 116, 144, 0.14);
+        }
+
+        .sharepoint-kicker {
+            display: inline-block;
+            margin-bottom: 8px;
+            color: #0369a1;
+            font-size: 0.74rem;
+            font-weight: 900;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+        }
+
+        .sharepoint-title {
+            display: block;
+            margin: 0 0 8px;
+            color: #075985;
+            font-size: 1.55rem;
+            line-height: 1.18;
+            font-weight: 900;
+            text-wrap: balance;
+        }
+
+        .sharepoint-copy {
+            display: block;
+            margin: 0;
+            color: #315769;
+            font-size: 1rem;
+            line-height: 1.55;
+        }
+
+        .sharepoint-button {
+            flex: 0 0 auto;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 50px;
+            padding: 0 22px;
+            border-radius: 999px;
+            background: linear-gradient(135deg, #0284c7, #0d9488);
+            color: #ffffff;
+            font-size: 0.95rem;
+            font-weight: 900;
+            white-space: nowrap;
+            box-shadow: 0 14px 28px rgba(2, 132, 199, 0.22);
+        }
+
         .holiday-hidden {
             display: none !important;
         }
@@ -1447,6 +1512,23 @@
                 line-height: 1.6;
             }
 
+            .sharepoint-panel {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 16px;
+                margin-bottom: 20px;
+                padding: 22px 18px;
+                border-radius: 18px;
+            }
+
+            .sharepoint-title {
+                font-size: 1.28rem;
+            }
+
+            .sharepoint-button {
+                width: 100%;
+            }
+
             .mobile-scroll-cue {
                 display: inline-flex;
                 align-items: center;
@@ -1732,6 +1814,15 @@
                 <a class="notice-link forecast" href="plan-lekcji-probny-2026-09-01.html">Otwórz próbną wersję planu lekcji</a>
             </div>
         </div>
+
+        <a class="sharepoint-panel" href="https://zespolszkolzawodowychnr5.sharepoint.com/sites/rokszkolny20262027/Shared%20Documents/Forms/AllItems.aspx" target="_blank" rel="noreferrer">
+            <span>
+                <span class="sharepoint-kicker">SharePoint szkolny</span>
+                <span class="sharepoint-title">Materiały i dokumenty na rok szkolny 2026/2027</span>
+                <span class="sharepoint-copy">Wejście do szkolnego SharePointa z dokumentami organizacyjnymi.</span>
+            </span>
+            <span class="sharepoint-button">Otwórz SharePoint</span>
+        </a>
 
         <a class="mobile-scroll-cue" href="#announcements-container">Przewiń niżej po komunikaty i ważne linki ↓</a>
 
