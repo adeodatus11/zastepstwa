@@ -363,7 +363,6 @@
             font-size: clamp(2.2rem, 5vw, 4.4rem);
             line-height: 1.02;
             font-weight: 900;
-            text-transform: uppercase;
             letter-spacing: 1px;
             text-wrap: balance;
         }
@@ -1650,7 +1649,7 @@
             <img src="orzeł.png" alt="ZSZ5 Logo" class="logo" onerror="this.style.display='none'">
             <div class="header-text">
                 <h1 class="main-title">INTERAKTYWNY PULPIT NAUCZYCIELA</h1>
-                <div class="sub-title">ZSZ5 we Wrocławiu • wakacyjne informacje organizacyjne</div>
+                <div class="sub-title">ZSZ5 we Wrocławiu • informacje organizacyjne</div>
                 <div id="selection-info" class="selection-info"></div>
                 <div id="clock" class="clock">--:--</div>
             </div>
@@ -1724,11 +1723,10 @@
 
     <div id="dashboard-view">
         <div class="holiday-hero">
-            <div class="holiday-badge">SĄ WAKACJE</div>
-            <h2 class="holiday-headline">Rok szkolny 2025-2026 jest zakończony</h2>
+            <div class="holiday-badge">ROK SZKOLNY 2026/2027</div>
+            <h2 class="holiday-headline">Rozpoczęcie roku szkolnego 2026/2027 już za chwilę</h2>
             <p class="holiday-subtext">
-                Dziękujemy za wspólną pracę. Ten widok pokazuje teraz tylko najważniejsze informacje organizacyjne na koniec wakacji
-                i przygotowanie do startu roku szkolnego 2026-2027.
+                Ten widok pokazuje teraz najważniejsze informacje organizacyjne związane ze startem roku szkolnego 2026/2027.
             </p>
             <div class="holiday-actions">
                 <a class="notice-link forecast" href="plan-lekcji-probny-2026-09-01.html">Otwórz próbną wersję planu lekcji</a>
@@ -1756,12 +1754,31 @@
             <div class="anno-left">
                 <div class="anno-title">Komunikaty organizacyjne</div>
                 <div id="announcement-list">
+                    <article class="anno-btn">
+                        <span class="notice-kicker">Rozpoczęcie roku szkolnego</span>
+                        <h3 class="notice-title">Harmonogram rozpoczęcia roku szkolnego 2026/2027</h3>
+                        <p class="notice-body">Rozpoczęcie roku szkolnego odbędzie się według poniższego harmonogramu.</p>
+                        <div class="meeting-details">
+                            <div class="meeting-detail">
+                                <span class="meeting-label">1 września</span>
+                                <span class="meeting-value">Klasy starsze BS I i technikum - godz. 8:00, sale lekcyjne, spotkania z wychowawcami.</span>
+                            </div>
+                            <div class="meeting-detail">
+                                <span class="meeting-label">1 września</span>
+                                <span class="meeting-value">Klasy pierwsze BS I i technikum - godz. 9:00, boisko szkolne.</span>
+                            </div>
+                            <div class="meeting-detail">
+                                <span class="meeting-label">3 września</span>
+                                <span class="meeting-value">Semestr 1 i 3 BS II stopnia - godz. 14:00, pierwsze zajęcia i spotkanie organizacyjne.</span>
+                            </div>
+                        </div>
+                    </article>
                     <article class="anno-btn is-forecast">
                         <span class="notice-kicker">Plan lekcji</span>
                         <h3 class="notice-title">Próbna wersja planu lekcji od 1 września 2026 r.</h3>
                         <p class="notice-body">Dostępna jest próbna wersja planu lekcji. Plan może jeszcze ulec zmianie, dlatego proszę potraktować go jako materiał roboczy do sprawdzenia organizacji zajęć.</p>
                         <p class="notice-body"><span class="notice-emphasis">To nie jest wersja planu przeznaczona dla uczniów i rodziców.</span> Uczniowie i rodzice otrzymają plan lekcji 1 września.</p>
-                        <p class="notice-body">Plan został przygotowany z perspektywy całej szkoły i uczniów. Nie jest układany pod kogokolwiek, dla kogokolwiek ani przeciwko komukolwiek. Jeżeli występuje ważna i niedająca się zmienić przeszkoda, proszę o SMS bezpośrednio do mnie z konkretną informacją.</p>
+                        <p class="notice-body">Plan został przygotowany z perspektywy całej szkoły i uczniów. <strong>Nie jest układany pod kogokolwiek, dla kogokolwiek ani przeciwko komukolwiek.</strong> Jeżeli występuje ważna i niedająca się zmienić przeszkoda, proszę o SMS bezpośrednio do mnie z konkretną informacją.</p>
                         <div class="notice-actions">
                             <a class="notice-link forecast" href="plan-lekcji-probny-2026-09-01.html">Otwórz próbną wersję planu lekcji</a>
                         </div>
@@ -1834,7 +1851,7 @@
                 <div class="holiday-content">
                     <div class="question-text">Najważniejsze terminy</div>
                     <div class="personal-countdown" id="summaryCounts">Odliczanie...</div>
-                    <div class="summary-sub" id="summarySources">Do wtorku, 25 sierpnia 2026, godz. 9:00.</div>
+                    <div class="summary-sub" id="summarySources">Do wtorku, 1 września 2026, godz. 8:00.</div>
                     <div class="milestone-list">
                         <div class="milestone-item">
                             <div class="milestone-date">1.09 • 8:00</div>
@@ -1941,7 +1958,7 @@
 
         const CHANGES = window.ScheduleChanges;
         const HOLIDAY_MODE = true;
-        const HOLIDAY_RETURN_AT = new Date("2026-08-25T09:00:00+02:00");
+        const HOLIDAY_RETURN_AT = new Date("2026-09-01T08:00:00+02:00");
 
         function splitCsv(value) {
             return String(value || "")
@@ -3344,9 +3361,9 @@
         function updateHolidayCountdown() {
             const diffMs = HOLIDAY_RETURN_AT.getTime() - Date.now();
             if (diffMs <= 0) {
-                refs.summaryCounts.innerHTML = `<div class="countdown-finished">Wracamy dziś o 9:00</div>`;
+                refs.summaryCounts.innerHTML = `<div class="countdown-finished">Rozpoczynamy rok szkolny</div>`;
                 STATE.holidayCountdownSignature = "";
-                refs.summarySources.textContent = "Wtorek, 25 sierpnia 2026, godz. 9:00.";
+                refs.summarySources.textContent = "Wtorek, 1 września 2026, godz. 8:00.";
                 return;
             }
 
@@ -3357,7 +3374,7 @@
             const seconds = totalSeconds % 60;
 
             renderHolidayCountdown({ days, hours, minutes, seconds });
-            refs.summarySources.textContent = "Do wtorku, 25 sierpnia 2026, godz. 9:00.";
+            refs.summarySources.textContent = "Do wtorku, 1 września 2026, godz. 8:00.";
         }
 
         function closeFirstClassMeetingPopup() {
@@ -3384,13 +3401,13 @@
 
         function applyHolidayMode() {
             updateHolidayCountdown();
-            refs.footerMeta.textContent = "Tryb wakacyjny • Rok szkolny 2025-2026 został zakończony • Do zobaczenia w sierpniu";
-            refs.desktopStatus.textContent = "Tryb wakacyjny";
+            refs.footerMeta.textContent = "Start roku szkolnego 2026/2027 • najważniejsze informacje organizacyjne";
+            refs.desktopStatus.textContent = "Start roku szkolnego";
             refs.desktopStatus.style.color = "#4ade80";
-            refs.mobileStatus.textContent = "Tryb wakacyjny";
+            refs.mobileStatus.textContent = "Start roku szkolnego";
             refs.mobileStatus.style.color = "#4ade80";
-            refs.dutyBarContent.innerHTML = `<span class="duty-empty-msg">Tryb wakacyjny - dyżury wrócą w sierpniu.</span>`;
-            log("Tryb wakacyjny aktywny");
+            refs.dutyBarContent.innerHTML = `<span class="duty-empty-msg">Informacje organizacyjne - dyżury wrócą po uruchomieniu planu.</span>`;
+            log("Widok startu roku szkolnego aktywny");
         }
 
         function updateMeta() {
@@ -3456,9 +3473,9 @@
 
         function updateLessonStatus() {
             if (HOLIDAY_MODE) {
-                refs.desktopStatus.textContent = "Tryb wakacyjny";
+                refs.desktopStatus.textContent = "Start roku szkolnego";
                 refs.desktopStatus.style.color = "#4ade80";
-                refs.mobileStatus.textContent = "Tryb wakacyjny";
+                refs.mobileStatus.textContent = "Start roku szkolnego";
                 refs.mobileStatus.style.color = "#4ade80";
                 updateHolidayCountdown();
                 return;
@@ -3560,7 +3577,6 @@
         window.addEventListener("load", async () => {
             startClock();
             await refreshData();
-            showFirstClassMeetingPopup();
             window.setInterval(refreshData, CONFIG.refreshInterval);
         });
 

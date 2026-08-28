@@ -166,6 +166,9 @@
             border: 1px solid #f0c27a;
             box-shadow: 0 1.6rem 4rem rgba(15, 23, 42, .28);
         }
+        .notice-modal:focus {
+            outline: none;
+        }
         .notice-modal-header {
             padding: 1.1rem 1.25rem .8rem;
             border-left: 7px solid #b45309;
@@ -191,6 +194,14 @@
         .notice-modal-content p {
             margin: .55rem 0;
             line-height: 1.5;
+        }
+        .notice-modal-content ul {
+            margin: .65rem 0 .65rem 1.25rem;
+            padding: 0;
+        }
+        .notice-modal-content li {
+            margin: .35rem 0;
+            line-height: 1.45;
         }
         .notice-modal-button {
             width: 100%;
@@ -267,16 +278,22 @@
 </head>
 <body>
 <div class="notice-modal-backdrop" id="trialNoticeModal" role="dialog" aria-modal="true" aria-labelledby="trialNoticeModalTitle">
-    <div class="notice-modal">
+    <div class="notice-modal" tabindex="-1">
         <div class="notice-modal-header">
             <span class="notice-modal-kicker">Ważna informacja</span>
             <h1 class="notice-modal-title" id="trialNoticeModalTitle">Próbna wersja planu lekcji</h1>
         </div>
         <div class="notice-modal-content">
-            <p><strong>To jest wersja próbna planu lekcji i może jeszcze ulec zmianie.</strong></p>
+            <p><strong>To jest wersja próbna planu lekcji i może jeszcze ulec zmianie.</strong> Proszę traktować ją jako materiał roboczy do sprawdzenia organizacji zajęć.</p>
             <p><strong>To nie jest wersja planu przeznaczona dla uczniów i rodziców.</strong> Uczniowie i rodzice otrzymają plan lekcji 1 września.</p>
-            <p>Plan został przygotowany z perspektywy całej szkoły. Nie jest układany pod kogokolwiek, dla kogokolwiek ani przeciwko komukolwiek.</p>
-            <p>Jeżeli z ważnego i niedającego się zmienić powodu plan jest dla Państwa niemożliwy do realizacji, proszę o informację SMS-em bezpośrednio do mnie.</p>
+            <p>Plan został przygotowany z perspektywy całej szkoły, przede wszystkim z uwzględnieniem warunków pracy uczniów i organizacji zajęć. <strong>Nie jest układany pod kogokolwiek, dla kogokolwiek ani przeciwko komukolwiek.</strong></p>
+            <p>Jeżeli z ważnego i niedającego się zmienić powodu plan jest dla Państwa niemożliwy do realizacji, proszę o informację SMS-em bezpośrednio do mnie. Spróbuję wprowadzić korektę, o ile będzie to możliwe, ale nie mogę zagwarantować, że każdą zmianę da się uwzględnić.</p>
+            <ul>
+                <li>Proszę zgłaszać wyłącznie przeszkody rzeczywiście nie do pokonania, ponieważ każda korekta może wpływać na plan innych nauczycieli, oddziałów i pracowni.</li>
+                <li>Okienka są częścią organizacji pracy szkoły: mogą służyć pracy wychowawczej, kontaktom z rodzicami, bieżącej dokumentacji oraz dyspozycyjności do zastępstw.</li>
+                <li>Wyjątkiem organizacyjnym pozostaje pracownia fryzjerska: przy dużej liczbie grup i ograniczonej liczbie pracowni część zajęć musi odbywać się w godzinach popołudniowych.</li>
+            </ul>
+            <p><strong>Proszę o życzliwe spojrzenie na plan oraz o zgłaszanie tylko takich spraw, które faktycznie wymagają korekty.</strong></p>
             <button class="notice-modal-button" type="button" id="trialNoticeAccept">Przeczytałem/am - zamknij komunikat</button>
         </div>
     </div>
@@ -450,7 +467,7 @@
     <div class="trial-notice-body">
     <p><strong>To jest wersja próbna planu lekcji i może jeszcze ulec zmianie.</strong> Proszę traktować ją jako materiał roboczy do sprawdzenia organizacji zajęć.</p>
     <p><strong>To nie jest wersja planu przeznaczona dla uczniów i rodziców.</strong> Uczniowie i rodzice otrzymają plan lekcji 1 września.</p>
-    <p>Plan został przygotowany z perspektywy całej szkoły, przede wszystkim z uwzględnieniem warunków pracy uczniów i organizacji zajęć. Nie jest układany pod kogokolwiek, dla kogokolwiek ani przeciwko komukolwiek.</p>
+    <p>Plan został przygotowany z perspektywy całej szkoły, przede wszystkim z uwzględnieniem warunków pracy uczniów i organizacji zajęć. <strong>Nie jest układany pod kogokolwiek, dla kogokolwiek ani przeciwko komukolwiek.</strong></p>
     <p>Jeżeli z ważnego i niedającego się zmienić powodu plan jest dla Państwa niemożliwy do realizacji, proszę o informację SMS-em bezpośrednio do mnie. Spróbuję wprowadzić korektę, o ile będzie to możliwe, ale nie mogę zagwarantować, że każdą zmianę da się uwzględnić.</p>
     <ul>
         <li>Proszę zgłaszać wyłącznie przeszkody rzeczywiście nie do pokonania, ponieważ każda korekta może wpływać na plan innych nauczycieli, oddziałów i pracowni.</li>
@@ -25896,11 +25913,12 @@
 (function() {
     const plans = document.getElementsByClassName("plan");
     const modal = document.getElementById("trialNoticeModal");
+    const modalCard = modal?.querySelector(".notice-modal");
     const modalButton = document.getElementById("trialNoticeAccept");
 
     if (modal && modalButton) {
         document.body.classList.add("modal-open");
-        modalButton.focus();
+        modalCard?.focus({ preventScroll: true });
         modalButton.addEventListener("click", () => {
             modal.hidden = true;
             document.body.classList.remove("modal-open");
