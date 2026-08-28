@@ -377,6 +377,13 @@
             text-wrap: pretty;
         }
 
+        .holiday-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 22px;
+        }
+
         .holiday-hidden {
             display: none !important;
         }
@@ -1723,6 +1730,9 @@
                 Dziękujemy za wspólną pracę. Ten widok pokazuje teraz tylko najważniejsze informacje organizacyjne na koniec wakacji
                 i przygotowanie do startu roku szkolnego 2026-2027.
             </p>
+            <div class="holiday-actions">
+                <a class="notice-link forecast" href="plan-lekcji-probny-2026-09-01.html">Otwórz próbną wersję planu lekcji</a>
+            </div>
         </div>
 
         <a class="mobile-scroll-cue" href="#announcements-container">Przewiń niżej po komunikaty i ważne linki ↓</a>
@@ -1746,6 +1756,16 @@
             <div class="anno-left">
                 <div class="anno-title">Komunikaty organizacyjne</div>
                 <div id="announcement-list">
+                    <article class="anno-btn is-forecast">
+                        <span class="notice-kicker">Plan lekcji</span>
+                        <h3 class="notice-title">Próbna wersja planu lekcji od 1 września 2026 r.</h3>
+                        <p class="notice-body">Dostępna jest próbna wersja planu lekcji. Plan może jeszcze ulec zmianie, dlatego proszę potraktować go jako materiał roboczy do sprawdzenia organizacji zajęć.</p>
+                        <p class="notice-body"><span class="notice-emphasis">To nie jest wersja planu przeznaczona dla uczniów i rodziców.</span> Uczniowie i rodzice otrzymają plan lekcji 1 września.</p>
+                        <p class="notice-body">Plan został przygotowany z perspektywy całej szkoły i uczniów. Nie jest układany pod kogokolwiek, dla kogokolwiek ani przeciwko komukolwiek. Jeżeli występuje ważna i niedająca się zmienić przeszkoda, proszę o SMS bezpośrednio do mnie z konkretną informacją.</p>
+                        <div class="notice-actions">
+                            <a class="notice-link forecast" href="plan-lekcji-probny-2026-09-01.html">Otwórz próbną wersję planu lekcji</a>
+                        </div>
+                    </article>
                     <article class="anno-btn">
                         <span class="notice-kicker">Nauczyciele</span>
                         <h3 class="notice-title">25-27 sierpnia: praca w szkole i egzaminy poprawkowe</h3>
@@ -1845,6 +1865,7 @@
     <footer>
         <span id="footer-meta">Ładowanie danych...</span>
         <span> • <a href="https://www.zsz5.edupage.org" target="_blank" rel="noreferrer">www.zsz5.edupage.org</a></span>
+        <span> • Próbny plan: <a href="plan-lekcji-probny-2026-09-01.html">plan-lekcji-probny-2026-09-01.html</a></span>
         <span> • Widok TV: <a href="tv.html">tv.html</a></span>
     </footer>
 
