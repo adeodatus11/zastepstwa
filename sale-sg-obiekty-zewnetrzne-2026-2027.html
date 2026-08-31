@@ -1,353 +1,1646 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="pl">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Sale sg1-sg8 i obiekty zewnętrzne 2026/2027</title>
-  <style>
-    :root { --ink:#172033; --muted:#5d687a; --line:#d9dee8; --soft:#f5f7fb; --head:#1f2937; --accent:#b45309; }
-    * { box-sizing: border-box; }
-    body { margin:0; font-family:"Segoe UI", Roboto, Arial, sans-serif; color:var(--ink); background:#f3f5f8; }
-    header { background:#fff; border-bottom:1px solid var(--line); padding:22px clamp(16px, 4vw, 48px); }
-    h1 { margin:0; font-size:clamp(24px, 3vw, 36px); line-height:1.15; letter-spacing:0; }
-    .lead { margin:.45rem 0 0; color:var(--muted); max-width:980px; line-height:1.45; }
-    main { padding:24px clamp(12px, 3vw, 40px) 42px; }
-    .section { margin:0 0 28px; }
-    h2 { margin:0 0 12px; font-size:22px; }
-    .tabs { display:flex; flex-wrap:wrap; gap:8px; margin:0 0 14px; }
-    .tabs a { color:#0f3f74; background:#fff; border:1px solid var(--line); border-radius:6px; padding:7px 10px; text-decoration:none; font-weight:700; }
-    .table-wrap { overflow:auto; background:#fff; border:1px solid var(--line); border-radius:8px; box-shadow:0 8px 24px rgba(15,23,42,.06); }
-    table { width:100%; border-collapse:collapse; min-width:860px; }
-    th { background:var(--head); color:#fff; text-align:left; font-weight:800; }
-    th, td { border:1px solid var(--line); padding:9px 10px; vertical-align:top; line-height:1.32; }
-    tbody tr:nth-child(even) { background:var(--soft); }
-    .room-title { margin:24px 0 8px; padding-left:10px; border-left:6px solid var(--accent); }
-    .room-title:first-of-type { margin-top:0; }
-    .num { text-align:center; white-space:nowrap; font-weight:700; }
-    .time { white-space:nowrap; }
-    .group { font-weight:700; }
-    .teacher { font-weight:700; color:#26364d; }
-    .empty { color:#7a8494; font-style:italic; }
-    .external table { min-width:980px; }
-    .note { margin-top:12px; padding:12px 14px; background:#fff7ed; border-left:6px solid var(--accent); border-radius:6px; line-height:1.5; }
-    .back { display:inline-block; margin-top:4px; color:#0f3f74; font-weight:700; text-decoration:none; }
-    @media (max-width:700px) { th, td { padding:8px; } .lead { font-size:15px; } }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sale sg1-sg8 i obiekty zewnętrzne 2026/2027</title>
+    <style>
+        body {
+            font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background: #f5f7f8;
+            color: #1f2933;
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+        nav {
+            background: #f8f8f8; box-shadow: 0 0 2em 0 #a0a0a0; border-right: 1px solid #f0f0f0;
+            position: fixed; top: 0; left: 0; width: 17em; height: 100%; padding-left: 1em; padding-right: 2em;
+            text-align: justify; overflow: auto; display: flex; flex-direction: column;
+
+            svg { display: block; margin: 2em auto 2.5em; width: 15em; }
+            .school-master-logo { display: block; width: 15em; height: auto; margin: 0 auto 2em; }
+            .h { font-weight: bold; margin: 2em 0 .5em 1em; }
+            a.l { display: inline-block; text-decoration: none; color: blue;
+                margin: 2px; padding: 5px; min-width: 2em;
+                border: 1px solid lightgray; border-radius: 5px; background: white;
+                text-overflow: ellipsis; overflow: hidden; }
+            a.l:visited { color: blue; }
+            > div:nth-child(2) { flex-grow: 1; }
+        }
+        main {
+            margin-left: 20em; padding: 1rem 1rem 2rem;
+            footer { margin: 1em 0 .5em; font-size: 85%; color: #606060; }
+        }
+        .plan-shell {
+            overflow-x: auto;
+            background: #fff;
+            border: 1px solid #d8dee4;
+            border-radius: .5rem;
+            box-shadow: 0 .4rem 1.2rem rgba(15, 23, 42, .06);
+        }
+        table.plan {
+            display: none;
+            min-width: 72rem;
+            width: 100%;
+            border-collapse: collapse;
+            caption { font-weight: bold; font-size: 150%; padding: .75em 0; }
+            td { padding: 5px; }
+            tbody { border: 1px solid gray; }
+            tbody td { border-width: 1px 0 0 1px; border-style: solid; border-color: lightgray; }
+            thead td { font-weight: bold; text-align: center; }
+            thead td:nth-child(1) { width: 1em; }
+            thead td:nth-child(2) { width: 7em; }
+            td.r { text-align: right; }
+            td.t { border-top-color: gray; }
+            td.l { border-left-color: gray; }
+            td.n { border: 0; }
+            tr.d td { background: #fffff8; }
+            a { text-decoration: none; }
+            div.g { font-size: 80%; padding-left: 1em; padding-top: .25em; }
+        }
+        table.external-plan { min-width: 64rem; }
+        table.external-plan thead td:nth-child(1) { width: 10rem; }
+        table.external-plan thead td:nth-child(2) { width: auto; }
+        table.external-plan td { line-height: 1.35; vertical-align: top; }
+        .page-title {
+            max-width: 76rem;
+            margin: 0 0 1rem;
+            border-left: 6px solid #b45309;
+            background: #fff7ed;
+            color: #3f2f1c;
+            border-radius: .45rem;
+            padding: .9rem 1.15rem;
+            box-shadow: 0 0.2rem 0.8rem rgba(120, 53, 15, 0.08);
+        }
+        .page-title h1 { margin: 0; font-size: 1.35rem; line-height: 1.25; }
+        .page-title p { margin: .3rem 0 0; line-height: 1.4; }
+        @media (max-width: 900px) {
+            body { display: flex; flex-direction: column; }
+            nav {
+                position: static; width: auto; height: auto; padding: .75rem;
+                box-shadow: none; border-right: 0; border-bottom: 1px solid #e5e7eb; order: 2;
+            }
+            nav svg { width: 10rem; margin: .5rem auto 1rem; }
+            nav .school-master-logo { width: min(18rem, 92vw); margin-bottom: 1rem; }
+            main { margin-left: 0; padding-inline: .75rem; order: 1; }
+            .plan-shell { border-radius: .35rem; margin-bottom: 1rem; }
+            table.plan { font-size: .85rem; min-width: 62rem; }
+        }
+    </style>
 </head>
 <body>
-  <header>
+<nav><div>
+    <a href="https://dobryplan.edu.pl" target="_blank"><svg viewBox="0 0 23.655 4.068" xmlns="http://www.w3.org/2000/svg">
+        <title>dobryplan</title>
+        <g transform="translate(-58.647 -123.81)" fill="black" stroke-width=".35278">
+            <path d="m61.072 127.03h-0.74414v-0.24253c-0.12678 0.10473-0.24805 0.1819-0.35829 0.23151-0.11024 0.0551-0.24254 0.0772-0.38585 0.0772-0.28663 0-0.50712-0.11025-0.678-0.33073-0.17639-0.21498-0.25907-0.50712-0.25907-0.87644 0-0.19843 0.02756-0.36931 0.08819-0.52365 0.05512-0.14883 0.1378-0.28112 0.23151-0.39136 0.09371-0.10473 0.20946-0.1819 0.34727-0.24254 0.12678-0.0551 0.26458-0.0827 0.39688-0.0827 0.1378 0 0.25356 0.0165 0.34175 0.0441 0.08819 0.0276 0.1819 0.0661 0.27561 0.11024v-0.98667h0.74414zm-0.74414-0.63941v-1.141c-0.04961-0.0165-0.10473-0.0331-0.16536-0.0441-0.06063-0.011-0.11024-0.0165-0.15985-0.0165-0.19844 0-0.34175 0.0606-0.44097 0.18741-0.09922 0.11576-0.14332 0.28664-0.14332 0.50712 0 0.226 0.03859 0.39137 0.11576 0.49058 0.07717 0.10473 0.20395 0.15434 0.38034 0.15434 0.06615 0 0.1378-0.011 0.21497-0.0386 0.07166-0.022 0.1378-0.0551 0.19844-0.0992z"/>
+            <path d="m64.147 125.87c0 0.38034-0.11024 0.6835-0.33624 0.90399-0.22049 0.22049-0.53468 0.33073-0.93707 0.33073s-0.71107-0.11024-0.93707-0.33073c-0.22049-0.22049-0.33624-0.52365-0.33624-0.90399 0-0.38585 0.11576-0.68902 0.34175-0.904 0.22049-0.22048 0.52917-0.33072 0.93155-0.33072s0.71658 0.11024 0.94258 0.33072c0.22049 0.22049 0.33073 0.51815 0.33073 0.904zm-0.91502 0.56224c0.0441-0.0551 0.08268-0.12678 0.10473-0.21498 0.02756-0.0772 0.03858-0.19843 0.03858-0.34175 0-0.1378-0.01102-0.25356-0.03858-0.34727-0.02205-0.0882-0.06063-0.16536-0.09922-0.22048-0.04961-0.0551-0.09922-0.0937-0.15985-0.11576-0.06615-0.0276-0.13229-0.0331-0.20395-0.0331-0.07166 0-0.13229 6e-3 -0.18741 0.0221-0.06063 0.022-0.11024 0.0606-0.15985 0.12127-0.04961 0.0496-0.08819 0.12678-0.11024 0.22048-0.02756 0.0882-0.03859 0.20946-0.03859 0.35278 0 0.12127 0.0055 0.23151 0.03307 0.32522 0.02205 0.0937 0.06063 0.17087 0.09922 0.226 0.04961 0.0551 0.09922 0.0937 0.16536 0.11575 0.05512 0.0276 0.12678 0.0386 0.20395 0.0386 0.06615 0 0.13229-0.011 0.19844-0.0331 0.05512-0.022 0.11024-0.0606 0.15434-0.11575z"/>
+            <path d="m67.101 125.84c0 0.3638-0.09922 0.66145-0.30317 0.89296-0.19844 0.23151-0.452 0.34176-0.75516 0.34176-0.13229 0-0.24805-0.011-0.34175-0.0386-0.09922-0.0276-0.19292-0.0661-0.28112-0.12127l-0.02756 0.11576h-0.71107v-3.2136h0.73863v1.1355c0.11576-0.0882 0.23151-0.16537 0.35278-0.22049 0.11576-0.0551 0.25907-0.0827 0.4079-0.0827 0.29766 0 0.52366 0.10473 0.68351 0.31419 0.15434 0.21498 0.23702 0.50712 0.23702 0.87644zm-0.76619 0.011c0-0.20395-0.03859-0.3638-0.10473-0.47405-0.07166-0.11024-0.19844-0.16536-0.38034-0.16536-0.07166 0-0.14332 6e-3 -0.21497 0.0276-0.07717 0.0221-0.14883 0.0551-0.21497 0.0937v1.1686c0.05512 0.0165 0.10473 0.0276 0.15434 0.0386 0.04961 6e-3 0.10473 6e-3 0.17088 6e-3 0.19844 0 0.34727-0.0551 0.44097-0.17088 0.09922-0.11575 0.14883-0.28663 0.14883-0.52365z"/>
+            <path d="m69.321 125.42h-0.07166c-0.02756-0.011-0.07717-0.022-0.14883-0.022-0.07166-0.011-0.12678-0.011-0.17639-0.011-0.10473 0-0.19844 6e-3 -0.28112 0.0221-0.08268 0.011-0.17088 0.0331-0.26458 0.0661v1.5544h-0.73863v-2.3206h0.73863v0.34176c0.16536-0.13781 0.30868-0.23703 0.42995-0.27561 0.12127-0.0496 0.23151-0.0717 0.33073-0.0717h0.09371c0.03307 0 0.06063 6e-3 0.08819 6e-3z"/>
+            <path d="m70.786 126.21 0.52917-1.5048h0.76619l-1.2898 3.175h-0.80478l0.36932-0.8654-0.90399-2.3096h0.78272z"/>
+            <path d="m74.557 125.85c0 0.18741-0.03307 0.35829-0.08268 0.51263-0.05512 0.15434-0.13229 0.28663-0.226 0.39687-0.08819 0.0992-0.19844 0.17639-0.32522 0.23151-0.12127 0.0606-0.25356 0.0827-0.38585 0.0827-0.12678 0-0.23151-0.011-0.32522-0.0331-0.09922-0.0276-0.20395-0.0716-0.29766-0.12678v0.97014h-0.39136v-3.164h0.39136v0.24254c0.09922-0.0827 0.21497-0.15434 0.34727-0.21497 0.12678-0.0606 0.26458-0.0882 0.4079-0.0882 0.28112 0 0.49609 0.10474 0.65595 0.3142 0.15434 0.20946 0.23151 0.5016 0.23151 0.87643zm-0.40239 0.011c0-0.28112-0.04961-0.48507-0.14332-0.62838-0.09371-0.13229-0.24254-0.20395-0.43546-0.20395-0.11024 0-0.226 0.022-0.34175 0.0717-0.11024 0.0496-0.22049 0.11575-0.3197 0.18741v1.3119c0.11024 0.0496 0.20395 0.0827 0.28112 0.0992 0.07717 0.022 0.17088 0.0276 0.2701 0.0276 0.22049 0 0.38585-0.0717 0.50712-0.21497 0.12127-0.14883 0.1819-0.36932 0.1819-0.65044z"/>
+            <path d="m75.558 127.03h-0.39136v-3.2136h0.39136z"/>
+            <path d="m78.118 127.03h-0.39136v-0.24805c-0.03307 0.0276-0.07717 0.0606-0.1378 0.10473-0.05512 0.0441-0.11576 0.0717-0.17088 0.0992-0.06063 0.0331-0.1378 0.0551-0.226 0.0772-0.07717 0.022-0.1819 0.0331-0.29214 0.0331-0.20946 0-0.38585-0.0717-0.52917-0.20395-0.14883-0.14332-0.22049-0.3142-0.22049-0.52917 0-0.17639 0.03858-0.31419 0.11576-0.42444 0.07717-0.11024 0.1819-0.19292 0.32522-0.25356 0.1378-0.0661 0.30868-0.10473 0.50161-0.12677 0.19844-0.022 0.4079-0.0386 0.6339-0.0496v-0.0606c0-0.0882-0.01102-0.15985-0.0441-0.22048-0.03307-0.0551-0.07166-0.10473-0.13229-0.13781-0.05512-0.0276-0.12127-0.0551-0.19844-0.0606-0.07717-0.0165-0.15985-0.0165-0.24254-0.0165-0.09922 0-0.21497 0.011-0.34175 0.0386-0.12678 0.0276-0.25356 0.0661-0.38585 0.11575h-0.02205v-0.39136c0.07717-0.022 0.1819-0.0441 0.32522-0.0717 0.14332-0.022 0.28663-0.0386 0.42444-0.0386 0.16536 0 0.30317 0.0165 0.42995 0.0386 0.11576 0.0331 0.22049 0.0772 0.30868 0.14332 0.08819 0.0606 0.15434 0.14331 0.19844 0.24253 0.0441 0.10473 0.07166 0.226 0.07166 0.37483zm-0.39136-0.56775v-0.64492c-0.11576 0.011-0.25907 0.0165-0.41892 0.0331-0.15434 0.0165-0.28112 0.0386-0.38034 0.0606-0.11024 0.0331-0.19844 0.0827-0.2701 0.14883-0.06615 0.0661-0.10473 0.15985-0.10473 0.27561 0 0.13229 0.03859 0.23151 0.12127 0.30317 0.07717 0.0606 0.20395 0.0937 0.36932 0.0937 0.13229 0 0.25907-0.022 0.36931-0.0772 0.11576-0.0551 0.22049-0.11575 0.31419-0.19292z"/>
+            <path d="m80.79 127.03h-0.38585v-1.3119c0-0.10473-0.0055-0.20946-0.01654-0.30317-0.01654-0.0937-0.03858-0.16537-0.07166-0.21497-0.03858-0.0606-0.08268-0.0992-0.14883-0.1323-0.06615-0.022-0.14883-0.0386-0.25356-0.0386s-0.21497 0.0276-0.33073 0.0772c-0.11576 0.0551-0.226 0.12127-0.33073 0.19844v1.7253h-0.39136v-2.3096h0.39136v0.25907c0.11576-0.0992 0.24254-0.1819 0.36932-0.23702 0.13229-0.0551 0.2701-0.0827 0.40239-0.0827 0.25356 0 0.44097 0.0772 0.57326 0.226 0.12678 0.14883 0.19292 0.3638 0.19292 0.64492z"/>
+            <path d="m82.302 127.03h-0.7717v-0.81029h0.7717z"/>
+        </g>
+    </svg></a>
+    <img class="school-master-logo" src="orzel-szkola-mistrzow.png" alt="ZSZ5 we Wrocławiu - Szkoła Mistrzów">
+    <div class="h">Sale szkolne</div>
+    <a class="l" href="#sg1">sg1</a>
+    <a class="l" href="#sg2">sg2</a>
+    <a class="l" href="#sg3">sg3</a>
+    <a class="l" href="#sg4">sg4</a>
+    <a class="l" href="#sg5">sg5</a>
+    <a class="l" href="#sg6">sg6</a>
+    <a class="l" href="#sg7">sg7</a>
+    <a class="l" href="#sg8">sg8</a>
+    <div class="h">Obiekty zewnętrzne</div>
+    <a class="l" href="#obiekty-zewnetrzne">zestawienie</a>
+    </div>
+    <div></div>
+</nav>
+<main>
+<div class="page-title">
     <h1>Sale sg1-sg8 i obiekty zewnętrzne</h1>
-    <p class="lead">Zestawienie wygenerowane z planu roboczego 2 na rok szkolny 2026/2027. Pierwsza część pokazuje tylko sale szkolne sg1-sg8, druga część zawiera przekazane zestawienie zajęć w obiektach zewnętrznych.</p>
-    <a class="back" href="index.html">Wróć do strony nauczyciela</a>
-  </header>
-  <main>
-    <section class="section">
-      <h2>Plan sal sg1-sg8</h2>
-      <div class="tabs">
-        <a href="#sg1">sg1</a>
-        <a href="#sg2">sg2</a>
-        <a href="#sg3">sg3</a>
-        <a href="#sg4">sg4</a>
-        <a href="#sg5">sg5</a>
-        <a href="#sg6">sg6</a>
-        <a href="#sg7">sg7</a>
-        <a href="#sg8">sg8</a>
-      </div>
-      <h3 class="room-title" id="sg1">sg1</h3>
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr><th>Dzień</th><th>Lekcja</th><th>Godzina</th><th>Zajęcia</th><th>Oddział / grupa</th><th>Nauczyciel</th></tr>
-          </thead>
-          <tbody>
-            <tr><td>Wtorek</td><td class="num">1</td><td class="time">8:00 – 8:45</td><td>Wychowanie fizyczne</td><td class="group">3K (ch)</td><td class="teacher">KW</td></tr>
-            <tr><td>Wtorek</td><td class="num">2</td><td class="time">8:50 – 9:35</td><td>Wychowanie fizyczne</td><td class="group">3K (ch)</td><td class="teacher">KW</td></tr>
-            <tr><td>Wtorek</td><td class="num">3</td><td class="time">9:40 – 10:25</td><td>Wychowanie fizyczne</td><td class="group">3K (ch)</td><td class="teacher">KW</td></tr>
-            <tr><td>Wtorek</td><td class="num">7</td><td class="time">13:15 – 14:00</td><td>Wychowanie fizyczne</td><td class="group">1TFA (gr2)</td><td class="teacher">DK</td></tr>
-            <tr><td>Wtorek</td><td class="num">8</td><td class="time">14:05 – 14:50</td><td>Wychowanie fizyczne</td><td class="group">1TFA (gr2)</td><td class="teacher">DK</td></tr>
-            <tr><td>Wtorek</td><td class="num">9</td><td class="time">14:55 – 15:40</td><td>Wychowanie fizyczne</td><td class="group">1TFA (gr2)</td><td class="teacher">DK</td></tr>
-            <tr><td>Środa</td><td class="num">1</td><td class="time">8:00 – 8:45</td><td>Wychowanie fizyczne</td><td class="group">1TH (ch)</td><td class="teacher">KW</td></tr>
-            <tr><td>Środa</td><td class="num">2</td><td class="time">8:50 – 9:35</td><td>Wychowanie fizyczne</td><td class="group">1TH (ch)</td><td class="teacher">KW</td></tr>
-            <tr><td>Środa</td><td class="num">3</td><td class="time">9:40 – 10:25</td><td>Wychowanie fizyczne</td><td class="group">1TH (ch)</td><td class="teacher">KW</td></tr>
-            <tr><td>Środa</td><td class="num">4</td><td class="time">10:35 – 11:20</td><td>Wychowanie fizyczne</td><td class="group">2K (ch)</td><td class="teacher">KW</td></tr>
-            <tr><td>Środa</td><td class="num">5</td><td class="time">11:25 – 12:10</td><td>Wychowanie fizyczne</td><td class="group">2K (ch)</td><td class="teacher">KW</td></tr>
-            <tr><td>Środa</td><td class="num">6</td><td class="time">12:25 – 13:10</td><td>Wychowanie fizyczne</td><td class="group">2K (ch)</td><td class="teacher">KW</td></tr>
-            <tr><td>Czwartek</td><td class="num">1</td><td class="time">8:00 – 8:45</td><td>Wychowanie fizyczne</td><td class="group">1WB (gr2)</td><td class="teacher">MC</td></tr>
-            <tr><td>Czwartek</td><td class="num">2</td><td class="time">8:50 – 9:35</td><td>Wychowanie fizyczne</td><td class="group">1WB (gr2)</td><td class="teacher">MC</td></tr>
-            <tr><td>Czwartek</td><td class="num">3</td><td class="time">9:40 – 10:25</td><td>Wychowanie fizyczne</td><td class="group">1WB (gr2)</td><td class="teacher">MC</td></tr>
-            <tr><td>Czwartek</td><td class="num">4</td><td class="time">10:35 – 11:20</td><td>Wychowanie fizyczne</td><td class="group">1S (ch)</td><td class="teacher">MC</td></tr>
-            <tr><td>Czwartek</td><td class="num">5</td><td class="time">11:25 – 12:10</td><td>Wychowanie fizyczne</td><td class="group">1S (ch)</td><td class="teacher">MC</td></tr>
-            <tr><td>Czwartek</td><td class="num">6</td><td class="time">12:25 – 13:10</td><td>Wychowanie fizyczne</td><td class="group">1S (ch)</td><td class="teacher">MC</td></tr>
-            <tr><td>Czwartek</td><td class="num">7</td><td class="time">13:15 – 14:00</td><td>Wychowanie fizyczne</td><td class="group">2CB</td><td class="teacher">AJ</td></tr>
-            <tr><td>Czwartek</td><td class="num">8</td><td class="time">14:05 – 14:50</td><td>Wychowanie fizyczne</td><td class="group">2CB</td><td class="teacher">AJ</td></tr>
-            <tr><td>Czwartek</td><td class="num">9</td><td class="time">14:55 – 15:40</td><td>Wychowanie fizyczne</td><td class="group">2CB</td><td class="teacher">AJ</td></tr>
-            <tr><td>Piątek</td><td class="num">1</td><td class="time">8:00 – 8:45</td><td>Wychowanie fizyczne</td><td class="group">3TFB (dz)</td><td class="teacher">AJ</td></tr>
-            <tr><td>Piątek</td><td class="num">2</td><td class="time">8:50 – 9:35</td><td>Wychowanie fizyczne</td><td class="group">3TFB (dz)</td><td class="teacher">AJ</td></tr>
-            <tr><td>Piątek</td><td class="num">3</td><td class="time">9:40 – 10:25</td><td>Wychowanie fizyczne</td><td class="group">3TFB (dz)</td><td class="teacher">AJ</td></tr>
-            <tr><td>Piątek</td><td class="num">4</td><td class="time">10:35 – 11:20</td><td>Wychowanie fizyczne</td><td class="group">5TFB (dz)</td><td class="teacher">AJ</td></tr>
-            <tr><td>Piątek</td><td class="num">5</td><td class="time">11:25 – 12:10</td><td>Wychowanie fizyczne</td><td class="group">5TFB (dz)</td><td class="teacher">AJ</td></tr>
-            <tr><td>Piątek</td><td class="num">6</td><td class="time">12:25 – 13:10</td><td>Wychowanie fizyczne</td><td class="group">5TFB (dz)</td><td class="teacher">AJ</td></tr>
-            <tr><td>Piątek</td><td class="num">7</td><td class="time">13:15 – 14:00</td><td>Wychowanie fizyczne</td><td class="group">1FB (dz)</td><td class="teacher">AJ</td></tr>
-            <tr><td>Piątek</td><td class="num">8</td><td class="time">14:05 – 14:50</td><td>Wychowanie fizyczne</td><td class="group">1FB (dz)</td><td class="teacher">AJ</td></tr>
-            <tr><td>Piątek</td><td class="num">9</td><td class="time">14:55 – 15:40</td><td>Wychowanie fizyczne</td><td class="group">1FB (dz)</td><td class="teacher">AJ</td></tr>
-          </tbody>
-        </table>
-      </div>
-      <h3 class="room-title" id="sg2">sg2</h3>
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr><th>Dzień</th><th>Lekcja</th><th>Godzina</th><th>Zajęcia</th><th>Oddział / grupa</th><th>Nauczyciel</th></tr>
-          </thead>
-          <tbody>
-            <tr><td>Poniedziałek</td><td class="num">3</td><td class="time">9:40 – 10:25</td><td>Wychowanie fizyczne</td><td class="group">1WA (ch)</td><td class="teacher">KP</td></tr>
-            <tr><td>Poniedziałek</td><td class="num">4</td><td class="time">10:35 – 11:20</td><td>Wychowanie fizyczne</td><td class="group">1WA (ch)</td><td class="teacher">KP</td></tr>
-            <tr><td>Poniedziałek</td><td class="num">5</td><td class="time">11:25 – 12:10</td><td>Wychowanie fizyczne</td><td class="group">1WA (ch)</td><td class="teacher">KP</td></tr>
-            <tr><td>Poniedziałek</td><td class="num">6</td><td class="time">12:25 – 13:10</td><td>Wychowanie fizyczne</td><td class="group">2CA (ch), 2S (ch)</td><td class="teacher">KP</td></tr>
-            <tr><td>Poniedziałek</td><td class="num">7</td><td class="time">13:15 – 14:00</td><td>Wychowanie fizyczne</td><td class="group">2CA (ch), 2S (ch)</td><td class="teacher">KP</td></tr>
-            <tr><td>Poniedziałek</td><td class="num">8</td><td class="time">14:05 – 14:50</td><td>Wychowanie fizyczne</td><td class="group">2CA (ch), 2S (ch)</td><td class="teacher">KP</td></tr>
-            <tr><td>Wtorek</td><td class="num">3</td><td class="time">9:40 – 10:25</td><td>Wychowanie fizyczne</td><td class="group">3FC</td><td class="teacher">MP</td></tr>
-            <tr><td>Wtorek</td><td class="num">4</td><td class="time">10:35 – 11:20</td><td>Wychowanie fizyczne</td><td class="group">3FC</td><td class="teacher">MP</td></tr>
-            <tr><td>Wtorek</td><td class="num">5</td><td class="time">11:25 – 12:10</td><td>Wychowanie fizyczne</td><td class="group">3FC</td><td class="teacher">MP</td></tr>
-            <tr><td>Wtorek</td><td class="num">6</td><td class="time">12:25 – 13:10</td><td>Wychowanie fizyczne</td><td class="group">3CA (dz)</td><td class="teacher">AJ</td></tr>
-            <tr><td>Wtorek</td><td class="num">7</td><td class="time">13:15 – 14:00</td><td>Wychowanie fizyczne</td><td class="group">3CA (dz)</td><td class="teacher">AJ</td></tr>
-            <tr><td>Wtorek</td><td class="num">8</td><td class="time">14:05 – 14:50</td><td>Wychowanie fizyczne</td><td class="group">3CA (dz)</td><td class="teacher">AJ</td></tr>
-            <tr><td>Środa</td><td class="num">1</td><td class="time">8:00 – 8:45</td><td>Wychowanie fizyczne</td><td class="group">1TH (dz)</td><td class="teacher">MP</td></tr>
-            <tr><td>Środa</td><td class="num">2</td><td class="time">8:50 – 9:35</td><td>Wychowanie fizyczne</td><td class="group">1TH (dz)</td><td class="teacher">MP</td></tr>
-            <tr><td>Środa</td><td class="num">3</td><td class="time">9:40 – 10:25</td><td>Wychowanie fizyczne</td><td class="group">1TH (dz)</td><td class="teacher">MP</td></tr>
-            <tr><td>Środa</td><td class="num">4</td><td class="time">10:35 – 11:20</td><td>Wychowanie fizyczne</td><td class="group">2FB (dz)</td><td class="teacher">MP</td></tr>
-            <tr><td>Środa</td><td class="num">5</td><td class="time">11:25 – 12:10</td><td>Wychowanie fizyczne</td><td class="group">2FB (dz)</td><td class="teacher">MP</td></tr>
-            <tr><td>Środa</td><td class="num">6</td><td class="time">12:25 – 13:10</td><td>Wychowanie fizyczne</td><td class="group">2FB (dz)</td><td class="teacher">MP</td></tr>
-            <tr><td>Środa</td><td class="num">7</td><td class="time">13:15 – 14:00</td><td>Wychowanie fizyczne</td><td class="group">2FC</td><td class="teacher">MP</td></tr>
-            <tr><td>Środa</td><td class="num">8</td><td class="time">14:05 – 14:50</td><td>Wychowanie fizyczne</td><td class="group">2FC</td><td class="teacher">MP</td></tr>
-            <tr><td>Środa</td><td class="num">9</td><td class="time">14:55 – 15:40</td><td>Wychowanie fizyczne</td><td class="group">2FC</td><td class="teacher">MP</td></tr>
-            <tr><td>Czwartek</td><td class="num">2</td><td class="time">8:50 – 9:35</td><td>Wychowanie fizyczne</td><td class="group">1WB (gr1)</td><td class="teacher">KW</td></tr>
-            <tr><td>Czwartek</td><td class="num">3</td><td class="time">9:40 – 10:25</td><td>Wychowanie fizyczne</td><td class="group">1WB (gr1)</td><td class="teacher">KW</td></tr>
-            <tr><td>Czwartek</td><td class="num">4</td><td class="time">10:35 – 11:20</td><td>Wychowanie fizyczne</td><td class="group">1WB (gr1)</td><td class="teacher">KW</td></tr>
-            <tr><td>Czwartek</td><td class="num">5</td><td class="time">11:25 – 12:10</td><td>Wychowanie fizyczne</td><td class="group">1CB (gr1)</td><td class="teacher">MP</td></tr>
-            <tr><td>Czwartek</td><td class="num">6</td><td class="time">12:25 – 13:10</td><td>Wychowanie fizyczne</td><td class="group">1CB (gr1)</td><td class="teacher">MP</td></tr>
-            <tr><td>Czwartek</td><td class="num">7</td><td class="time">13:15 – 14:00</td><td>Wychowanie fizyczne</td><td class="group">1CB (gr1)</td><td class="teacher">MP</td></tr>
-            <tr><td>Piątek</td><td class="num">7</td><td class="time">13:15 – 14:00</td><td>Wychowanie fizyczne</td><td class="group">1FB (ch)</td><td class="teacher">KP</td></tr>
-            <tr><td>Piątek</td><td class="num">8</td><td class="time">14:05 – 14:50</td><td>Wychowanie fizyczne</td><td class="group">1FB (ch)</td><td class="teacher">KP</td></tr>
-            <tr><td>Piątek</td><td class="num">9</td><td class="time">14:55 – 15:40</td><td>Wychowanie fizyczne</td><td class="group">1FB (ch)</td><td class="teacher">KP</td></tr>
-          </tbody>
-        </table>
-      </div>
-      <h3 class="room-title" id="sg3">sg3</h3>
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr><th>Dzień</th><th>Lekcja</th><th>Godzina</th><th>Zajęcia</th><th>Oddział / grupa</th><th>Nauczyciel</th></tr>
-          </thead>
-          <tbody>
-            <tr><td>Poniedziałek</td><td class="num">3</td><td class="time">9:40 – 10:25</td><td>Wychowanie fizyczne</td><td class="group">1WA (dz)</td><td class="teacher">MC</td></tr>
-            <tr><td>Poniedziałek</td><td class="num">4</td><td class="time">10:35 – 11:20</td><td>Wychowanie fizyczne</td><td class="group">1WA (dz)</td><td class="teacher">MC</td></tr>
-            <tr><td>Poniedziałek</td><td class="num">5</td><td class="time">11:25 – 12:10</td><td>Wychowanie fizyczne</td><td class="group">1WA (dz)</td><td class="teacher">MC</td></tr>
-            <tr><td>Poniedziałek</td><td class="num">6</td><td class="time">12:25 – 13:10</td><td>Wychowanie fizyczne</td><td class="group">2S (dz)</td><td class="teacher">MC</td></tr>
-            <tr><td>Poniedziałek</td><td class="num">7</td><td class="time">13:15 – 14:00</td><td>Wychowanie fizyczne</td><td class="group">2S (dz)</td><td class="teacher">MC</td></tr>
-            <tr><td>Poniedziałek</td><td class="num">8</td><td class="time">14:05 – 14:50</td><td>Wychowanie fizyczne</td><td class="group">2S (dz)</td><td class="teacher">MC</td></tr>
-            <tr><td>Wtorek</td><td class="num">3</td><td class="time">9:40 – 10:25</td><td>Wychowanie fizyczne</td><td class="group">1TFH (gr1)</td><td class="teacher">MC</td></tr>
-            <tr><td>Wtorek</td><td class="num">4</td><td class="time">10:35 – 11:20</td><td>Wychowanie fizyczne</td><td class="group">1TFH (gr1)</td><td class="teacher">MC</td></tr>
-            <tr><td>Wtorek</td><td class="num">5</td><td class="time">11:25 – 12:10</td><td>Wychowanie fizyczne</td><td class="group">1TFH (gr1)</td><td class="teacher">MC</td></tr>
-            <tr><td>Wtorek</td><td class="num">6</td><td class="time">12:25 – 13:10</td><td>Wychowanie fizyczne</td><td class="group">3CA (ch)</td><td class="teacher">MC</td></tr>
-            <tr><td>Wtorek</td><td class="num">7</td><td class="time">13:15 – 14:00</td><td>Wychowanie fizyczne</td><td class="group">3CA (ch)</td><td class="teacher">MC</td></tr>
-            <tr><td>Wtorek</td><td class="num">8</td><td class="time">14:05 – 14:50</td><td>Wychowanie fizyczne</td><td class="group">3CA (ch)</td><td class="teacher">MC</td></tr>
-            <tr><td>Środa</td><td class="num">2</td><td class="time">8:50 – 9:35</td><td>Wychowanie fizyczne</td><td class="group">1TFB (ch)</td><td class="teacher">MC</td></tr>
-            <tr><td>Środa</td><td class="num">3</td><td class="time">9:40 – 10:25</td><td>Wychowanie fizyczne</td><td class="group">1TFB (ch)</td><td class="teacher">MC</td></tr>
-            <tr><td>Środa</td><td class="num">4</td><td class="time">10:35 – 11:20</td><td>Wychowanie fizyczne</td><td class="group">1TFB (ch)</td><td class="teacher">MC</td></tr>
-            <tr><td>Środa</td><td class="num">6</td><td class="time">12:25 – 13:10</td><td>Wychowanie fizyczne</td><td class="group">2WA (ch2)</td><td class="teacher">MC</td></tr>
-            <tr><td>Środa</td><td class="num">7</td><td class="time">13:15 – 14:00</td><td>Wychowanie fizyczne</td><td class="group">2WA (ch2)</td><td class="teacher">MC</td></tr>
-            <tr><td>Środa</td><td class="num">8</td><td class="time">14:05 – 14:50</td><td>Wychowanie fizyczne</td><td class="group">2WA (ch2)</td><td class="teacher">MC</td></tr>
-            <tr><td>Czwartek</td><td class="num">2</td><td class="time">8:50 – 9:35</td><td>Wychowanie fizyczne</td><td class="group">1FC (gr1)</td><td class="teacher">LN</td></tr>
-            <tr><td>Czwartek</td><td class="num">3</td><td class="time">9:40 – 10:25</td><td>Wychowanie fizyczne</td><td class="group">1FC (gr1)</td><td class="teacher">LN</td></tr>
-            <tr><td>Czwartek</td><td class="num">4</td><td class="time">10:35 – 11:20</td><td>Wychowanie fizyczne</td><td class="group">1FC (gr1)</td><td class="teacher">LN</td></tr>
-          </tbody>
-        </table>
-      </div>
-      <h3 class="room-title" id="sg4">sg4</h3>
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr><th>Dzień</th><th>Lekcja</th><th>Godzina</th><th>Zajęcia</th><th>Oddział / grupa</th><th>Nauczyciel</th></tr>
-          </thead>
-          <tbody>
-            <tr><td>Poniedziałek</td><td class="num">2</td><td class="time">8:50 – 9:35</td><td>Wychowanie fizyczne</td><td class="group">2TH (dz)</td><td class="teacher">MP</td></tr>
-            <tr><td>Poniedziałek</td><td class="num">3</td><td class="time">9:40 – 10:25</td><td>Wychowanie fizyczne</td><td class="group">2TH (dz)</td><td class="teacher">MP</td></tr>
-            <tr><td>Poniedziałek</td><td class="num">4</td><td class="time">10:35 – 11:20</td><td>Wychowanie fizyczne</td><td class="group">2TH (dz)</td><td class="teacher">MP</td></tr>
-            <tr><td>Poniedziałek</td><td class="num">5</td><td class="time">11:25 – 12:10</td><td>Wychowanie fizyczne</td><td class="group">4TH (dz)</td><td class="teacher">MP</td></tr>
-            <tr><td>Poniedziałek</td><td class="num">6</td><td class="time">12:25 – 13:10</td><td>Wychowanie fizyczne</td><td class="group">4TH (dz)</td><td class="teacher">MP</td></tr>
-            <tr><td>Poniedziałek</td><td class="num">7</td><td class="time">13:15 – 14:00</td><td>Wychowanie fizyczne</td><td class="group">4TH (dz)</td><td class="teacher">MP</td></tr>
-            <tr><td>Wtorek</td><td class="num">1</td><td class="time">8:00 – 8:45</td><td>Wychowanie fizyczne</td><td class="group">3K (dz), 3WA (dz)</td><td class="teacher">RJ</td></tr>
-            <tr><td>Wtorek</td><td class="num">2</td><td class="time">8:50 – 9:35</td><td>Wychowanie fizyczne</td><td class="group">3K (dz), 3WA (dz)</td><td class="teacher">RJ</td></tr>
-            <tr><td>Wtorek</td><td class="num">3</td><td class="time">9:40 – 10:25</td><td>Wychowanie fizyczne</td><td class="group">3K (dz), 3WA (dz)</td><td class="teacher">RJ</td></tr>
-            <tr><td>Wtorek</td><td class="num">4</td><td class="time">10:35 – 11:20</td><td>Wychowanie fizyczne</td><td class="group">2TFA</td><td class="teacher">RJ</td></tr>
-            <tr><td>Wtorek</td><td class="num">5</td><td class="time">11:25 – 12:10</td><td>Wychowanie fizyczne</td><td class="group">2TFA</td><td class="teacher">RJ</td></tr>
-            <tr><td>Wtorek</td><td class="num">6</td><td class="time">12:25 – 13:10</td><td>Wychowanie fizyczne</td><td class="group">2TFA</td><td class="teacher">RJ</td></tr>
-            <tr><td>Środa</td><td class="num">3</td><td class="time">9:40 – 10:25</td><td>Wychowanie fizyczne</td><td class="group">2FA</td><td class="teacher">DK</td></tr>
-            <tr><td>Środa</td><td class="num">4</td><td class="time">10:35 – 11:20</td><td>Wychowanie fizyczne</td><td class="group">2FA</td><td class="teacher">DK</td></tr>
-            <tr><td>Środa</td><td class="num">5</td><td class="time">11:25 – 12:10</td><td>Wychowanie fizyczne</td><td class="group">2FA</td><td class="teacher">DK</td></tr>
-            <tr><td>Czwartek</td><td class="num">6</td><td class="time">12:25 – 13:10</td><td>Wychowanie fizyczne</td><td class="group">1K (dz)</td><td class="teacher">LN</td></tr>
-            <tr><td>Czwartek</td><td class="num">7</td><td class="time">13:15 – 14:00</td><td>Wychowanie fizyczne</td><td class="group">1K (dz)</td><td class="teacher">LN</td></tr>
-            <tr><td>Czwartek</td><td class="num">8</td><td class="time">14:05 – 14:50</td><td>Wychowanie fizyczne</td><td class="group">1K (dz)</td><td class="teacher">LN</td></tr>
-            <tr><td>Piątek</td><td class="num">1</td><td class="time">8:00 – 8:45</td><td>Wychowanie fizyczne</td><td class="group">4TFA</td><td class="teacher">DK</td></tr>
-            <tr><td>Piątek</td><td class="num">2</td><td class="time">8:50 – 9:35</td><td>Wychowanie fizyczne</td><td class="group">4TFA</td><td class="teacher">DK</td></tr>
-            <tr><td>Piątek</td><td class="num">3</td><td class="time">9:40 – 10:25</td><td>Wychowanie fizyczne</td><td class="group">4TFA</td><td class="teacher">DK</td></tr>
-            <tr><td>Piątek</td><td class="num">4</td><td class="time">10:35 – 11:20</td><td>Wychowanie fizyczne</td><td class="group">5TH (dz)</td><td class="teacher">DK</td></tr>
-            <tr><td>Piątek</td><td class="num">5</td><td class="time">11:25 – 12:10</td><td>Wychowanie fizyczne</td><td class="group">5TH (dz)</td><td class="teacher">DK</td></tr>
-            <tr><td>Piątek</td><td class="num">6</td><td class="time">12:25 – 13:10</td><td>Wychowanie fizyczne</td><td class="group">5TH (dz)</td><td class="teacher">DK</td></tr>
-          </tbody>
-        </table>
-      </div>
-      <h3 class="room-title" id="sg5">sg5</h3>
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr><th>Dzień</th><th>Lekcja</th><th>Godzina</th><th>Zajęcia</th><th>Oddział / grupa</th><th>Nauczyciel</th></tr>
-          </thead>
-          <tbody>
-            <tr><td>Wtorek</td><td class="num">3</td><td class="time">9:40 – 10:25</td><td>Wychowanie fizyczne</td><td class="group">3FA</td><td class="teacher">DK</td></tr>
-            <tr><td>Wtorek</td><td class="num">4</td><td class="time">10:35 – 11:20</td><td>Wychowanie fizyczne</td><td class="group">3FA</td><td class="teacher">DK</td></tr>
-            <tr><td>Wtorek</td><td class="num">5</td><td class="time">11:25 – 12:10</td><td>Wychowanie fizyczne</td><td class="group">3FA</td><td class="teacher">DK</td></tr>
-            <tr><td>Wtorek</td><td class="num">8</td><td class="time">14:05 – 14:50</td><td>Wychowanie fizyczne</td><td class="group">3FB (dz)</td><td class="teacher">MP</td></tr>
-            <tr><td>Wtorek</td><td class="num">9</td><td class="time">14:55 – 15:40</td><td>Wychowanie fizyczne</td><td class="group">3FB (dz)</td><td class="teacher">MP</td></tr>
-            <tr><td>Wtorek</td><td class="num">10</td><td class="time">15:45 – 16:30</td><td>Wychowanie fizyczne</td><td class="group">3FB (dz)</td><td class="teacher">MP</td></tr>
-            <tr><td>Środa</td><td class="num">1</td><td class="time">8:00 – 8:45</td><td>Wychowanie fizyczne</td><td class="group">1FA (gr1)</td><td class="teacher">AJ</td></tr>
-            <tr><td>Środa</td><td class="num">2</td><td class="time">8:50 – 9:35</td><td>Wychowanie fizyczne</td><td class="group">1FA (gr1)</td><td class="teacher">AJ</td></tr>
-            <tr><td>Środa</td><td class="num">3</td><td class="time">9:40 – 10:25</td><td>Wychowanie fizyczne</td><td class="group">1FA (gr1)</td><td class="teacher">AJ</td></tr>
-            <tr><td>Środa</td><td class="num">4</td><td class="time">10:35 – 11:20</td><td>Wychowanie fizyczne</td><td class="group">2K (dz)</td><td class="teacher">AJ</td></tr>
-            <tr><td>Środa</td><td class="num">5</td><td class="time">11:25 – 12:10</td><td>Wychowanie fizyczne</td><td class="group">2K (dz)</td><td class="teacher">AJ</td></tr>
-            <tr><td>Środa</td><td class="num">6</td><td class="time">12:25 – 13:10</td><td>Wychowanie fizyczne</td><td class="group">2K (dz)</td><td class="teacher">AJ</td></tr>
-            <tr><td>Czwartek</td><td class="num">1</td><td class="time">8:00 – 8:45</td><td>Wychowanie fizyczne</td><td class="group">3CB</td><td class="teacher">RJ</td></tr>
-            <tr><td>Czwartek</td><td class="num">2</td><td class="time">8:50 – 9:35</td><td>Wychowanie fizyczne</td><td class="group">3CB</td><td class="teacher">RJ</td></tr>
-            <tr><td>Czwartek</td><td class="num">3</td><td class="time">9:40 – 10:25</td><td>Wychowanie fizyczne</td><td class="group">3CB</td><td class="teacher">RJ</td></tr>
-            <tr><td>Czwartek</td><td class="num">4</td><td class="time">10:35 – 11:20</td><td>Wychowanie fizyczne</td><td class="group">1S (dz)</td><td class="teacher">RJ</td></tr>
-            <tr><td>Czwartek</td><td class="num">5</td><td class="time">11:25 – 12:10</td><td>Wychowanie fizyczne</td><td class="group">1S (dz)</td><td class="teacher">RJ</td></tr>
-            <tr><td>Czwartek</td><td class="num">6</td><td class="time">12:25 – 13:10</td><td>Wychowanie fizyczne</td><td class="group">1S (dz)</td><td class="teacher">RJ</td></tr>
-          </tbody>
-        </table>
-      </div>
-      <h3 class="room-title" id="sg6">sg6</h3>
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr><th>Dzień</th><th>Lekcja</th><th>Godzina</th><th>Zajęcia</th><th>Oddział / grupa</th><th>Nauczyciel</th></tr>
-          </thead>
-          <tbody>
-            <tr><td>Środa</td><td class="num">4</td><td class="time">10:35 – 11:20</td><td>Wychowanie fizyczne</td><td class="group">2FB (ch)</td><td class="teacher">KP</td></tr>
-            <tr><td>Środa</td><td class="num">5</td><td class="time">11:25 – 12:10</td><td>Wychowanie fizyczne</td><td class="group">2FB (ch)</td><td class="teacher">KP</td></tr>
-            <tr><td>Środa</td><td class="num">6</td><td class="time">12:25 – 13:10</td><td>Wychowanie fizyczne</td><td class="group">2FB (ch)</td><td class="teacher">KP</td></tr>
-            <tr><td>Czwartek</td><td class="num">4</td><td class="time">10:35 – 11:20</td><td>Wychowanie fizyczne</td><td class="group">1CB (gr2)</td><td class="teacher">SD</td></tr>
-            <tr><td>Czwartek</td><td class="num">5</td><td class="time">11:25 – 12:10</td><td>Wychowanie fizyczne</td><td class="group">1CB (gr2)</td><td class="teacher">SD</td></tr>
-            <tr><td>Czwartek</td><td class="num">6</td><td class="time">12:25 – 13:10</td><td>Wychowanie fizyczne</td><td class="group">1CB (gr2)</td><td class="teacher">SD</td></tr>
-          </tbody>
-        </table>
-      </div>
-      <h3 class="room-title" id="sg7">sg7</h3>
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr><th>Dzień</th><th>Lekcja</th><th>Godzina</th><th>Zajęcia</th><th>Oddział / grupa</th><th>Nauczyciel</th></tr>
-          </thead>
-          <tbody>
-            <tr><td>Poniedziałek</td><td class="num">2</td><td class="time">8:50 – 9:35</td><td>Wychowanie fizyczne</td><td class="group">2TFB (ch), 2TH (ch)</td><td class="teacher">KW</td></tr>
-            <tr><td>Poniedziałek</td><td class="num">3</td><td class="time">9:40 – 10:25</td><td>Wychowanie fizyczne</td><td class="group">2TFB (ch), 2TH (ch)</td><td class="teacher">KW</td></tr>
-            <tr><td>Poniedziałek</td><td class="num">4</td><td class="time">10:35 – 11:20</td><td>Wychowanie fizyczne</td><td class="group">2TFB (ch), 2TH (ch)</td><td class="teacher">KW</td></tr>
-            <tr><td>Poniedziałek</td><td class="num">5</td><td class="time">11:25 – 12:10</td><td>Wychowanie fizyczne</td><td class="group">4TFB (ch), 4TH (ch)</td><td class="teacher">KW</td></tr>
-            <tr><td>Poniedziałek</td><td class="num">6</td><td class="time">12:25 – 13:10</td><td>Wychowanie fizyczne</td><td class="group">4TFB (ch), 4TH (ch)</td><td class="teacher">KW</td></tr>
-            <tr><td>Poniedziałek</td><td class="num">7</td><td class="time">13:15 – 14:00</td><td>Wychowanie fizyczne</td><td class="group">4TFB (ch), 4TH (ch)</td><td class="teacher">KW</td></tr>
-            <tr><td>Poniedziałek</td><td class="num">9</td><td class="time">14:55 – 15:40</td><td>Wychowanie fizyczne</td><td class="group">1CA (dz)</td><td class="teacher">RJ</td></tr>
-            <tr><td>Poniedziałek</td><td class="num">10</td><td class="time">15:45 – 16:30</td><td>Wychowanie fizyczne</td><td class="group">1CA (dz)</td><td class="teacher">RJ</td></tr>
-            <tr><td>Poniedziałek</td><td class="num">11</td><td class="time">16:35 – 17:20</td><td>Wychowanie fizyczne</td><td class="group">1CA (dz)</td><td class="teacher">RJ</td></tr>
-            <tr><td>Wtorek</td><td class="num">1</td><td class="time">8:00 – 8:45</td><td>Wychowanie fizyczne</td><td class="group">3WA (ch2)</td><td class="teacher">LN</td></tr>
-            <tr><td>Wtorek</td><td class="num">2</td><td class="time">8:50 – 9:35</td><td>Wychowanie fizyczne</td><td class="group">3WA (ch2)</td><td class="teacher">LN</td></tr>
-            <tr><td>Wtorek</td><td class="num">3</td><td class="time">9:40 – 10:25</td><td>Wychowanie fizyczne</td><td class="group">3WA (ch2)</td><td class="teacher">LN</td></tr>
-            <tr><td>Wtorek</td><td class="num">4</td><td class="time">10:35 – 11:20</td><td>Wychowanie fizyczne</td><td class="group">1TFH (gr2)</td><td class="teacher">LN</td></tr>
-            <tr><td>Wtorek</td><td class="num">5</td><td class="time">11:25 – 12:10</td><td>Wychowanie fizyczne</td><td class="group">1TFH (gr2)</td><td class="teacher">LN</td></tr>
-            <tr><td>Wtorek</td><td class="num">6</td><td class="time">12:25 – 13:10</td><td>Wychowanie fizyczne</td><td class="group">1TFH (gr2)</td><td class="teacher">LN</td></tr>
-            <tr><td>Wtorek</td><td class="num">7</td><td class="time">13:15 – 14:00</td><td>Wychowanie fizyczne</td><td class="group">1TFA (gr1)</td><td class="teacher">LN</td></tr>
-            <tr><td>Wtorek</td><td class="num">8</td><td class="time">14:05 – 14:50</td><td>Wychowanie fizyczne</td><td class="group">1TFA (gr1)</td><td class="teacher">LN</td></tr>
-            <tr><td>Wtorek</td><td class="num">9</td><td class="time">14:55 – 15:40</td><td>Wychowanie fizyczne</td><td class="group">1TFA (gr1)</td><td class="teacher">LN</td></tr>
-            <tr><td>Środa</td><td class="num">1</td><td class="time">8:00 – 8:45</td><td>Wychowanie fizyczne</td><td class="group">1FA (gr2)</td><td class="teacher">RJ</td></tr>
-            <tr><td>Środa</td><td class="num">2</td><td class="time">8:50 – 9:35</td><td>Wychowanie fizyczne</td><td class="group">1FA (gr2)</td><td class="teacher">RJ</td></tr>
-            <tr><td>Środa</td><td class="num">3</td><td class="time">9:40 – 10:25</td><td>Wychowanie fizyczne</td><td class="group">1FA (gr2)</td><td class="teacher">RJ</td></tr>
-            <tr><td>Czwartek</td><td class="num">6</td><td class="time">12:25 – 13:10</td><td>Wychowanie fizyczne</td><td class="group">1K (ch)</td><td class="teacher">KP</td></tr>
-            <tr><td>Czwartek</td><td class="num">7</td><td class="time">13:15 – 14:00</td><td>Wychowanie fizyczne</td><td class="group">1K (ch)</td><td class="teacher">KP</td></tr>
-            <tr><td>Czwartek</td><td class="num">8</td><td class="time">14:05 – 14:50</td><td>Wychowanie fizyczne</td><td class="group">1K (ch)</td><td class="teacher">KP</td></tr>
-            <tr><td>Piątek</td><td class="num">4</td><td class="time">10:35 – 11:20</td><td>Wychowanie fizyczne</td><td class="group">5TFB (ch), 5TH (ch)</td><td class="teacher">LN</td></tr>
-            <tr><td>Piątek</td><td class="num">5</td><td class="time">11:25 – 12:10</td><td>Wychowanie fizyczne</td><td class="group">5TFB (ch), 5TH (ch)</td><td class="teacher">LN</td></tr>
-            <tr><td>Piątek</td><td class="num">6</td><td class="time">12:25 – 13:10</td><td>Wychowanie fizyczne</td><td class="group">5TFB (ch), 5TH (ch)</td><td class="teacher">LN</td></tr>
-            <tr><td>Piątek</td><td class="num">7</td><td class="time">13:15 – 14:00</td><td>Wychowanie fizyczne</td><td class="group">3TFA</td><td class="teacher">LN</td></tr>
-            <tr><td>Piątek</td><td class="num">8</td><td class="time">14:05 – 14:50</td><td>Wychowanie fizyczne</td><td class="group">3TFA</td><td class="teacher">LN</td></tr>
-            <tr><td>Piątek</td><td class="num">9</td><td class="time">14:55 – 15:40</td><td>Wychowanie fizyczne</td><td class="group">3TFA</td><td class="teacher">LN</td></tr>
-          </tbody>
-        </table>
-      </div>
-      <h3 class="room-title" id="sg8">sg8</h3>
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr><th>Dzień</th><th>Lekcja</th><th>Godzina</th><th>Zajęcia</th><th>Oddział / grupa</th><th>Nauczyciel</th></tr>
-          </thead>
-          <tbody>
-            <tr><td>Poniedziałek</td><td class="num">2</td><td class="time">8:50 – 9:35</td><td>Wychowanie fizyczne</td><td class="group">2TFB (dz)</td><td class="teacher">DK</td></tr>
-            <tr><td>Poniedziałek</td><td class="num">3</td><td class="time">9:40 – 10:25</td><td>Wychowanie fizyczne</td><td class="group">2TFB (dz)</td><td class="teacher">DK</td></tr>
-            <tr><td>Poniedziałek</td><td class="num">4</td><td class="time">10:35 – 11:20</td><td>Wychowanie fizyczne</td><td class="group">2TFB (dz)</td><td class="teacher">DK</td></tr>
-            <tr><td>Poniedziałek</td><td class="num">5</td><td class="time">11:25 – 12:10</td><td>Wychowanie fizyczne</td><td class="group">4TFB (dz)</td><td class="teacher">DK</td></tr>
-            <tr><td>Poniedziałek</td><td class="num">6</td><td class="time">12:25 – 13:10</td><td>Wychowanie fizyczne</td><td class="group">4TFB (dz)</td><td class="teacher">DK</td></tr>
-            <tr><td>Poniedziałek</td><td class="num">7</td><td class="time">13:15 – 14:00</td><td>Wychowanie fizyczne</td><td class="group">4TFB (dz)</td><td class="teacher">DK</td></tr>
-            <tr><td>Poniedziałek</td><td class="num">9</td><td class="time">14:55 – 15:40</td><td>Wychowanie fizyczne</td><td class="group">1CA (ch)</td><td class="teacher">SD</td></tr>
-            <tr><td>Poniedziałek</td><td class="num">10</td><td class="time">15:45 – 16:30</td><td>Wychowanie fizyczne</td><td class="group">1CA (ch)</td><td class="teacher">SD</td></tr>
-            <tr><td>Poniedziałek</td><td class="num">11</td><td class="time">16:35 – 17:20</td><td>Wychowanie fizyczne</td><td class="group">1CA (ch)</td><td class="teacher">SD</td></tr>
-            <tr><td>Wtorek</td><td class="num">1</td><td class="time">8:00 – 8:45</td><td>Wychowanie fizyczne</td><td class="group">3WA (ch1)</td><td class="teacher">AJ</td></tr>
-            <tr><td>Wtorek</td><td class="num">2</td><td class="time">8:50 – 9:35</td><td>Wychowanie fizyczne</td><td class="group">3WA (ch1)</td><td class="teacher">AJ</td></tr>
-            <tr><td>Wtorek</td><td class="num">3</td><td class="time">9:40 – 10:25</td><td>Wychowanie fizyczne</td><td class="group">3WA (ch1)</td><td class="teacher">AJ</td></tr>
-            <tr><td>Wtorek</td><td class="num">5</td><td class="time">11:25 – 12:10</td><td>Wychowanie fizyczne</td><td class="group">2WA (ch1)</td><td class="teacher">KW</td></tr>
-            <tr><td>Wtorek</td><td class="num">6</td><td class="time">12:25 – 13:10</td><td>Wychowanie fizyczne</td><td class="group">2WA (ch1)</td><td class="teacher">KW</td></tr>
-            <tr><td>Wtorek</td><td class="num">7</td><td class="time">13:15 – 14:00</td><td>Wychowanie fizyczne</td><td class="group">2WA (ch1)</td><td class="teacher">KW</td></tr>
-            <tr><td>Wtorek</td><td class="num">8</td><td class="time">14:05 – 14:50</td><td>Wychowanie fizyczne</td><td class="group">3FB (ch)</td><td class="teacher">SD</td></tr>
-            <tr><td>Wtorek</td><td class="num">9</td><td class="time">14:55 – 15:40</td><td>Wychowanie fizyczne</td><td class="group">3FB (ch)</td><td class="teacher">SD</td></tr>
-            <tr><td>Wtorek</td><td class="num">10</td><td class="time">15:45 – 16:30</td><td>Wychowanie fizyczne</td><td class="group">3FB (ch)</td><td class="teacher">SD</td></tr>
-            <tr><td>Środa</td><td class="num">2</td><td class="time">8:50 – 9:35</td><td>Wychowanie fizyczne</td><td class="group">1TFB (dz)</td><td class="teacher">LN</td></tr>
-            <tr><td>Środa</td><td class="num">3</td><td class="time">9:40 – 10:25</td><td>Wychowanie fizyczne</td><td class="group">1TFB (dz)</td><td class="teacher">LN</td></tr>
-            <tr><td>Środa</td><td class="num">4</td><td class="time">10:35 – 11:20</td><td>Wychowanie fizyczne</td><td class="group">1TFB (dz)</td><td class="teacher">LN</td></tr>
-            <tr><td>Czwartek</td><td class="num">3</td><td class="time">9:40 – 10:25</td><td>Wychowanie fizyczne</td><td class="group">1FC (gr2)</td><td class="teacher">DK</td></tr>
-            <tr><td>Czwartek</td><td class="num">4</td><td class="time">10:35 – 11:20</td><td>Wychowanie fizyczne</td><td class="group">1FC (gr2)</td><td class="teacher">DK</td></tr>
-            <tr><td>Czwartek</td><td class="num">5</td><td class="time">11:25 – 12:10</td><td>Wychowanie fizyczne</td><td class="group">1FC (gr2)</td><td class="teacher">DK</td></tr>
-            <tr><td>Czwartek</td><td class="num">8</td><td class="time">14:05 – 14:50</td><td>Wychowanie fizyczne</td><td class="group">2CA (dz), 2WA (dz)</td><td class="teacher">RJ</td></tr>
-            <tr><td>Czwartek</td><td class="num">9</td><td class="time">14:55 – 15:40</td><td>Wychowanie fizyczne</td><td class="group">2CA (dz), 2WA (dz)</td><td class="teacher">RJ</td></tr>
-            <tr><td>Czwartek</td><td class="num">10</td><td class="time">15:45 – 16:30</td><td>Wychowanie fizyczne</td><td class="group">2CA (dz), 2WA (dz)</td><td class="teacher">RJ</td></tr>
-            <tr><td>Piątek</td><td class="num">1</td><td class="time">8:00 – 8:45</td><td>Wychowanie fizyczne</td><td class="group">3TFB (ch)</td><td class="teacher">KW</td></tr>
-            <tr><td>Piątek</td><td class="num">2</td><td class="time">8:50 – 9:35</td><td>Wychowanie fizyczne</td><td class="group">3TFB (ch)</td><td class="teacher">KW</td></tr>
-            <tr><td>Piątek</td><td class="num">3</td><td class="time">9:40 – 10:25</td><td>Wychowanie fizyczne</td><td class="group">3TFB (ch)</td><td class="teacher">KW</td></tr>
-          </tbody>
-        </table>
-      </div>
-    </section>
-    <section class="section external">
-      <h2>Zestawienie zajęć w obiektach zewnętrznych - rok szkolny 2026/2027</h2>
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr><th>Dzień / godzina</th><th>09:00-10:30</th><th>10:00-10:50</th><th>10:30-12:00</th><th>11:00-11:50</th><th>12:00-13:30</th></tr>
-          </thead>
-          <tbody>
-            <tr><td>poniedziałek</td><td>1. sala główna<br>2. basen rekreacyjny</td><td></td><td>1. sala Body&amp;Mind<br>2. basen rekreacyjny</td><td>rolki / lodowisko (20 os.)</td><td>1. sala Fitness duża<br>2. basen rekreacyjny</td></tr>
-            <tr><td>wtorek</td><td>1. sala główna<br>2. basen sportowy</td><td>rolki / lodowisko (20 os.)</td><td>1. sala Body&amp;Mind<br>2. basen sportowy</td><td></td><td>1. sala Fitness duża<br>2. basen sportowy</td></tr>
-            <tr><td>środa</td><td>1. sala główna<br>2. basen rekreacyjny</td><td></td><td>1. sala Body&amp;Mind<br>2. basen rekreacyjny</td><td>rolki / lodowisko (20 os.)</td><td>1. sala Fitness duża<br>2. basen rekreacyjny</td></tr>
-            <tr><td>czwartek</td><td>1. sala główna<br>2. basen rekreacyjny</td><td></td><td>1. sala główna<br>2. basen rekreacyjny</td><td>rolki / lodowisko (20 os.)</td><td>1. sala Fitness duża<br>2. basen rekreacyjny</td></tr>
-            <tr><td>piątek</td><td>basen sportowy</td><td></td><td>1. sala główna<br>2. sala Body&amp;Mind<br>3. basen sportowy</td><td>rolki / lodowisko (20 os.)</td><td>1. sala Body&amp;Mind<br>2. basen sportowy</td></tr>
-          </tbody>
-        </table>
-      </div>
-      <div class="note"><strong>Dni wyłączone z realizacji - AQUAPARK BOROWSKA:</strong><br>
+    <p>Widok zawiera oryginalne tabele Dobrego Planu tylko dla sal sg1-sg8 oraz zestawienie zajęć w obiektach zewnętrznych.</p>
+</div>
+<div class="plan-shell" aria-label="Tabele sal i obiektów zewnętrznych">
+<table class="plan" id="sg1">
+    <caption>sg1</caption>
+    <thead>
+    <tr>
+        <td class="n"></td>
+        <td class="n"></td>
+        <td class="l t" colspan="2">Poniedziałek</td>
+        <td class="l t" colspan="2">Wtorek</td>
+        <td class="l t" colspan="2">Środa</td>
+        <td class="l t" colspan="2">Czwartek</td>
+        <td class="l t" colspan="2">Piątek</td>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+    <td class="l t r" rowspan="1">1</td>
+    <td class="t" rowspan="1">8:00 – 8:45</td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#3K">3K</a> (ch)</div></td>
+    <td class="t" rowspan="1"><a href="#KW">KW</a></td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#1TH">1TH</a> (ch)</div></td>
+    <td class="t" rowspan="1"><a href="#KW">KW</a></td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#1WB">1WB</a> (gr2)</div></td>
+    <td class="t" rowspan="1"><a href="#MC">MC</a></td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#3TFB">3TFB</a> (dz)</div></td>
+    <td class="t" rowspan="1"><a href="#AJ">AJ</a></td>
+    </tr>
+    <tr class="d">
+    <td class="l t r" rowspan="1">2</td>
+    <td class="t" rowspan="1">8:50 – 9:35</td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#3K">3K</a> (ch)</div></td>
+    <td class="t" rowspan="1"><a href="#KW">KW</a></td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#1TH">1TH</a> (ch)</div></td>
+    <td class="t" rowspan="1"><a href="#KW">KW</a></td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#1WB">1WB</a> (gr2)</div></td>
+    <td class="t" rowspan="1"><a href="#MC">MC</a></td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#3TFB">3TFB</a> (dz)</div></td>
+    <td class="t" rowspan="1"><a href="#AJ">AJ</a></td>
+    </tr>
+    <tr>
+    <td class="l t r" rowspan="1">3</td>
+    <td class="t" rowspan="1">9:40 – 10:25</td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#3K">3K</a> (ch)</div></td>
+    <td class="t" rowspan="1"><a href="#KW">KW</a></td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#1TH">1TH</a> (ch)</div></td>
+    <td class="t" rowspan="1"><a href="#KW">KW</a></td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#1WB">1WB</a> (gr2)</div></td>
+    <td class="t" rowspan="1"><a href="#MC">MC</a></td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#3TFB">3TFB</a> (dz)</div></td>
+    <td class="t" rowspan="1"><a href="#AJ">AJ</a></td>
+    </tr>
+    <tr class="d">
+    <td class="l t r" rowspan="1">4</td>
+    <td class="t" rowspan="1">10:35 – 11:20</td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#2K">2K</a> (ch)</div></td>
+    <td class="t" rowspan="1"><a href="#KW">KW</a></td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#1S">1S</a> (ch)</div></td>
+    <td class="t" rowspan="1"><a href="#MC">MC</a></td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#5TFB">5TFB</a> (dz)</div></td>
+    <td class="t" rowspan="1"><a href="#AJ">AJ</a></td>
+    </tr>
+    <tr>
+    <td class="l t r" rowspan="1">5</td>
+    <td class="t" rowspan="1">11:25 – 12:10</td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#2K">2K</a> (ch)</div></td>
+    <td class="t" rowspan="1"><a href="#KW">KW</a></td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#1S">1S</a> (ch)</div></td>
+    <td class="t" rowspan="1"><a href="#MC">MC</a></td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#5TFB">5TFB</a> (dz)</div></td>
+    <td class="t" rowspan="1"><a href="#AJ">AJ</a></td>
+    </tr>
+    <tr class="d">
+    <td class="l t r" rowspan="1">6</td>
+    <td class="t" rowspan="1">12:25 – 13:10</td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#2K">2K</a> (ch)</div></td>
+    <td class="t" rowspan="1"><a href="#KW">KW</a></td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#1S">1S</a> (ch)</div></td>
+    <td class="t" rowspan="1"><a href="#MC">MC</a></td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#5TFB">5TFB</a> (dz)</div></td>
+    <td class="t" rowspan="1"><a href="#AJ">AJ</a></td>
+    </tr>
+    <tr>
+    <td class="l t r" rowspan="1">7</td>
+    <td class="t" rowspan="1">13:15 – 14:00</td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#1TFA">1TFA</a> (gr2)</div></td>
+    <td class="t" rowspan="1"><a href="#DK">DK</a></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#2CB">2CB</a></div></td>
+    <td class="t" rowspan="1"><a href="#AJ">AJ</a></td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#1FB">1FB</a> (dz)</div></td>
+    <td class="t" rowspan="1"><a href="#AJ">AJ</a></td>
+    </tr>
+    <tr class="d">
+    <td class="l t r" rowspan="1">8</td>
+    <td class="t" rowspan="1">14:05 – 14:50</td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#1TFA">1TFA</a> (gr2)</div></td>
+    <td class="t" rowspan="1"><a href="#DK">DK</a></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#2CB">2CB</a></div></td>
+    <td class="t" rowspan="1"><a href="#AJ">AJ</a></td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#1FB">1FB</a> (dz)</div></td>
+    <td class="t" rowspan="1"><a href="#AJ">AJ</a></td>
+    </tr>
+    <tr>
+    <td class="l t r" rowspan="1">9</td>
+    <td class="t" rowspan="1">14:55 – 15:40</td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#1TFA">1TFA</a> (gr2)</div></td>
+    <td class="t" rowspan="1"><a href="#DK">DK</a></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#2CB">2CB</a></div></td>
+    <td class="t" rowspan="1"><a href="#AJ">AJ</a></td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#1FB">1FB</a> (dz)</div></td>
+    <td class="t" rowspan="1"><a href="#AJ">AJ</a></td>
+    </tr>
+    <tr class="d">
+    <td class="l t r" rowspan="1">10</td>
+    <td class="t" rowspan="1">15:45 – 16:30</td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    </tr>
+    <tr>
+    <td class="l t r" rowspan="1">11</td>
+    <td class="t" rowspan="1">16:35 – 17:20</td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    </tr>
+    <tr class="d">
+    <td class="l t r" rowspan="1">12</td>
+    <td class="t" rowspan="1">17:25 – 18:10</td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    </tr>
+    <tr>
+    <td class="l t r" rowspan="1">13</td>
+    <td class="t" rowspan="1">18:15 – 19:00</td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    </tr>
+    </tbody>
+</table><table class="plan" id="sg2">
+    <caption>sg2</caption>
+    <thead>
+    <tr>
+        <td class="n"></td>
+        <td class="n"></td>
+        <td class="l t" colspan="2">Poniedziałek</td>
+        <td class="l t" colspan="2">Wtorek</td>
+        <td class="l t" colspan="2">Środa</td>
+        <td class="l t" colspan="2">Czwartek</td>
+        <td class="l t" colspan="2">Piątek</td>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+    <td class="l t r" rowspan="1">1</td>
+    <td class="t" rowspan="1">8:00 – 8:45</td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#1TH">1TH</a> (dz)</div></td>
+    <td class="t" rowspan="1"><a href="#MP">MP</a></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    </tr>
+    <tr class="d">
+    <td class="l t r" rowspan="1">2</td>
+    <td class="t" rowspan="1">8:50 – 9:35</td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#1TH">1TH</a> (dz)</div></td>
+    <td class="t" rowspan="1"><a href="#MP">MP</a></td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#1WB">1WB</a> (gr1)</div></td>
+    <td class="t" rowspan="1"><a href="#KW">KW</a></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    </tr>
+    <tr>
+    <td class="l t r" rowspan="1">3</td>
+    <td class="t" rowspan="1">9:40 – 10:25</td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#1WA">1WA</a> (ch)</div></td>
+    <td class="t" rowspan="1"><a href="#KP">KP</a></td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#3FC">3FC</a></div></td>
+    <td class="t" rowspan="1"><a href="#MP">MP</a></td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#1TH">1TH</a> (dz)</div></td>
+    <td class="t" rowspan="1"><a href="#MP">MP</a></td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#1WB">1WB</a> (gr1)</div></td>
+    <td class="t" rowspan="1"><a href="#KW">KW</a></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    </tr>
+    <tr class="d">
+    <td class="l t r" rowspan="1">4</td>
+    <td class="t" rowspan="1">10:35 – 11:20</td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#1WA">1WA</a> (ch)</div></td>
+    <td class="t" rowspan="1"><a href="#KP">KP</a></td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#3FC">3FC</a></div></td>
+    <td class="t" rowspan="1"><a href="#MP">MP</a></td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#2FB">2FB</a> (dz)</div></td>
+    <td class="t" rowspan="1"><a href="#MP">MP</a></td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#1WB">1WB</a> (gr1)</div></td>
+    <td class="t" rowspan="1"><a href="#KW">KW</a></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    </tr>
+    <tr>
+    <td class="l t r" rowspan="1">5</td>
+    <td class="t" rowspan="1">11:25 – 12:10</td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#1WA">1WA</a> (ch)</div></td>
+    <td class="t" rowspan="1"><a href="#KP">KP</a></td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#3FC">3FC</a></div></td>
+    <td class="t" rowspan="1"><a href="#MP">MP</a></td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#2FB">2FB</a> (dz)</div></td>
+    <td class="t" rowspan="1"><a href="#MP">MP</a></td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#1CB">1CB</a> (gr1)</div></td>
+    <td class="t" rowspan="1"><a href="#MP">MP</a></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    </tr>
+    <tr class="d">
+    <td class="l t r" rowspan="1">6</td>
+    <td class="t" rowspan="1">12:25 – 13:10</td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#2CA">2CA</a> (ch), <a href="#2S">2S</a> (ch)</div></td>
+    <td class="t" rowspan="1"><a href="#KP">KP</a></td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#3CA">3CA</a> (dz)</div></td>
+    <td class="t" rowspan="1"><a href="#AJ">AJ</a></td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#2FB">2FB</a> (dz)</div></td>
+    <td class="t" rowspan="1"><a href="#MP">MP</a></td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#1CB">1CB</a> (gr1)</div></td>
+    <td class="t" rowspan="1"><a href="#MP">MP</a></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    </tr>
+    <tr>
+    <td class="l t r" rowspan="1">7</td>
+    <td class="t" rowspan="1">13:15 – 14:00</td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#2CA">2CA</a> (ch), <a href="#2S">2S</a> (ch)</div></td>
+    <td class="t" rowspan="1"><a href="#KP">KP</a></td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#3CA">3CA</a> (dz)</div></td>
+    <td class="t" rowspan="1"><a href="#AJ">AJ</a></td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#2FC">2FC</a></div></td>
+    <td class="t" rowspan="1"><a href="#MP">MP</a></td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#1CB">1CB</a> (gr1)</div></td>
+    <td class="t" rowspan="1"><a href="#MP">MP</a></td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#1FB">1FB</a> (ch)</div></td>
+    <td class="t" rowspan="1"><a href="#KP">KP</a></td>
+    </tr>
+    <tr class="d">
+    <td class="l t r" rowspan="1">8</td>
+    <td class="t" rowspan="1">14:05 – 14:50</td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#2CA">2CA</a> (ch), <a href="#2S">2S</a> (ch)</div></td>
+    <td class="t" rowspan="1"><a href="#KP">KP</a></td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#3CA">3CA</a> (dz)</div></td>
+    <td class="t" rowspan="1"><a href="#AJ">AJ</a></td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#2FC">2FC</a></div></td>
+    <td class="t" rowspan="1"><a href="#MP">MP</a></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#1FB">1FB</a> (ch)</div></td>
+    <td class="t" rowspan="1"><a href="#KP">KP</a></td>
+    </tr>
+    <tr>
+    <td class="l t r" rowspan="1">9</td>
+    <td class="t" rowspan="1">14:55 – 15:40</td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#2FC">2FC</a></div></td>
+    <td class="t" rowspan="1"><a href="#MP">MP</a></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#1FB">1FB</a> (ch)</div></td>
+    <td class="t" rowspan="1"><a href="#KP">KP</a></td>
+    </tr>
+    <tr class="d">
+    <td class="l t r" rowspan="1">10</td>
+    <td class="t" rowspan="1">15:45 – 16:30</td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    </tr>
+    <tr>
+    <td class="l t r" rowspan="1">11</td>
+    <td class="t" rowspan="1">16:35 – 17:20</td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    </tr>
+    <tr class="d">
+    <td class="l t r" rowspan="1">12</td>
+    <td class="t" rowspan="1">17:25 – 18:10</td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    </tr>
+    <tr>
+    <td class="l t r" rowspan="1">13</td>
+    <td class="t" rowspan="1">18:15 – 19:00</td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    </tr>
+    </tbody>
+</table><table class="plan" id="sg3">
+    <caption>sg3</caption>
+    <thead>
+    <tr>
+        <td class="n"></td>
+        <td class="n"></td>
+        <td class="l t" colspan="2">Poniedziałek</td>
+        <td class="l t" colspan="2">Wtorek</td>
+        <td class="l t" colspan="2">Środa</td>
+        <td class="l t" colspan="2">Czwartek</td>
+        <td class="l t" colspan="2">Piątek</td>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+    <td class="l t r" rowspan="1">1</td>
+    <td class="t" rowspan="1">8:00 – 8:45</td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    </tr>
+    <tr class="d">
+    <td class="l t r" rowspan="1">2</td>
+    <td class="t" rowspan="1">8:50 – 9:35</td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#1TFB">1TFB</a> (ch)</div></td>
+    <td class="t" rowspan="1"><a href="#MC">MC</a></td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#1FC">1FC</a> (gr1)</div></td>
+    <td class="t" rowspan="1"><a href="#LN">LN</a></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    </tr>
+    <tr>
+    <td class="l t r" rowspan="1">3</td>
+    <td class="t" rowspan="1">9:40 – 10:25</td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#1WA">1WA</a> (dz)</div></td>
+    <td class="t" rowspan="1"><a href="#MC">MC</a></td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#1TFH">1TFH</a> (gr1)</div></td>
+    <td class="t" rowspan="1"><a href="#MC">MC</a></td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#1TFB">1TFB</a> (ch)</div></td>
+    <td class="t" rowspan="1"><a href="#MC">MC</a></td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#1FC">1FC</a> (gr1)</div></td>
+    <td class="t" rowspan="1"><a href="#LN">LN</a></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    </tr>
+    <tr class="d">
+    <td class="l t r" rowspan="1">4</td>
+    <td class="t" rowspan="1">10:35 – 11:20</td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#1WA">1WA</a> (dz)</div></td>
+    <td class="t" rowspan="1"><a href="#MC">MC</a></td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#1TFH">1TFH</a> (gr1)</div></td>
+    <td class="t" rowspan="1"><a href="#MC">MC</a></td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#1TFB">1TFB</a> (ch)</div></td>
+    <td class="t" rowspan="1"><a href="#MC">MC</a></td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#1FC">1FC</a> (gr1)</div></td>
+    <td class="t" rowspan="1"><a href="#LN">LN</a></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    </tr>
+    <tr>
+    <td class="l t r" rowspan="1">5</td>
+    <td class="t" rowspan="1">11:25 – 12:10</td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#1WA">1WA</a> (dz)</div></td>
+    <td class="t" rowspan="1"><a href="#MC">MC</a></td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#1TFH">1TFH</a> (gr1)</div></td>
+    <td class="t" rowspan="1"><a href="#MC">MC</a></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    </tr>
+    <tr class="d">
+    <td class="l t r" rowspan="1">6</td>
+    <td class="t" rowspan="1">12:25 – 13:10</td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#2S">2S</a> (dz)</div></td>
+    <td class="t" rowspan="1"><a href="#MC">MC</a></td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#3CA">3CA</a> (ch)</div></td>
+    <td class="t" rowspan="1"><a href="#MC">MC</a></td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#2WA">2WA</a> (ch2)</div></td>
+    <td class="t" rowspan="1"><a href="#MC">MC</a></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    </tr>
+    <tr>
+    <td class="l t r" rowspan="1">7</td>
+    <td class="t" rowspan="1">13:15 – 14:00</td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#2S">2S</a> (dz)</div></td>
+    <td class="t" rowspan="1"><a href="#MC">MC</a></td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#3CA">3CA</a> (ch)</div></td>
+    <td class="t" rowspan="1"><a href="#MC">MC</a></td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#2WA">2WA</a> (ch2)</div></td>
+    <td class="t" rowspan="1"><a href="#MC">MC</a></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    </tr>
+    <tr class="d">
+    <td class="l t r" rowspan="1">8</td>
+    <td class="t" rowspan="1">14:05 – 14:50</td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#2S">2S</a> (dz)</div></td>
+    <td class="t" rowspan="1"><a href="#MC">MC</a></td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#3CA">3CA</a> (ch)</div></td>
+    <td class="t" rowspan="1"><a href="#MC">MC</a></td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#2WA">2WA</a> (ch2)</div></td>
+    <td class="t" rowspan="1"><a href="#MC">MC</a></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    </tr>
+    <tr>
+    <td class="l t r" rowspan="1">9</td>
+    <td class="t" rowspan="1">14:55 – 15:40</td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    </tr>
+    <tr class="d">
+    <td class="l t r" rowspan="1">10</td>
+    <td class="t" rowspan="1">15:45 – 16:30</td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    </tr>
+    <tr>
+    <td class="l t r" rowspan="1">11</td>
+    <td class="t" rowspan="1">16:35 – 17:20</td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    </tr>
+    <tr class="d">
+    <td class="l t r" rowspan="1">12</td>
+    <td class="t" rowspan="1">17:25 – 18:10</td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    </tr>
+    <tr>
+    <td class="l t r" rowspan="1">13</td>
+    <td class="t" rowspan="1">18:15 – 19:00</td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    </tr>
+    </tbody>
+</table><table class="plan" id="sg4">
+    <caption>sg4</caption>
+    <thead>
+    <tr>
+        <td class="n"></td>
+        <td class="n"></td>
+        <td class="l t" colspan="2">Poniedziałek</td>
+        <td class="l t" colspan="2">Wtorek</td>
+        <td class="l t" colspan="2">Środa</td>
+        <td class="l t" colspan="2">Czwartek</td>
+        <td class="l t" colspan="2">Piątek</td>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+    <td class="l t r" rowspan="1">1</td>
+    <td class="t" rowspan="1">8:00 – 8:45</td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#3K">3K</a> (dz), <a href="#3WA">3WA</a> (dz)</div></td>
+    <td class="t" rowspan="1"><a href="#RJ">RJ</a></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#4TFA">4TFA</a></div></td>
+    <td class="t" rowspan="1"><a href="#DK">DK</a></td>
+    </tr>
+    <tr class="d">
+    <td class="l t r" rowspan="1">2</td>
+    <td class="t" rowspan="1">8:50 – 9:35</td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#2TH">2TH</a> (dz)</div></td>
+    <td class="t" rowspan="1"><a href="#MP">MP</a></td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#3K">3K</a> (dz), <a href="#3WA">3WA</a> (dz)</div></td>
+    <td class="t" rowspan="1"><a href="#RJ">RJ</a></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#4TFA">4TFA</a></div></td>
+    <td class="t" rowspan="1"><a href="#DK">DK</a></td>
+    </tr>
+    <tr>
+    <td class="l t r" rowspan="1">3</td>
+    <td class="t" rowspan="1">9:40 – 10:25</td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#2TH">2TH</a> (dz)</div></td>
+    <td class="t" rowspan="1"><a href="#MP">MP</a></td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#3K">3K</a> (dz), <a href="#3WA">3WA</a> (dz)</div></td>
+    <td class="t" rowspan="1"><a href="#RJ">RJ</a></td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#2FA">2FA</a></div></td>
+    <td class="t" rowspan="1"><a href="#DK">DK</a></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#4TFA">4TFA</a></div></td>
+    <td class="t" rowspan="1"><a href="#DK">DK</a></td>
+    </tr>
+    <tr class="d">
+    <td class="l t r" rowspan="1">4</td>
+    <td class="t" rowspan="1">10:35 – 11:20</td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#2TH">2TH</a> (dz)</div></td>
+    <td class="t" rowspan="1"><a href="#MP">MP</a></td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#2TFA">2TFA</a></div></td>
+    <td class="t" rowspan="1"><a href="#RJ">RJ</a></td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#2FA">2FA</a></div></td>
+    <td class="t" rowspan="1"><a href="#DK">DK</a></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#5TH">5TH</a> (dz)</div></td>
+    <td class="t" rowspan="1"><a href="#DK">DK</a></td>
+    </tr>
+    <tr>
+    <td class="l t r" rowspan="1">5</td>
+    <td class="t" rowspan="1">11:25 – 12:10</td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#4TH">4TH</a> (dz)</div></td>
+    <td class="t" rowspan="1"><a href="#MP">MP</a></td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#2TFA">2TFA</a></div></td>
+    <td class="t" rowspan="1"><a href="#RJ">RJ</a></td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#2FA">2FA</a></div></td>
+    <td class="t" rowspan="1"><a href="#DK">DK</a></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#5TH">5TH</a> (dz)</div></td>
+    <td class="t" rowspan="1"><a href="#DK">DK</a></td>
+    </tr>
+    <tr class="d">
+    <td class="l t r" rowspan="1">6</td>
+    <td class="t" rowspan="1">12:25 – 13:10</td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#4TH">4TH</a> (dz)</div></td>
+    <td class="t" rowspan="1"><a href="#MP">MP</a></td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#2TFA">2TFA</a></div></td>
+    <td class="t" rowspan="1"><a href="#RJ">RJ</a></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#1K">1K</a> (dz)</div></td>
+    <td class="t" rowspan="1"><a href="#LN">LN</a></td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#5TH">5TH</a> (dz)</div></td>
+    <td class="t" rowspan="1"><a href="#DK">DK</a></td>
+    </tr>
+    <tr>
+    <td class="l t r" rowspan="1">7</td>
+    <td class="t" rowspan="1">13:15 – 14:00</td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#4TH">4TH</a> (dz)</div></td>
+    <td class="t" rowspan="1"><a href="#MP">MP</a></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#1K">1K</a> (dz)</div></td>
+    <td class="t" rowspan="1"><a href="#LN">LN</a></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    </tr>
+    <tr class="d">
+    <td class="l t r" rowspan="1">8</td>
+    <td class="t" rowspan="1">14:05 – 14:50</td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#1K">1K</a> (dz)</div></td>
+    <td class="t" rowspan="1"><a href="#LN">LN</a></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    </tr>
+    <tr>
+    <td class="l t r" rowspan="1">9</td>
+    <td class="t" rowspan="1">14:55 – 15:40</td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    </tr>
+    <tr class="d">
+    <td class="l t r" rowspan="1">10</td>
+    <td class="t" rowspan="1">15:45 – 16:30</td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    </tr>
+    <tr>
+    <td class="l t r" rowspan="1">11</td>
+    <td class="t" rowspan="1">16:35 – 17:20</td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    </tr>
+    <tr class="d">
+    <td class="l t r" rowspan="1">12</td>
+    <td class="t" rowspan="1">17:25 – 18:10</td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    </tr>
+    <tr>
+    <td class="l t r" rowspan="1">13</td>
+    <td class="t" rowspan="1">18:15 – 19:00</td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    </tr>
+    </tbody>
+</table><table class="plan" id="sg5">
+    <caption>sg5</caption>
+    <thead>
+    <tr>
+        <td class="n"></td>
+        <td class="n"></td>
+        <td class="l t" colspan="2">Poniedziałek</td>
+        <td class="l t" colspan="2">Wtorek</td>
+        <td class="l t" colspan="2">Środa</td>
+        <td class="l t" colspan="2">Czwartek</td>
+        <td class="l t" colspan="2">Piątek</td>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+    <td class="l t r" rowspan="1">1</td>
+    <td class="t" rowspan="1">8:00 – 8:45</td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#1FA">1FA</a> (gr1)</div></td>
+    <td class="t" rowspan="1"><a href="#AJ">AJ</a></td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#3CB">3CB</a></div></td>
+    <td class="t" rowspan="1"><a href="#RJ">RJ</a></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    </tr>
+    <tr class="d">
+    <td class="l t r" rowspan="1">2</td>
+    <td class="t" rowspan="1">8:50 – 9:35</td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#1FA">1FA</a> (gr1)</div></td>
+    <td class="t" rowspan="1"><a href="#AJ">AJ</a></td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#3CB">3CB</a></div></td>
+    <td class="t" rowspan="1"><a href="#RJ">RJ</a></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    </tr>
+    <tr>
+    <td class="l t r" rowspan="1">3</td>
+    <td class="t" rowspan="1">9:40 – 10:25</td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#3FA">3FA</a></div></td>
+    <td class="t" rowspan="1"><a href="#DK">DK</a></td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#1FA">1FA</a> (gr1)</div></td>
+    <td class="t" rowspan="1"><a href="#AJ">AJ</a></td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#3CB">3CB</a></div></td>
+    <td class="t" rowspan="1"><a href="#RJ">RJ</a></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    </tr>
+    <tr class="d">
+    <td class="l t r" rowspan="1">4</td>
+    <td class="t" rowspan="1">10:35 – 11:20</td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#3FA">3FA</a></div></td>
+    <td class="t" rowspan="1"><a href="#DK">DK</a></td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#2K">2K</a> (dz)</div></td>
+    <td class="t" rowspan="1"><a href="#AJ">AJ</a></td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#1S">1S</a> (dz)</div></td>
+    <td class="t" rowspan="1"><a href="#RJ">RJ</a></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    </tr>
+    <tr>
+    <td class="l t r" rowspan="1">5</td>
+    <td class="t" rowspan="1">11:25 – 12:10</td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#3FA">3FA</a></div></td>
+    <td class="t" rowspan="1"><a href="#DK">DK</a></td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#2K">2K</a> (dz)</div></td>
+    <td class="t" rowspan="1"><a href="#AJ">AJ</a></td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#1S">1S</a> (dz)</div></td>
+    <td class="t" rowspan="1"><a href="#RJ">RJ</a></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    </tr>
+    <tr class="d">
+    <td class="l t r" rowspan="1">6</td>
+    <td class="t" rowspan="1">12:25 – 13:10</td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#2K">2K</a> (dz)</div></td>
+    <td class="t" rowspan="1"><a href="#AJ">AJ</a></td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#1S">1S</a> (dz)</div></td>
+    <td class="t" rowspan="1"><a href="#RJ">RJ</a></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    </tr>
+    <tr>
+    <td class="l t r" rowspan="1">7</td>
+    <td class="t" rowspan="1">13:15 – 14:00</td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    </tr>
+    <tr class="d">
+    <td class="l t r" rowspan="1">8</td>
+    <td class="t" rowspan="1">14:05 – 14:50</td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#3FB">3FB</a> (dz)</div></td>
+    <td class="t" rowspan="1"><a href="#MP">MP</a></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    </tr>
+    <tr>
+    <td class="l t r" rowspan="1">9</td>
+    <td class="t" rowspan="1">14:55 – 15:40</td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#3FB">3FB</a> (dz)</div></td>
+    <td class="t" rowspan="1"><a href="#MP">MP</a></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    </tr>
+    <tr class="d">
+    <td class="l t r" rowspan="1">10</td>
+    <td class="t" rowspan="1">15:45 – 16:30</td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#3FB">3FB</a> (dz)</div></td>
+    <td class="t" rowspan="1"><a href="#MP">MP</a></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    </tr>
+    <tr>
+    <td class="l t r" rowspan="1">11</td>
+    <td class="t" rowspan="1">16:35 – 17:20</td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    </tr>
+    <tr class="d">
+    <td class="l t r" rowspan="1">12</td>
+    <td class="t" rowspan="1">17:25 – 18:10</td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    </tr>
+    <tr>
+    <td class="l t r" rowspan="1">13</td>
+    <td class="t" rowspan="1">18:15 – 19:00</td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    </tr>
+    </tbody>
+</table><table class="plan" id="sg6">
+    <caption>sg6</caption>
+    <thead>
+    <tr>
+        <td class="n"></td>
+        <td class="n"></td>
+        <td class="l t" colspan="2">Poniedziałek</td>
+        <td class="l t" colspan="2">Wtorek</td>
+        <td class="l t" colspan="2">Środa</td>
+        <td class="l t" colspan="2">Czwartek</td>
+        <td class="l t" colspan="2">Piątek</td>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+    <td class="l t r" rowspan="1">1</td>
+    <td class="t" rowspan="1">8:00 – 8:45</td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    </tr>
+    <tr class="d">
+    <td class="l t r" rowspan="1">2</td>
+    <td class="t" rowspan="1">8:50 – 9:35</td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    </tr>
+    <tr>
+    <td class="l t r" rowspan="1">3</td>
+    <td class="t" rowspan="1">9:40 – 10:25</td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    </tr>
+    <tr class="d">
+    <td class="l t r" rowspan="1">4</td>
+    <td class="t" rowspan="1">10:35 – 11:20</td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#2FB">2FB</a> (ch)</div></td>
+    <td class="t" rowspan="1"><a href="#KP">KP</a></td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#1CB">1CB</a> (gr2)</div></td>
+    <td class="t" rowspan="1"><a href="#SD">SD</a></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    </tr>
+    <tr>
+    <td class="l t r" rowspan="1">5</td>
+    <td class="t" rowspan="1">11:25 – 12:10</td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#2FB">2FB</a> (ch)</div></td>
+    <td class="t" rowspan="1"><a href="#KP">KP</a></td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#1CB">1CB</a> (gr2)</div></td>
+    <td class="t" rowspan="1"><a href="#SD">SD</a></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    </tr>
+    <tr class="d">
+    <td class="l t r" rowspan="1">6</td>
+    <td class="t" rowspan="1">12:25 – 13:10</td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#2FB">2FB</a> (ch)</div></td>
+    <td class="t" rowspan="1"><a href="#KP">KP</a></td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#1CB">1CB</a> (gr2)</div></td>
+    <td class="t" rowspan="1"><a href="#SD">SD</a></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    </tr>
+    <tr>
+    <td class="l t r" rowspan="1">7</td>
+    <td class="t" rowspan="1">13:15 – 14:00</td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    </tr>
+    <tr class="d">
+    <td class="l t r" rowspan="1">8</td>
+    <td class="t" rowspan="1">14:05 – 14:50</td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    </tr>
+    <tr>
+    <td class="l t r" rowspan="1">9</td>
+    <td class="t" rowspan="1">14:55 – 15:40</td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    </tr>
+    <tr class="d">
+    <td class="l t r" rowspan="1">10</td>
+    <td class="t" rowspan="1">15:45 – 16:30</td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    </tr>
+    <tr>
+    <td class="l t r" rowspan="1">11</td>
+    <td class="t" rowspan="1">16:35 – 17:20</td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    </tr>
+    <tr class="d">
+    <td class="l t r" rowspan="1">12</td>
+    <td class="t" rowspan="1">17:25 – 18:10</td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    </tr>
+    <tr>
+    <td class="l t r" rowspan="1">13</td>
+    <td class="t" rowspan="1">18:15 – 19:00</td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    </tr>
+    </tbody>
+</table><table class="plan" id="sg7">
+    <caption>sg7</caption>
+    <thead>
+    <tr>
+        <td class="n"></td>
+        <td class="n"></td>
+        <td class="l t" colspan="2">Poniedziałek</td>
+        <td class="l t" colspan="2">Wtorek</td>
+        <td class="l t" colspan="2">Środa</td>
+        <td class="l t" colspan="2">Czwartek</td>
+        <td class="l t" colspan="2">Piątek</td>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+    <td class="l t r" rowspan="1">1</td>
+    <td class="t" rowspan="1">8:00 – 8:45</td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#3WA">3WA</a> (ch2)</div></td>
+    <td class="t" rowspan="1"><a href="#LN">LN</a></td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#1FA">1FA</a> (gr2)</div></td>
+    <td class="t" rowspan="1"><a href="#RJ">RJ</a></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    </tr>
+    <tr class="d">
+    <td class="l t r" rowspan="1">2</td>
+    <td class="t" rowspan="1">8:50 – 9:35</td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#2TFB">2TFB</a> (ch), <a href="#2TH">2TH</a> (ch)</div></td>
+    <td class="t" rowspan="1"><a href="#KW">KW</a></td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#3WA">3WA</a> (ch2)</div></td>
+    <td class="t" rowspan="1"><a href="#LN">LN</a></td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#1FA">1FA</a> (gr2)</div></td>
+    <td class="t" rowspan="1"><a href="#RJ">RJ</a></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    </tr>
+    <tr>
+    <td class="l t r" rowspan="1">3</td>
+    <td class="t" rowspan="1">9:40 – 10:25</td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#2TFB">2TFB</a> (ch), <a href="#2TH">2TH</a> (ch)</div></td>
+    <td class="t" rowspan="1"><a href="#KW">KW</a></td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#3WA">3WA</a> (ch2)</div></td>
+    <td class="t" rowspan="1"><a href="#LN">LN</a></td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#1FA">1FA</a> (gr2)</div></td>
+    <td class="t" rowspan="1"><a href="#RJ">RJ</a></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    </tr>
+    <tr class="d">
+    <td class="l t r" rowspan="1">4</td>
+    <td class="t" rowspan="1">10:35 – 11:20</td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#2TFB">2TFB</a> (ch), <a href="#2TH">2TH</a> (ch)</div></td>
+    <td class="t" rowspan="1"><a href="#KW">KW</a></td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#1TFH">1TFH</a> (gr2)</div></td>
+    <td class="t" rowspan="1"><a href="#LN">LN</a></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#5TFB">5TFB</a> (ch), <a href="#5TH">5TH</a> (ch)</div></td>
+    <td class="t" rowspan="1"><a href="#LN">LN</a></td>
+    </tr>
+    <tr>
+    <td class="l t r" rowspan="1">5</td>
+    <td class="t" rowspan="1">11:25 – 12:10</td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#4TFB">4TFB</a> (ch), <a href="#4TH">4TH</a> (ch)</div></td>
+    <td class="t" rowspan="1"><a href="#KW">KW</a></td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#1TFH">1TFH</a> (gr2)</div></td>
+    <td class="t" rowspan="1"><a href="#LN">LN</a></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#5TFB">5TFB</a> (ch), <a href="#5TH">5TH</a> (ch)</div></td>
+    <td class="t" rowspan="1"><a href="#LN">LN</a></td>
+    </tr>
+    <tr class="d">
+    <td class="l t r" rowspan="1">6</td>
+    <td class="t" rowspan="1">12:25 – 13:10</td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#4TFB">4TFB</a> (ch), <a href="#4TH">4TH</a> (ch)</div></td>
+    <td class="t" rowspan="1"><a href="#KW">KW</a></td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#1TFH">1TFH</a> (gr2)</div></td>
+    <td class="t" rowspan="1"><a href="#LN">LN</a></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#1K">1K</a> (ch)</div></td>
+    <td class="t" rowspan="1"><a href="#KP">KP</a></td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#5TFB">5TFB</a> (ch), <a href="#5TH">5TH</a> (ch)</div></td>
+    <td class="t" rowspan="1"><a href="#LN">LN</a></td>
+    </tr>
+    <tr>
+    <td class="l t r" rowspan="1">7</td>
+    <td class="t" rowspan="1">13:15 – 14:00</td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#4TFB">4TFB</a> (ch), <a href="#4TH">4TH</a> (ch)</div></td>
+    <td class="t" rowspan="1"><a href="#KW">KW</a></td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#1TFA">1TFA</a> (gr1)</div></td>
+    <td class="t" rowspan="1"><a href="#LN">LN</a></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#1K">1K</a> (ch)</div></td>
+    <td class="t" rowspan="1"><a href="#KP">KP</a></td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#3TFA">3TFA</a></div></td>
+    <td class="t" rowspan="1"><a href="#LN">LN</a></td>
+    </tr>
+    <tr class="d">
+    <td class="l t r" rowspan="1">8</td>
+    <td class="t" rowspan="1">14:05 – 14:50</td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#1TFA">1TFA</a> (gr1)</div></td>
+    <td class="t" rowspan="1"><a href="#LN">LN</a></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#1K">1K</a> (ch)</div></td>
+    <td class="t" rowspan="1"><a href="#KP">KP</a></td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#3TFA">3TFA</a></div></td>
+    <td class="t" rowspan="1"><a href="#LN">LN</a></td>
+    </tr>
+    <tr>
+    <td class="l t r" rowspan="1">9</td>
+    <td class="t" rowspan="1">14:55 – 15:40</td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#1CA">1CA</a> (dz)</div></td>
+    <td class="t" rowspan="1"><a href="#RJ">RJ</a></td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#1TFA">1TFA</a> (gr1)</div></td>
+    <td class="t" rowspan="1"><a href="#LN">LN</a></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#3TFA">3TFA</a></div></td>
+    <td class="t" rowspan="1"><a href="#LN">LN</a></td>
+    </tr>
+    <tr class="d">
+    <td class="l t r" rowspan="1">10</td>
+    <td class="t" rowspan="1">15:45 – 16:30</td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#1CA">1CA</a> (dz)</div></td>
+    <td class="t" rowspan="1"><a href="#RJ">RJ</a></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    </tr>
+    <tr>
+    <td class="l t r" rowspan="1">11</td>
+    <td class="t" rowspan="1">16:35 – 17:20</td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#1CA">1CA</a> (dz)</div></td>
+    <td class="t" rowspan="1"><a href="#RJ">RJ</a></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    </tr>
+    <tr class="d">
+    <td class="l t r" rowspan="1">12</td>
+    <td class="t" rowspan="1">17:25 – 18:10</td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    </tr>
+    <tr>
+    <td class="l t r" rowspan="1">13</td>
+    <td class="t" rowspan="1">18:15 – 19:00</td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    </tr>
+    </tbody>
+</table><table class="plan" id="sg8">
+    <caption>sg8</caption>
+    <thead>
+    <tr>
+        <td class="n"></td>
+        <td class="n"></td>
+        <td class="l t" colspan="2">Poniedziałek</td>
+        <td class="l t" colspan="2">Wtorek</td>
+        <td class="l t" colspan="2">Środa</td>
+        <td class="l t" colspan="2">Czwartek</td>
+        <td class="l t" colspan="2">Piątek</td>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+    <td class="l t r" rowspan="1">1</td>
+    <td class="t" rowspan="1">8:00 – 8:45</td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#3WA">3WA</a> (ch1)</div></td>
+    <td class="t" rowspan="1"><a href="#AJ">AJ</a></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#3TFB">3TFB</a> (ch)</div></td>
+    <td class="t" rowspan="1"><a href="#KW">KW</a></td>
+    </tr>
+    <tr class="d">
+    <td class="l t r" rowspan="1">2</td>
+    <td class="t" rowspan="1">8:50 – 9:35</td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#2TFB">2TFB</a> (dz)</div></td>
+    <td class="t" rowspan="1"><a href="#DK">DK</a></td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#3WA">3WA</a> (ch1)</div></td>
+    <td class="t" rowspan="1"><a href="#AJ">AJ</a></td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#1TFB">1TFB</a> (dz)</div></td>
+    <td class="t" rowspan="1"><a href="#LN">LN</a></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#3TFB">3TFB</a> (ch)</div></td>
+    <td class="t" rowspan="1"><a href="#KW">KW</a></td>
+    </tr>
+    <tr>
+    <td class="l t r" rowspan="1">3</td>
+    <td class="t" rowspan="1">9:40 – 10:25</td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#2TFB">2TFB</a> (dz)</div></td>
+    <td class="t" rowspan="1"><a href="#DK">DK</a></td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#3WA">3WA</a> (ch1)</div></td>
+    <td class="t" rowspan="1"><a href="#AJ">AJ</a></td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#1TFB">1TFB</a> (dz)</div></td>
+    <td class="t" rowspan="1"><a href="#LN">LN</a></td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#1FC">1FC</a> (gr2)</div></td>
+    <td class="t" rowspan="1"><a href="#DK">DK</a></td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#3TFB">3TFB</a> (ch)</div></td>
+    <td class="t" rowspan="1"><a href="#KW">KW</a></td>
+    </tr>
+    <tr class="d">
+    <td class="l t r" rowspan="1">4</td>
+    <td class="t" rowspan="1">10:35 – 11:20</td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#2TFB">2TFB</a> (dz)</div></td>
+    <td class="t" rowspan="1"><a href="#DK">DK</a></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#1TFB">1TFB</a> (dz)</div></td>
+    <td class="t" rowspan="1"><a href="#LN">LN</a></td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#1FC">1FC</a> (gr2)</div></td>
+    <td class="t" rowspan="1"><a href="#DK">DK</a></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    </tr>
+    <tr>
+    <td class="l t r" rowspan="1">5</td>
+    <td class="t" rowspan="1">11:25 – 12:10</td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#4TFB">4TFB</a> (dz)</div></td>
+    <td class="t" rowspan="1"><a href="#DK">DK</a></td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#2WA">2WA</a> (ch1)</div></td>
+    <td class="t" rowspan="1"><a href="#KW">KW</a></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#1FC">1FC</a> (gr2)</div></td>
+    <td class="t" rowspan="1"><a href="#DK">DK</a></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    </tr>
+    <tr class="d">
+    <td class="l t r" rowspan="1">6</td>
+    <td class="t" rowspan="1">12:25 – 13:10</td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#4TFB">4TFB</a> (dz)</div></td>
+    <td class="t" rowspan="1"><a href="#DK">DK</a></td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#2WA">2WA</a> (ch1)</div></td>
+    <td class="t" rowspan="1"><a href="#KW">KW</a></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    </tr>
+    <tr>
+    <td class="l t r" rowspan="1">7</td>
+    <td class="t" rowspan="1">13:15 – 14:00</td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#4TFB">4TFB</a> (dz)</div></td>
+    <td class="t" rowspan="1"><a href="#DK">DK</a></td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#2WA">2WA</a> (ch1)</div></td>
+    <td class="t" rowspan="1"><a href="#KW">KW</a></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    </tr>
+    <tr class="d">
+    <td class="l t r" rowspan="1">8</td>
+    <td class="t" rowspan="1">14:05 – 14:50</td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#3FB">3FB</a> (ch)</div></td>
+    <td class="t" rowspan="1"><a href="#SD">SD</a></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#2CA">2CA</a> (dz), <a href="#2WA">2WA</a> (dz)</div></td>
+    <td class="t" rowspan="1"><a href="#RJ">RJ</a></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    </tr>
+    <tr>
+    <td class="l t r" rowspan="1">9</td>
+    <td class="t" rowspan="1">14:55 – 15:40</td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#1CA">1CA</a> (ch)</div></td>
+    <td class="t" rowspan="1"><a href="#SD">SD</a></td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#3FB">3FB</a> (ch)</div></td>
+    <td class="t" rowspan="1"><a href="#SD">SD</a></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#2CA">2CA</a> (dz), <a href="#2WA">2WA</a> (dz)</div></td>
+    <td class="t" rowspan="1"><a href="#RJ">RJ</a></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    </tr>
+    <tr class="d">
+    <td class="l t r" rowspan="1">10</td>
+    <td class="t" rowspan="1">15:45 – 16:30</td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#1CA">1CA</a> (ch)</div></td>
+    <td class="t" rowspan="1"><a href="#SD">SD</a></td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#3FB">3FB</a> (ch)</div></td>
+    <td class="t" rowspan="1"><a href="#SD">SD</a></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#2CA">2CA</a> (dz), <a href="#2WA">2WA</a> (dz)</div></td>
+    <td class="t" rowspan="1"><a href="#RJ">RJ</a></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    </tr>
+    <tr>
+    <td class="l t r" rowspan="1">11</td>
+    <td class="t" rowspan="1">16:35 – 17:20</td>
+    <td class="l t" rowspan="1">Wychowanie fizyczne
+    <div class="g"><a href="#1CA">1CA</a> (ch)</div></td>
+    <td class="t" rowspan="1"><a href="#SD">SD</a></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    </tr>
+    <tr class="d">
+    <td class="l t r" rowspan="1">12</td>
+    <td class="t" rowspan="1">17:25 – 18:10</td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    </tr>
+    <tr>
+    <td class="l t r" rowspan="1">13</td>
+    <td class="t" rowspan="1">18:15 – 19:00</td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    <td class="l t" rowspan="1" colspan="2"><br></td>
+    </tr>
+    </tbody>
+</table>
+<table class="plan external-plan" id="obiekty-zewnetrzne">
+    <caption>Zestawienie zajęć w obiektach zewnętrznych - rok szkolny 2026/2027</caption>
+    <thead>
+    <tr>
+        <td class="n">Dzień / godzina</td>
+        <td class="l t">09:00-10:30</td>
+        <td class="l t">10:00-10:50</td>
+        <td class="l t">10:30-12:00</td>
+        <td class="l t">11:00-11:50</td>
+        <td class="l t">12:00-13:30</td>
+    </tr>
+    </thead>
+    <tbody>
+    <tr class="d">
+        <td class="l t">poniedziałek</td>
+        <td class="l t">1. sala główna<br>2. basen rekreacyjny</td>
+        <td class="l t"><br></td>
+        <td class="l t">1. sala Body&amp;Mind<br>2. basen rekreacyjny</td>
+        <td class="l t">rolki / lodowisko (20 os.)</td>
+        <td class="l t">1. sala Fitness duża<br>2. basen rekreacyjny</td>
+    </tr>
+    <tr>
+        <td class="l t">wtorek</td>
+        <td class="l t">1. sala główna<br>2. basen sportowy</td>
+        <td class="l t">rolki / lodowisko (20 os.)</td>
+        <td class="l t">1. sala Body&amp;Mind<br>2. basen sportowy</td>
+        <td class="l t"><br></td>
+        <td class="l t">1. sala Fitness duża<br>2. basen sportowy</td>
+    </tr>
+    <tr class="d">
+        <td class="l t">środa</td>
+        <td class="l t">1. sala główna<br>2. basen rekreacyjny</td>
+        <td class="l t"><br></td>
+        <td class="l t">1. sala Body&amp;Mind<br>2. basen rekreacyjny</td>
+        <td class="l t">rolki / lodowisko (20 os.)</td>
+        <td class="l t">1. sala Fitness duża<br>2. basen rekreacyjny</td>
+    </tr>
+    <tr>
+        <td class="l t">czwartek</td>
+        <td class="l t">1. sala główna<br>2. basen rekreacyjny</td>
+        <td class="l t"><br></td>
+        <td class="l t">1. sala główna<br>2. basen rekreacyjny</td>
+        <td class="l t">rolki / lodowisko (20 os.)</td>
+        <td class="l t">1. sala Fitness duża<br>2. basen rekreacyjny</td>
+    </tr>
+    <tr class="d">
+        <td class="l t">piątek</td>
+        <td class="l t">basen sportowy</td>
+        <td class="l t"><br></td>
+        <td class="l t">1. sala główna<br>2. sala Body&amp;Mind<br>3. basen sportowy</td>
+        <td class="l t">rolki / lodowisko (20 os.)</td>
+        <td class="l t">1. sala Body&amp;Mind<br>2. basen sportowy</td>
+    </tr>
+    <tr>
+        <td class="l t" colspan="6"><strong>Dni wyłączone z realizacji - AQUAPARK BOROWSKA:</strong><br>
         1.09-11.09 - dni wolne<br>
         21-25.09 - dni wolne<br>
         12-16.10 - dni wolne<br>
         9-13.11 - dni wolne<br>
         14-31.12 - dni wolne<br>
-        Od września do końca grudnia mamy 10 pełnych tygodni zajęć realizowanych.
-      </div>
-    </section>
-  </main>
+        Od września do końca grudnia mamy 10 pełnych tygodni zajęć realizowanych.</td>
+    </tr>
+    </tbody>
+</table>
+</div>
+<footer>Na podstawie planu roboczego 2. <a href="index.html">Wróć do strony nauczyciela</a></footer>
+<script type="text/javascript">
+(function() {
+    const plans = document.getElementsByClassName("plan");
+    function nav() {
+        const h = window.location.hash.substring(1) || "sg1";
+        for (let p of plans)
+            p.style.display = p.id === h ? "table" : "none";
+    }
+    window.addEventListener("hashchange", nav);
+    nav();
+})();
+</script>
+</main>
 </body>
 </html>
