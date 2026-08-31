@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wykaz podziałów na grupy</title>
+    <style>
+        :root {
+            color-scheme: light;
+            --bg: #f3f5f7;
+            --panel: #ffffff;
+            --ink: #17202a;
+            --muted: #637083;
+            --line: #d9e0e8;
+            --accent: #0f766e;
+            --accent-dark: #115e59;
+            --soft: #e8f3f1;
+            --warn: #fff7ed;
+        }
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            background: var(--bg);
+            color: var(--ink);
+            font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            line-height: 1.45;
+        }
+        header {
+            background: #ffffff;
+            border-bottom: 1px solid var(--line);
+        }
+        .wrap {
+            width: min(1180px, calc(100% - 32px));
+            margin: 0 auto;
+        }
+        .topbar {
+            display: flex;
+            gap: 16px;
+            justify-content: space-between;
+            align-items: center;
+            padding: 18px 0;
+        }
+        h1 {
+            margin: 0;
+            font-size: clamp(1.35rem, 2vw, 2rem);
+            line-height: 1.15;
+        }
+        .source {
+            color: var(--muted);
+            font-size: .95rem;
+            margin-top: 4px;
+        }
+        .summary {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            justify-content: flex-end;
+            color: var(--muted);
+            font-size: .9rem;
+        }
+        .summary span {
+            border: 1px solid var(--line);
+            border-radius: 999px;
+            padding: 5px 9px;
+            background: #f8fafc;
+            white-space: nowrap;
+        }
+        main {
+            padding: 18px 0 36px;
+        }
+        .layout {
+            display: grid;
+            grid-template-columns: 260px 1fr;
+            gap: 18px;
+            align-items: start;
+        }
+        .sidebar {
+            position: sticky;
+            top: 14px;
+            background: var(--panel);
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            padding: 12px;
+        }
+        .tools {
+            display: grid;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+        label {
+            display: grid;
+            gap: 4px;
+            color: var(--muted);
+            font-size: .82rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: .04em;
+        }
+        input {
+            width: 100%;
+            border: 1px solid var(--line);
+            border-radius: 6px;
+            padding: 9px 10px;
+            color: var(--ink);
+            font: inherit;
+            outline: none;
+        }
+        input:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(15, 118, 110, .15);
+        }
+        .class-list {
+            display: grid;
+            gap: 4px;
+            max-height: calc(100vh - 170px);
+            overflow: auto;
+            padding-right: 2px;
+        }
+        .class-button {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            min-height: 36px;
+            border: 0;
+            border-radius: 6px;
+            background: transparent;
+            color: var(--ink);
+            font: inherit;
+            text-align: left;
+            cursor: pointer;
+            padding: 7px 9px;
+        }
+        .class-button:hover {
+            background: #f1f5f9;
+        }
+        .class-button.active {
+            background: var(--accent);
+            color: #fff;
+            font-weight: 800;
+        }
+        .count {
+            min-width: 24px;
+            border-radius: 999px;
+            padding: 1px 6px;
+            background: #e2e8f0;
+            color: #475569;
+            font-size: .78rem;
+            text-align: center;
+        }
+        .class-button.active .count {
+            background: rgba(255,255,255,.2);
+            color: #fff;
+        }
+        .content {
+            display: grid;
+            gap: 14px;
+        }
+        .class-header {
+            background: var(--panel);
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            padding: 14px 16px;
+        }
+        .class-title {
+            display: flex;
+            align-items: baseline;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 10px;
+        }
+        h2 {
+            margin: 0;
+            font-size: 1.55rem;
+            line-height: 1.2;
+        }
+        .meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            color: var(--muted);
+            font-size: .9rem;
+        }
+        .meta span {
+            background: #f8fafc;
+            border: 1px solid var(--line);
+            border-radius: 999px;
+            padding: 4px 8px;
+        }
+        .division {
+            background: var(--panel);
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .division-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 14px;
+            background: #f8fafc;
+            border-bottom: 1px solid var(--line);
+        }
+        h3 {
+            margin: 0;
+            font-size: 1.05rem;
+        }
+        .chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+        .chip {
+            border-radius: 999px;
+            background: var(--soft);
+            color: var(--accent-dark);
+            font-weight: 800;
+            font-size: .82rem;
+            padding: 4px 8px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            vertical-align: top;
+            text-align: left;
+            padding: 12px 14px;
+            border-bottom: 1px solid var(--line);
+        }
+        th {
+            color: var(--muted);
+            font-size: .78rem;
+            text-transform: uppercase;
+            letter-spacing: .04em;
+            background: #ffffff;
+        }
+        tr:last-child td {
+            border-bottom: 0;
+        }
+        .group-name {
+            min-width: 104px;
+            font-size: 1.05rem;
+            font-weight: 900;
+            color: var(--accent-dark);
+        }
+        .subject-list {
+            display: grid;
+            gap: 8px;
+        }
+        .subject-row {
+            display: grid;
+            grid-template-columns: minmax(180px, 1fr) minmax(190px, 1fr);
+            gap: 10px;
+        }
+        .subject {
+            font-weight: 700;
+        }
+        .teachers {
+            color: var(--muted);
+        }
+        .missing {
+            display: inline-block;
+            border-radius: 5px;
+            background: var(--warn);
+            color: #9a3412;
+            padding: 2px 6px;
+            font-weight: 700;
+        }
+        .empty {
+            background: var(--panel);
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            padding: 18px;
+            color: var(--muted);
+        }
+        .hidden {
+            display: none !important;
+        }
+        @media (max-width: 820px) {
+            .topbar, .class-title, .division-head {
+                align-items: stretch;
+                flex-direction: column;
+            }
+            .summary {
+                justify-content: flex-start;
+            }
+            .layout {
+                grid-template-columns: 1fr;
+            }
+            .sidebar {
+                position: static;
+            }
+            .class-list {
+                display: flex;
+                gap: 6px;
+                overflow-x: auto;
+                max-height: none;
+                padding-bottom: 4px;
+            }
+            .class-button {
+                flex: 0 0 auto;
+                min-width: 82px;
+            }
+            .subject-row {
+                grid-template-columns: 1fr;
+                gap: 2px;
+            }
+        }
+    </style>
+</head>
+<body>
+<header>
+    <div class="wrap topbar">
+        <div>
+            <h1>Wykaz podziałów na grupy</h1>
+            <div class="source" id="source"></div>
+        </div>
+        <div class="summary" id="summary"></div>
+    </div>
+</header>
+<main>
+    <div class="wrap layout">
+        <aside class="sidebar">
+            <div class="tools">
+                <label for="search">Szukaj klasy</label>
+                <input id="search" type="search" placeholder="np. 1TFA" autocomplete="off">
+            </div>
+            <div class="class-list" id="classList"></div>
+        </aside>
+        <section class="content" id="content"></section>
+    </div>
+</main>
+<script>
+const REPORT = {"sourceTitle": "Plan lekcji obowiązuje od 01.09.2026", "classes": [{"id": "1B", "divisionCount": 1, "groupCount": 2, "divisions": [{"key": "gr", "label": "GR1 - GR2", "groups": [{"code": "gr1", "name": "GR1", "subjects": [{"subject": "Język angielski", "teachers": ["Mariola Granatowska"]}]}, {"code": "gr2", "name": "GR2", "subjects": [{"subject": "Język angielski", "teachers": ["Donata Staliś"]}]}]}]}, {"id": "1CA", "divisionCount": 3, "groupCount": 6, "divisions": [{"key": "gr", "label": "GR1 - GR2", "groups": [{"code": "gr1", "name": "GR1", "subjects": [{"subject": "Język angielski", "teachers": ["Anna Galert"]}, {"subject": "Informatyka", "teachers": ["Magdalena Taszycka"]}]}, {"code": "gr2", "name": "GR2", "subjects": [{"subject": "Język angielski", "teachers": ["Łukasz Wojciechowski"]}, {"subject": "Informatyka", "teachers": ["Paweł Młynarczyk"]}]}]}, {"key": "religia", "label": "REL-U - REL-N", "groups": [{"code": "relu", "name": "REL-U", "subjects": [{"subject": "Religia", "teachers": ["ks. Paweł Stypa"]}]}, {"code": "reln", "name": "REL-N", "subjects": [{"subject": "Religia", "teachers": []}]}]}, {"key": "wf", "label": "DZ - CH", "groups": [{"code": "dz", "name": "DZ", "subjects": [{"subject": "Wychowanie fizyczne", "teachers": ["Julita Rejno"]}]}, {"code": "ch", "name": "CH", "subjects": [{"subject": "Wychowanie fizyczne", "teachers": ["Sławomir Dalach"]}]}]}]}, {"id": "1CB", "divisionCount": 3, "groupCount": 6, "divisions": [{"key": "gr", "label": "GR1 - GR2", "groups": [{"code": "gr1", "name": "GR1", "subjects": [{"subject": "Wychowanie fizyczne", "teachers": ["Małgorzata Pietrycha"]}, {"subject": "Język angielski", "teachers": ["Anna Galert"]}, {"subject": "Informatyka", "teachers": ["Magdalena Taszycka"]}]}, {"code": "gr2", "name": "GR2", "subjects": [{"subject": "Wychowanie fizyczne", "teachers": ["Sławomir Dalach"]}, {"subject": "Język angielski", "teachers": ["Małgorzata Biezmienow"]}, {"subject": "Informatyka", "teachers": ["Paweł Młynarczyk"]}]}]}, {"key": "religia", "label": "REL-U - REL-N", "groups": [{"code": "relu", "name": "REL-U", "subjects": [{"subject": "Religia", "teachers": ["ks. Paweł Stypa"]}]}, {"code": "reln", "name": "REL-N", "subjects": [{"subject": "Religia", "teachers": []}]}]}, {"key": "zawod", "label": "CUKIERNIK - FRYZJER", "groups": [{"code": "cukiernik", "name": "CUKIERNIK", "subjects": [{"subject": "Technologie produkcji cukierniczej", "teachers": ["Małgorzata Kończyńska"]}, {"subject": "Technika w produkcji cukierniczej", "teachers": ["Renata Marzec"]}, {"subject": "rozwój kompetencji zawodowych - dekoracje w cukiernictwie", "teachers": ["Małgorzata Kończyńska"]}]}, {"code": "fryzjer", "name": "FRYZJER", "subjects": [{"subject": "Techniki fryzjerskie", "teachers": ["Anna Sobczak"]}, {"subject": "Podstawy fryzjerstwa", "teachers": ["Sylwia Mikołajczak"]}]}]}]}, {"id": "1FA", "divisionCount": 2, "groupCount": 4, "divisions": [{"key": "gr", "label": "GR1 - GR2", "groups": [{"code": "gr1", "name": "GR1", "subjects": [{"subject": "Wychowanie fizyczne", "teachers": ["Joanna Antoszewska"]}, {"subject": "Język angielski", "teachers": ["Donata Staliś"]}, {"subject": "Informatyka", "teachers": ["Magdalena Taszycka"]}]}, {"code": "gr2", "name": "GR2", "subjects": [{"subject": "Wychowanie fizyczne", "teachers": ["Julita Rejno"]}, {"subject": "Język angielski", "teachers": ["Anna Galert"]}, {"subject": "Informatyka", "teachers": ["Magdalena Taszycka"]}]}]}, {"key": "religia", "label": "REL-U - REL-N", "groups": [{"code": "relu", "name": "REL-U", "subjects": [{"subject": "Religia", "teachers": ["ks. Paweł Stypa"]}]}, {"code": "reln", "name": "REL-N", "subjects": [{"subject": "Religia", "teachers": []}]}]}]}, {"id": "1FB", "divisionCount": 3, "groupCount": 6, "divisions": [{"key": "gr", "label": "GR1 - GR2", "groups": [{"code": "gr1", "name": "GR1", "subjects": [{"subject": "Język angielski", "teachers": ["Anna Galert"]}, {"subject": "Informatyka", "teachers": ["Magdalena Taszycka"]}]}, {"code": "gr2", "name": "GR2", "subjects": [{"subject": "Język angielski", "teachers": ["Małgorzata Biezmienow"]}, {"subject": "Informatyka", "teachers": ["Magdalena Taszycka"]}]}]}, {"key": "religia", "label": "REL-U - REL-N", "groups": [{"code": "relu", "name": "REL-U", "subjects": [{"subject": "Religia", "teachers": ["ks. Paweł Stypa"]}]}, {"code": "reln", "name": "REL-N", "subjects": [{"subject": "Religia", "teachers": []}]}]}, {"key": "wf", "label": "DZ - CH", "groups": [{"code": "dz", "name": "DZ", "subjects": [{"subject": "Wychowanie fizyczne", "teachers": ["Joanna Antoszewska"]}]}, {"code": "ch", "name": "CH", "subjects": [{"subject": "Wychowanie fizyczne", "teachers": ["Krzysztof Płatek"]}]}]}]}, {"id": "1FC", "divisionCount": 2, "groupCount": 4, "divisions": [{"key": "gr", "label": "GR1 - GR2", "groups": [{"code": "gr1", "name": "GR1", "subjects": [{"subject": "Wychowanie fizyczne", "teachers": ["Lidia Nestoruk"]}, {"subject": "Język angielski", "teachers": ["Anna Galert"]}, {"subject": "Informatyka", "teachers": ["Magdalena Taszycka"]}]}, {"code": "gr2", "name": "GR2", "subjects": [{"subject": "Wychowanie fizyczne", "teachers": ["Krystyna Dalach"]}, {"subject": "Język angielski", "teachers": ["Łukasz Wojciechowski"]}, {"subject": "Informatyka", "teachers": ["Paweł Młynarczyk"]}]}]}, {"key": "religia", "label": "REL-U - REL-N", "groups": [{"code": "relu", "name": "REL-U", "subjects": [{"subject": "Religia", "teachers": ["ks. Paweł Stypa"]}]}, {"code": "reln", "name": "REL-N", "subjects": [{"subject": "Religia", "teachers": []}]}]}]}, {"id": "1K", "divisionCount": 3, "groupCount": 6, "divisions": [{"key": "gr", "label": "GR1 - GR2", "groups": [{"code": "gr1", "name": "GR1", "subjects": [{"subject": "Język angielski", "teachers": ["Anna Galert"]}, {"subject": "Informatyka", "teachers": ["Magdalena Taszycka"]}]}, {"code": "gr2", "name": "GR2", "subjects": [{"subject": "Język angielski", "teachers": ["Małgorzata Biezmienow"]}, {"subject": "Informatyka", "teachers": ["Paweł Młynarczyk"]}]}]}, {"key": "religia", "label": "REL-U - REL-N", "groups": [{"code": "relu", "name": "REL-U", "subjects": [{"subject": "Religia", "teachers": ["ks. Paweł Stypa"]}]}, {"code": "reln", "name": "REL-N", "subjects": [{"subject": "Religia", "teachers": []}]}]}, {"key": "wf", "label": "DZ - CH", "groups": [{"code": "dz", "name": "DZ", "subjects": [{"subject": "Wychowanie fizyczne", "teachers": ["Lidia Nestoruk"]}]}, {"code": "ch", "name": "CH", "subjects": [{"subject": "Wychowanie fizyczne", "teachers": ["Krzysztof Płatek"]}]}]}]}, {"id": "1S", "divisionCount": 3, "groupCount": 6, "divisions": [{"key": "gr", "label": "GR1 - GR2", "groups": [{"code": "gr1", "name": "GR1", "subjects": [{"subject": "Język angielski", "teachers": ["Łukasz Wojciechowski"]}, {"subject": "Informatyka", "teachers": ["Magdalena Taszycka"]}]}, {"code": "gr2", "name": "GR2", "subjects": [{"subject": "Język angielski", "teachers": ["Anna Galert"]}, {"subject": "Informatyka", "teachers": ["Paweł Młynarczyk"]}]}]}, {"key": "religia", "label": "REL-U - REL-N", "groups": [{"code": "relu", "name": "REL-U", "subjects": [{"subject": "Religia", "teachers": ["ks. Paweł Stypa"]}]}, {"code": "reln", "name": "REL-N", "subjects": [{"subject": "Religia", "teachers": []}]}]}, {"key": "wf", "label": "DZ - CH", "groups": [{"code": "dz", "name": "DZ", "subjects": [{"subject": "Wychowanie fizyczne", "teachers": ["Julita Rejno"]}]}, {"code": "ch", "name": "CH", "subjects": [{"subject": "Wychowanie fizyczne", "teachers": ["Marcin Cieśla"]}]}]}]}, {"id": "1TFA", "divisionCount": 2, "groupCount": 4, "divisions": [{"key": "gr", "label": "GR1 - GR2", "groups": [{"code": "gr1", "name": "GR1", "subjects": [{"subject": "Wychowanie fizyczne", "teachers": ["Lidia Nestoruk"]}, {"subject": "Język angielski", "teachers": ["Małgorzata Biezmienow"]}, {"subject": "Zajęcia praktyczne - wykonywanie usług fryzjerskich", "teachers": ["Edyta Jaworska"]}, {"subject": "Język niemiecki", "teachers": ["Anna Misiąg"]}, {"subject": "Informatyka", "teachers": ["Maciej Najwer"]}]}, {"code": "gr2", "name": "GR2", "subjects": [{"subject": "Wychowanie fizyczne", "teachers": ["Krystyna Dalach"]}, {"subject": "Język angielski", "teachers": ["Anna Galert"]}, {"subject": "Zajęcia praktyczne - wykonywanie usług fryzjerskich", "teachers": ["Paweł Danielewski"]}, {"subject": "Język niemiecki", "teachers": ["Małgorzata Fiodorów"]}, {"subject": "Informatyka", "teachers": ["Magdalena Taszycka"]}]}]}, {"key": "religia", "label": "REL-U - REL-N", "groups": [{"code": "relu", "name": "REL-U", "subjects": [{"subject": "Religia", "teachers": ["ks. Paweł Stypa"]}]}, {"code": "reln", "name": "REL-N", "subjects": [{"subject": "Religia", "teachers": []}]}]}]}, {"id": "1TFB", "divisionCount": 3, "groupCount": 6, "divisions": [{"key": "gr", "label": "GR1 - GR2", "groups": [{"code": "gr1", "name": "GR1", "subjects": [{"subject": "Język angielski", "teachers": ["Anna Galert"]}, {"subject": "Zajęcia praktyczne - wykonywanie usług fryzjerskich", "teachers": ["Edyta Jaworska"]}, {"subject": "Język niemiecki", "teachers": ["Anna Misiąg"]}, {"subject": "Informatyka", "teachers": ["Maciej Najwer"]}]}, {"code": "gr2", "name": "GR2", "subjects": [{"subject": "Język angielski", "teachers": ["Mariola Granatowska"]}, {"subject": "Zajęcia praktyczne - wykonywanie usług fryzjerskich", "teachers": ["Anna Sobczak"]}, {"subject": "Język niemiecki", "teachers": ["Małgorzata Fiodorów"]}, {"subject": "Informatyka", "teachers": ["Magdalena Taszycka"]}]}]}, {"key": "religia", "label": "REL-U - REL-N", "groups": [{"code": "relu", "name": "REL-U", "subjects": [{"subject": "Religia", "teachers": ["ks. Paweł Stypa"]}]}, {"code": "reln", "name": "REL-N", "subjects": [{"subject": "Religia", "teachers": []}]}]}, {"key": "wf", "label": "DZ - CH", "groups": [{"code": "dz", "name": "DZ", "subjects": [{"subject": "Wychowanie fizyczne", "teachers": ["Lidia Nestoruk"]}]}, {"code": "ch", "name": "CH", "subjects": [{"subject": "Wychowanie fizyczne", "teachers": ["Marcin Cieśla"]}]}]}]}, {"id": "1TFH", "divisionCount": 3, "groupCount": 6, "divisions": [{"key": "gr", "label": "GR1 - GR2", "groups": [{"code": "gr1", "name": "GR1", "subjects": [{"subject": "Wychowanie fizyczne", "teachers": ["Marcin Cieśla"]}, {"subject": "Język angielski", "teachers": ["Aleksandra Karczmarz"]}, {"subject": "Język niemiecki", "teachers": ["Anna Misiąg"]}, {"subject": "Informatyka", "teachers": ["Magdalena Taszycka"]}]}, {"code": "gr2", "name": "GR2", "subjects": [{"subject": "Wychowanie fizyczne", "teachers": ["Lidia Nestoruk"]}, {"subject": "Język angielski", "teachers": ["Małgorzata Biezmienow"]}, {"subject": "Język niemiecki", "teachers": ["Małgorzata Fiodorów"]}, {"subject": "Informatyka", "teachers": ["Maciej Najwer"]}]}]}, {"key": "religia", "label": "REL-U - REL-N", "groups": [{"code": "relu", "name": "REL-U", "subjects": [{"subject": "Religia", "teachers": ["ks. Paweł Stypa"]}]}, {"code": "reln", "name": "REL-N", "subjects": [{"subject": "Religia", "teachers": []}]}]}, {"key": "technikum", "label": "TECH.HAND. - TECH.FRYZ.", "groups": [{"code": "tech.hand.", "name": "TECH.HAND.", "subjects": [{"subject": "Pracownia sprzedaży", "teachers": ["Bożena Czukiewska"]}, {"subject": "Geografia", "teachers": ["Alicja Smereka"]}, {"subject": "Towar jako przedmiot handlu", "teachers": ["Anna Kosin"]}, {"subject": "Organizacja sprzedaży", "teachers": ["Agnieszka Skarupa"]}, {"subject": "Obsługa klientów", "teachers": ["Dariusz Socha"]}]}, {"code": "tech.fryz.", "name": "TECH.FRYZ.", "subjects": [{"subject": "Zajęcia praktyczne - wykonywanie usług fryzjerskich", "teachers": ["Beata Krzemińska"]}, {"subject": "Techniki fryzjerskie", "teachers": ["Paweł Danielewski"]}, {"subject": "Biologia", "teachers": ["Anna Mucha"]}, {"subject": "Podstawy fryzjerstwa", "teachers": ["Sylwia Mikołajczak"]}]}]}]}, {"id": "1TH", "divisionCount": 3, "groupCount": 6, "divisions": [{"key": "gr", "label": "GR1 - GR2", "groups": [{"code": "gr1", "name": "GR1", "subjects": [{"subject": "Język angielski", "teachers": ["Małgorzata Biezmienow"]}, {"subject": "Pracownia sprzedaży", "teachers": ["Agnieszka Skarupa"]}, {"subject": "Język niemiecki", "teachers": ["Anna Misiąg"]}, {"subject": "Informatyka", "teachers": ["Magdalena Taszycka"]}]}, {"code": "gr2", "name": "GR2", "subjects": [{"subject": "Język angielski", "teachers": ["Mariola Granatowska"]}, {"subject": "Pracownia sprzedaży", "teachers": ["Anna Kosin"]}, {"subject": "Język niemiecki", "teachers": ["Małgorzata Fiodorów"]}, {"subject": "Informatyka", "teachers": ["Magdalena Taszycka"]}]}]}, {"key": "religia", "label": "REL-U - REL-N", "groups": [{"code": "relu", "name": "REL-U", "subjects": [{"subject": "Religia", "teachers": ["ks. Paweł Stypa"]}]}, {"code": "reln", "name": "REL-N", "subjects": [{"subject": "Religia", "teachers": []}]}]}, {"key": "wf", "label": "DZ - CH", "groups": [{"code": "dz", "name": "DZ", "subjects": [{"subject": "Wychowanie fizyczne", "teachers": ["Małgorzata Pietrycha"]}]}, {"code": "ch", "name": "CH", "subjects": [{"subject": "Wychowanie fizyczne", "teachers": ["Kamil Wójcik"]}]}]}]}, {"id": "1WA", "divisionCount": 3, "groupCount": 6, "divisions": [{"key": "gr", "label": "GR1 - GR2", "groups": [{"code": "gr1", "name": "GR1", "subjects": [{"subject": "Język niemiecki", "teachers": ["Małgorzata Fiodorów"]}, {"subject": "Informatyka", "teachers": ["Magdalena Taszycka"]}]}, {"code": "gr2", "name": "GR2", "subjects": [{"subject": "Język niemiecki", "teachers": ["Anna Misiąg"]}, {"subject": "Informatyka", "teachers": ["Paweł Młynarczyk"]}]}]}, {"key": "religia", "label": "REL-U - REL-N", "groups": [{"code": "relu", "name": "REL-U", "subjects": [{"subject": "Religia", "teachers": ["ks. Paweł Stypa"]}]}, {"code": "reln", "name": "REL-N", "subjects": [{"subject": "Religia", "teachers": []}]}]}, {"key": "wf", "label": "DZ - CH", "groups": [{"code": "dz", "name": "DZ", "subjects": [{"subject": "Wychowanie fizyczne", "teachers": ["Marcin Cieśla"]}]}, {"code": "ch", "name": "CH", "subjects": [{"subject": "Wychowanie fizyczne", "teachers": ["Krzysztof Płatek"]}]}]}]}, {"id": "1WB", "divisionCount": 2, "groupCount": 4, "divisions": [{"key": "gr", "label": "GR1 - GR2", "groups": [{"code": "gr1", "name": "GR1", "subjects": [{"subject": "Wychowanie fizyczne", "teachers": ["Kamil Wójcik"]}, {"subject": "Język niemiecki", "teachers": ["Małgorzata Fiodorów"]}, {"subject": "Informatyka", "teachers": ["Magdalena Taszycka"]}]}, {"code": "gr2", "name": "GR2", "subjects": [{"subject": "Wychowanie fizyczne", "teachers": ["Marcin Cieśla"]}, {"subject": "Język niemiecki", "teachers": ["Małgorzata Fiodorów"]}, {"subject": "Informatyka", "teachers": ["Paweł Młynarczyk"]}]}]}, {"key": "religia", "label": "REL-U - REL-N", "groups": [{"code": "relu", "name": "REL-U", "subjects": [{"subject": "Religia", "teachers": ["ks. Paweł Stypa"]}]}, {"code": "reln", "name": "REL-N", "subjects": [{"subject": "Religia", "teachers": []}]}]}]}, {"id": "2B", "divisionCount": 0, "groupCount": 0, "divisions": []}, {"id": "2CA", "divisionCount": 2, "groupCount": 4, "divisions": [{"key": "religia", "label": "REL-U - REL-N", "groups": [{"code": "relu", "name": "REL-U", "subjects": [{"subject": "Religia", "teachers": ["ks. Paweł Stypa"]}]}, {"code": "reln", "name": "REL-N", "subjects": [{"subject": "Religia", "teachers": []}]}]}, {"key": "wf", "label": "DZ - CH", "groups": [{"code": "dz", "name": "DZ", "subjects": [{"subject": "Wychowanie fizyczne", "teachers": ["Julita Rejno"]}]}, {"code": "ch", "name": "CH", "subjects": [{"subject": "Wychowanie fizyczne", "teachers": ["Krzysztof Płatek"]}]}]}]}, {"id": "2CB", "divisionCount": 1, "groupCount": 2, "divisions": [{"key": "religia", "label": "REL-U - REL-N", "groups": [{"code": "relu", "name": "REL-U", "subjects": [{"subject": "Religia", "teachers": ["ks. Paweł Stypa"]}]}, {"code": "reln", "name": "REL-N", "subjects": [{"subject": "Religia", "teachers": []}]}]}]}, {"id": "2FA", "divisionCount": 1, "groupCount": 2, "divisions": [{"key": "religia", "label": "REL-U - REL-N", "groups": [{"code": "relu", "name": "REL-U", "subjects": [{"subject": "Religia", "teachers": ["ks. Paweł Stypa"]}]}, {"code": "reln", "name": "REL-N", "subjects": [{"subject": "Religia", "teachers": []}]}]}]}, {"id": "2FB", "divisionCount": 1, "groupCount": 2, "divisions": [{"key": "wf", "label": "DZ - CH", "groups": [{"code": "dz", "name": "DZ", "subjects": [{"subject": "Wychowanie fizyczne", "teachers": ["Małgorzata Pietrycha"]}]}, {"code": "ch", "name": "CH", "subjects": [{"subject": "Wychowanie fizyczne", "teachers": ["Krzysztof Płatek"]}]}]}]}, {"id": "2FC", "divisionCount": 0, "groupCount": 0, "divisions": []}, {"id": "2K", "divisionCount": 2, "groupCount": 4, "divisions": [{"key": "gr", "label": "GR1 - GR2", "groups": [{"code": "gr1", "name": "GR1", "subjects": [{"subject": "Język angielski", "teachers": ["Aleksandra Karczmarz"]}]}, {"code": "gr2", "name": "GR2", "subjects": [{"subject": "Język angielski", "teachers": ["Mariola Granatowska"]}]}]}, {"key": "wf", "label": "DZ - CH", "groups": [{"code": "dz", "name": "DZ", "subjects": [{"subject": "Wychowanie fizyczne", "teachers": ["Joanna Antoszewska"]}]}, {"code": "ch", "name": "CH", "subjects": [{"subject": "Wychowanie fizyczne", "teachers": ["Kamil Wójcik"]}]}]}]}, {"id": "2S", "divisionCount": 2, "groupCount": 4, "divisions": [{"key": "religia", "label": "REL-U - REL-N", "groups": [{"code": "relu", "name": "REL-U", "subjects": [{"subject": "Religia", "teachers": ["ks. Paweł Stypa"]}]}, {"code": "reln", "name": "REL-N", "subjects": [{"subject": "Religia", "teachers": []}]}]}, {"key": "wf", "label": "DZ - CH", "groups": [{"code": "dz", "name": "DZ", "subjects": [{"subject": "Wychowanie fizyczne", "teachers": ["Marcin Cieśla"]}]}, {"code": "ch", "name": "CH", "subjects": [{"subject": "Wychowanie fizyczne", "teachers": ["Krzysztof Płatek"]}]}]}]}, {"id": "2TFA", "divisionCount": 2, "groupCount": 4, "divisions": [{"key": "gr", "label": "GR1 - GR2", "groups": [{"code": "gr1", "name": "GR1", "subjects": [{"subject": "Zajęcia praktyczne - wykonywanie usług fryzjerskich", "teachers": ["Agnieszka Jastrzębska- Majtyka"]}]}, {"code": "gr2", "name": "GR2", "subjects": [{"subject": "Zajęcia praktyczne - wykonywanie usług fryzjerskich", "teachers": ["Iwona Leńczowska"]}]}]}, {"key": "religia", "label": "REL-U - REL-N", "groups": [{"code": "relu", "name": "REL-U", "subjects": [{"subject": "Religia", "teachers": ["ks. Paweł Stypa"]}]}, {"code": "reln", "name": "REL-N", "subjects": [{"subject": "Religia", "teachers": []}]}]}]}, {"id": "2TFB", "divisionCount": 3, "groupCount": 6, "divisions": [{"key": "gr", "label": "GR1 - GR2", "groups": [{"code": "gr1", "name": "GR1", "subjects": [{"subject": "Zajęcia praktyczne - wykonywanie usług fryzjerskich", "teachers": ["Paweł Danielewski"]}]}, {"code": "gr2", "name": "GR2", "subjects": [{"subject": "Zajęcia praktyczne - wykonywanie usług fryzjerskich", "teachers": ["Edyta Jaworska"]}]}]}, {"key": "religia", "label": "REL-U - REL-N", "groups": [{"code": "relu", "name": "REL-U", "subjects": [{"subject": "Religia", "teachers": ["ks. Paweł Stypa"]}]}, {"code": "reln", "name": "REL-N", "subjects": [{"subject": "Religia", "teachers": []}]}]}, {"key": "wf", "label": "DZ - CH", "groups": [{"code": "dz", "name": "DZ", "subjects": [{"subject": "Wychowanie fizyczne", "teachers": ["Krystyna Dalach"]}]}, {"code": "ch", "name": "CH", "subjects": [{"subject": "Wychowanie fizyczne", "teachers": ["Kamil Wójcik"]}]}]}]}, {"id": "2TH", "divisionCount": 2, "groupCount": 4, "divisions": [{"key": "religia", "label": "REL-U - REL-N", "groups": [{"code": "relu", "name": "REL-U", "subjects": [{"subject": "Religia", "teachers": ["ks. Paweł Stypa"]}]}, {"code": "reln", "name": "REL-N", "subjects": [{"subject": "Religia", "teachers": []}]}]}, {"key": "wf", "label": "DZ - CH", "groups": [{"code": "dz", "name": "DZ", "subjects": [{"subject": "Wychowanie fizyczne", "teachers": ["Małgorzata Pietrycha"]}]}, {"code": "ch", "name": "CH", "subjects": [{"subject": "Wychowanie fizyczne", "teachers": ["Kamil Wójcik"]}]}]}]}, {"id": "2WA", "divisionCount": 3, "groupCount": 7, "divisions": [{"key": "gr", "label": "GR1 - GR2", "groups": [{"code": "gr1", "name": "GR1", "subjects": [{"subject": "Język niemiecki", "teachers": ["Anna Misiąg"]}]}, {"code": "gr2", "name": "GR2", "subjects": [{"subject": "Język niemiecki", "teachers": ["Małgorzata Fiodorów"]}]}]}, {"key": "religia", "label": "REL-U - REL-N", "groups": [{"code": "relu", "name": "REL-U", "subjects": [{"subject": "Religia", "teachers": ["ks. Paweł Stypa"]}]}, {"code": "reln", "name": "REL-N", "subjects": [{"subject": "Religia", "teachers": []}]}]}, {"key": "wf", "label": "DZ - CH1 - CH2", "groups": [{"code": "dz", "name": "DZ", "subjects": [{"subject": "Wychowanie fizyczne", "teachers": ["Julita Rejno"]}]}, {"code": "ch1", "name": "CH1", "subjects": [{"subject": "Wychowanie fizyczne", "teachers": ["Kamil Wójcik"]}]}, {"code": "ch2", "name": "CH2", "subjects": [{"subject": "Wychowanie fizyczne", "teachers": ["Marcin Cieśla"]}]}]}]}, {"id": "3CA", "divisionCount": 1, "groupCount": 2, "divisions": [{"key": "wf", "label": "DZ - CH", "groups": [{"code": "dz", "name": "DZ", "subjects": [{"subject": "Wychowanie fizyczne", "teachers": ["Joanna Antoszewska"]}]}, {"code": "ch", "name": "CH", "subjects": [{"subject": "Wychowanie fizyczne", "teachers": ["Marcin Cieśla"]}]}]}]}, {"id": "3CB", "divisionCount": 0, "groupCount": 0, "divisions": []}, {"id": "3FA", "divisionCount": 0, "groupCount": 0, "divisions": []}, {"id": "3FB", "divisionCount": 2, "groupCount": 4, "divisions": [{"key": "religia", "label": "REL-U - REL-N", "groups": [{"code": "relu", "name": "REL-U", "subjects": [{"subject": "Religia", "teachers": ["ks. Paweł Stypa"]}]}, {"code": "reln", "name": "REL-N", "subjects": [{"subject": "Religia", "teachers": []}]}]}, {"key": "wf", "label": "DZ - CH", "groups": [{"code": "dz", "name": "DZ", "subjects": [{"subject": "Wychowanie fizyczne", "teachers": ["Małgorzata Pietrycha"]}]}, {"code": "ch", "name": "CH", "subjects": [{"subject": "Wychowanie fizyczne", "teachers": ["Sławomir Dalach"]}]}]}]}, {"id": "3FC", "divisionCount": 0, "groupCount": 0, "divisions": []}, {"id": "3K", "divisionCount": 3, "groupCount": 6, "divisions": [{"key": "gr", "label": "GR1 - GR2", "groups": [{"code": "gr1", "name": "GR1", "subjects": [{"subject": "Język angielski", "teachers": ["Łukasz Wojciechowski"]}]}, {"code": "gr2", "name": "GR2", "subjects": [{"subject": "Język angielski", "teachers": ["Małgorzata Biezmienow"]}]}]}, {"key": "wf", "label": "DZ - CH", "groups": [{"code": "dz", "name": "DZ", "subjects": [{"subject": "Wychowanie fizyczne", "teachers": ["Julita Rejno"]}]}, {"code": "ch", "name": "CH", "subjects": [{"subject": "Wychowanie fizyczne", "teachers": ["Kamil Wójcik"]}]}]}, {"key": "zawod", "label": "KUCHARZ - SPRZEDAWCA", "groups": [{"code": "kucharz", "name": "KUCHARZ", "subjects": [{"subject": "technika w produkcji gastronomicznej", "teachers": ["Arkadiusz Mocarski"]}, {"subject": "technologia gastronomiczna z towaroznawstwem", "teachers": ["Arkadiusz Mocarski"]}, {"subject": "Język angielski zawodowy", "teachers": ["Łukasz Wojciechowski"]}]}, {"code": "sprzedawca", "name": "SPRZEDAWCA", "subjects": [{"subject": "Organizacja sprzedaży", "teachers": ["Agnieszka Skarupa"]}, {"subject": "Towaroznawstwo", "teachers": ["Anna Kosin"]}, {"subject": "Obsługa klienta", "teachers": ["Agnieszka Skarupa"]}, {"subject": "Język angielski zawodowy", "teachers": ["Łukasz Wojciechowski"]}]}]}]}, {"id": "3TFA", "divisionCount": 0, "groupCount": 0, "divisions": []}, {"id": "3TFB", "divisionCount": 4, "groupCount": 8, "divisions": [{"key": "gr", "label": "GR1 - GR2", "groups": [{"code": "gr1", "name": "GR1", "subjects": [{"subject": "Język angielski", "teachers": ["Anna Galert"]}, {"subject": "Język niemiecki", "teachers": ["Anna Misiąg"]}, {"subject": "Informatyka", "teachers": ["Magdalena Taszycka"]}]}, {"code": "gr2", "name": "GR2", "subjects": [{"subject": "Język angielski", "teachers": ["Mariola Granatowska"]}, {"subject": "Język niemiecki", "teachers": ["Małgorzata Fiodorów"]}, {"subject": "Informatyka", "teachers": ["Maciej Najwer"]}]}]}, {"key": "religia", "label": "REL-U - REL-N", "groups": [{"code": "relu", "name": "REL-U", "subjects": [{"subject": "Religia", "teachers": ["ks. Paweł Stypa"]}]}, {"code": "reln", "name": "REL-N", "subjects": [{"subject": "Religia", "teachers": []}]}]}, {"key": "wf", "label": "DZ - CH", "groups": [{"code": "dz", "name": "DZ", "subjects": [{"subject": "Wychowanie fizyczne", "teachers": ["Joanna Antoszewska"]}]}, {"code": "ch", "name": "CH", "subjects": [{"subject": "Wychowanie fizyczne", "teachers": ["Kamil Wójcik"]}]}]}, {"key": "technikum", "label": "TECH.HAND. - TECH.FRYZ.", "groups": [{"code": "tech.hand.", "name": "TECH.HAND.", "subjects": [{"subject": "Symulacyjna firma handlowa", "teachers": ["Agnieszka Skarupa"]}, {"subject": "Pracownia sprzedaży", "teachers": ["Anna Kosin"]}, {"subject": "Geografia", "teachers": ["Alicja Smereka"]}, {"subject": "Organizacja i technika sprzedaży", "teachers": ["Anna Kosin"]}, {"subject": "Obsługa klientów", "teachers": ["Dariusz Socha"]}, {"subject": "Język angielski zawodowy", "teachers": ["Łukasz Wojciechowski"]}]}, {"code": "tech.fryz.", "name": "TECH.FRYZ.", "subjects": [{"subject": "Zajęcia praktyczne - wykonywanie usług fryzjerskich", "teachers": ["Edyta Jaworska"]}, {"subject": "Techniki fryzjerskie", "teachers": ["Paweł Danielewski"]}, {"subject": "Projektowanie fryzur", "teachers": ["Paweł Danielewski"]}, {"subject": "Biologia", "teachers": ["Barbara Małecka"]}, {"subject": "Podstawy fryzjerstwa", "teachers": ["Sylwia Mikołajczak"]}]}]}]}, {"id": "3WA", "divisionCount": 2, "groupCount": 5, "divisions": [{"key": "gr", "label": "GR1 - GR2", "groups": [{"code": "gr1", "name": "GR1", "subjects": [{"subject": "Język niemiecki", "teachers": ["Anna Misiąg"]}]}, {"code": "gr2", "name": "GR2", "subjects": [{"subject": "Język niemiecki", "teachers": ["Małgorzata Fiodorów"]}]}]}, {"key": "wf", "label": "DZ - CH1 - CH2", "groups": [{"code": "dz", "name": "DZ", "subjects": [{"subject": "Wychowanie fizyczne", "teachers": ["Julita Rejno"]}]}, {"code": "ch1", "name": "CH1", "subjects": [{"subject": "Wychowanie fizyczne", "teachers": ["Joanna Antoszewska"]}]}, {"code": "ch2", "name": "CH2", "subjects": [{"subject": "Wychowanie fizyczne", "teachers": ["Lidia Nestoruk"]}]}]}]}, {"id": "4TFA", "divisionCount": 1, "groupCount": 2, "divisions": [{"key": "religia", "label": "REL-U - REL-N", "groups": [{"code": "relu", "name": "REL-U", "subjects": [{"subject": "Religia", "teachers": ["ks. Paweł Stypa"]}]}, {"code": "reln", "name": "REL-N", "subjects": [{"subject": "Religia", "teachers": []}]}]}]}, {"id": "4TFB", "divisionCount": 2, "groupCount": 4, "divisions": [{"key": "religia", "label": "REL-U - REL-N", "groups": [{"code": "relu", "name": "REL-U", "subjects": [{"subject": "Religia", "teachers": ["ks. Paweł Stypa"]}]}, {"code": "reln", "name": "REL-N", "subjects": [{"subject": "Religia", "teachers": []}]}]}, {"key": "wf", "label": "DZ - CH", "groups": [{"code": "dz", "name": "DZ", "subjects": [{"subject": "Wychowanie fizyczne", "teachers": ["Krystyna Dalach"]}]}, {"code": "ch", "name": "CH", "subjects": [{"subject": "Wychowanie fizyczne", "teachers": ["Kamil Wójcik"]}]}]}]}, {"id": "4TH", "divisionCount": 2, "groupCount": 4, "divisions": [{"key": "gr", "label": "GR1 - GR2", "groups": [{"code": "gr1", "name": "GR1", "subjects": [{"subject": "Język angielski", "teachers": ["Donata Staliś"]}, {"subject": "Symulacyjna firma handlowa", "teachers": ["Agnieszka Skarupa"]}, {"subject": "Język niemiecki", "teachers": ["Małgorzata Fiodorów"]}]}, {"code": "gr2", "name": "GR2", "subjects": [{"subject": "Język angielski", "teachers": ["Mariola Granatowska"]}, {"subject": "Symulacyjna firma handlowa", "teachers": ["Bożena Czukiewska"]}, {"subject": "Język niemiecki", "teachers": ["Anna Misiąg"]}]}]}, {"key": "wf", "label": "DZ - CH", "groups": [{"code": "dz", "name": "DZ", "subjects": [{"subject": "Wychowanie fizyczne", "teachers": ["Małgorzata Pietrycha"]}]}, {"code": "ch", "name": "CH", "subjects": [{"subject": "Wychowanie fizyczne", "teachers": ["Kamil Wójcik"]}]}]}]}, {"id": "5TFB", "divisionCount": 2, "groupCount": 4, "divisions": [{"key": "religia", "label": "REL-U - REL-N", "groups": [{"code": "relu", "name": "REL-U", "subjects": [{"subject": "Religia", "teachers": ["ks. Paweł Stypa"]}]}, {"code": "reln", "name": "REL-N", "subjects": [{"subject": "Religia", "teachers": []}]}]}, {"key": "wf", "label": "DZ - CH", "groups": [{"code": "dz", "name": "DZ", "subjects": [{"subject": "Wychowanie fizyczne", "teachers": ["Joanna Antoszewska"]}]}, {"code": "ch", "name": "CH", "subjects": [{"subject": "Wychowanie fizyczne", "teachers": ["Lidia Nestoruk"]}]}]}]}, {"id": "5TH", "divisionCount": 1, "groupCount": 2, "divisions": [{"key": "wf", "label": "DZ - CH", "groups": [{"code": "dz", "name": "DZ", "subjects": [{"subject": "Wychowanie fizyczne", "teachers": ["Krystyna Dalach"]}]}, {"code": "ch", "name": "CH", "subjects": [{"subject": "Wychowanie fizyczne", "teachers": ["Lidia Nestoruk"]}]}]}]}], "stats": {"classes": 40, "classesWithGroups": 34, "teachers": 58}};
+
+const classList = document.getElementById("classList");
+const content = document.getElementById("content");
+const search = document.getElementById("search");
+document.getElementById("source").textContent = REPORT.sourceTitle;
+document.getElementById("summary").innerHTML = `
+    <span>${REPORT.stats.classes} klas</span>
+    <span>${REPORT.stats.classesWithGroups} z podziałami</span>
+    <span>${REPORT.stats.teachers} nauczycieli</span>
+`;
+
+let activeClassId = new URLSearchParams(window.location.search).get("klasa")
+    || window.location.hash.replace("#", "")
+    || "1TFA";
+
+function escapeHtml(value) {
+    return String(value).replace(/[&<>"']/g, char => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#039;"
+    }[char]));
+}
+
+function renderList() {
+    const term = search.value.trim().toLowerCase();
+    classList.innerHTML = "";
+    REPORT.classes
+        .filter(item => item.id.toLowerCase().includes(term))
+        .forEach(item => {
+            const button = document.createElement("button");
+            button.type = "button";
+            button.className = `class-button ${item.id === activeClassId ? "active" : ""}`;
+            button.innerHTML = `<span>${escapeHtml(item.id)}</span><span class="count">${item.groupCount}</span>`;
+            button.addEventListener("click", () => selectClass(item.id));
+            classList.appendChild(button);
+        });
+}
+
+function selectClass(classId) {
+    activeClassId = classId;
+    history.replaceState(null, "", `#${encodeURIComponent(classId)}`);
+    renderList();
+    renderClass();
+}
+
+function renderClass() {
+    const item = REPORT.classes.find(entry => entry.id === activeClassId) || REPORT.classes[0];
+    if (!item) {
+        content.innerHTML = `<div class="empty">Brak danych do wyświetlenia.</div>`;
+        return;
+    }
+    activeClassId = item.id;
+
+    const header = `
+        <div class="class-header">
+            <div class="class-title">
+                <h2>${escapeHtml(item.id)}</h2>
+                <div class="meta">
+                    <span>${item.divisionCount} podziałów</span>
+                    <span>${item.groupCount} grup</span>
+                </div>
+            </div>
+        </div>`;
+
+    if (!item.divisions.length) {
+        content.innerHTML = header + `<div class="empty">W tej klasie nie wykryto podziałów na grupy w planie nauczycieli.</div>`;
+        return;
+    }
+
+    const divisions = item.divisions.map(division => `
+        <article class="division">
+            <div class="division-head">
+                <h3>Podział: ${escapeHtml(division.label)}</h3>
+                <div class="chips">
+                    ${division.groups.map(group => `<span class="chip">${escapeHtml(group.name)}</span>`).join("")}
+                </div>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Grupa</th>
+                        <th>Przedmioty i nauczyciele</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${division.groups.map(group => `
+                        <tr>
+                            <td class="group-name">${escapeHtml(group.name)}</td>
+                            <td>
+                                <div class="subject-list">
+                                    ${group.subjects.map(row => `
+                                        <div class="subject-row">
+                                            <div class="subject">${escapeHtml(row.subject)}</div>
+                                            <div class="teachers">${row.teachers.length ? escapeHtml(row.teachers.join(", ")) : '<span class="missing">brak nauczyciela w planie</span>'}</div>
+                                        </div>
+                                    `).join("")}
+                                </div>
+                            </td>
+                        </tr>
+                    `).join("")}
+                </tbody>
+            </table>
+        </article>
+    `).join("");
+
+    content.innerHTML = header + divisions;
+}
+
+search.addEventListener("input", renderList);
+renderList();
+renderClass();
+</script>
+</body>
+</html>
