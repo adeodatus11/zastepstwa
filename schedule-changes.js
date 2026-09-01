@@ -61,6 +61,13 @@
       return "";
     }
 
+    if (typeof value === "number" && XLSX?.SSF?.parse_date_code) {
+      const parsed = XLSX.SSF.parse_date_code(value);
+      if (parsed?.y && parsed?.m && parsed?.d) {
+        return `${parsed.y}-${String(parsed.m).padStart(2, "0")}-${String(parsed.d).padStart(2, "0")}`;
+      }
+    }
+
     if (value instanceof Date && !Number.isNaN(value.getTime())) {
       return `${value.getFullYear()}-${String(value.getMonth() + 1).padStart(2, "0")}-${String(value.getDate()).padStart(2, "0")}`;
     }
@@ -251,6 +258,26 @@
     return "effect";
   }
 
+  function isGenericSubstituteLabel(value) {
+    const candidate = normalizeText(value);
+    return !candidate
+      || candidate === "-"
+      || candidate === "zastepstwo"
+      || candidate.includes("uczniowie")
+      || candidate.includes("przychodza pozniej")
+      || candidate.includes("przychodzą później")
+      || candidate.includes("zwolnieni do domu")
+      || candidate.includes("zlaczenie grup")
+      || candidate.includes("złączenie grup");
+  }
+
+  function getSubstituteTeacherName(rawName, teacher) {
+    if (teacher.id) {
+      return teacher.name;
+    }
+    return isGenericSubstituteLabel(rawName) ? "" : compactSpaces(rawName);
+  }
+
   function substitutionLabelScore(value) {
     const candidate = normalizeText(value);
     if (!candidate) {
@@ -303,7 +330,7 @@
           absentTeacherId: absentTeacher.id,
           absentTeacherName: absentTeacher.name,
           substituteTeacherId: substituteTeacher.id,
-          substituteTeacherName: substituteTeacher.name,
+          substituteTeacherName: getSubstituteTeacherName(row["Zastępstwo"], substituteTeacher),
           rawSubstituteLabel: compactSpaces(row["Zastępstwo"]),
           reason: compactSpaces(row["Powód nieobecności"]),
           effectLabel: compactSpaces(row["Skutek nieobecności"]),
@@ -381,7 +408,7 @@
         absentTeacherId: absentTeacher.id,
         absentTeacherName: absentTeacher.name,
         substituteTeacherId: substituteTeacher.id,
-        substituteTeacherName: substituteTeacher.id ? substituteTeacher.name : "",
+        substituteTeacherName: getSubstituteTeacherName(substituteRaw, substituteTeacher),
         rawSubstituteLabel: substituteRaw,
         reason: "",
         effectLabel: substituteTeacher.id ? "Zastępstwo" : substituteRaw,
@@ -429,6 +456,33 @@
     });
 
     return transfers;
+  }
+
+  function parseInfoDutyChanges(workbook, teacherLookup) {
+    const sheet = workbook.Sheets["Dyżury"];
+    if (!sheet) {
+      return [];
+    }
+
+    const rows = XLSX.utils.sheet_to_json(sheet, { defval: "" });
+    return rows
+      .map((row) => {
+        const absentTeacher = teacherLookup.resolve(row["Nauczyciel"]);
+        const substituteRaw = compactSpaces(row["Zastępca"]);
+        const substituteTeacher = teacherLookup.resolve(substituteRaw);
+        return {
+          date: parseIsoDateValue(row["Dzień"]),
+          time: compactSpaces(row["Godzina"]),
+          absentTeacherId: absentTeacher.id,
+          absentTeacherName: absentTeacher.name,
+          substituteTeacherId: substituteTeacher.id,
+          substituteTeacherName: getSubstituteTeacherName(substituteRaw, substituteTeacher),
+          rawSubstituteLabel: substituteRaw,
+          place: compactSpaces(row["Miejsce dyżuru"]),
+          note: compactSpaces(row["Uwagi"])
+        };
+      })
+      .filter((event) => event.date && event.time && event.absentTeacherName);
   }
 
   function mergeSubstitutionMaps(primaryMap, secondaryMap) {
@@ -517,10 +571,12 @@
     const detailed = detailedSource ? parseDetailedChanges(detailedSource.workbook, teacherLookup) : { substitutions: new Map(), transfers: new Map() };
     const substitutionInfo = substitutionInfoSource ? parseInfoSubstitutions(substitutionInfoSource.workbook, teacherLookup) : new Map();
     const transferInfo = transferInfoSource ? parseInfoTransfers(transferInfoSource.workbook, teacherLookup) : new Map();
+    const dutyChanges = substitutionInfoSource ? parseInfoDutyChanges(substitutionInfoSource.workbook, teacherLookup) : [];
 
     return {
       substitutions: mergeSubstitutionMaps(detailed.substitutions, substitutionInfo),
       transfers: mergeTransferMaps(detailed.transfers, transferInfo),
+      dutyChanges,
       sources: {
         detailedChanges: detailedSource ? detailedSource.source : "",
         substitutionsInfo: substitutionInfoSource ? substitutionInfoSource.source : "",
