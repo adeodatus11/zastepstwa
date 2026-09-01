@@ -88,6 +88,7 @@ def parse_source(source):
     teacher_names = dict(teacher_links)
 
     class_groups = defaultdict(lambda: defaultdict(lambda: defaultdict(set)))
+    class_subject_teachers = defaultdict(lambda: defaultdict(set))
     subject_order = {}
     order_counter = 0
 
@@ -129,6 +130,7 @@ def parse_source(source):
                 ):
                     class_name = clean_text(class_name)
                     group = clean_text(group).lower()
+                    class_subject_teachers[class_name][subject].add(teacher_name)
                     if not group:
                         continue
                     class_groups[class_name][group][subject].add(teacher_name)
@@ -141,17 +143,48 @@ def parse_source(source):
     for _, class_name in class_links:
         groups = class_groups.get(class_name, {})
         divisions = build_divisions(groups, subject_order)
+        subject_teachers = build_subject_teachers(class_subject_teachers.get(class_name, {}), subject_order)
+        teacher_subjects = build_teacher_subjects(subject_teachers)
         classes.append(
             {
                 "id": class_name,
                 "divisionCount": len(divisions),
                 "groupCount": sum(len(division["groups"]) for division in divisions),
+                "subjectTeacherCount": len(teacher_subjects),
+                "subjectTeachers": subject_teachers,
+                "teacherSubjects": teacher_subjects,
+                "copyText": build_copy_text(class_name, teacher_subjects),
                 "divisions": divisions,
             }
         )
 
     return {
         "sourceTitle": "Plan lekcji obowiązuje od 01.09.2026",
+        "vulcan": {
+            "updated": "Opracowano na podstawie Bazy Wiedzy VULCAN, stan na 01.09.2026.",
+            "steps": [
+                "Dziennik / Dziennik oddziału: wybierz oddział.",
+                "Przedmioty i nauczyciele: kliknij Zmień listę przedmiotów i nauczycieli.",
+                "Zmiana przedmiotów: przenieś do prawej listy przedmioty realizowane w oddziale. Nazwy powinny brzmieć identycznie jak w planie nauczania oddziału.",
+                "Zmiana nauczycieli: przenieś do prawej listy nauczycieli uczących w oddziale w bieżącym roku.",
+                "W macierzy przedmiotów i nauczycieli kliknij komórkę na przecięciu przedmiotu i nauczyciela, aby przypisać nauczyciela do przedmiotu. Ponowne kliknięcie odznacza przypisanie.",
+                "Grupy: przez Zmień listę grup dodaj grupy występujące w oddziale, a przez Zmień przynależność przypisz uczniów do grup.",
+            ],
+            "sources": [
+                {
+                    "label": "Jak założyć dziennik oddziału i wprowadzić podstawowe dane",
+                    "url": "https://www.bazawiedzy.vulcan.edu.pl/bazawiedzy.php/show/23",
+                },
+                {
+                    "label": "Prowadzenie dziennika oddziału przez wychowawcę",
+                    "url": "https://www.bazawiedzy.vulcan.edu.pl/bazawiedzy.php/show/9",
+                },
+                {
+                    "label": "Jak opisać przedmioty w dzienniku oddziału",
+                    "url": "https://www.bazawiedzy.vulcan.edu.pl/bazawiedzy.php/show/6",
+                },
+            ],
+        },
         "classes": classes,
         "stats": {
             "classes": len(classes),
@@ -227,6 +260,52 @@ def build_divisions(groups, subject_order):
     return divisions
 
 
+def teacher_sort_key(name):
+    normalized = name.removeprefix("ks. ").strip()
+    parts = normalized.split()
+    if len(parts) < 2:
+        return (normalized.casefold(), "")
+    return (parts[-1].casefold(), " ".join(parts[:-1]).casefold())
+
+
+def build_subject_teachers(subjects, subject_order):
+    return [
+        {
+            "subject": subject,
+            "teachers": sorted(teachers, key=teacher_sort_key),
+        }
+        for subject, teachers in sorted(
+            subjects.items(),
+            key=lambda item: (subject_order.get(item[0], 9999), item[0].casefold()),
+        )
+    ]
+
+
+def build_teacher_subjects(subject_teachers):
+    teacher_subjects = defaultdict(list)
+    for row in subject_teachers:
+        for teacher in row["teachers"]:
+            teacher_subjects[teacher].append(row["subject"])
+
+    return [
+        {
+            "teacher": teacher,
+            "subjects": sorted(set(subjects), key=lambda value: value.casefold()),
+        }
+        for teacher, subjects in sorted(teacher_subjects.items(), key=lambda item: teacher_sort_key(item[0]))
+    ]
+
+
+def build_copy_text(class_name, teacher_subjects):
+    lines = [class_name]
+    if not teacher_subjects:
+        lines.append("Brak wykrytych nauczycieli uczących w oddziale.")
+        return "\n".join(lines)
+    for row in teacher_subjects:
+        lines.append(f"{row['teacher']} - {'; '.join(row['subjects'])}")
+    return "\n".join(lines)
+
+
 def render_html(data):
     payload = json.dumps(data, ensure_ascii=False)
     return f"""<!DOCTYPE html>
@@ -234,7 +313,7 @@ def render_html(data):
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Wykaz podziałów na grupy</title>
+    <title>Wykazy oddziałów</title>
     <style>
         :root {{
             color-scheme: light;
@@ -317,6 +396,33 @@ def render_html(data):
             display: grid;
             gap: 10px;
             margin-bottom: 12px;
+        }}
+        .view-tabs {{
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 12px;
+        }}
+        .tab-button,
+        .copy-button {{
+            border: 1px solid var(--line);
+            border-radius: 6px;
+            background: #fff;
+            color: var(--ink);
+            font: inherit;
+            font-weight: 800;
+            cursor: pointer;
+            padding: 8px 10px;
+        }}
+        .tab-button:hover,
+        .copy-button:hover {{
+            border-color: var(--accent);
+            color: var(--accent-dark);
+        }}
+        .tab-button.active {{
+            border-color: var(--accent);
+            background: var(--accent);
+            color: #fff;
         }}
         label {{
             display: grid;
@@ -491,6 +597,80 @@ def render_html(data):
         .teachers {{
             color: var(--muted);
         }}
+        .teacher-list {{
+            display: grid;
+            gap: 8px;
+            padding: 0 14px;
+        }}
+        .teacher-row {{
+            display: grid;
+            grid-template-columns: minmax(190px, .7fr) minmax(220px, 1.3fr);
+            gap: 12px;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--line);
+        }}
+        .teacher-row:last-child {{
+            border-bottom: 0;
+        }}
+        .teacher-name {{
+            font-weight: 900;
+            color: var(--accent-dark);
+        }}
+        .copy-panel,
+        .vulcan-note {{
+            background: var(--panel);
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            padding: 14px;
+        }}
+        .copy-head {{
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 10px;
+        }}
+        .copy-text {{
+            width: 100%;
+            border: 1px solid var(--line);
+            border-radius: 6px;
+            padding: 12px;
+            margin: 0;
+            color: var(--ink);
+            background: #fbfdff;
+            font: 0.95rem/1.45 Consolas, "SFMono-Regular", monospace;
+            outline: none;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            word-break: normal;
+        }}
+        .copy-text:focus {{
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(15, 118, 110, .15);
+        }}
+        .vulcan-note ol {{
+            margin: 10px 0 0 1.4rem;
+            padding: 0;
+        }}
+        .vulcan-note li {{
+            margin: 6px 0;
+        }}
+        .source-links {{
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 12px;
+        }}
+        .source-links a {{
+            border: 1px solid var(--line);
+            border-radius: 999px;
+            color: var(--accent-dark);
+            background: var(--soft);
+            font-weight: 800;
+            font-size: .82rem;
+            padding: 5px 9px;
+            text-decoration: none;
+        }}
         .missing {{
             display: inline-block;
             border-radius: 5px;
@@ -538,6 +718,14 @@ def render_html(data):
                 grid-template-columns: 1fr;
                 gap: 2px;
             }}
+            .teacher-row {{
+                grid-template-columns: 1fr;
+                gap: 2px;
+            }}
+            .copy-head {{
+                align-items: stretch;
+                flex-direction: column;
+            }}
         }}
     </style>
 </head>
@@ -545,7 +733,7 @@ def render_html(data):
 <header>
     <div class="wrap topbar">
         <div>
-            <h1>Wykaz podziałów na grupy</h1>
+            <h1>Wykazy oddziałów</h1>
             <div class="source" id="source"></div>
         </div>
         <div class="summary" id="summary"></div>
@@ -579,6 +767,9 @@ document.getElementById("summary").innerHTML = `
 let activeClassId = new URLSearchParams(window.location.search).get("klasa")
     || window.location.hash.replace("#", "")
     || "1TFA";
+let activeView = new URLSearchParams(window.location.search).get("widok") === "nauczyciele"
+    ? "teachers"
+    : "groups";
 
 function escapeHtml(value) {{
     return String(value).replace(/[&<>"']/g, char => ({{
@@ -607,9 +798,75 @@ function renderList() {{
 
 function selectClass(classId) {{
     activeClassId = classId;
-    history.replaceState(null, "", `#${{encodeURIComponent(classId)}}`);
+    updateLocation();
     renderList();
     renderClass();
+}}
+
+function selectView(view) {{
+    activeView = view;
+    updateLocation();
+    renderClass();
+}}
+
+function updateLocation() {{
+    const viewParam = activeView === "teachers" ? "?widok=nauczyciele" : "";
+    history.replaceState(null, "", `${{viewParam}}#${{encodeURIComponent(activeClassId)}}`);
+}}
+
+function renderHeader(item) {{
+    return `
+        <div class="class-header">
+            <div class="class-title">
+                <h2>${{escapeHtml(item.id)}}</h2>
+                <div class="meta">
+                    <span>${{item.divisionCount}} podziałów</span>
+                    <span>${{item.groupCount}} grup</span>
+                    <span>${{item.subjectTeacherCount}} nauczycieli w oddziale</span>
+                </div>
+            </div>
+            <div class="view-tabs" aria-label="Widok">
+                <button type="button" class="tab-button ${{activeView === "groups" ? "active" : ""}}" data-view="groups">Podziały na grupy</button>
+                <button type="button" class="tab-button ${{activeView === "teachers" ? "active" : ""}}" data-view="teachers">Nauczyciele w oddziale</button>
+            </div>
+        </div>`;
+}}
+
+function bindViewButtons() {{
+    content.querySelectorAll("[data-view]").forEach(button => {{
+        button.addEventListener("click", () => selectView(button.dataset.view));
+    }});
+    const copyButton = content.querySelector("[data-copy-list]");
+    if (copyButton) {{
+        copyButton.addEventListener("click", () => copyTeacherList(copyButton));
+    }}
+}}
+
+async function copyTeacherList(button) {{
+    const copyList = content.querySelector("#copyList");
+    if (!copyList) return;
+    const text = copyList.textContent;
+    try {{
+        if (navigator.clipboard) {{
+            await navigator.clipboard.writeText(text);
+        }} else {{
+            selectText(copyList);
+            document.execCommand("copy");
+        }}
+        const original = button.textContent;
+        button.textContent = "Skopiowano";
+        setTimeout(() => button.textContent = original, 1200);
+    }} catch (error) {{
+        selectText(copyList);
+    }}
+}}
+
+function selectText(element) {{
+    const selection = window.getSelection();
+    const range = document.createRange();
+    range.selectNodeContents(element);
+    selection.removeAllRanges();
+    selection.addRange(range);
 }}
 
 function renderClass() {{
@@ -620,23 +877,17 @@ function renderClass() {{
     }}
     activeClassId = item.id;
 
-    const header = `
-        <div class="class-header">
-            <div class="class-title">
-                <h2>${{escapeHtml(item.id)}}</h2>
-                <div class="meta">
-                    <span>${{item.divisionCount}} podziałów</span>
-                    <span>${{item.groupCount}} grup</span>
-                </div>
-            </div>
-        </div>`;
+    const header = renderHeader(item);
+    content.innerHTML = header + (activeView === "teachers" ? renderTeachers(item) : renderGroups(item));
+    bindViewButtons();
+}}
 
+function renderGroups(item) {{
     if (!item.divisions.length) {{
-        content.innerHTML = header + `<div class="empty">W tej klasie nie wykryto podziałów na grupy w planie nauczycieli.</div>`;
-        return;
+        return `<div class="empty">W tej klasie nie wykryto podziałów na grupy w planie nauczycieli.</div>`;
     }}
 
-    const divisions = item.divisions.map(division => `
+    return item.divisions.map(division => `
         <article class="division">
             <div class="division-head">
                 <h3>Podział: ${{escapeHtml(division.label)}}</h3>
@@ -671,11 +922,56 @@ function renderClass() {{
             </table>
         </article>
     `).join("");
+}}
 
-    content.innerHTML = header + divisions;
+function renderTeachers(item) {{
+    if (!item.teacherSubjects.length) {{
+        return `<div class="empty">W tej klasie nie wykryto nauczycieli uczących w oddziale.</div>`;
+    }}
+
+    return `
+        <article class="copy-panel">
+            <div class="copy-head">
+                <h3>Lista do przekopiowania</h3>
+                <button type="button" class="copy-button" data-copy-list>Kopiuj listę</button>
+            </div>
+            <pre id="copyList" class="copy-text" tabindex="0">${{escapeHtml(item.copyText)}}</pre>
+        </article>
+        <article class="division">
+            <div class="division-head">
+                <h3>Nauczyciele i przedmioty w oddziale</h3>
+            </div>
+            <div class="teacher-list">
+                ${{item.teacherSubjects.map(row => `
+                    <div class="teacher-row">
+                        <div class="teacher-name">${{escapeHtml(row.teacher)}}</div>
+                        <div class="teachers">${{escapeHtml(row.subjects.join("; "))}}</div>
+                    </div>
+                `).join("")}}
+            </div>
+        </article>
+        <article class="vulcan-note">
+            <h3>VULCAN: lista przedmiotów i nauczycieli</h3>
+            <div class="teachers">${{escapeHtml(REPORT.vulcan.updated)}}</div>
+            <ol>
+                ${{REPORT.vulcan.steps.map(step => `<li>${{escapeHtml(step)}}</li>`).join("")}}
+            </ol>
+            <div class="source-links">
+                ${{REPORT.vulcan.sources.map(source => `<a href="${{escapeHtml(source.url)}}" target="_blank" rel="noreferrer">${{escapeHtml(source.label)}}</a>`).join("")}}
+            </div>
+        </article>
+    `;
 }}
 
 search.addEventListener("input", renderList);
+window.addEventListener("hashchange", () => {{
+    const hashClass = decodeURIComponent(window.location.hash.replace("#", ""));
+    if (hashClass) {{
+        activeClassId = hashClass;
+        renderList();
+        renderClass();
+    }}
+}});
 renderList();
 renderClass();
 </script>
