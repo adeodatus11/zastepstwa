@@ -351,6 +351,11 @@
             background: var(--warn-soft);
         }
 
+        .supervision-slot.is-empty {
+            border-left-color: var(--line-strong);
+            background: #f8fbf8;
+        }
+
         .supervision-slot-day {
             color: var(--accent-dark);
             font-size: 0.95rem;
@@ -368,6 +373,11 @@
             margin-top: 8px;
             color: var(--text);
             font-weight: 850;
+        }
+
+        .supervision-slot.is-empty .supervision-slot-person {
+            color: var(--muted);
+            font-style: italic;
         }
 
         .section {
@@ -921,7 +931,7 @@
                 headers.forEach((header, columnIndex) => {
                     const dayIndex = getDayIndexFromHeader(header);
                     const person = compactSpaces(row[columnIndex]);
-                    if (!dayIndex || !person) {
+                    if (!dayIndex) {
                         return;
                     }
                     entries.push({
@@ -1002,6 +1012,9 @@
         }
 
         function renderSupervisionContact(person) {
+            if (!compactSpaces(person)) {
+                return `<span class="supervision-pill warn">Brak osoby w grafiku</span>`;
+            }
             const phone = getPhoneForPerson(person);
             if (!phone) {
                 return `<span class="supervision-pill warn">Brak numeru w arkuszu</span>`;
@@ -1031,23 +1044,25 @@
 
             const current = getCurrentDuty();
             if (current) {
+                const personLabel = current.person || "Brak obsady";
                 currentBox.innerHTML = `
                     <div class="supervision-label">Teraz pełni dyżur</div>
-                    <h4>${escapeHtml(current.person)}</h4>
+                    <h4>${escapeHtml(personLabel)}</h4>
                     <p>${escapeHtml(current.dayLabel)}, ${escapeHtml(current.timeLabel)}</p>
-                    <div class="supervision-contact">${renderSupervisionContact(current.person)}</div>
+                    <div class="supervision-contact">${renderSupervisionContact(personLabel === "Brak obsady" ? "" : current.person)}</div>
                 `;
                 return;
             }
 
             const next = getNextDuty();
+            const nextPerson = next?.person || "Brak obsady";
             const nextText = next
-                ? `Najbliższy: ${formatDutyDate(next)}, ${next.timeLabel}, ${next.person}.`
+                ? `Najbliższy: ${formatDutyDate(next)}, ${next.timeLabel}, ${nextPerson}.`
                 : "W grafiku nie ma kolejnego wpisu w najbliższym tygodniu.";
 
             currentBox.innerHTML = `
-                <div class="supervision-label">Teraz</div>
-                <h4>Brak dyżuru nadzoru</h4>
+                <div class="supervision-label">Najbliższy wpis</div>
+                <h4>${next ? "Najbliższy dyżur" : "Brak dyżuru nadzoru"}</h4>
                 <p>${escapeHtml(nextText)}</p>
             `;
         }
@@ -1074,11 +1089,12 @@
                     && current.dayIndex === entry.dayIndex
                     && current.timeLabel === entry.timeLabel
                     && current.person === entry.person;
+                const personLabel = entry.person || "Brak obsady";
                 return `
-                    <article class="supervision-slot${isCurrent ? " is-current" : ""}">
+                    <article class="supervision-slot${isCurrent ? " is-current" : ""}${entry.person ? "" : " is-empty"}">
                         <div class="supervision-slot-day">${escapeHtml(entry.dayLabel)}</div>
                         <div class="supervision-slot-time">${escapeHtml(entry.timeLabel)}</div>
-                        <div class="supervision-slot-person">${escapeHtml(entry.person)}</div>
+                        <div class="supervision-slot-person">${escapeHtml(personLabel)}</div>
                     </article>
                 `;
             }).join("");
