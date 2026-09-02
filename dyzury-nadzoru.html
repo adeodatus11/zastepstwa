@@ -239,12 +239,15 @@
         .schedule-grid {
             display: grid;
             grid-template-columns: repeat(5, minmax(160px, 1fr));
+            align-items: stretch;
             gap: 0;
             overflow-x: auto;
         }
 
         .day-column {
             min-width: 160px;
+            display: grid;
+            grid-template-rows: 92px repeat(2, minmax(118px, auto));
             border-left: 1px solid var(--line);
             background: #ffffff;
         }
@@ -254,9 +257,6 @@
         }
 
         .day-head {
-            position: sticky;
-            top: 76px;
-            z-index: 1;
             min-height: 64px;
             display: grid;
             align-content: center;
@@ -386,6 +386,7 @@
 
             .day-column {
                 min-width: 0;
+                display: block;
                 border-left: 0;
                 border-top: 1px solid var(--line);
             }
@@ -395,7 +396,6 @@
             }
 
             .day-head {
-                position: static;
                 min-height: 0;
             }
 
