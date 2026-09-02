@@ -923,12 +923,16 @@
             const entries = [];
 
             rows.slice(1).forEach((row) => {
-                const shift = parseShift(row[1]);
+                const shiftColumnIndex = row.findIndex((cell) => Boolean(parseShift(cell)));
+                const shift = shiftColumnIndex >= 0 ? parseShift(row[shiftColumnIndex]) : null;
                 if (!shift) {
                     return;
                 }
 
                 headers.forEach((header, columnIndex) => {
+                    if (columnIndex <= shiftColumnIndex) {
+                        return;
+                    }
                     const dayIndex = getDayIndexFromHeader(header);
                     const person = compactSpaces(row[columnIndex]);
                     if (!dayIndex) {
