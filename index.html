@@ -5,12 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pulpit nauczyciela - ZSZ5</title>
     <link rel="icon" href="data:,">
+    <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
     <style>
         :root {
             --bg: #f5f7f4;
             --surface: #ffffff;
             --surface-soft: #eef5ef;
             --line: #d6e3d8;
+            --line-strong: #b8d0c0;
             --text: #17332b;
             --muted: #536760;
             --accent: #176b4c;
@@ -18,6 +20,8 @@
             --accent-soft: #dff1e7;
             --warn: #8a4b0f;
             --warn-soft: #fff3df;
+            --blue: #245f86;
+            --blue-soft: #e6f1f7;
             --radius: 14px;
         }
 
@@ -121,7 +125,7 @@
 
         .primary-actions {
             display: grid;
-            grid-template-columns: repeat(3, minmax(0, 1fr));
+            grid-template-columns: repeat(2, minmax(0, 1fr));
             gap: 12px;
             margin: 0;
             padding: 18px;
@@ -238,6 +242,134 @@
             align-items: start;
         }
 
+        .supervision-card {
+            margin: 18px 0;
+            border: 1px solid var(--line);
+            border-radius: var(--radius);
+            background: var(--surface);
+            overflow: hidden;
+            box-shadow: 0 12px 28px rgba(23, 107, 76, 0.07);
+        }
+
+        .supervision-top {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) minmax(280px, 360px);
+            gap: 18px;
+            padding: 20px;
+            border-bottom: 1px solid var(--line);
+            background:
+                linear-gradient(135deg, rgba(223, 241, 231, 0.88), rgba(255, 255, 255, 0.94)),
+                var(--surface);
+        }
+
+        .supervision-heading h3,
+        .supervision-current h4 {
+            margin: 0;
+            color: var(--accent-dark);
+        }
+
+        .supervision-heading h3 {
+            font-size: 1.3rem;
+            line-height: 1.2;
+        }
+
+        .supervision-heading p {
+            margin: 7px 0 0;
+            color: var(--muted);
+            line-height: 1.5;
+        }
+
+        .supervision-current {
+            border: 1px solid var(--line-strong);
+            border-radius: 12px;
+            background: #ffffff;
+            padding: 16px;
+        }
+
+        .supervision-label {
+            color: var(--muted);
+            font-size: 0.78rem;
+            font-weight: 900;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+        .supervision-current h4 {
+            margin-top: 5px;
+            font-size: 1.3rem;
+            line-height: 1.2;
+        }
+
+        .supervision-current p {
+            margin: 7px 0 0;
+            color: var(--muted);
+            line-height: 1.45;
+        }
+
+        .supervision-contact {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .supervision-pill {
+            display: inline-flex;
+            align-items: center;
+            min-height: 28px;
+            padding: 4px 10px;
+            border-radius: 999px;
+            background: var(--accent-soft);
+            color: var(--accent-dark);
+            font-size: 0.82rem;
+            font-weight: 850;
+            text-decoration: none;
+        }
+
+        .supervision-pill.warn {
+            background: var(--warn-soft);
+            color: var(--warn);
+        }
+
+        .supervision-schedule {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 12px;
+            padding: 20px;
+        }
+
+        .supervision-slot {
+            border: 1px solid var(--line);
+            border-left: 4px solid var(--accent);
+            border-radius: 12px;
+            background: #ffffff;
+            padding: 14px;
+        }
+
+        .supervision-slot.is-current {
+            border-left-color: var(--warn);
+            background: var(--warn-soft);
+        }
+
+        .supervision-slot-day {
+            color: var(--accent-dark);
+            font-size: 0.95rem;
+            font-weight: 900;
+        }
+
+        .supervision-slot-time {
+            margin-top: 4px;
+            color: var(--muted);
+            font-size: 0.86rem;
+            font-weight: 800;
+        }
+
+        .supervision-slot-person {
+            margin-top: 8px;
+            color: var(--text);
+            font-weight: 850;
+        }
+
         .section {
             border: 1px solid var(--line);
             border-radius: var(--radius);
@@ -269,22 +401,19 @@
         }
 
         .message-list,
-        .event-list,
-        .link-grid {
+        .event-list {
             display: grid;
             gap: 0;
         }
 
         .message,
-        .event,
-        .text-link {
+        .event {
             padding: 18px 20px;
             border-top: 1px solid var(--line);
         }
 
         .message:first-child,
-        .event:first-child,
-        .text-link:first-child {
+        .event:first-child {
             border-top: 0;
         }
 
@@ -311,12 +440,69 @@
             color: var(--warn);
         }
 
+        .message-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 7px;
+            margin-bottom: 9px;
+        }
+
+        .message-tag {
+            display: inline-flex;
+            align-items: center;
+            min-height: 24px;
+            padding: 3px 8px;
+            border-radius: 999px;
+            background: var(--accent-soft);
+            color: var(--accent-dark);
+            font-size: 0.75rem;
+            font-weight: 900;
+        }
+
+        .message.important .message-tag {
+            background: #ffe2b7;
+            color: var(--warn);
+        }
+
+        .link-grid {
+            display: grid;
+            gap: 16px;
+            padding: 16px;
+        }
+
+        .link-group {
+            border: 1px solid var(--line);
+            border-radius: 12px;
+            overflow: hidden;
+            background: #ffffff;
+        }
+
+        .link-group-title {
+            padding: 11px 14px;
+            background: var(--surface-soft);
+            color: var(--muted);
+            font-size: 0.78rem;
+            font-weight: 900;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
         .text-link {
             display: grid;
             grid-template-columns: minmax(0, 1fr) auto;
             gap: 18px;
             align-items: center;
             background: var(--surface);
+            padding: 14px;
+            border-top: 1px solid var(--line);
+        }
+
+        .text-link:first-of-type {
+            border-top: 0;
+        }
+
+        .text-link.priority strong {
+            color: var(--warn);
         }
 
         .text-link strong {
@@ -412,6 +598,16 @@
                 padding-top: 12px;
             }
 
+            .supervision-top {
+                grid-template-columns: 1fr;
+                padding: 16px;
+            }
+
+            .supervision-schedule {
+                grid-template-columns: 1fr;
+                padding: 16px;
+            }
+
             .primary-actions {
                 padding: 12px;
             }
@@ -455,7 +651,6 @@
                 <nav class="primary-actions" aria-label="Najważniejsze akcje">
                     <a class="action-link primary" href="zastepstwa.html">Plan z zastępstwami <span aria-hidden="true">›</span></a>
                     <a class="action-link" href="plan-lekcji-2026-09-01.html">Czysty plan lekcji <span aria-hidden="true">›</span></a>
-                    <a class="action-link" href="wykaz-podzialow-grup.html">Wykaz grup <span aria-hidden="true">›</span></a>
                 </nav>
             </div>
             <aside class="countdown-card" aria-labelledby="countdown-title">
@@ -485,23 +680,41 @@
             </aside>
         </section>
 
+        <section class="supervision-card" aria-labelledby="supervision-title">
+            <div class="supervision-top">
+                <div class="supervision-heading">
+                    <h3 id="supervision-title">Dyżur nadzoru</h3>
+                    <p>Aktualny dyżur jest wyliczany z grafiku według dnia tygodnia i godziny.</p>
+                </div>
+                <div class="supervision-current" id="supervision-current" aria-live="polite">
+                    <div class="supervision-label">Teraz</div>
+                    <h4>Ładowanie grafiku</h4>
+                    <p>Sprawdzam plik z dyżurami nadzoru.</p>
+                </div>
+            </div>
+            <div class="supervision-schedule" id="supervision-schedule" aria-label="Grafik dyżurów nadzoru"></div>
+        </section>
+
         <div class="layout">
             <div>
                 <section class="section" aria-labelledby="messages-title">
                     <div class="section-header">
                         <h3 id="messages-title">Komunikaty</h3>
-                        <p>Krótka lista informacji, które wymagają sprawdzenia przed lekcjami.</p>
+                        <p>Najważniejsze informacje robocze na dziś.</p>
                     </div>
                     <div class="message-list">
                         <article class="message important">
+                            <div class="message-meta"><span class="message-tag">codziennie</span></div>
                             <h4>Zastępstwa i przeniesienia</h4>
-                            <p>Aktualny widok znajduje się w osobnym module. Dane są pobierane z plików Excel opublikowanych razem ze stroną.</p>
+                            <p>Sprawdź moduł zastępstw przed rozpoczęciem lekcji. Zmiany są pobierane z plików Excel.</p>
                         </article>
                         <article class="message">
+                            <div class="message-meta"><span class="message-tag">plan</span></div>
                             <h4>Plan lekcji</h4>
-                            <p>Czysty plan pozostaje dostępny osobno. Użyj go, gdy chcesz sprawdzić bazowy tygodniowy rozkład bez zmian z arkuszy zastępstw.</p>
+                            <p>Czysty plan służy do sprawdzenia bazowego rozkładu bez zastępstw i przeniesień.</p>
                         </article>
                         <article class="message">
+                            <div class="message-meta"><span class="message-tag">dokumenty</span></div>
                             <h4>Dokumenty szkolne</h4>
                             <p>Materiały organizacyjne są dostępne w szkolnym SharePoincie.</p>
                         </article>
@@ -534,48 +747,64 @@
                     <p>Stałe skróty do najczęściej używanych widoków.</p>
                 </div>
                 <div class="link-grid">
-                    <a class="text-link" href="zastepstwa.html">
-                        <span>
-                            <strong>Plan z zastępstwami</strong>
-                            <small>Wybór nauczyciela, zastępstwa, przeniesienia i płatności.</small>
-                        </span>
-                        <span aria-hidden="true">›</span>
-                    </a>
-                    <a class="text-link" href="plan-lekcji-2026-09-01.html">
-                        <span>
-                            <strong>Czysty plan lekcji</strong>
-                            <small>Bazowy plan tygodniowy bez zmian z arkuszy.</small>
-                        </span>
-                        <span aria-hidden="true">›</span>
-                    </a>
-                    <a class="text-link" href="wykaz-podzialow-grup.html">
-                        <span>
-                            <strong>Wykaz grup klasowych</strong>
-                            <small>Podziały grup i informacje pomocnicze.</small>
-                        </span>
-                        <span aria-hidden="true">›</span>
-                    </a>
-                    <a class="text-link" href="calendar-2026-2027.html">
-                        <span>
-                            <strong>Kalendarium 2026/2027</strong>
-                            <small>Widok dnia, tygodnia, miesiąca i roku szkolnego.</small>
-                        </span>
-                        <span aria-hidden="true">›</span>
-                    </a>
-                    <a class="text-link" href="https://zespolszkolzawodowychnr5.sharepoint.com/sites/rokszkolny20262027/Shared%20Documents/Forms/AllItems.aspx" target="_blank" rel="noreferrer">
-                        <span>
-                            <strong>SharePoint szkolny</strong>
-                            <small>Dokumenty organizacyjne i materiały robocze.</small>
-                        </span>
-                        <span aria-hidden="true">›</span>
-                    </a>
-                    <a class="text-link" href="https://www.zsz5.edupage.org" target="_blank" rel="noreferrer">
-                        <span>
-                            <strong>EduPage ZSZ5</strong>
-                            <small>Oficjalna strona szkoły.</small>
-                        </span>
-                        <span aria-hidden="true">›</span>
-                    </a>
+                    <div class="link-group">
+                        <div class="link-group-title">Plany i zastępstwa</div>
+                        <a class="text-link priority" href="zastepstwa.html">
+                            <span>
+                                <strong>Plan z zastępstwami</strong>
+                                <small>Wybór nauczyciela, przeniesienia i płatności.</small>
+                            </span>
+                            <span aria-hidden="true">›</span>
+                        </a>
+                        <a class="text-link" href="plan-lekcji-2026-09-01.html">
+                            <span>
+                                <strong>Czysty plan lekcji</strong>
+                                <small>Bazowy plan tygodniowy.</small>
+                            </span>
+                            <span aria-hidden="true">›</span>
+                        </a>
+                        <a class="text-link" href="wykaz-podzialow-grup.html">
+                            <span>
+                                <strong>Wykaz grup klasowych</strong>
+                                <small>Podziały grup i informacje pomocnicze.</small>
+                            </span>
+                            <span aria-hidden="true">›</span>
+                        </a>
+                    </div>
+                    <div class="link-group">
+                        <div class="link-group-title">Dyżury i kalendarz</div>
+                        <a class="text-link" href="grafik-dyzurow-nadzoru-2026-2027.xlsx">
+                            <span>
+                                <strong>Grafik dyżurów nadzoru</strong>
+                                <small>Plik Excel używany przez panel dyżuru.</small>
+                            </span>
+                            <span aria-hidden="true">›</span>
+                        </a>
+                        <a class="text-link" href="calendar-2026-2027.html">
+                            <span>
+                                <strong>Kalendarium 2026/2027</strong>
+                                <small>Widok dnia, tygodnia, miesiąca i roku.</small>
+                            </span>
+                            <span aria-hidden="true">›</span>
+                        </a>
+                    </div>
+                    <div class="link-group">
+                        <div class="link-group-title">Dokumenty zewnętrzne</div>
+                        <a class="text-link" href="https://zespolszkolzawodowychnr5.sharepoint.com/sites/rokszkolny20262027/Shared%20Documents/Forms/AllItems.aspx" target="_blank" rel="noreferrer">
+                            <span>
+                                <strong>SharePoint szkolny</strong>
+                                <small>Dokumenty organizacyjne i materiały robocze.</small>
+                            </span>
+                            <span aria-hidden="true">›</span>
+                        </a>
+                        <a class="text-link" href="https://www.zsz5.edupage.org" target="_blank" rel="noreferrer">
+                            <span>
+                                <strong>EduPage ZSZ5</strong>
+                                <small>Oficjalna strona szkoły.</small>
+                            </span>
+                            <span aria-hidden="true">›</span>
+                        </a>
+                    </div>
                 </div>
             </aside>
         </div>
@@ -590,6 +819,283 @@
     </footer>
 
     <script>
+        const SUPERVISION_CONFIG = {
+            workbook: "grafik-dyzurow-nadzoru-2026-2027.xlsx"
+        };
+
+        const DAY_NAMES = ["niedziela", "poniedziałek", "wtorek", "środa", "czwartek", "piątek", "sobota"];
+        const supervisionState = {
+            entries: [],
+            phones: new Map(),
+            error: ""
+        };
+
+        function compactSpaces(value) {
+            return String(value ?? "").replace(/\s+/g, " ").trim();
+        }
+
+        function escapeHtml(value) {
+            return compactSpaces(value)
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#39;");
+        }
+
+        function normalizeText(value) {
+            return compactSpaces(value)
+                .toLowerCase()
+                .normalize("NFD")
+                .replace(/[\u0300-\u036f]/g, "")
+                .replace(/ł/g, "l");
+        }
+
+        function timeToMinutes(value) {
+            const match = compactSpaces(value).match(/^(\d{1,2}):(\d{2})$/);
+            if (!match) {
+                return null;
+            }
+            return Number(match[1]) * 60 + Number(match[2]);
+        }
+
+        function parseShift(value) {
+            const match = compactSpaces(value).match(/(\d{1,2}:\d{2})\s*-\s*(\d{1,2}:\d{2})/);
+            if (!match) {
+                return null;
+            }
+            const start = timeToMinutes(match[1]);
+            const end = timeToMinutes(match[2]);
+            if (start === null || end === null) {
+                return null;
+            }
+            return {
+                label: `${match[1]} - ${match[2]}`,
+                start,
+                end
+            };
+        }
+
+        function getDayIndexFromHeader(value) {
+            const header = normalizeText(value);
+            if (header.includes("poniedzialek")) return 1;
+            if (header.includes("wtorek")) return 2;
+            if (header.includes("sroda")) return 3;
+            if (header.includes("czwartek")) return 4;
+            if (header.includes("piatek")) return 5;
+            return null;
+        }
+
+        function getPhoneForPerson(name) {
+            return supervisionState.phones.get(compactSpaces(name)) || supervisionState.phones.get(normalizeText(name)) || null;
+        }
+
+        async function loadSupervisionWorkbook() {
+            if (!window.XLSX) {
+                throw new Error("Nie można wczytać biblioteki XLSX.");
+            }
+
+            const response = await fetch(SUPERVISION_CONFIG.workbook, { cache: "no-store" });
+            if (!response.ok) {
+                throw new Error(`Nie można wczytać grafiku dyżurów (HTTP ${response.status}).`);
+            }
+
+            const workbook = XLSX.read(await response.arrayBuffer(), { type: "array" });
+            const scheduleSheet = workbook.Sheets["grafik"] || workbook.Sheets["grafik dyżurów"];
+            const phonesSheet = workbook.Sheets["numery telefonów"];
+
+            if (!scheduleSheet) {
+                throw new Error("Brak arkusza z grafikiem dyżurów.");
+            }
+
+            const rows = XLSX.utils.sheet_to_json(scheduleSheet, { header: 1, defval: "", raw: false });
+            const headers = rows[0] || [];
+            const entries = [];
+
+            rows.slice(1).forEach((row) => {
+                const shift = parseShift(row[1]);
+                if (!shift) {
+                    return;
+                }
+
+                headers.forEach((header, columnIndex) => {
+                    const dayIndex = getDayIndexFromHeader(header);
+                    const person = compactSpaces(row[columnIndex]);
+                    if (!dayIndex || !person) {
+                        return;
+                    }
+                    entries.push({
+                        dayIndex,
+                        dayLabel: DAY_NAMES[dayIndex],
+                        timeLabel: shift.label,
+                        start: shift.start,
+                        end: shift.end,
+                        person
+                    });
+                });
+            });
+
+            supervisionState.entries = entries.sort((left, right) => {
+                return left.dayIndex - right.dayIndex || left.start - right.start || left.person.localeCompare(right.person, "pl");
+            });
+
+            supervisionState.phones = new Map();
+            if (phonesSheet) {
+                const phoneRows = XLSX.utils.sheet_to_json(phonesSheet, { header: 1, defval: "", raw: false });
+                phoneRows.slice(1).forEach((row) => {
+                    const name = compactSpaces(row[0]);
+                    const number = compactSpaces(row[1]).split(/\r?\n/)[0];
+                    const ext = compactSpaces(row[2]).replace(/^wew\.?\s*/i, "");
+                    if (!name || !number) {
+                        return;
+                    }
+                    const phone = { number, ext };
+                    supervisionState.phones.set(name, phone);
+                    supervisionState.phones.set(normalizeText(name), phone);
+                });
+            }
+        }
+
+        function getCurrentDuty(now = new Date()) {
+            const dayIndex = now.getDay();
+            const currentMinutes = now.getHours() * 60 + now.getMinutes();
+            return supervisionState.entries.find((entry) => {
+                return entry.dayIndex === dayIndex && currentMinutes >= entry.start && currentMinutes < entry.end;
+            }) || null;
+        }
+
+        function getNextDuty(now = new Date()) {
+            const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+            const currentMinutes = now.getHours() * 60 + now.getMinutes();
+            const candidates = [];
+
+            for (let offset = 0; offset < 8; offset += 1) {
+                const date = new Date(today);
+                date.setDate(today.getDate() + offset);
+                const dayIndex = date.getDay();
+
+                supervisionState.entries.forEach((entry) => {
+                    if (entry.dayIndex !== dayIndex) {
+                        return;
+                    }
+                    if (offset === 0 && entry.start <= currentMinutes) {
+                        return;
+                    }
+                    candidates.push({ ...entry, date, offset });
+                });
+            }
+
+            return candidates.sort((left, right) => {
+                return left.date - right.date || left.start - right.start;
+            })[0] || null;
+        }
+
+        function formatDutyDate(entry) {
+            if (!entry?.date) {
+                return "";
+            }
+            return entry.date.toLocaleDateString("pl-PL", {
+                weekday: "long",
+                day: "numeric",
+                month: "long"
+            });
+        }
+
+        function renderSupervisionContact(person) {
+            const phone = getPhoneForPerson(person);
+            if (!phone) {
+                return `<span class="supervision-pill warn">Brak numeru w arkuszu</span>`;
+            }
+            const phoneHref = phone.number.replace(/\s+/g, "");
+            const extText = phone.ext ? `wew. ${phone.ext}` : "bez wew.";
+            return `
+                <a class="supervision-pill" href="tel:${escapeHtml(phoneHref)}">${escapeHtml(phone.number)}</a>
+                <span class="supervision-pill">${escapeHtml(extText)}</span>
+            `;
+        }
+
+        function renderCurrentSupervision() {
+            const currentBox = document.getElementById("supervision-current");
+            if (!currentBox) {
+                return;
+            }
+
+            if (supervisionState.error) {
+                currentBox.innerHTML = `
+                    <div class="supervision-label">Dyżur nadzoru</div>
+                    <h4>Nie udało się wczytać grafiku</h4>
+                    <p>${escapeHtml(supervisionState.error)}</p>
+                `;
+                return;
+            }
+
+            const current = getCurrentDuty();
+            if (current) {
+                currentBox.innerHTML = `
+                    <div class="supervision-label">Teraz pełni dyżur</div>
+                    <h4>${escapeHtml(current.person)}</h4>
+                    <p>${escapeHtml(current.dayLabel)}, ${escapeHtml(current.timeLabel)}</p>
+                    <div class="supervision-contact">${renderSupervisionContact(current.person)}</div>
+                `;
+                return;
+            }
+
+            const next = getNextDuty();
+            const nextText = next
+                ? `Najbliższy: ${formatDutyDate(next)}, ${next.timeLabel}, ${next.person}.`
+                : "W grafiku nie ma kolejnego wpisu w najbliższym tygodniu.";
+
+            currentBox.innerHTML = `
+                <div class="supervision-label">Teraz</div>
+                <h4>Brak dyżuru nadzoru</h4>
+                <p>${escapeHtml(nextText)}</p>
+            `;
+        }
+
+        function renderSupervisionSchedule() {
+            const container = document.getElementById("supervision-schedule");
+            if (!container) {
+                return;
+            }
+
+            if (supervisionState.error) {
+                container.innerHTML = "";
+                return;
+            }
+
+            if (!supervisionState.entries.length) {
+                container.innerHTML = `<div class="supervision-slot"><div class="supervision-slot-person">Brak wpisów w grafiku.</div></div>`;
+                return;
+            }
+
+            const current = getCurrentDuty();
+            container.innerHTML = supervisionState.entries.map((entry) => {
+                const isCurrent = current
+                    && current.dayIndex === entry.dayIndex
+                    && current.timeLabel === entry.timeLabel
+                    && current.person === entry.person;
+                return `
+                    <article class="supervision-slot${isCurrent ? " is-current" : ""}">
+                        <div class="supervision-slot-day">${escapeHtml(entry.dayLabel)}</div>
+                        <div class="supervision-slot-time">${escapeHtml(entry.timeLabel)}</div>
+                        <div class="supervision-slot-person">${escapeHtml(entry.person)}</div>
+                    </article>
+                `;
+            }).join("");
+        }
+
+        async function initSupervision() {
+            try {
+                await loadSupervisionWorkbook();
+            } catch (error) {
+                supervisionState.error = error instanceof Error ? error.message : String(error);
+            }
+            renderCurrentSupervision();
+            renderSupervisionSchedule();
+            window.setInterval(renderCurrentSupervision, 60000);
+            window.setInterval(renderSupervisionSchedule, 60000);
+        }
+
         function updateClock() {
             const clock = document.getElementById("clock");
             const now = new Date();
@@ -619,6 +1125,7 @@
 
         updateClock();
         updateCountdown();
+        initSupervision();
         window.setInterval(updateClock, 1000);
         window.setInterval(updateCountdown, 60000);
     </script>
