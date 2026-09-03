@@ -130,74 +130,6 @@
             text-decoration: none;
             font-weight: 700;
         }
-        .notice-modal-backdrop {
-            position: fixed;
-            inset: 0;
-            z-index: 2000;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 1rem;
-            background: rgba(15, 23, 42, .58);
-        }
-        .notice-modal-backdrop[hidden] { display: none; }
-        .notice-modal {
-            width: min(42rem, 100%);
-            max-height: min(44rem, calc(100vh - 2rem));
-            overflow: auto;
-            border-radius: .75rem;
-            background: #fffdf8;
-            color: #2f261d;
-            border: 1px solid #f0c27a;
-            box-shadow: 0 1.6rem 4rem rgba(15, 23, 42, .28);
-        }
-        .notice-modal:focus { outline: none; }
-        .notice-modal-header {
-            padding: 1.1rem 1.25rem .8rem;
-            border-left: 7px solid #b45309;
-            background: #fff7ed;
-        }
-        .notice-modal-kicker {
-            display: block;
-            margin-bottom: .35rem;
-            color: #9a3412;
-            font-size: .78rem;
-            font-weight: 800;
-            letter-spacing: .08em;
-            text-transform: uppercase;
-        }
-        .notice-modal-title {
-            margin: 0;
-            font-size: 1.45rem;
-            line-height: 1.2;
-        }
-        .notice-modal-content { padding: 1rem 1.25rem 1.25rem; }
-        .notice-modal-content p {
-            margin: .55rem 0;
-            line-height: 1.5;
-        }
-        .notice-modal-content ul {
-            margin: .65rem 0 .65rem 1.25rem;
-            padding: 0;
-        }
-        .notice-modal-content li {
-            margin: .35rem 0;
-            line-height: 1.45;
-        }
-        .notice-modal-button {
-            width: 100%;
-            min-height: 3rem;
-            margin-top: .85rem;
-            border: 0;
-            border-radius: .45rem;
-            background: #9a3412;
-            color: #fff;
-            font: inherit;
-            font-weight: 800;
-            cursor: pointer;
-        }
-        .notice-modal-button:hover { background: #7c2d12; }
-        body.modal-open { overflow: hidden; }
         @media (max-width: 900px) {
             body {
                 display: flex;
@@ -368,21 +300,6 @@
     </style>
 </head>
 <body>
-<div class="notice-modal-backdrop" id="trialNoticeModal" role="dialog" aria-modal="true" aria-labelledby="trialNoticeModalTitle">
-    <div class="notice-modal" tabindex="-1">
-        <div class="notice-modal-header">
-            <span class="notice-modal-kicker">Ważna informacja</span>
-            <h1 class="notice-modal-title" id="trialNoticeModalTitle">Plan lekcji obowiązujący od 7 września 2026 r.</h1>
-        </div>
-        <div class="notice-modal-content">
-            <p><strong>To jest obowiązujący plan lekcji od poniedziałku, 7 września 2026 r.</strong></p>
-            <p>Zmiana planu wynika ze zmian kadrowych w szkole.</p>
-            <p>Plan został przygotowany z perspektywy całej szkoły, przede wszystkim z uwzględnieniem warunków pracy uczniów i organizacji zajęć. <strong>Nie jest układany pod kogokolwiek, dla kogokolwiek ani przeciwko komukolwiek.</strong></p>
-            <p><strong>To najlepszy możliwy układ przy obecnych warunkach organizacyjnych szkoły, ograniczeniach sal, grup i dostępności zajęć.</strong></p>
-            <button class="notice-modal-button" type="button" id="trialNoticeAccept">Przeczytałem/am - zamknij komunikat</button>
-        </div>
-    </div>
-</div>
 <nav><div>
     <a href="https://dobryplan.edu.pl" target="_blank"><svg viewBox="0 0 23.655 4.068" xmlns="http://www.w3.org/2000/svg">
         <title>dobryplan</title>
@@ -27154,18 +27071,6 @@
 <script type="text/javascript">
 (function() {
     const plans = document.getElementsByClassName("plan");
-    const modal = document.getElementById("trialNoticeModal");
-    const modalCard = modal?.querySelector(".notice-modal");
-    const modalButton = document.getElementById("trialNoticeAccept");
-
-    if (modal && modalButton) {
-        document.body.classList.add("modal-open");
-        modalCard?.focus({ preventScroll: true });
-        modalButton.addEventListener("click", () => {
-            modal.hidden = true;
-            document.body.classList.remove("modal-open");
-        });
-    }
 
     function nav() {
         const h = window.location.hash.substring(1) || plans[0]?.id;
