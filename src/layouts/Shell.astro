@@ -1,0 +1,118 @@
+---
+import "@fontsource/source-sans-3/latin-ext-400.css";
+import "@fontsource/source-sans-3/latin-ext-600.css";
+import "@fontsource/source-sans-3/latin-ext-700.css";
+import "@fontsource/source-sans-3/latin-400.css";
+import "@fontsource/source-sans-3/latin-600.css";
+import "@fontsource/source-sans-3/latin-700.css";
+import "../styles/site.css";
+import { Image } from "astro:assets";
+import logo from "../../public/logo.png";
+import fs from "node:fs";
+const publication = JSON.parse(
+  fs.readFileSync("public/data/manifest.json", "utf8"),
+);
+const publicationLabel = new Date(publication.generatedAt).toLocaleString(
+  "pl-PL",
+  { timeZone: "Europe/Warsaw" },
+);
+const { title, section = "Pulpit", tv = false } = Astro.props;
+const menu = [
+  ["Pulpit", "/index.html"],
+  ["Plan", "/plan.html"],
+  ["Dyżury", "/dyzury-nadzoru.html"],
+  ["Kalendarz", "/calendar-2026-2027.html"],
+  ["Materiały", "/materialy.html"],
+];
+---
+
+<!doctype html>
+<html lang="pl">
+  <head
+    ><meta charset="UTF-8" /><meta
+      name="viewport"
+      content="width=device-width, initial-scale=1"
+    /><meta
+      name="description"
+      content="Plan lekcji, zastępstwa, dyżury i kalendarz ZSZ5 we Wrocławiu."
+    /><link rel="icon" href="/favicon.png" /><title>
+      {title} — Szkoła Mistrzów
+    </title></head
+  >
+  <body class:list={{ "tv-mode": tv }}
+    ><a class="skip" href="#tresc">Przejdź do treści</a>
+    <header class="site-header">
+      <div class="header-inner">
+        <a
+          class="brand"
+          href="/index.html"
+          aria-label="Szkoła Mistrzów — pulpit"
+          ><Image
+            src={logo}
+            alt="ZSZ5 we Wrocławiu — Szkoła Mistrzów"
+            width={480}
+            widths={[240, 480]}
+            sizes="(min-width: 768px) 240px, 220px"
+            loading="eager"
+            fetchpriority="high"
+            format="webp"
+          /></a
+        ><button
+          class="menu-toggle"
+          aria-expanded="false"
+          aria-controls="navigation">Menu</button
+        ><nav id="navigation" aria-label="Główna nawigacja">
+          {
+            menu.map(([name, href]) => (
+              <a
+                href={href}
+                aria-current={section === name ? "page" : undefined}
+              >
+                {name}
+              </a>
+            ))
+          }
+        </nav>
+      </div>
+    </header>
+    <main id="tresc" tabindex="-1">
+      <div class="page-heading">
+        {
+          section !== "Pulpit" && (
+            <a class="back" href="/index.html">
+              ← Pulpit nauczyciela
+            </a>
+          )
+        }<p class="eyebrow">ZSZ5 · Wrocław</p><h1>{title}</h1><slot
+          name="intro"
+        />
+      </div><div
+        id="data-status"
+        class="status"
+        role="status"
+        aria-live="polite"
+      >
+        Dane opublikowane {publicationLabel}
+      </div><slot />
+    </main>
+    <footer class="site-footer">
+      <span>Szkoła Mistrzów · ZSZ5 we Wrocławiu</span><div>
+        <a href="/tv.html">Ekran TV</a><a
+          href="https://www.zsz5.edupage.org"
+          target="_blank"
+          rel="noopener">Strona szkoły ↗</a>
+      </div>
+    </footer>
+    <script>
+      document
+        .querySelector(".menu-toggle")
+        ?.addEventListener("click", (event) => {
+          const b = event.currentTarget as HTMLButtonElement;
+          b.setAttribute(
+            "aria-expanded",
+            String(b.getAttribute("aria-expanded") !== "true"),
+          );
+        });
+    </script>
+  </body>
+</html>

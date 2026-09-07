@@ -1,0 +1,62 @@
+name: Sprawdź i przygotuj serwis
+on:
+  push:
+    branches: [przebudowa]
+  pull_request:
+    branches: [przebudowa]
+  workflow_dispatch:
+    inputs:
+      publish:
+        description: "Opublikuj odebraną wersję na GitHub Pages"
+        type: boolean
+        default: false
+permissions:
+  contents: read
+concurrency:
+  group: site-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: npm ci
+      - run: pip install -r requirements-build.txt
+      - run: npm run check
+      - run: npm run verify
+      - run: npx playwright install --with-deps chromium firefox webkit
+      - run: npm run test:browser
+      - run: npm run test:performance
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: raport-testow
+          path: reports/
+      - uses: actions/upload-artifact@v4
+        with:
+          name: podglad-serwisu
+          path: dist/
+      - uses: actions/upload-pages-artifact@v3
+        if: (github.event_name == 'workflow_dispatch' && inputs.publish) || (github.event_name == 'push' && vars.PUBLISH_PRZEBUDOWA == 'true')
+        with:
+          path: dist/
+  deploy:
+    if: github.ref == 'refs/heads/przebudowa' && ((github.event_name == 'workflow_dispatch' && inputs.publish) || (github.event_name == 'push' && vars.PUBLISH_PRZEBUDOWA == 'true'))
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/deploy-pages@v4
+        id: deployment

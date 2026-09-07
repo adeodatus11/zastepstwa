@@ -1,0 +1,10 @@
+node_modules/
+dist/
+.astro/
+public/data/
+.DS_Store
+__pycache__/
+test-results/
+playwright-report/
+reports/
+.venv/

@@ -1,0 +1,43 @@
+{
+  "opis": "Jedyne źródło grafiku specjalistów. Dni: 1–5, poniedziałek–piątek.",
+  "rokSzkolny": "2026/2027",
+  "telefon": "+48 71 798 69 34",
+  "specjalisci": [
+    {
+      "imieNazwisko": "Sylwia Bokuniewicz",
+      "rola": "pedagog",
+      "wewnetrzny": "142",
+      "godziny": {
+        "1": "9:30-17:30",
+        "2": "8:00-14:36",
+        "3": "9:00-14:00",
+        "4": "8:00-12:00",
+        "5": "12:30-17:30"
+      }
+    },
+    {
+      "imieNazwisko": "Maria Kaszak",
+      "rola": "pedagog specjalny",
+      "wewnetrzny": "140",
+      "godziny": {
+        "1": "8:00-12:00",
+        "2": "12:30-17:30",
+        "3": "8:00-12:00",
+        "4": "12:30-17:30",
+        "5": "9:00-13:00"
+      }
+    },
+    {
+      "imieNazwisko": "Aleksandra Aszkiełowicz",
+      "rola": "psycholog",
+      "wewnetrzny": "142",
+      "godziny": {
+        "1": "8:00-13:00",
+        "2": "11:00-17:00",
+        "3": "10:00-16:00",
+        "4": "10:00-17:00",
+        "5": "8:00-12:36"
+      }
+    }
+  ]
+}

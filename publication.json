@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "validFrom": "2026-09-07",
+  "validTo": "2026-12-11",
+  "timezone": "Europe/Warsaw",
+  "sources": {
+    "xml": "dyzury-2026-09-07-korekta.xml",
+    "substitutions": "InformacjeOZastepstwach.xlsx",
+    "transfers": "InformacjeOPrzeniesieniach.xlsx",
+    "supervision": "grafik-dyzurow-nadzoru-2026-2027.xlsx",
+    "calendar": "kalendarz_dzienny_role_2026_2027.xlsx",
+    "legacyPlan": "plan-lekcji-2026-09-07.html"
+  },
+  "schoolYear": "2026/2027",
+  "calendarFrom": "2026-09-01",
+  "calendarTo": "2027-08-31",
+  "supervisionValidFrom": "2026-09-07",
+  "supervisionValidTo": "2026-09-11",
+  "supervisionNotes": {
+    "3": "do 16:30 + Rady Pedagogiczne",
+    "5": "do 17:20"
+  }
+}

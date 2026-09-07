@@ -1,0 +1,574 @@
+---
+import Shell from "../layouts/Shell.astro";
+import fs from "node:fs";
+import { validDate } from "../lib/schema.mjs";
+const news = Object.values(
+  import.meta.glob<{
+    frontmatter: { title: string; date: string };
+    Content: any;
+  }>("../content/aktualnosci/*.md", { eager: true }),
+).sort((a, b) => b.frontmatter.date.localeCompare(a.frontmatter.date));
+for (const item of news)
+  if (!item.frontmatter.title || !validDate(item.frontmatter.date))
+    throw Error("Aktualność wymaga tytułu i daty YYYY-MM-DD");
+export function getStaticPaths() {
+  return [
+    "index",
+    "plan",
+    "zastepstwa",
+    "plan-lekcji-2026-09-07",
+    "dyzury-nadzoru",
+    "pomoc-psychologiczno-pedagogiczna",
+    "calendar-2026-2027",
+    "wykaz-podzialow-grup",
+    "sale-sg-obiekty-zewnetrzne-2026-2027",
+    "materialy",
+    "tv",
+  ].map((page) => ({ params: { page } }));
+}
+const page = Astro.params.page!;
+const plan = [
+  "plan",
+  "zastepstwa",
+  "plan-lekcji-2026-09-07",
+  "sale-sg-obiekty-zewnetrzne-2026-2027",
+].includes(page);
+const contact = [
+  "dyzury-nadzoru",
+  "pomoc-psychologiczno-pedagogiczna",
+].includes(page);
+const titles: Record<string, string> = {
+  index: "Twój dzień w szkole",
+  plan: "Plan lekcji",
+  zastepstwa: "Plan ze zmianami",
+  "plan-lekcji-2026-09-07": "Plan lekcji",
+  "dyzury-nadzoru": "Dyżury nadzoru",
+  "pomoc-psychologiczno-pedagogiczna": "Pomoc psychologiczno-pedagogiczna",
+  "calendar-2026-2027": "Kalendarz szkolny",
+  "wykaz-podzialow-grup": "Wykazy oddziałów",
+  "sale-sg-obiekty-zewnetrzne-2026-2027": "Sale i obiekty zewnętrzne",
+  materialy: "Materiały i przydatne strony",
+  tv: "Plan lekcji klas",
+};
+const section = plan
+  ? "Plan"
+  : contact
+    ? "Dyżury"
+    : page.includes("calendar")
+      ? "Kalendarz"
+      : page === "index"
+        ? "Pulpit"
+        : "Materiały";
+const manifest = JSON.parse(
+  fs.readFileSync("public/data/manifest.json", "utf8"),
+);
+const contacts = JSON.parse(
+  fs.readFileSync("public" + manifest.files.contacts, "utf8"),
+);
+const links = [
+  [
+    "Dyżury nadzoru",
+    "Aktualny dyżur i grafik kadry kierowniczej.",
+    "/dyzury-nadzoru.html",
+  ],
+  [
+    "Pomoc psychologiczno-pedagogiczna",
+    "Godziny pracy i kontakt do specjalistów.",
+    "/pomoc-psychologiczno-pedagogiczna.html",
+  ],
+  [
+    "Wykazy oddziałów",
+    "Nauczyciele i podziały na grupy.",
+    "/wykaz-podzialow-grup.html",
+  ],
+  [
+    "Sale i obiekty zewnętrzne",
+    "Zajęcia w salach i obiektach sportowych.",
+    "/sale-sg-obiekty-zewnetrzne-2026-2027.html",
+  ],
+  [
+    "Biblioteka dokumentów",
+    "Szkolny SharePoint 2026/2027.",
+    "https://zespolszkolzawodowychnr5.sharepoint.com/sites/rokszkolny20262027/Shared%20Documents/Forms/AllItems.aspx",
+  ],
+  [
+    "Plan szkoły",
+    "Sale, piętra i mapa terenu.",
+    "https://nawigacja.szkolamistrzow.info/",
+  ],
+  [
+    "Strefa Ucznia",
+    "Informacje dla uczniów i rodziców.",
+    "https://informator.szkolamistrzow.info/",
+  ],
+  [
+    "Strona wychowawcy",
+    "Materiały do lekcji wychowawczych.",
+    "https://wychowawca.szkolamistrzow.info/",
+  ],
+  [
+    "Od podstawy programowej do ocen",
+    "Programy i rozkłady materiału.",
+    "https://programy.szkolamistrzow.info/",
+  ],
+  [
+    "Trening umiejętności życiowych",
+    "Materiały warsztatowe.",
+    "https://tuz.covepolska.pl/",
+  ],
+  [
+    "Uruchom zaangażowanie",
+    "Kurs dla nauczycieli.",
+    "https://zaangazowanie.covepolska.pl/",
+  ],
+];
+---
+
+<Shell title={titles[page]} section={section} tv={page === "tv"}>
+  <p slot="intro" class="muted">
+    {
+      page === "index"
+        ? "Plan, zmiany i najważniejsze informacje — w jednym miejscu."
+        : plan
+          ? "Wybierz nauczyciela, oddział lub salę. Plan i zmiany pozostają zawsze pod ręką."
+          : page === "tv"
+            ? ""
+            : `Rok szkolny ${manifest.schoolYear}`
+    }
+  </p>
+  <div id="app" data-page={page}>
+    {
+      page === "index" && (
+        <>
+          <>
+            <div class="quick-links">
+              <>
+                <a class="quick-link" href="/plan.html">
+                  <>
+                    <span class="arrow" aria-hidden="true">
+                      →
+                    </span>
+                    <strong>Otwórz plan</strong>
+                    <span>Twój nauczyciel, oddział lub sala</span>
+                  </>
+                </a>
+                <a class="quick-link" href="/plan.html?list=changes">
+                  <>
+                    <span class="arrow" aria-hidden="true">
+                      →
+                    </span>
+                    <strong>Zmiany na dziś</strong>
+                    <span>Zastępstwa, przeniesienia i dyżury</span>
+                  </>
+                </a>
+              </>
+            </div>
+            <div class="grid dashboard">
+              <>
+                <div class="grid">
+                  <>
+                    <section class="panel">
+                      <>
+                        <div class="panel-heading">
+                          <>
+                            <h2>Dyżury w szkole</h2>
+                            <a href="/dyzury-nadzoru.html">Pełny grafik →</a>
+                          </>
+                        </div>
+                        <div id="home-duty">Wczytywanie bieżącego dyżuru…</div>
+                      </>
+                    </section>
+                    <section class="panel">
+                      <>
+                        <h2>Aktualności</h2>
+                        {news.map(({ frontmatter, Content }) => (
+                          <article class="row">
+                            <p class="event-date">
+                              {new Date(
+                                frontmatter.date + "T12:00:00Z",
+                              ).toLocaleDateString("pl-PL", {
+                                day: "numeric",
+                                month: "long",
+                                year: "numeric",
+                                timeZone: "UTC",
+                              })}
+                            </p>
+                            <h3>{frontmatter.title}</h3>
+                            <Content />
+                          </article>
+                        ))}
+                      </>
+                    </section>
+                  </>
+                </div>
+                <div class="grid">
+                  <>
+                    <section class="panel">
+                      <>
+                        <div class="panel-heading">
+                          <>
+                            <h2>Najbliższe wydarzenia</h2>
+                            <a href="/calendar-2026-2027.html">Kalendarz →</a>
+                          </>
+                        </div>
+                        <div id="home-calendar">Wczytywanie wydarzeń…</div>
+                      </>
+                    </section>
+                    <section class="panel">
+                      <h2>Pod ręką</h2>
+                      {links.slice(1, 5).map(([name, desc, href]) => (
+                        <a class="row link-row" href={href}>
+                          <h3>{name} →</h3>
+                          <p class="meta">{desc}</p>
+                        </a>
+                      ))}
+                    </section>
+                  </>
+                </div>
+              </>
+            </div>
+          </>
+        </>
+      )
+    }
+    {
+      plan && (
+        <>
+          <div class="schedule-layout">
+            <>
+              <aside class="panel" aria-label="Wybór planu">
+                <details class="selector-details">
+                  <>
+                    <summary id="selector-summary">Wybierz plan</summary>
+                    <div class="filters">
+                      <>
+                        <div>
+                          <>
+                            <label for="entity-type">Pokaż plan</label>
+                            <select id="entity-type">
+                              <>
+                                <option value="teacher">Nauczyciela</option>
+                                <option value="class">Oddziału</option>
+                                <option value="room">Sali</option>
+                                <option value="duty">
+                                  Miejsca dyżurowania
+                                </option>
+                              </>
+                            </select>
+                          </>
+                        </div>
+                        <div>
+                          <>
+                            <label for="search">Szukaj</label>
+                            <input
+                              id="search"
+                              type="search"
+                              placeholder="Nazwisko, oddział lub sala"
+                              autocomplete="off"
+                            />
+                          </>
+                        </div>
+                        <div>
+                          <>
+                            <label for="entity">Wybierz z listy</label>
+                            <select id="entity">
+                              <option>Wczytywanie…</option>
+                            </select>
+                          </>
+                        </div>
+                        <button id="favorite">
+                          Zapisz jako mój nauczyciel
+                        </button>
+                        <div class="meta" id="favorite-status" role="status" />
+                        <a class="button" href="/wykaz-podzialow-grup.html">
+                          Wykazy oddziałów
+                        </a>
+                      </>
+                    </div>
+                  </>
+                </details>
+              </aside>
+              <section class="schedule-content">
+                <>
+                  <div class="toolbar">
+                    <>
+                      <div>
+                        <>
+                          <label for="date">Dzień</label>
+                          <div class="date-controls">
+                            <>
+                              <button id="prev" aria-label="Poprzedni dzień">
+                                ←
+                              </button>
+                              <input type="date" id="date" />
+                              <button id="next" aria-label="Następny dzień">
+                                →
+                              </button>
+                            </>
+                          </div>
+                        </>
+                      </div>
+                      <div>
+                        <>
+                          <label for="mode">Wersja planu</label>
+                          <select id="mode">
+                            <>
+                              <option value="changes">Ze zmianami</option>
+                              <option value="base">Plan bazowy</option>
+                            </>
+                          </select>
+                        </>
+                      </div>
+                    </>
+                  </div>
+                  <div class="actions">
+                    <>
+                      <button id="today">Dzisiaj</button>
+                      <button id="day" aria-pressed="true">
+                        Dzień
+                      </button>
+                      <button id="week" aria-pressed="false">
+                        Tydzień
+                      </button>
+                      <button id="changes" aria-pressed="false">
+                        Lista zmian
+                      </button>
+                      <button id="print">Drukuj</button>
+                    </>
+                  </div>
+                  <div id="validity" />
+                  <div class="panel-heading">
+                    <h2 id="selection-title">Plan lekcji</h2>
+                  </div>
+                  <div id="schedule" aria-live="polite">
+                    <p class="empty">Wczytywanie planu…</p>
+                  </div>
+                </>
+              </section>
+            </>
+          </div>
+        </>
+      )
+    }
+    {
+      contact && (
+        <>
+          <>
+            <div class="toolbar">
+              <>
+                <div>
+                  <>
+                    <label for="contact-day">Dzień tygodnia</label>
+                    <select id="contact-day">
+                      {[
+                        "Poniedziałek",
+                        "Wtorek",
+                        "Środa",
+                        "Czwartek",
+                        "Piątek",
+                        "Cały tydzień",
+                      ].map((d, i) => (
+                        <option value={i === 5 ? "all" : i + 1}>{d}</option>
+                      ))}
+                    </select>
+                  </>
+                </div>
+                <div class="actions">
+                  <a
+                    class="button"
+                    href={
+                      page === "dyzury-nadzoru"
+                        ? "/pomoc-psychologiczno-pedagogiczna.html"
+                        : "/dyzury-nadzoru.html"
+                    }
+                  >
+                    {page === "dyzury-nadzoru"
+                      ? "Pomoc psychologiczno-pedagogiczna"
+                      : "Dyżury nadzoru"}
+                  </a>
+                </div>
+              </>
+            </div>
+            <section
+              class="panel"
+              id="contacts-current"
+              style="margin-bottom:20px"
+            >
+              <h2>Aktualny lub najbliższy dyżur</h2>
+            </section>
+            <div id="contacts" class="grid two">
+              <section class="panel">
+                <>
+                  <h2>Kontakt do szkoły</h2>
+                  <p>
+                    <a class="button" href="tel:+48717986934">
+                      71 798 69 34
+                    </a>
+                  </p>
+                  <p class="muted">Wczytywanie grafiku…</p>
+                </>
+              </section>
+            </div>
+            <noscript>
+              <section class="panel">
+                <h2>Grafik tygodniowy</h2>
+                {contacts.supervision.map((e: any) => (
+                  <p>
+                    {e.day}. dzień tygodnia · {e.start}–{e.end} · {e.name}
+                  </p>
+                ))}
+              </section>
+            </noscript>
+          </>
+        </>
+      )
+    }
+    {
+      page === "calendar-2026-2027" && (
+        <>
+          <>
+            <div class="toolbar">
+              <>
+                <div>
+                  <>
+                    <label for="calendar-date">Data</label>
+                    <input id="calendar-date" type="date" />
+                  </>
+                </div>
+                <div>
+                  <>
+                    <label for="category">Kategoria</label>
+                    <select id="category">
+                      <>
+                        <option value="all">Wszystkie wydarzenia</option>
+                        <option value="holiday">Dni wolne</option>
+                        <option value="exam">Egzaminy</option>
+                        <option value="council">Rady pedagogiczne</option>
+                        <option value="classification">Klasyfikacje</option>
+                        <option value="meeting">Spotkania</option>
+                        <option value="practice">Praktyki</option>
+                        <option value="general">Pozostałe</option>
+                      </>
+                    </select>
+                  </>
+                </div>
+              </>
+            </div>
+            <div class="actions">
+              <>
+                <button id="cal-prev" aria-label="Poprzedni okres">
+                  ←
+                </button>
+                <button id="cal-today">Dzisiaj</button>
+                <button id="cal-next" aria-label="Następny okres">
+                  →
+                </button>
+                <label class="visually-hidden" for="cal-view">
+                  Widok kalendarza
+                </label>
+                <select id="cal-view" style="width:auto">
+                  <>
+                    <option value="list">Lista</option>
+                    <option value="day">Dzień</option>
+                    <option value="week">Tydzień</option>
+                    <option value="month">Miesiąc</option>
+                    <option value="year">Rok szkolny</option>
+                  </>
+                </select>
+              </>
+            </div>
+            <div class="toolbar" style="margin-top:16px">
+              <>
+                <div>
+                  <>
+                    <label for="event-search">Szukaj wydarzenia</label>
+                    <input
+                      type="search"
+                      id="event-search"
+                      placeholder="Nazwa, oddział, rada, egzamin…"
+                    />
+                  </>
+                </div>
+                <button id="confirmation-only" aria-pressed="false">
+                  Tylko do doprecyzowania
+                </button>
+              </>
+            </div>
+            <div id="calendar" aria-live="polite" />
+          </>
+        </>
+      )
+    }
+    {
+      page === "wykaz-podzialow-grup" && (
+        <>
+          <>
+            <div class="toolbar">
+              <>
+                <div>
+                  <>
+                    <label for="group-search">Szukaj oddziału</label>
+                    <input
+                      type="search"
+                      id="group-search"
+                      placeholder="Np. 1TFA"
+                    />
+                  </>
+                </div>
+                <div>
+                  <>
+                    <label for="group-class">Oddział</label>
+                    <select id="group-class">
+                      <option>Wczytywanie…</option>
+                    </select>
+                  </>
+                </div>
+              </>
+            </div>
+            <div id="groups" aria-live="polite" />
+          </>
+        </>
+      )
+    }
+    {
+      page === "materialy" && (
+        <div class="grid two">
+          {links.map(([name, desc, href]) => (
+            <a
+              class="panel link-row"
+              href={href}
+              target={href.startsWith("https") ? "_blank" : undefined}
+              rel={href.startsWith("https") ? "noopener" : undefined}
+            >
+              <h2>
+                {name} {href.startsWith("https") ? "↗" : "→"}
+              </h2>
+              <p class="muted">{desc}</p>
+            </a>
+          ))}
+        </div>
+      )
+    }
+    {
+      page === "tv" && (
+        <>
+          <>
+            <div id="tv-clock" />
+            <div id="tv-content">
+              <p>Wczytywanie planu…</p>
+            </div>
+            <div id="tv-progress" />
+          </>
+        </>
+      )
+    }
+  </div><noscript
+    ><p class="notice">
+      Włącz JavaScript, aby korzystać z wyszukiwania, aktualnego planu i
+      filtrów.
+    </p></noscript
+  >
+  <script>
+    import "../lib/bootstrap";
+  </script>
+</Shell>
