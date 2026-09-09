@@ -24,7 +24,7 @@ const menu = [
   ["Kalendarz", "/calendar-2026-2027.html"],
   ["Linki", "/materialy.html"],
   [
-    "Biblioteka dokumentów ↗",
+    "Biblioteka dokumentów / SharePoint ↗",
     "https://zespolszkolzawodowychnr5.sharepoint.com/sites/rokszkolny20262027/Shared%20Documents/Forms/AllItems.aspx",
   ],
 ];
@@ -85,22 +85,27 @@ const menu = [
       </div>
     </header>
     <main id="tresc" tabindex="-1">
-      <div class="page-heading">
-        {
-          section !== "Pulpit" && (
-            <a class="back" href="/index.html">
-              ← Pulpit nauczyciela
-            </a>
-          )
-        }<p class="eyebrow">ZSZ5 · Wrocław</p><h1>{title}</h1><slot
-          name="intro"
-        />
-      </div><div
-        id="data-status"
-        class="status"
-        role="status"
-        aria-live="polite"
-      >
+      {
+        section === "Pulpit" && (
+          <h1 class="visually-hidden">Pulpit nauczyciela</h1>
+        )
+      }
+      {
+        section !== "Pulpit" && (
+          <div class="page-heading">
+            {section !== "Pulpit" && (
+              <a class="back" href="/index.html">
+                ← Pulpit nauczyciela
+              </a>
+            )}
+            <p class="eyebrow">ZSZ5 · Wrocław</p>
+            <>
+              <h1>{title}</h1>
+              <slot name="intro" />
+            </>
+          </div>
+        )
+      }<div id="data-status" class="status" role="status" aria-live="polite">
         Dane opublikowane {publicationLabel}
       </div><slot />
     </main>
