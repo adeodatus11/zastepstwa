@@ -265,7 +265,14 @@ const hash = crypto
   .update(JSON.stringify({ config, payloads }))
   .digest("hex")
   .slice(0, 16);
+const appHash = crypto.createHash("sha256");
+for (const file of (await fs.readdir("src", { recursive: true })).sort()) {
+  const source = path.join("src", file);
+  if ((await fs.stat(source)).isFile())
+    appHash.update(file).update(await fs.readFile(source));
+}
 const manifest = {
+  appVersion: appHash.digest("hex").slice(0, 16),
   schemaVersion: 1,
   version: hash,
   validFrom: config.validFrom,

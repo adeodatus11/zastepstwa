@@ -47,7 +47,7 @@ const titles: Record<string, string> = {
   "calendar-2026-2027": "Kalendarz szkolny",
   "wykaz-podzialow-grup": "Wykazy oddziałów",
   "sale-sg-obiekty-zewnetrzne-2026-2027": "Sale i obiekty zewnętrzne",
-  materialy: "Materiały i przydatne strony",
+  materialy: "Linki",
   tv: "Plan lekcji klas",
 };
 const section = plan
@@ -58,7 +58,7 @@ const section = plan
       ? "Kalendarz"
       : page === "index"
         ? "Pulpit"
-        : "Materiały";
+        : "Linki";
 const manifest = JSON.parse(
   fs.readFileSync("public/data/manifest.json", "utf8"),
 );
@@ -85,11 +85,6 @@ const links = [
     "Sale i obiekty zewnętrzne",
     "Zajęcia w salach i obiektach sportowych.",
     "/sale-sg-obiekty-zewnetrzne-2026-2027.html",
-  ],
-  [
-    "Biblioteka dokumentów",
-    "Szkolny SharePoint 2026/2027.",
-    "https://zespolszkolzawodowychnr5.sharepoint.com/sites/rokszkolny20262027/Shared%20Documents/Forms/AllItems.aspx",
   ],
   [
     "Plan szkoły",

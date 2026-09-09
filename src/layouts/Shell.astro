@@ -22,7 +22,11 @@ const menu = [
   ["Plan", "/plan.html"],
   ["Dyżury", "/dyzury-nadzoru.html"],
   ["Kalendarz", "/calendar-2026-2027.html"],
-  ["Materiały", "/materialy.html"],
+  ["Linki", "/materialy.html"],
+  [
+    "Biblioteka dokumentów ↗",
+    "https://zespolszkolzawodowychnr5.sharepoint.com/sites/rokszkolny20262027/Shared%20Documents/Forms/AllItems.aspx",
+  ],
 ];
 ---
 
@@ -30,6 +34,9 @@ const menu = [
 <html lang="pl">
   <head
     ><meta charset="UTF-8" /><meta
+      name="app-version"
+      content={publication.appVersion}
+    /><meta
       name="viewport"
       content="width=device-width, initial-scale=1"
     /><meta
@@ -66,6 +73,8 @@ const menu = [
             menu.map(([name, href]) => (
               <a
                 href={href}
+                target={href.startsWith("https:") ? "_blank" : undefined}
+                rel={href.startsWith("https:") ? "noopener" : undefined}
                 aria-current={section === name ? "page" : undefined}
               >
                 {name}
@@ -100,10 +109,40 @@ const menu = [
         <a href="/tv.html">Ekran TV</a><a
           href="https://www.zsz5.edupage.org"
           target="_blank"
-          rel="noopener">Strona szkoły ↗</a>
+          rel="noopener">Strona szkoły ↗</a
+        >
       </div>
     </footer>
     <script>
+      const appVersion = document.querySelector<HTMLMetaElement>(
+        'meta[name="app-version"]',
+      )?.content;
+      async function checkAppVersion() {
+        if (document.hidden) return;
+        try {
+          const response = await fetch("/data/manifest.json", {
+            cache: "no-store",
+          });
+          if (!response.ok) return;
+          const next = await response.json();
+          if (
+            typeof next.appVersion !== "string" ||
+            next.appVersion === appVersion
+          )
+            return;
+          const url = new URL(location.href);
+          if (url.searchParams.get("_v") === next.appVersion) return;
+          url.searchParams.set("_v", next.appVersion);
+          location.replace(url.href);
+        } catch {
+          /* Keep the current page available during a connection failure. */
+        }
+      }
+      setInterval(checkAppVersion, 120000);
+      document.addEventListener("visibilitychange", () => {
+        if (!document.hidden) void checkAppVersion();
+      });
+
       document
         .querySelector(".menu-toggle")
         ?.addEventListener("click", (event) => {
