@@ -61,14 +61,14 @@ test("Mobile selection, day/week, changes, saved teacher, preserved URL and relo
   await page.locator("#selector-summary").click();
   await expect(page.locator("#selection-title")).toContainText("Najwer");
   await page.locator("#week").click();
-  await expect(page.locator(".day-column")).toHaveCount(5);
+  await expect(page.locator(".day-heading")).toHaveCount(5);
   expect(
     await page.evaluate(
       () => document.documentElement.scrollWidth <= innerWidth,
     ),
   ).toBe(true);
   await page.locator("#changes").click();
-  await expect(page.locator(".lesson")).not.toHaveCount(0);
+  await expect(page.locator(".change-row")).not.toHaveCount(0);
   await page.reload();
   await expect(page.locator("#changes")).toHaveAttribute(
     "aria-pressed",
@@ -262,3 +262,39 @@ for (const date of ["2026-09-08", "2026-09-09", "2026-09-10", "2026-09-11"])
     }
     expect(complete).toBe(true);
   });
+
+test("Timetable aligns lesson slots and duty replacements retain source details", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await page.goto(
+    "/plan.html?type=teacher&date=2026-09-07&view=week&mode=changes",
+  );
+  await expect(page.locator(".day-heading")).toHaveCount(5);
+  const rows = page.locator(".timetable tbody tr");
+  expect(await rows.count()).toBeGreaterThan(0);
+  for (const row of await rows.all())
+    await expect(row.locator("th, td")).toHaveCount(7);
+  await page.locator("#duty-changes").click();
+  await expect(page.locator(".duty-changes-table")).toContainText(
+    "Krystyna Stępień",
+  );
+  await expect(page.locator(".duty-changes-table")).toContainText(
+    "Magdalena Nowak",
+  );
+  await expect(page.locator(".duty-changes-table")).toContainText(
+    "10:25-10:35",
+  );
+  await page.locator("#next").click();
+  await expect(page.locator("#date")).toHaveValue("2026-09-08");
+  await page.reload();
+  await expect(page.locator("#duty-changes")).toHaveAttribute(
+    "aria-pressed",
+    "true",
+  );
+  await page.locator("#date").fill("2026-09-12");
+  await page.locator("#date").press("Tab");
+  await expect(page.locator("#schedule")).toContainText(
+    "Brak zastępstw dyżurów",
+  );
+});

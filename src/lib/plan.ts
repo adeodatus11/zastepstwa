@@ -1,15 +1,7 @@
+import { timetableHTML, changesHTML } from "./plan-table";
 import { validDate } from "./schema.mjs";
 import { connect } from "./data";
-import {
-  daily,
-  today,
-  addDays,
-  week,
-  dateLabel,
-  selected,
-  esc,
-  norm,
-} from "./model.mjs";
+import { daily, today, addDays, week, selected, esc, norm } from "./model.mjs";
 export const labels: Record<string, string> = {
   base: "",
   substitution: "Zastępstwo",
@@ -47,7 +39,8 @@ export async function init() {
     mode =
       q.get("mode") || (page?.startsWith("plan-lekcji") ? "base" : "changes"),
     view = q.get("view") || (innerWidth >= 1200 ? "week" : "day"),
-    list = q.get("list") === "changes";
+    list = ["changes", "duties"].includes(q.get("list") || ""),
+    dutiesOnly = q.get("list") === "duties";
   let plan: any, changes: any, pub: any;
   get("entity-type").value = type;
   get("date").value = date;
@@ -78,14 +71,16 @@ export async function init() {
     date = get("date").value || today();
     mode = get("mode").value;
     const params = new URLSearchParams({ type, id, date, mode, view });
-    if (list) params.set("list", "changes");
+    if (list) params.set("list", dutiesOnly ? "duties" : "changes");
     history.replaceState(null, "", `${location.pathname}?${params}`);
     try {
       const context = new URLSearchParams({ type, id, date, mode, view });
       sessionStorage.setItem("plan-context", context.toString());
     } catch {}
     get("selection-title").textContent = list
-      ? "Zmiany w szkole"
+      ? dutiesOnly
+        ? "Zastępstwa dyżurów"
+        : "Zmiany w szkole"
       : type === "teacher"
         ? plan.teachers[id]?.name || "Brak wyników"
         : type === "duty"
@@ -102,7 +97,19 @@ export async function init() {
             "brak wyników");
     for (const v of ["day", "week"])
       get(v).setAttribute("aria-pressed", String(view === v && !list));
-    get("changes").setAttribute("aria-pressed", String(list));
+    get("changes").setAttribute("aria-pressed", String(list && !dutiesOnly));
+    get("duty-changes").setAttribute(
+      "aria-pressed",
+      String(list && dutiesOnly),
+    );
+    get("prev").setAttribute(
+      "aria-label",
+      view === "week" && !list ? "Poprzedni tydzień" : "Poprzedni dzień",
+    );
+    get("next").setAttribute(
+      "aria-label",
+      view === "week" && !list ? "Następny tydzień" : "Następny dzień",
+    );
     get("validity").innerHTML =
       date < pub.validFrom || date > pub.validTo
         ? `<p class="notice">Wybrana data jest poza okresem obowiązywania planu (${esc(pub.validFrom)} – ${esc(pub.validTo)}). Nie wyświetlamy nieaktualnego rozkładu.</p>`
@@ -112,23 +119,31 @@ export async function init() {
           esc(pub.validTo) +
           "</p>";
     const dates = list ? [date] : view === "week" ? week(date) : [date];
-    get("schedule").innerHTML =
-      `<div class="day-grid ${view === "week" && !list ? "week" : ""}">${dates
-        .map((d) => {
-          const rows =
-            d < pub.validFrom || d > pub.validTo
-              ? []
-              : daily(plan, changes, d, list ? "changes" : mode).filter(
-                  (l: any) =>
-                    list
-                      ? !["base", "duty", "removed", "moved-out"].includes(
-                          l.status,
-                        )
-                      : selected(l, type, id, plan),
-                );
-          return `<section class="day-column"><h3 class="day-title">${esc(dateLabel(d))}</h3>${rows.length ? rows.map(lessonHTML).join("") : `<p class="empty">${list ? "Brak zmian na ten dzień." : "Brak zajęć w tym dniu."}</p>`}</section>`;
-        })
-        .join("")}</div>`;
+    const days = dates.map((d) => ({
+      date: d,
+      rows:
+        d < pub.validFrom || d > pub.validTo
+          ? []
+          : daily(plan, changes, d, list ? "changes" : mode).filter((l: any) =>
+              list
+                ? !["base", "duty", "removed", "moved-out"].includes(l.status)
+                : selected(l, type, id, plan),
+            ),
+    }));
+    get("schedule").innerHTML = list
+      ? changesHTML(
+          days[0].rows,
+          date < pub.validFrom || date > pub.validTo
+            ? []
+            : changes.dutyChanges.filter((d: any) => d.date === date),
+          date,
+          dutiesOnly,
+        )
+      : timetableHTML(
+          days,
+          plan.periods,
+          get("selection-title").textContent || "Plan lekcji",
+        );
   }
   await connect(["plan", "changes"], (data, m) => {
     plan = data.plan;
@@ -177,11 +192,11 @@ export async function init() {
     render();
   };
   get("prev").onclick = () => {
-    get("date").value = addDays(date, view === "week" ? -7 : -1);
+    get("date").value = addDays(date, view === "week" && !list ? -7 : -1);
     render();
   };
   get("next").onclick = () => {
-    get("date").value = addDays(date, view === "week" ? 7 : 1);
+    get("date").value = addDays(date, view === "week" && !list ? 7 : 1);
     render();
   };
   get("today").onclick = () => {
@@ -195,7 +210,13 @@ export async function init() {
       render();
     };
   get("changes").onclick = () => {
-    list = !list;
+    list = !list || dutiesOnly;
+    dutiesOnly = false;
+    render();
+  };
+  get("duty-changes").onclick = () => {
+    list = true;
+    dutiesOnly = true;
     render();
   };
   get("print").onclick = () => window.print();

@@ -428,6 +428,142 @@ main {
   max-width: 100%;
   border-radius: 8px;
 }
+.schedule-table-wrap {
+  border: 1px solid #aab8b1;
+  border-radius: 4px;
+  margin-bottom: 24px;
+  background: white;
+}
+.schedule-table-wrap caption {
+  text-align: left;
+  padding: 12px;
+  font-weight: 700;
+  font-size: 1.05rem;
+}
+.timetable {
+  table-layout: fixed;
+  min-width: 860px;
+}
+.timetable .period-col {
+  width: 62px;
+}
+.timetable .clock-col {
+  width: 112px;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.timetable th,
+.timetable td,
+.changes-table th,
+.changes-table td {
+  border: 1px solid #c2cdc7;
+  padding: 7px 8px;
+}
+.timetable thead th {
+  text-align: center;
+}
+.timetable .day-heading::first-letter {
+  text-transform: uppercase;
+}
+.table-date {
+  font-weight: 400;
+}
+.timetable tbody th {
+  text-align: center;
+  font-size: 0.85rem;
+}
+.timetable tbody tr:nth-child(even) {
+  background: #f6f8f7;
+}
+.timetable .break-row {
+  background: #edf4ef;
+}
+.timetable .table-entry {
+  border: 0;
+  border-radius: 0;
+  padding: 6px;
+  margin: -1px;
+  background: transparent;
+  font-size: 0.88rem;
+  line-height: 1.35;
+}
+.table-entry + .table-entry {
+  border-top: 1px solid #c2cdc7;
+  margin-top: 6px;
+}
+.table-subject {
+  display: block;
+  margin-bottom: 3px;
+}
+.table-status,
+.table-payment {
+  display: block;
+  font-size: 0.8rem;
+  margin-top: 4px;
+}
+.table-note {
+  font-size: 0.82rem;
+  margin-top: 4px;
+}
+.table-empty {
+  display: block;
+  text-align: center;
+  color: var(--muted);
+}
+.timetable .substitution,
+.timetable .duty-change {
+  background: #fff1d6;
+}
+.timetable .transfer {
+  background: #e6f2fa;
+}
+.timetable .removed,
+.timetable .moved-out,
+.timetable .cancelled {
+  background: #fbe9e9;
+}
+.timetable .removed .table-subject,
+.timetable .moved-out .table-subject {
+  text-decoration: line-through;
+}
+.changes-table {
+  min-width: 740px;
+}
+.changes-table tbody tr:nth-child(even) {
+  background: #f6f8f7;
+}
+.changes-table td {
+  overflow-wrap: anywhere;
+}
+.changes-table th[scope="row"] {
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+.timetable:has(.day-heading:nth-child(3):last-child) {
+  min-width: 420px;
+}
+@media print {
+  .schedule-layout > aside {
+    display: none;
+  }
+  .schedule-table-wrap {
+    overflow: visible;
+    border: 0;
+  }
+  .schedule-table-wrap table {
+    min-width: 0;
+    font-size: 9pt;
+  }
+  .timetable .table-entry {
+    font-size: 9pt;
+  }
+  .schedule-table-wrap tr {
+    break-inside: avoid;
+  }
+  .schedule-table-wrap thead {
+    display: table-header-group;
+  }
+}
 table {
   border-collapse: collapse;
   width: 100%;
