@@ -475,8 +475,28 @@ main {
 .timetable tbody tr:nth-child(even) {
   background: #f6f8f7;
 }
-.timetable .break-row {
+.timetable .break-chip {
+  margin: 6px 0 0;
+  padding: 4px 6px;
+  border-left: 2px solid var(--green);
+  border-radius: 3px;
   background: #edf4ef;
+  font-size: 0.75rem;
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+  break-inside: avoid;
+}
+.break-chip strong,
+.break-chip span {
+  display: block;
+}
+.timetable .break-chip.duty-change {
+  background: #fff1d6;
+  border-color: #a65a13;
+}
+.timetable .break-chip.removed {
+  background: #fbe9e9;
+  border-color: var(--red);
 }
 .timetable .table-entry {
   border: 0;

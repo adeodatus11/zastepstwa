@@ -271,6 +271,13 @@ test("Timetable aligns lesson slots and duty replacements retain source details"
     "/plan.html?type=teacher&date=2026-09-07&view=week&mode=changes",
   );
   await expect(page.locator(".day-heading")).toHaveCount(5);
+  await expect(page.locator(".break-chip")).not.toHaveCount(0);
+  await expect(
+    page.locator(".timetable tbody th").filter({ hasText: "Przerwa" }),
+  ).toHaveCount(0);
+  await expect(page.locator(".break-chip").first()).toContainText(
+    "10:25–10:35",
+  );
   const rows = page.locator(".timetable tbody tr");
   expect(await rows.count()).toBeGreaterThan(0);
   for (const row of await rows.all())

@@ -22,7 +22,14 @@ export function timetableHTML(
   const entries = days.flatMap((d) => d.rows);
   if (!entries.length) return '<p class="empty">Brak zajęć w tym okresie.</p>';
   // Include empty lessons between the first and last event, so gaps align across days.
-  const first = entries.map((l) => l.start).sort()[0];
+  const orderedPeriods = [...periods].sort((a, b) =>
+    a.start.localeCompare(b.start),
+  );
+  const dutyPeriod = (d: any) =>
+    orderedPeriods.filter((p) => p.end <= d.start).at(-1) || orderedPeriods[0];
+  const first = entries
+    .map((l) => (l.period ? l.start : dutyPeriod(l)?.start || l.start))
+    .sort()[0];
   const last = entries
     .map((l) => l.end)
     .sort()
@@ -32,7 +39,12 @@ export function timetableHTML(
   for (const p of periods)
     if (p.start >= first && p.start < last)
       slots.set(key({ ...p, period: p.number }), { ...p, period: p.number });
-  for (const l of entries) slots.set(key(l), l);
+  for (const l of entries) if (l.period) slots.set(key(l), l);
+  for (const l of entries.filter((l) => !l.period)) {
+    const p = dutyPeriod(l);
+    if (p)
+      slots.set(key({ ...p, period: p.number }), { ...p, period: p.number });
+  }
   const sorted = [...slots.values()].sort(
     (a, b) => a.start.localeCompare(b.start) || a.end.localeCompare(b.end),
   );
@@ -40,10 +52,26 @@ export function timetableHTML(
     `<table class="timetable"><caption class="visually-hidden">${esc(title)}</caption><thead><tr><th scope="col" class="period-col">Lekcja</th><th scope="col" class="clock-col">Godziny</th>${days.map((d) => `<th scope="col" class="day-heading">${esc(dateLabel(d.date).split(",")[0])}<br><span class="table-date">${esc(d.date.slice(8))}.${esc(d.date.slice(5, 7))}</span></th>`).join("")}</tr></thead><tbody>${sorted
       .map(
         (slot) =>
-          `<tr class="${slot.period ? "lesson-row" : "break-row"}"><th scope="row">${slot.period || "Przerwa"}</th><td class="clock-col">${esc(slot.start)}–${esc(slot.end)}</td>${days
+          `<tr class="lesson-row"><th scope="row">${slot.period}</th><td class="clock-col">${esc(slot.start)}–${esc(slot.end)}</td>${days
             .map((d) => {
               const rows = d.rows.filter((l) => key(l) === key(slot));
-              return `<td>${rows.length ? rows.map((l) => `<article class="lesson table-entry ${esc(l.status)}"><strong class="table-subject">${esc(l.subject)}</strong>${l.classNames.length ? `<div>${names(l.classNames)}${l.groupNames.filter((g: string) => g !== "Cała klasa").length ? ` · ${names(l.groupNames.filter((g: string) => g !== "Cała klasa"))}` : ""}</div>` : ""}${l.teacherNames.join(", ") === title ? "" : `<div>${names(l.teacherNames)}</div>`}<div>${l.place ? "Miejsce" : "Sala"}: ${esc(l.roomNames.join(" / "))}</div>${details(l)}</article>`).join("") : '<span class="table-empty" aria-label="Brak zajęć">—</span>'}</td>`;
+              const duties = d.rows.filter((l) => {
+                const p = dutyPeriod(l);
+                return (
+                  !l.period &&
+                  p &&
+                  key({ ...p, period: p.number }) === key(slot)
+                );
+              });
+              const chips = (before: boolean) =>
+                duties
+                  .filter((l) => l.start < slot.start === before)
+                  .map(
+                    (l) =>
+                      `<aside class="break-chip ${esc(l.status)}"><strong>${esc(l.start)}–${esc(l.end)} · ${l.status === "duty-change" ? "Zastępstwo dyżuru" : l.status === "removed" ? "Dyżur zdjęty" : "Dyżur"}</strong><span>${esc(l.place || l.roomNames.join(" / "))}${l.teacherNames.join(", ") === title ? "" : ` · ${names(l.teacherNames)}`}</span>${l.note ? `<span>${esc(l.note)}</span>` : ""}</aside>`,
+                  )
+                  .join("");
+              return `<td>${chips(true)}${rows.length ? rows.map((l) => `<article class="lesson table-entry ${esc(l.status)}"><strong class="table-subject">${esc(l.subject)}</strong>${l.classNames.length ? `<div>${names(l.classNames)}${l.groupNames.filter((g: string) => g !== "Cała klasa").length ? ` · ${names(l.groupNames.filter((g: string) => g !== "Cała klasa"))}` : ""}</div>` : ""}${l.teacherNames.join(", ") === title ? "" : `<div>${names(l.teacherNames)}</div>`}<div>${l.place ? "Miejsce" : "Sala"}: ${esc(l.roomNames.join(" / "))}</div>${details(l)}</article>`).join("") : '<span class="table-empty" aria-label="Brak zajęć">—</span>'}${chips(false)}</td>`;
             })
             .join("")}</tr>`,
       )
