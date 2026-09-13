@@ -1,4 +1,11 @@
 import { test, expect } from "@playwright/test";
+import fs from "node:fs";
+const manifest = JSON.parse(
+  fs.readFileSync("public/data/manifest.json", "utf8"),
+);
+const changes = JSON.parse(
+  fs.readFileSync("public" + manifest.files.changes, "utf8"),
+);
 const pages = [
   "index",
   "plan",
@@ -67,6 +74,7 @@ test("Mobile selection, day/week, changes, saved teacher, preserved URL and relo
       () => document.documentElement.scrollWidth <= innerWidth,
     ),
   ).toBe(true);
+  await page.locator("#date").fill(changes.substitutions[0].date);
   await page.locator("#changes").click();
   await expect(page.locator(".change-row")).not.toHaveCount(0);
   await page.reload();
@@ -282,18 +290,21 @@ test("Timetable aligns lesson slots and duty replacements retain source details"
   expect(await rows.count()).toBeGreaterThan(0);
   for (const row of await rows.all())
     await expect(row.locator("th, td")).toHaveCount(7);
+  const duty = changes.dutyChanges.find((d: any) => d.substituteTeacherName);
+  await page.locator("#date").fill(duty.date);
   await page.locator("#duty-changes").click();
-  await expect(page.locator(".duty-changes-table")).toContainText(
-    "Krystyna Stępień",
-  );
-  await expect(page.locator(".duty-changes-table")).toContainText(
-    "Magdalena Nowak",
-  );
-  await expect(page.locator(".duty-changes-table")).toContainText(
-    "10:25-10:35",
-  );
+  for (const value of [
+    duty.absentTeacherName,
+    duty.substituteTeacherName,
+    duty.time,
+  ])
+    await expect(page.locator(".duty-changes-table")).toContainText(value);
   await page.locator("#next").click();
-  await expect(page.locator("#date")).toHaveValue("2026-09-08");
+  const next = new Date(duty.date + "T12:00:00Z");
+  next.setUTCDate(next.getUTCDate() + 1);
+  await expect(page.locator("#date")).toHaveValue(
+    next.toISOString().slice(0, 10),
+  );
   await page.reload();
   await expect(page.locator("#duty-changes")).toHaveAttribute(
     "aria-pressed",

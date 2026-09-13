@@ -100,7 +100,9 @@ test("Every deputy duty retained, including person not present in base timetable
       daily(plan, changes, e.date).some(
         (l) =>
           l.status === "duty-change" &&
-          l.teacherIds.includes(e.substituteTeacherId) &&
+          (e.substituteTeacherId
+            ? l.teacherIds.includes(e.substituteTeacherId)
+            : l.teacherNames.includes(e.rawSubstituteLabel)) &&
           l.place === e.place,
       ),
     );
