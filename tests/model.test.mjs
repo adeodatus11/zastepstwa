@@ -182,3 +182,20 @@ test("Only generated public assets enter deployment, not spreadsheets or raw XML
   const files = fs.readdirSync("dist");
   assert.ok(!files.some((f) => /\.(xlsx|xml|py)$/.test(f)));
 });
+
+test("Other activity changes retain every scheduling entry without diary titles", () => {
+  const config = JSON.parse(fs.readFileSync("publication.json"));
+  const book = XLSX.read(fs.readFileSync(config.sources.substitutions));
+  const sheet = book.Sheets["Dzienniki zajeć innych"];
+  const source = sheet ? XLSX.utils.sheet_to_json(sheet, { defval: "" }) : [];
+  assert.equal(changes.otherActivities.length, source.length);
+  for (const [i, row] of source.entries()) {
+    assert.equal(changes.otherActivities[i].subject, row["Opis zajęć"]);
+    assert.equal(changes.otherActivities[i].time, row["Godzina"]);
+    assert.ok(changes.otherActivities[i].absentTeacherId);
+    if (row["Dziennik zajęć innych"])
+      assert.ok(
+        !JSON.stringify(changes).includes(row["Dziennik zajęć innych"]),
+      );
+  }
+});

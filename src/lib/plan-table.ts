@@ -99,3 +99,10 @@ export function changesHTML(
     : '<p class="empty">Brak zmian w lekcjach na ten dzień.</p>';
   return lessonsTable + dutyTable;
 }
+
+export function otherActivitiesHTML(entries: any[]) {
+  if (!entries.length) return "";
+  return wrap(
+    `<table class="changes-table"><caption>Zmiany zajęć innych</caption><thead><tr>${["Data / godziny", "Nauczyciel", "Zajęcia", "Sala", "Informacja"].map((h) => `<th scope="col">${h}</th>`).join("")}</tr></thead><tbody>${entries.map((e) => `<tr><th scope="row">${esc(dateLabel(e.date))}<br>${esc(e.time)}</th><td>${esc(e.absentTeacherName)}</td><td>${esc(e.subject)}</td><td>${esc(e.room)}</td><td>${esc(e.message === "-" ? "Nie wskazano zastępcy" : e.message)}${e.note ? `<br>${esc(e.note)}` : ""}</td></tr>`).join("")}</tbody></table>`,
+  );
+}

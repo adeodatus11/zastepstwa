@@ -165,11 +165,39 @@ const changes = JSON.parse(
     ),
   ),
 );
+// Only scheduling fields are public; diary titles can identify individual pupils.
+const substitutionBook = XLSX.read(
+  await fs.readFile(config.sources.substitutions),
+  { type: "buffer" },
+);
+const otherSheet = substitutionBook.Sheets["Dzienniki zajeć innych"];
+changes.otherActivities = otherSheet
+  ? XLSX.utils.sheet_to_json(otherSheet, { defval: "" }).map((row) => {
+      const parts = String(row["Dzień"]).split(".");
+      const date = parts.length === 3 ? parts.reverse().join("-") : "";
+      const time = String(row["Godzina"]);
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(date) || !time || !row["Nauczyciel"])
+        throw Error("Niekompletny wpis zajęć innych");
+      return {
+        date,
+        time,
+        absentTeacherName: String(row["Nauczyciel"]),
+        subject: String(row["Opis zajęć"]),
+        room: String(row["Sala"]),
+        message: String(row["Zastępca"]) || "-",
+        note: String(row["Uwagi"]),
+      };
+    })
+  : [];
 for (const s of changes.substitutions)
   if (!s.date || !s.period || !s.branch.className)
     throw Error("Niekompletny wpis zastępstwa");
 // Preserve people supplied only in operational workbooks, including reversed names.
-for (const e of [...changes.substitutions, ...changes.dutyChanges])
+for (const e of [
+  ...changes.substitutions,
+  ...changes.dutyChanges,
+  ...changes.otherActivities,
+])
   for (const prefix of ["absentTeacher", "substituteTeacher"])
     if (!e[prefix + "Id"] && e[prefix + "Name"]) {
       const name = e[prefix + "Name"],

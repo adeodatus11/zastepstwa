@@ -1,4 +1,4 @@
-import { timetableHTML, changesHTML } from "./plan-table";
+import { timetableHTML, changesHTML, otherActivitiesHTML } from "./plan-table";
 import { validDate } from "./schema.mjs";
 import { connect } from "./data";
 import { daily, today, addDays, week, selected, esc, norm } from "./model.mjs";
@@ -144,6 +144,16 @@ export async function init() {
           plan.periods,
           get("selection-title").textContent || "Plan lekcji",
         );
+    if (!dutiesOnly || !list) {
+      const other = (changes.otherActivities || []).filter(
+        (e: any) =>
+          dates.includes(e.date) &&
+          e.date >= pub.validFrom &&
+          e.date <= pub.validTo &&
+          (list || (type === "teacher" && e.absentTeacherId === id)),
+      );
+      get("schedule").innerHTML += otherActivitiesHTML(other);
+    }
   }
   await connect(["plan", "changes"], (data, m) => {
     plan = data.plan;
