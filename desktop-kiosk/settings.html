@@ -1,0 +1,6 @@
+<!doctype html><html lang="pl"><head><meta charset="utf-8"><meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Wybór ekranów</title><link rel="stylesheet" href="settings.css"></head><body>
+<main><p class="eyebrow">PULPIT NAUCZYCIELA</p><h1>Wybór ekranów</h1><p>Kiosk i telewizor działają równocześnie. Przypisz każdemu osobny ekran.</p>
+<form id="screens-form"><label for="kiosk-screen">Kiosk — ekran do obsługi przez nauczyciela</label><select id="kiosk-screen" required></select><p class="hint">Plan i podstrony. Powrót na pulpit po 15 sekundach bezczynności.</p>
+<label for="tv-screen">Telewizor — automatyczny widok planu i zastępstw</label><select id="tv-screen"></select><p class="hint">Stały pokaz. Aktualizacje i kopia offline z datą pobrania.</p>
+<p id="notice" role="status"></p><div class="actions"><button id="identify" type="button">Pokaż numery ekranów</button><button type="submit" class="primary">Zapisz i uruchom</button></div></form>
+<p class="footnote">W Windows wybierz tryb „Rozszerz te ekrany” (Win+P → Rozszerz). Ustawienia otworzysz ponownie skrótem Ctrl+Shift+S.</p></main><script src="settings.js"></script></body></html>
