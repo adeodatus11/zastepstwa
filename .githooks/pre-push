@@ -1,0 +1,7 @@
+#!/bin/sh
+while read local_ref local_sha remote_ref remote_sha; do
+  case "$local_sha" in 0000000000000000000000000000000000000000) continue ;; esac
+  for revision in $(git rev-list "$local_sha" --not --remotes); do
+    "${PYTHON:-python3}" scripts/privacy_xlsx.py --revision "$revision" || exit 1
+  done
+done

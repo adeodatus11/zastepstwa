@@ -171,6 +171,8 @@ const substitutionBook = XLSX.read(
   { type: "buffer" },
 );
 const otherSheet = substitutionBook.Sheets["Dzienniki zajeć innych"];
+if (otherSheet && XLSX.utils.sheet_to_json(otherSheet).some(row => row["Dziennik zajęć innych"]))
+  throw Error("Przed publikacją usuń nazwy dzienników: python3 scripts/privacy_xlsx.py --sanitize InformacjeOZastepstwach.xlsx");
 changes.otherActivities = otherSheet
   ? XLSX.utils.sheet_to_json(otherSheet, { defval: "" }).map((row) => {
       const parts = String(row["Dzień"]).split(".");

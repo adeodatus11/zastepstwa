@@ -29,6 +29,7 @@ jobs:
           python-version: "3.12"
       - run: npm ci
       - run: pip install -r requirements-build.txt
+      - run: python scripts/privacy_xlsx.py
       - run: npm run check
       - run: npm run verify
       - run: npx playwright install --with-deps chromium firefox webkit
