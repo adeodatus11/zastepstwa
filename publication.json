@@ -14,10 +14,7 @@
   "schoolYear": "2026/2027",
   "calendarFrom": "2026-09-01",
   "calendarTo": "2027-08-31",
-  "supervisionValidFrom": "2026-09-07",
-  "supervisionValidTo": "2026-09-11",
-  "supervisionNotes": {
-    "3": "do 16:30 + Rady Pedagogiczne",
-    "5": "do 17:20"
-  }
+  "supervisionValidFrom": "2026-09-14",
+  "supervisionValidTo": "2026-09-18",
+  "supervisionNotes": {}
 }
