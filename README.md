@@ -1,5 +1,7 @@
 # Serwis nauczyciela ZSZ5 — przebudowa
 
+Aktualizacja paczki Excel: [instrukcja dla Claude i innych agentów](INSTRUKCJA_AKTUALIZACJI_ZASTEPSTW.md). Punkt wejścia dla Claude: [CLAUDE.md](CLAUDE.md).
+
 Nowy serwis powstaje na branchu `przebudowa`. Źródła interfejsu są w `src/`, a gotowa strona w `dist/`. Pliki HTML w głównym katalogu pozostają wersją referencyjną sprzed przebudowy i źródłem mapowania dawnych linków. Nie są częścią nowego artefaktu publikacji.
 
 ## Uruchomienie
