@@ -40,6 +40,8 @@ Nie otwieraj plików przez `file://` ani nie serwuj głównego katalogu jako now
 | Kalendarz | XLSX `sources.calendar`; zakres roku w `calendarFrom`, `calendarTo`, `schoolYear` |
 | Komunikaty | Nowy lub zmieniony plik Markdown w `src/content/aktualnosci/` |
 
+Najnowszy komunikat jest wyświetlany na pulpicie. Wszystkie wpisy pozostają w archiwum `/aktualnosci.html`, dostępnym z głównego menu i sekcji aktualności. Obrazy (np. kody QR) umieszczaj w `public/` i odwołuj się do nich adresem od `/`.
+
 Przykład komunikatu:
 
 ```md

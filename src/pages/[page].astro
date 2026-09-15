@@ -14,6 +14,7 @@ for (const item of news)
 export function getStaticPaths() {
   return [
     "index",
+    "aktualnosci",
     "plan",
     "zastepstwa",
     "plan-lekcji-2026-09-07",
@@ -36,6 +37,7 @@ const contact = [
 ].includes(page);
 const titles: Record<string, string> = {
   index: "Twój dzień w szkole",
+  aktualnosci: "Archiwum aktualności",
   plan: "Plan lekcji",
   zastepstwa: "Plan ze zmianami",
   "plan-lekcji-2026-09-07": "Plan lekcji",
@@ -47,17 +49,20 @@ const titles: Record<string, string> = {
   materialy: "Linki",
   tv: "Plan lekcji klas",
 };
-const section = plan
-  ? "Plan"
-  : contact
-    ? "Dyżury"
-    : page.includes("calendar")
-      ? "Kalendarz"
-      : page === "index"
-        ? "Pulpit"
-        : externalSchedule
-          ? "Plan"
-          : "Linki";
+const section =
+  page === "aktualnosci"
+    ? "Aktualności"
+    : plan
+      ? "Plan"
+      : contact
+        ? "Dyżury"
+        : page.includes("calendar")
+          ? "Kalendarz"
+          : page === "index"
+            ? "Pulpit"
+            : externalSchedule
+              ? "Plan"
+              : "Linki";
 const manifest = JSON.parse(
   fs.readFileSync("public/data/manifest.json", "utf8"),
 );
@@ -243,8 +248,15 @@ const externalFacilitiesExcludedDays = [
                     </section>
                     <section class="panel">
                       <>
-                        <h2>Aktualności</h2>
-                        {news.map(({ frontmatter, Content }) => (
+                        <div class="panel-heading">
+                          <>
+                            <h2 id="aktualnosci">Aktualności</h2>
+                            <a href="/aktualnosci.html">
+                              Archiwum aktualności →
+                            </a>
+                          </>
+                        </div>
+                        {news.slice(0, 1).map(({ frontmatter, Content }) => (
                           <article class="row">
                             <p class="event-date">
                               {new Date(
@@ -292,6 +304,32 @@ const externalFacilitiesExcludedDays = [
             </div>
           </>
         </>
+      )
+    }
+    {
+      page === "aktualnosci" && (
+        <section class="panel news-content" aria-label="Wszystkie komunikaty">
+          <p>Wszystkie komunikaty, od najnowszych do najstarszych.</p>
+          {news.map(({ frontmatter, Content }) => (
+            <article class="row">
+              <p class="event-date">
+                <time datetime={frontmatter.date}>
+                  {new Date(frontmatter.date + "T12:00:00Z").toLocaleDateString(
+                    "pl-PL",
+                    {
+                      day: "numeric",
+                      month: "long",
+                      year: "numeric",
+                      timeZone: "UTC",
+                    },
+                  )}
+                </time>
+              </p>
+              <h2>{frontmatter.title}</h2>
+              <Content />
+            </article>
+          ))}
+        </section>
       )
     }
     {

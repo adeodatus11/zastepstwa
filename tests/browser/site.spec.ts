@@ -8,6 +8,7 @@ const changes = JSON.parse(
 );
 const pages = [
   "index",
+  "aktualnosci",
   "plan",
   "zastepstwa",
   "plan-lekcji-2026-09-07",
@@ -30,7 +31,13 @@ for (const width of [320, 390, 768, 834, 1024, 1440])
     });
     for (const name of pages) {
       await page.goto(`/${name}.html`);
-      if (!["materialy", "sale-sg-obiekty-zewnetrzne-2026-2027"].includes(name))
+      if (
+        ![
+          "aktualnosci",
+          "materialy",
+          "sale-sg-obiekty-zewnetrzne-2026-2027",
+        ].includes(name)
+      )
         await expect(page.locator("#data-status[data-loaded]")).toContainText(
           "Dane opublikowane",
         );

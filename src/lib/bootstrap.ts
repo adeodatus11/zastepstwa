@@ -5,7 +5,11 @@ else if (page === "tv") void import("./tv").then((m) => m.init());
 else if (page === "calendar-2026-2027")
   void import("./calendar").then((m) => m.init());
 else if (
-  !["materialy", "sale-sg-obiekty-zewnetrzne-2026-2027"].includes(page || "")
+  ![
+    "aktualnosci",
+    "materialy",
+    "sale-sg-obiekty-zewnetrzne-2026-2027",
+  ].includes(page || "")
 )
   void import("./pages").then((m) => m.init(page || "index"));
 
