@@ -30,7 +30,7 @@ for (const width of [320, 390, 768, 834, 1024, 1440])
     });
     for (const name of pages) {
       await page.goto(`/${name}.html`);
-      if (name !== "materialy")
+      if (!["materialy", "sale-sg-obiekty-zewnetrzne-2026-2027"].includes(name))
         await expect(page.locator("#data-status[data-loaded]")).toContainText(
           "Dane opublikowane",
         );
@@ -121,7 +121,7 @@ test("Calendar filters and all views; groups and school contacts", async ({
   await expect(page.locator("#copy-teachers")).toBeVisible();
   await page.goto("/dyzury-nadzoru.html");
   await page.locator("#contact-day").selectOption("all");
-  await expect(page.locator("#contacts section")).toHaveCount(5);
+  await expect(page.locator(".contacts-week th")).toHaveCount(5);
   expect(
     await page.locator("#contacts a").first().getAttribute("href"),
   ).toMatch(/^tel:\+48\d+,\d+$/);
@@ -225,10 +225,11 @@ test("Old plan entrypoints retain their semantics after another selection", asyn
   await page.goto("/zastepstwa.html");
   await expect(page.locator("#mode")).toHaveValue("changes");
   await page.goto("/sale-sg-obiekty-zewnetrzne-2026-2027.html");
-  await expect(page.locator("#data-status[data-loaded]")).toContainText(
-    "Dane opublikowane",
+  await expect(page.locator("h1")).toContainText("Basen i Lodowisko - grafik");
+  await expect(page.locator(".external-schedule")).toContainText(
+    "rolki / lodowisko",
   );
-  await expect(page.locator("#entity-type")).toHaveValue("room");
+  await expect(page.locator("#entity-type")).toHaveCount(0);
   await page.goto("/plan-lekcji-2026-09-07.html");
   await expect(page.locator("#mode")).toHaveValue("base");
 });
