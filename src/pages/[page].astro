@@ -27,12 +27,9 @@ export function getStaticPaths() {
   ].map((page) => ({ params: { page } }));
 }
 const page = Astro.params.page!;
-const plan = [
-  "plan",
-  "zastepstwa",
-  "plan-lekcji-2026-09-07",
-  "sale-sg-obiekty-zewnetrzne-2026-2027",
-].includes(page);
+const externalSchedulePage = "sale-sg-obiekty-zewnetrzne-2026-2027";
+const externalSchedule = page === externalSchedulePage;
+const plan = ["plan", "zastepstwa", "plan-lekcji-2026-09-07"].includes(page);
 const contact = [
   "dyzury-nadzoru",
   "pomoc-psychologiczno-pedagogiczna",
@@ -46,7 +43,7 @@ const titles: Record<string, string> = {
   "pomoc-psychologiczno-pedagogiczna": "Pomoc psychologiczno-pedagogiczna",
   "calendar-2026-2027": "Kalendarz szkolny",
   "wykaz-podzialow-grup": "Wykazy oddziałów",
-  "sale-sg-obiekty-zewnetrzne-2026-2027": "Sale i obiekty zewnętrzne",
+  "sale-sg-obiekty-zewnetrzne-2026-2027": "Basen i Lodowisko - grafik",
   materialy: "Linki",
   tv: "Plan lekcji klas",
 };
@@ -58,7 +55,9 @@ const section = plan
       ? "Kalendarz"
       : page === "index"
         ? "Pulpit"
-        : "Linki";
+        : externalSchedule
+          ? "Plan"
+          : "Linki";
 const manifest = JSON.parse(
   fs.readFileSync("public/data/manifest.json", "utf8"),
 );
@@ -82,8 +81,8 @@ const links = [
     "/wykaz-podzialow-grup.html",
   ],
   [
-    "Sale i obiekty zewnętrzne",
-    "Zajęcia w salach i obiektach sportowych.",
+    "Basen i Lodowisko - grafik",
+    "Zestawienie zajęć w obiektach zewnętrznych.",
     "/sale-sg-obiekty-zewnetrzne-2026-2027.html",
   ],
   [
@@ -117,6 +116,73 @@ const links = [
     "https://zaangazowanie.covepolska.pl/",
   ],
 ];
+const externalFacilitiesSchedule = [
+  {
+    day: "poniedziałek",
+    slots: [
+      ["1. sala główna", "2. basen rekreacyjny"],
+      [],
+      ["1. sala Body&Mind", "2. basen rekreacyjny"],
+      ["rolki / lodowisko (20 os.)"],
+      ["1. sala Fitness duża", "2. basen rekreacyjny"],
+    ],
+  },
+  {
+    day: "wtorek",
+    slots: [
+      ["1. sala główna", "2. basen sportowy"],
+      ["rolki / lodowisko (20 os.)"],
+      ["1. sala Body&Mind", "2. basen sportowy"],
+      [],
+      ["1. sala Fitness duża", "2. basen sportowy"],
+    ],
+  },
+  {
+    day: "środa",
+    slots: [
+      ["1. sala główna", "2. basen rekreacyjny"],
+      [],
+      ["1. sala Body&Mind", "2. basen rekreacyjny"],
+      ["rolki / lodowisko (20 os.)"],
+      ["1. sala Fitness duża", "2. basen rekreacyjny"],
+    ],
+  },
+  {
+    day: "czwartek",
+    slots: [
+      ["1. sala główna", "2. basen rekreacyjny"],
+      [],
+      ["1. sala główna", "2. basen rekreacyjny"],
+      ["rolki / lodowisko (20 os.)"],
+      ["1. sala Fitness duża", "2. basen rekreacyjny"],
+    ],
+  },
+  {
+    day: "piątek",
+    slots: [
+      ["basen sportowy"],
+      [],
+      ["1. sala główna", "2. sala Body&Mind", "3. basen sportowy"],
+      ["rolki / lodowisko (20 os.)"],
+      ["1. sala Body&Mind", "2. basen sportowy"],
+    ],
+  },
+];
+const externalFacilitiesHours = [
+  "09:00-10:30",
+  "10:00-10:50",
+  "10:30-12:00",
+  "11:00-11:50",
+  "12:00-13:30",
+];
+const externalFacilitiesExcludedDays = [
+  "1.09-11.09 -> dni wolne",
+  "21-25.09 -> dni wolne",
+  "12-16.10 -> dni wolne",
+  "9-13.11 -> dni wolne",
+  "14-31.12 -> dni wolne",
+  "od września do końca grudnia mamy 10 pełnych tygodni zajęć realizowanych",
+];
 ---
 
 <Shell title={titles[page]} section={section} tv={page === "tv"}>
@@ -124,11 +190,13 @@ const links = [
     {
       page === "index"
         ? "Plan, zmiany i najważniejsze informacje — w jednym miejscu."
-        : plan
-          ? "Wybierz nauczyciela, oddział lub salę. Plan i zmiany pozostają zawsze pod ręką."
-          : page === "tv"
-            ? ""
-            : `Rok szkolny ${manifest.schoolYear}`
+        : externalSchedule
+          ? "Zestawienie zajęć realizowanych na basenie i lodowisku w roku szkolnym 2026/2027."
+          : plan
+            ? "Wybierz nauczyciela, oddział lub salę. Plan i zmiany pozostają zawsze pod ręką."
+            : page === "tv"
+              ? ""
+              : `Rok szkolny ${manifest.schoolYear}`
     }
   </p>
   <div id="app" data-page={page}>
@@ -278,6 +346,12 @@ const links = [
                         <a class="button" href="/wykaz-podzialow-grup.html">
                           Wykazy oddziałów
                         </a>
+                        <a
+                          class="button"
+                          href="/sale-sg-obiekty-zewnetrzne-2026-2027.html"
+                        >
+                          Basen i Lodowisko - grafik
+                        </a>
                       </>
                     </div>
                   </>
@@ -419,6 +493,68 @@ const links = [
             </noscript>
           </>
         </>
+      )
+    }
+    {
+      externalSchedule && (
+        <section
+          class="panel external-schedule-panel"
+          aria-labelledby="external-schedule-title"
+        >
+          <div class="panel-heading">
+            <div>
+              <p class="eyebrow">Rok szkolny 2026/2027</p>
+              <h2 id="external-schedule-title">
+                ZESTAWIENIE ZAJĘĆ w obiektach zewnętrznych - rok szkolny
+                2026/2027
+              </h2>
+            </div>
+            <a class="button" href="/plan-lekcji-2026-09-07.html">
+              Plan lekcji
+            </a>
+          </div>
+          <div class="table-wrap external-table-wrap">
+            <table class="external-schedule">
+              <thead>
+                <tr>
+                  <th scope="col">Dzień / godzina</th>
+                  {externalFacilitiesHours.map((hour) => (
+                    <th scope="col">{hour}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {externalFacilitiesSchedule.map(({ day, slots }) => (
+                  <tr>
+                    <th scope="row">{day}</th>
+                    {slots.map((slot) => (
+                      <td>
+                        {slot.length ? (
+                          slot.map((item) => <p>{item}</p>)
+                        ) : (
+                          <span class="table-empty"> </span>
+                        )}
+                      </td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <section
+            class="external-exclusions"
+            aria-labelledby="external-exclusions-title"
+          >
+            <h3 id="external-exclusions-title">
+              Dni wyłączone z realizacji: AQUAPARK BOROWSKA
+            </h3>
+            <ul>
+              {externalFacilitiesExcludedDays.map((item) => (
+                <li>{item}</li>
+              ))}
+            </ul>
+          </section>
+        </section>
       )
     }
     {

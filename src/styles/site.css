@@ -562,6 +562,50 @@ main {
 .timetable:has(.day-heading:nth-child(3):last-child) {
   min-width: 420px;
 }
+.external-schedule-panel {
+  max-width: 1180px;
+}
+.external-table-wrap {
+  border: 1px solid #aab8b1;
+  border-radius: 8px;
+  background: white;
+}
+.external-schedule {
+  min-width: 980px;
+}
+.external-schedule th,
+.external-schedule td {
+  border: 1px solid #c2cdc7;
+  padding: 10px 12px;
+  vertical-align: top;
+}
+.external-schedule thead th {
+  text-align: center;
+}
+.external-schedule tbody th {
+  width: 150px;
+  text-transform: capitalize;
+}
+.external-schedule td p {
+  margin: 0;
+}
+.external-schedule td p + p {
+  margin-top: 4px;
+}
+.external-exclusions {
+  margin-top: 22px;
+  padding: 18px;
+  border-left: 3px solid var(--green);
+  background: var(--pale);
+  border-radius: 6px;
+}
+.external-exclusions ul {
+  margin: 10px 0 0;
+  padding-left: 20px;
+}
+.external-exclusions li + li {
+  margin-top: 4px;
+}
 @media print {
   .schedule-layout > aside {
     display: none;

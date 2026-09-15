@@ -1,17 +1,12 @@
 const page = document.getElementById("app")?.dataset.page;
-if (
-  [
-    "plan",
-    "zastepstwa",
-    "plan-lekcji-2026-09-07",
-    "sale-sg-obiekty-zewnetrzne-2026-2027",
-  ].includes(page || "")
-)
+if (["plan", "zastepstwa", "plan-lekcji-2026-09-07"].includes(page || ""))
   void import("./plan").then((m) => m.init());
 else if (page === "tv") void import("./tv").then((m) => m.init());
 else if (page === "calendar-2026-2027")
   void import("./calendar").then((m) => m.init());
-else if (page !== "materialy")
+else if (
+  !["materialy", "sale-sg-obiekty-zewnetrzne-2026-2027"].includes(page || "")
+)
   void import("./pages").then((m) => m.init(page || "index"));
 
 try {
