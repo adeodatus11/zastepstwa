@@ -1004,3 +1004,15 @@ th {
   min-height: 44px;
   align-content: center;
 }
+
+/* One Monday–Friday table for both contact schedules. */
+.contacts-week-wrap { width: 100%; overflow-x: auto; }
+.contacts-week { width: 100%; min-width: 900px; table-layout: fixed; border-collapse: collapse; }
+.contacts-week caption { text-align: left; padding: 0 0 16px; font-weight: 700; }
+.contacts-week th { width: 20%; text-align: left; text-transform: capitalize; }
+.contacts-week th, .contacts-week td { padding: 14px; border: 1px solid var(--line); vertical-align: top; }
+.contacts-week .row { padding: 14px 0; }
+.contacts-week .row:first-child { padding-top: 0; }
+.contacts-week .event-date { white-space: nowrap; font-weight: 700; }
+.contacts-week .contact-name { overflow-wrap: anywhere; }
+.contacts-week .contact-actions { flex-wrap: wrap; }

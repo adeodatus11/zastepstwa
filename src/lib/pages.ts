@@ -205,6 +205,12 @@ export async function init(page: string) {
       "<h2>Aktualny lub najbliższy dyżur</h2>" +
       current(entries, page === "dyzury-nadzoru" ? data : undefined);
     const days = sel.value === "all" ? [1, 2, 3, 4, 5] : [+sel.value];
+    const weekly = sel.value === "all";
+    get("contacts").className = weekly ? "contacts-week-wrap" : "grid two";
+    if (weekly) {
+      get("contacts").innerHTML = `<table class="contacts-week"><caption>${page === "dyzury-nadzoru" ? `Dyżury kadry kierowniczej · ${esc(data.validFrom)} – ${esc(data.validTo)}` : "Pomoc psychologiczno-pedagogiczna · grafik tygodniowy"}</caption><thead><tr>${days.map(day => `<th scope="col">${DAYS[day]}</th>`).join("")}</tr></thead><tbody><tr>${days.map(day => `<td>${page === "dyzury-nadzoru" && data.notes?.[day] ? `<p class="notice">${esc(data.notes[day])}</p>` : ""}${entries.filter((e: any) => e.day === day).sort((a: any, b: any) => a.start.localeCompare(b.start) || a.end.localeCompare(b.end)).map(contact).join("") || '<p class="empty">Brak dyżuru.</p>'}</td>`).join("")}</tr></tbody></table>`;
+      return;
+    }
     get("contacts").innerHTML = days
       .map(
         (day) =>
