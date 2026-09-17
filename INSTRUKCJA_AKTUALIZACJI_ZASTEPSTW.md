@@ -132,3 +132,25 @@ Liczby wpisów mają pochodzić z nowej paczki. Nie używaj na stałe liczebnoś
 Na koniec podaj krótko okres paczki, liczbę zastępstw/przeniesień/zmian dyżurów/zajęć innych, status publikacji obu stron oraz wynik testów i konkretne problemy.
 
 Jeżeli nie masz dostępu do repozytoriów, terminala lub publikacji, powiedz dokładnie, którego etapu nie wykonałeś. Nie deklaruj aktualizacji strony na podstawie samego przygotowania plików.
+
+## 8. Konkrety środowiskowe (Claude Code na web / sandbox)
+
+Runbook krok po kroku dla obu repozytoriów, z komendami i obejściami, jest w
+repozytorium planu uczniowskiego: `AKTUALIZACJA_ZASTEPSTW.md` (wejście:
+`CLAUDE.md`). Ta instrukcja pozostaje nadrzędna — tamten plik jej nie zmienia.
+
+Rzeczy, które w tym środowisku zawodzą i mają udokumentowane obejścia:
+
+- `npm ci` kończy się błędem 403 na `cdn.sheetjs.com` (polityka sieci sandboxu).
+  Nie wyłączaj weryfikacji TLS i nie commituj podmienionej wersji `xlsx` w
+  `package.json` ani `package-lock.json`. Pełną kontrolę i tak wykonuje CI.
+- Playwright szuka chromium-1243, a w obrazie jest 1194. Testy przeglądarkowe i
+  pomiary wydajności wymagają wskazania `executablePath` lub podstawienia
+  katalogu przeglądarek. Firefox i webkit pokrywa wyłącznie CI.
+- Publicznych adresów `nauczyciel.szkolamistrzow.info` i `plan.szkolamistrzow.info`
+  nie da się pobrać z sandboxu (403 na proxy). Publikację potwierdzaj wynikiem
+  jobów `build` i `deploy`, i napisz wprost, że kontroli na żywo nie wykonałeś.
+
+Przy generowaniu planu uczniowskiego `--plan-xml` jest obowiązkowy — domyślna
+ścieżka w `build_student_changes.py` wskazuje katalog, którego w normalnym klonie
+nie ma. Nazwę pliku bierz z `publication.json` → `sources.xml`.
