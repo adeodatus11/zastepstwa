@@ -499,6 +499,127 @@
             font-size: 0.95rem;
             margin-top: 12px;
         }
+        #duty-week-container {
+            background: rgba(15, 23, 42, 0.9);
+            border-radius: 16px;
+            border: 1px solid #334155;
+            margin-top: 20px;
+            padding: 25px 30px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+        }
+
+        .duty-week-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-bottom: 18px;
+        }
+
+        .duty-week-title {
+            font-size: 1.4rem;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 700;
+        }
+
+        .duty-week-table-wrap {
+            overflow-x: auto;
+        }
+
+        .duty-week-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 1.05rem;
+        }
+
+        .duty-week-table th,
+        .duty-week-table td {
+            border: 1px solid #334155;
+            padding: 12px 15px;
+            text-align: center;
+        }
+
+        .duty-week-table thead th {
+            background: #1e293b;
+            color: white;
+            font-weight: 800;
+            line-height: 1.3;
+        }
+
+        .duty-week-date {
+            display: block;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #94a3b8;
+            margin-top: 4px;
+        }
+
+        .duty-week-table tbody th {
+            background: #0f172a;
+            color: #e2e8f0;
+            font-family: Consolas, "SFMono-Regular", monospace;
+            font-weight: 700;
+            white-space: nowrap;
+            text-align: left;
+        }
+
+        .duty-week-name {
+            color: #e2e8f0;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .duty-week-hours {
+            display: block;
+            font-family: Consolas, "SFMono-Regular", monospace;
+            font-size: 0.8rem;
+            color: #fbbf24;
+            margin-bottom: 3px;
+        }
+
+        .duty-week-empty {
+            color: #475569;
+        }
+
+        .duty-week-table thead th.duty-week-today,
+        .duty-week-table tbody td.duty-week-today {
+            background: #064e3b;
+            border-color: #10b981;
+        }
+
+        .duty-week-table thead th.duty-week-today .duty-week-date {
+            color: #6ee7b7;
+        }
+
+        .duty-week-foot {
+            margin-top: 14px;
+            color: #94a3b8;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .duty-week-today-btn {
+            background: rgba(74, 222, 128, 0.12);
+            border: 1px solid #4ade80;
+            color: #4ade80;
+            border-radius: 999px;
+            padding: 5px 14px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .duty-week-today-btn:hover {
+            background: #4ade80;
+            color: #0f172a;
+        }
+
 
         #pp-team-container {
             background: rgba(15, 23, 42, 0.9);
@@ -1137,6 +1258,32 @@
                 min-height: 250px;
             }
 
+            #duty-week-container {
+                padding: 20px 15px;
+            }
+
+            .duty-week-head {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 12px;
+            }
+
+            .duty-week-table {
+                font-size: 0.95rem;
+            }
+
+            .duty-week-table th,
+            .duty-week-table td {
+                padding: 10px 12px;
+            }
+
+            .duty-week-table thead th:first-child,
+            .duty-week-table tbody th {
+                position: sticky;
+                left: 0;
+                z-index: 1;
+            }
+
             #pp-team-container {
                 padding: 20px 15px;
             }
@@ -1304,6 +1451,24 @@
             </div>
         </div>
 
+        <div id="duty-week-container">
+            <div class="duty-week-head">
+                <div class="duty-week-title">🛡️ Grafik dyżurów kadry kierowniczej</div>
+                <div class="week-nav">
+                    <button class="week-nav-btn" onclick="changeDutyWeek(-1)" aria-label="Poprzedni tydzień">&#10094;</button>
+                    <div class="week-display">
+                        <span class="week-label">Wybrany tydzień</span>
+                        <span class="week-range" id="duty-week-range">...</span>
+                    </div>
+                    <button class="week-nav-btn" onclick="changeDutyWeek(1)" aria-label="Następny tydzień">&#10095;</button>
+                </div>
+            </div>
+            <div class="duty-week-table-wrap">
+                <table class="duty-week-table" id="duty-week-table"></table>
+            </div>
+            <div class="duty-week-foot" id="duty-week-foot"></div>
+        </div>
+
         <div id="announcements-container">
             <div class="anno-left">
                 <div class="anno-title">📢 Komunikaty</div>
@@ -1457,6 +1622,7 @@
 
         const STATE = {
             weekOffset: 0,
+            dutyWeekOffset: 0,
             currentMode: "teacher",
             currentSelection: "",
             lastLoadedAt: null,
@@ -1478,6 +1644,9 @@
             dashboardView: document.getElementById("dashboard-view"),
             selectionGrid: document.getElementById("selection-grid"),
             dutyBarContent: document.getElementById("duty-bar-content"),
+            dutyWeekRange: document.getElementById("duty-week-range"),
+            dutyWeekTable: document.getElementById("duty-week-table"),
+            dutyWeekFoot: document.getElementById("duty-week-foot"),
             summaryCounts: document.getElementById("summaryCounts"),
             summarySources: document.getElementById("summarySources"),
             scheduleView: document.getElementById("schedule-view"),
@@ -2156,6 +2325,8 @@
             clearIdleReturnTimer();
             STATE.isDashboardActive = true;
             STATE.weekOffset = 0;
+            STATE.dutyWeekOffset = 0;
+            renderDutyWeek();
             refs.dashboardView.style.display = "block";
             refs.scheduleView.style.display = "none";
             refs.navControls.style.display = "none";
@@ -2748,10 +2919,12 @@
             const dayIndex = dayOfWeek - 1;
             const today = new Date(date.getFullYear(), date.getMonth(), date.getDate());
 
+            let source = "override";
             let shifts = (SUPERVISORY_DUTY_OVERRIDES[dateToIso(date)] || [])
                 .map((entry) => ({ shift: entry.shift, name: entry.name }));
 
             if (!shifts.length) {
+                source = "workbook";
                 shifts = DB.dutySchedule
                     .filter((entry) => {
                         if (!entry.range) {
@@ -2765,6 +2938,7 @@
             }
 
             if (!shifts.length) {
+                source = "template";
                 shifts = SUPERVISORY_DUTY_TEMPLATE.map((entry) => ({ shift: entry.shift, name: entry.days[dayIndex] }));
             }
 
@@ -2775,7 +2949,7 @@
                     if (!span || !name || normalize(name).includes("brak")) {
                         return null;
                     }
-                    return { name, shift: span.label, endLabel: span.endLabel, startMinutes: span.startMinutes, endMinutes: span.endMinutes };
+                    return { name, source, shift: span.label, endLabel: span.endLabel, startMinutes: span.startMinutes, endMinutes: span.endMinutes };
                 })
                 .filter(Boolean)
                 .sort((left, right) => left.startMinutes - right.startMinutes);
@@ -2786,6 +2960,74 @@
             const currentMinutes = now.getHours() * 60 + now.getMinutes();
             return getSupervisoryDutyPlan(now)
                 .find((entry) => currentMinutes >= entry.startMinutes && currentMinutes < entry.endMinutes) || null;
+        }
+
+        const DUTY_SOURCE_LABELS = {
+            override: "zmiana doraźna",
+            workbook: "wpis z pliku nadzoru",
+            template: "grafik wzorcowy"
+        };
+
+        function changeDutyWeek(direction) {
+            STATE.dutyWeekOffset += direction;
+            renderDutyWeek();
+        }
+
+        function goToCurrentDutyWeek() {
+            STATE.dutyWeekOffset = 0;
+            renderDutyWeek();
+        }
+
+        function renderDutyWeek() {
+            if (!refs.dutyWeekTable) {
+                return;
+            }
+
+            const weekDates = getWeekDates(STATE.dutyWeekOffset);
+            const todayIso = getTodayKey();
+            refs.dutyWeekRange.textContent = `${formatDateShort(weekDates[0])} - ${formatDateLabel(weekDates[4])}`;
+
+            const plans = weekDates.map((date) => getSupervisoryDutyPlan(date));
+            const startTimes = [...new Set(plans.flatMap((plan) => plan.map((entry) => entry.startMinutes)))]
+                .sort((left, right) => left - right);
+
+            if (!startTimes.length) {
+                refs.dutyWeekTable.innerHTML = `<tbody><tr><td class="duty-week-empty">Brak grafiku dyżurów dla tego tygodnia.</td></tr></tbody>`;
+            } else {
+                const headCells = weekDates.map((date, index) => {
+                    const todayClass = dateToIso(date) === todayIso ? ' class="duty-week-today"' : "";
+                    return `<th${todayClass}>${escapeHtml(DAY_NAMES[index])}<span class="duty-week-date">${escapeHtml(formatDateShort(date))}</span></th>`;
+                }).join("");
+
+                const rows = startTimes.map((startMinutes) => {
+                    const rowEntries = plans.map((plan) => plan.find((entry) => entry.startMinutes === startMinutes) || null);
+                    const labels = [...new Set(rowEntries.filter(Boolean).map((entry) => entry.shift))];
+                    const mixedHours = labels.length > 1;
+                    const rowLabel = mixedHours ? `od ${labels[0].split(" - ")[0]}` : labels[0];
+
+                    const cells = rowEntries.map((entry, dayIndex) => {
+                        const todayClass = dateToIso(weekDates[dayIndex]) === todayIso ? ' class="duty-week-today"' : "";
+                        if (!entry) {
+                            return `<td${todayClass}><span class="duty-week-empty">—</span></td>`;
+                        }
+                        const hours = mixedHours ? `<span class="duty-week-hours">${escapeHtml(entry.shift)}</span>` : "";
+                        return `<td${todayClass}>${hours}<span class="duty-week-name">${escapeHtml(entry.name)}</span></td>`;
+                    }).join("");
+
+                    return `<tr><th>${escapeHtml(rowLabel)}</th>${cells}</tr>`;
+                }).join("");
+
+                refs.dutyWeekTable.innerHTML = `<thead><tr><th>Godziny</th>${headCells}</tr></thead><tbody>${rows}</tbody>`;
+            }
+
+            const sources = [...new Set(plans.flatMap((plan) => plan.map((entry) => entry.source)))]
+                .map((key) => DUTY_SOURCE_LABELS[key])
+                .filter(Boolean);
+            const sourceText = sources.length ? `Źródło danych: ${sources.join(" • ")}.` : "";
+            const backButton = STATE.dutyWeekOffset === 0
+                ? ""
+                : `<button class="duty-week-today-btn" onclick="goToCurrentDutyWeek()">Wróć do bieżącego tygodnia</button>`;
+            refs.dutyWeekFoot.innerHTML = `${backButton}<span>${escapeHtml(sourceText)}</span>`;
         }
 
         function getPhoneForDutyPerson(rawName) {
@@ -2851,6 +3093,7 @@
             refs.footerMeta.textContent = `Plan XML + dyżury + nadzór XLSX • Ostatni odczyt: ${loadedAt}`;
             log(`Plan gotowy • Zastępstwa: ${DB.substitutions.length} • Przeniesienia: ${DB.transfers.length} • ${loadedAt}`);
             updateDutyBar();
+            renderDutyWeek();
         }
 
         function showError(message) {
@@ -2978,6 +3221,7 @@
 
         window.addEventListener("load", async () => {
             startClock();
+            renderDutyWeek();
             await refreshData();
             window.setInterval(refreshData, CONFIG.refreshInterval);
         });
