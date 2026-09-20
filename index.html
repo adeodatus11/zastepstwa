@@ -1408,8 +1408,23 @@
 
         const DAY_NAMES = ["Poniedziałek", "Wtorek", "Środa", "Czwartek", "Piątek"];
 
+        // Grafik wzorcowy dyżurów kadry kierowniczej (kolejność dni: pn, wt, śr, czw, pt).
+        // Obowiązuje w każdym tygodniu, dla którego plik nadzoru nie ma osobnego wpisu
+        // z zakresem dat i dla którego nie ma wpisu w SUPERVISORY_DUTY_OVERRIDES.
+        const SUPERVISORY_DUTY_TEMPLATE = [
+            {
+                shift: "08:00 - 13:30",
+                days: ["Maciej Najwer", "Arkadiusz Mocarski", "Arkadiusz Mocarski", "Marzena Filusz", "Małgorzata Kończyńska"]
+            },
+            {
+                shift: "13:30 - 19:00",
+                days: ["Marzena Filusz", "Małgorzata Kończyńska", "Wiesław Filipiak", "Maciej Najwer", "Wiesław Filipiak"]
+            }
+        ];
+
         // Doraźne zmiany w grafiku dyżurów kadry kierowniczej (klucz: data dnia).
-        // Dni nieujęte poniżej obowiązują zgodnie z grafikiem wzorcowym z pliku nadzoru.
+        // Mają pierwszeństwo przed plikiem nadzoru i przed grafikiem wzorcowym.
+        // Dni nieujęte poniżej obowiązują zgodnie z grafikiem wzorcowym.
         const SUPERVISORY_DUTY_OVERRIDES = {
             "2026-09-21": [
                 { shift: "08:00 - 13:30", name: "Małgorzata Kończyńska" },
@@ -2704,93 +2719,73 @@
             log(`Widok: ${refs.selectionInfo.textContent} • tydzień ${refs.weekRangeText.textContent}`);
         }
 
-        function getSupervisoryDutyOverride(date) {
-            const entries = SUPERVISORY_DUTY_OVERRIDES[dateToIso(date)];
-            if (!entries?.length) {
+        function parseDutyShift(shift) {
+            const [start, end] = compactSpaces(shift).split("-").map((part) => compactSpaces(part));
+            if (!/^\d{1,2}:\d{2}$/.test(start || "") || !/^\d{1,2}:\d{2}$/.test(end || "")) {
                 return null;
             }
 
-            return entries.map((entry) => {
-                const [start, end] = entry.shift.split("-").map((part) => part.trim());
-                return {
-                    name: entry.name,
-                    shift: `${padTime(start)} - ${padTime(end)}`,
-                    endLabel: padTime(end),
-                    startMinutes: timeToMinutes(start),
-                    endMinutes: timeToMinutes(end)
-                };
-            });
+            const startMinutes = timeToMinutes(start);
+            const endMinutes = timeToMinutes(end);
+            if (endMinutes <= startMinutes) {
+                return null;
+            }
+
+            return {
+                label: `${padTime(start)} - ${padTime(end)}`,
+                endLabel: padTime(end),
+                startMinutes,
+                endMinutes
+            };
+        }
+
+        function getSupervisoryDutyPlan(date) {
+            const dayOfWeek = date.getDay();
+            if (dayOfWeek === 0 || dayOfWeek === 6) {
+                return [];
+            }
+
+            const dayIndex = dayOfWeek - 1;
+            const today = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+
+            let shifts = (SUPERVISORY_DUTY_OVERRIDES[dateToIso(date)] || [])
+                .map((entry) => ({ shift: entry.shift, name: entry.name }));
+
+            if (!shifts.length) {
+                shifts = DB.dutySchedule
+                    .filter((entry) => {
+                        if (!entry.range) {
+                            return false;
+                        }
+                        const start = new Date(entry.range.start.getFullYear(), entry.range.start.getMonth(), entry.range.start.getDate());
+                        const end = new Date(entry.range.end.getFullYear(), entry.range.end.getMonth(), entry.range.end.getDate());
+                        return today >= start && today <= end;
+                    })
+                    .map((entry) => ({ shift: entry.shift, name: entry.days[dayIndex] }));
+            }
+
+            if (!shifts.length) {
+                shifts = SUPERVISORY_DUTY_TEMPLATE.map((entry) => ({ shift: entry.shift, name: entry.days[dayIndex] }));
+            }
+
+            return shifts
+                .map((entry) => {
+                    const span = parseDutyShift(entry.shift);
+                    const name = compactSpaces(entry.name);
+                    if (!span || !name || normalize(name).includes("brak")) {
+                        return null;
+                    }
+                    return { name, shift: span.label, endLabel: span.endLabel, startMinutes: span.startMinutes, endMinutes: span.endMinutes };
+                })
+                .filter(Boolean)
+                .sort((left, right) => left.startMinutes - right.startMinutes);
         }
 
         function getCurrentSupervisoryDuty() {
             const now = new Date();
-            const dayOfWeek = now.getDay();
-            if (dayOfWeek === 0 || dayOfWeek === 6) {
-                return null;
-            }
-
             const currentMinutes = now.getHours() * 60 + now.getMinutes();
-
-            const override = getSupervisoryDutyOverride(now);
-            if (override) {
-                const active = override.find((entry) => currentMinutes >= entry.startMinutes && currentMinutes < entry.endMinutes);
-                if (!active) {
-                    return null;
-                }
-                return { name: active.name, shift: active.shift, isWednesdayExtended: false };
-            }
-
-            let shiftKey = "";
-            let isWednesdayExtended = false;
-
-            if (dayOfWeek === 3) {
-                if (currentMinutes > 940) {
-                    return null;
-                }
-                shiftKey = "08:00 - 13:15";
-                isWednesdayExtended = currentMinutes >= 795;
-            } else if (currentMinutes < 795) {
-                shiftKey = "08:00 - 13:15";
-            } else if (currentMinutes < 1140) {
-                shiftKey = "13:15 - 19:00";
-            } else {
-                return null;
-            }
-
-            const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-            let fallbackEntry = null;
-
-            for (const entry of DB.dutySchedule) {
-                if (entry.shift !== shiftKey) {
-                    continue;
-                }
-
-                if (!entry.range) {
-                    fallbackEntry = fallbackEntry || entry;
-                    continue;
-                }
-
-                const start = new Date(entry.range.start.getFullYear(), entry.range.start.getMonth(), entry.range.start.getDate());
-                const end = new Date(entry.range.end.getFullYear(), entry.range.end.getMonth(), entry.range.end.getDate());
-                if (today >= start && today <= end) {
-                    const name = compactSpaces(entry.days[dayOfWeek - 1]);
-                    if (!name || normalize(name).includes("brak")) {
-                        return null;
-                    }
-                    return { name, shift: shiftKey, isWednesdayExtended };
-                }
-            }
-
-            if (!fallbackEntry) {
-                return null;
-            }
-
-            const fallbackName = compactSpaces(fallbackEntry.days[dayOfWeek - 1]);
-            if (!fallbackName || normalize(fallbackName).includes("brak")) {
-                return null;
-            }
-
-            return { name: fallbackName, shift: shiftKey, isWednesdayExtended };
+            return getSupervisoryDutyPlan(now)
+                .find((entry) => currentMinutes >= entry.startMinutes && currentMinutes < entry.endMinutes) || null;
         }
 
         function getPhoneForDutyPerson(rawName) {
@@ -2815,25 +2810,18 @@
             const duty = getCurrentSupervisoryDuty();
             if (!duty) {
                 const currentMinutes = now.getHours() * 60 + now.getMinutes();
-                let message = "Brak zaplanowanego dyżuru nadzoru w tym czasie.";
-                const override = getSupervisoryDutyOverride(now);
-                if (override) {
-                    const lastShift = override.reduce((latest, entry) => (entry.endMinutes > latest.endMinutes ? entry : latest));
-                    if (currentMinutes >= lastShift.endMinutes) {
-                        message = `Zakończono dyżur nadzoru na dziś (po ${lastShift.endLabel}).`;
-                    }
-                } else if (dayOfWeek === 3 && currentMinutes > 940) {
-                    message = "Zakończono dyżur nadzoru na dziś (po 15:40).";
-                } else if (dayOfWeek !== 3 && currentMinutes >= 1140) {
-                    message = "Zakończono dyżur nadzoru na dziś (po 19:00).";
-                }
+                const plan = getSupervisoryDutyPlan(now);
+                const lastShift = plan.length ? plan[plan.length - 1] : null;
+                const message = lastShift && currentMinutes >= lastShift.endMinutes
+                    ? `Zakończono dyżur nadzoru na dziś (po ${lastShift.endLabel}).`
+                    : "Brak zaplanowanego dyżuru nadzoru w tym czasie.";
                 refs.dutyBarContent.innerHTML = `<span class="duty-empty-msg">${escapeHtml(message)}</span>`;
                 return;
             }
 
             const rawName = compactSpaces(duty.name.split("/")[0].split("\n")[0]);
             const phone = getPhoneForDutyPerson(rawName);
-            const shiftLabel = duty.isWednesdayExtended ? "Środa po 13:15" : duty.shift.replace(" - ", " – ");
+            const shiftLabel = duty.shift.replace(" - ", " – ");
             const contactHtml = phone ? `
                 <div class="duty-contact-box">
                     <a href="tel:${escapeHtml(phone.number.replace(/\s+/g, ""))}" class="duty-phone-btn">
