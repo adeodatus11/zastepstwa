@@ -21,8 +21,10 @@ Warsztaty mają charakter psychoedukacyjny i rozwojowy — **nie są psychoterap
 
 To propozycja dla wychowawców klas pierwszych i pedagogów — warto wskazać ją uczniom, którzy trudno wchodzą w nową klasę, oraz ich rodzicom.
 
-Zapisy: telefonicznie pod numerem **690 580 652 w godz. 11.00–14.00** lub przez formularz zgłoszeniowy (kod QR poniżej). W formularzu trzeba podać wszystkie wymagane informacje i zaznaczyć: **warsztaty M. Kubów**.
+Zapisy: przez [formularz zgłoszeniowy](https://docs.google.com/forms/d/e/1FAIpQLSeoJAimnpRQGpdYiwkkauR_o-LM0gj9x-dMcguXGtdD7wHyLw/viewform) lub telefonicznie pod numerem **690 580 652 w godz. 11.00–14.00**. W formularzu trzeba podać wszystkie wymagane informacje i zaznaczyć: **warsztaty M. Kubów**.
 
-<img src="/qr-neuromed-warsztaty.png" alt="Kod QR do formularza zgłoszeniowego na warsztaty rozwoju emocjonalno-społecznego w NEUROMED" width="205" height="189" loading="lazy" />
+<a href="https://docs.google.com/forms/d/e/1FAIpQLSeoJAimnpRQGpdYiwkkauR_o-LM0gj9x-dMcguXGtdD7wHyLw/viewform"><img src="/qr-neuromed-warsztaty.png" alt="Kod QR do formularza zgłoszeniowego na warsztaty rozwoju emocjonalno-społecznego w NEUROMED" width="205" height="189" loading="lazy" /></a>
+
+Zeskanuj kod QR lub [przejdź do formularza zgłoszeniowego](https://docs.google.com/forms/d/e/1FAIpQLSeoJAimnpRQGpdYiwkkauR_o-LM0gj9x-dMcguXGtdD7wHyLw/viewform).
 
 Pełna informacja organizatora: [ulotka NEUROMED (PDF)](/neuromed-warsztaty-emocjonalno-spoleczne.pdf).
