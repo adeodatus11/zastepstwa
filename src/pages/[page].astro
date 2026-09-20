@@ -4,10 +4,15 @@ import fs from "node:fs";
 import { validDate } from "../lib/schema.mjs";
 const news = Object.values(
   import.meta.glob<{
-    frontmatter: { title: string; date: string };
+    frontmatter: { title: string; date: string; pinned?: boolean };
     Content: any;
   }>("../content/aktualnosci/*.md", { eager: true }),
-).sort((a, b) => b.frontmatter.date.localeCompare(a.frontmatter.date));
+).sort(
+  (a, b) =>
+    Number(b.frontmatter.pinned ?? false) -
+      Number(a.frontmatter.pinned ?? false) ||
+    b.frontmatter.date.localeCompare(a.frontmatter.date),
+);
 for (const item of news)
   if (!item.frontmatter.title || !validDate(item.frontmatter.date))
     throw Error("Aktualność wymaga tytułu i daty YYYY-MM-DD");

@@ -1,6 +1,7 @@
 ---
 title: "Akademia Ossolińska — III edycja. Dziesięć sobót w Ossolineum dla naszych uczniów"
 date: "2026-09-18"
+pinned: true
 ---
 
 Szanowni Państwo,

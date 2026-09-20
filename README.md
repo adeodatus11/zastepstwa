@@ -42,12 +42,15 @@ Nie otwieraj plików przez `file://` ani nie serwuj głównego katalogu jako now
 
 Najnowszy komunikat jest wyświetlany na pulpicie. Wszystkie wpisy pozostają w archiwum `/aktualnosci.html`, dostępnym z głównego menu i sekcji aktualności. Obrazy (np. kody QR) umieszczaj w `public/` i odwołuj się do nich adresem od `/`.
 
+Komunikat z `pinned: true` trafia przed wszystkie pozostałe, niezależnie od daty — dzięki temu ważny wpis zostaje na pulpicie, gdy dochodzą nowsze. Przypięć używaj pojedynczo i usuwaj pole, gdy sprawa jest nieaktualna; wpisy bez tego pola porządkuje sama data.
+
 Przykład komunikatu:
 
 ```md
 ---
 title: "Tytuł komunikatu"
 date: "2026-09-07"
+pinned: true # opcjonalne, trzyma wpis na górze
 ---
 Treść komunikatu. Można dodawać zwykłe linki Markdown.
 ```
