@@ -188,8 +188,10 @@ test("Other activity changes retain every scheduling entry without diary titles"
   const book = XLSX.read(fs.readFileSync(config.sources.substitutions));
   const sheet = book.Sheets["Dzienniki zajeć innych"];
   const source = sheet ? XLSX.utils.sheet_to_json(sheet, { defval: "" }) : [];
-  assert.equal(changes.otherActivities.length, source.length);
-  for (const [i, row] of source.entries()) {
+  const individual = (row) => /^\s*IND?\b/i.test(row["Dziennik zajęć innych"]);
+  const published = source.filter((row) => !individual(row));
+  assert.equal(changes.otherActivities.length, published.length);
+  for (const [i, row] of published.entries()) {
     assert.equal(changes.otherActivities[i].subject, row["Opis zajęć"]);
     assert.equal(changes.otherActivities[i].time, row["Godzina"]);
     assert.ok(changes.otherActivities[i].absentTeacherId);
@@ -198,4 +200,16 @@ test("Other activity changes retain every scheduling entry without diary titles"
         !JSON.stringify(changes).includes(row["Dziennik zajęć innych"]),
       );
   }
+  // Individual tuition belongs to one named pupil and is never published.
+  for (const row of source.filter(individual))
+    assert.ok(
+      !changes.otherActivities.some(
+        (e) => e.time === row["Godzina"] && e.subject === row["Opis zajęć"],
+      ),
+    );
+  for (const event of [...changes.substitutions, ...changes.transfers])
+    assert.ok(
+      !/^\s*IND?\b/i.test(event.branch.className) &&
+        !/^\s*IND?\b/i.test(event.branch.groupName),
+    );
 });

@@ -32,6 +32,7 @@ Surowe Excele mogą zawierać dane uczniów, także w nazwach dzienników, uwaga
 3. Przejrzyj wszystkie arkusze obu plików, także ukryte.
 4. Usuń dane identyfikujące uczniów. Zachowaj daty, godziny, przedmioty, oddziały/grupy, sale, nauczycieli oraz znaczenie zmian. Nie usuwaj nazwisk nauczycieli potrzebnych do przypisania zastępstw.
 5. Szczególnie sprawdź kolumnę `Dziennik zajęć innych` w arkuszu `Dzienniki zajeć innych`. Nazwa dziennika może zawierać imię, nazwisko i klasę ucznia.
+6. **Nauczanie indywidualne (`IND`) nie trafia na żadną ze stron.** Eksport oznacza je przedrostkiem `IN`/`IND` — w kolumnie `Oddział` (np. `4TFB|IND*KM`) albo w nazwie dziennika (`IN - Nazwisko Imię [klasa]`). Takie wpisy dotyczą jednego ucznia z imienia i nazwiska, więc są pomijane w wyświetlaniu zarówno w serwisie nauczyciela, jak i w planie uczniowskim. Filtr jest w kodzie (`scripts/privacy_xlsx.py`, `scripts/build/data.mjs`, `scripts/build_student_changes.py`) — nie usuwaj wpisów ręcznie z arkuszy.
 
 Repozytorium nauczyciela zawiera `scripts/privacy_xlsx.py`. Uruchom go na roboczych kopiach **obu plików**, zanim trafią do Git:
 
@@ -41,7 +42,7 @@ python3 scripts/privacy_xlsx.py --sanitize /ścieżka/do/kopii-przeniesień.xlsx
 git config core.hooksPath .githooks
 ```
 
-Skrypt usuwa nazwy dzienników z rozpoznawanej kolumny. **Nie jest pełnym wykrywaczem danych osobowych.** Osobno sprawdź pozostałe kolumny, uwagi, komentarze i arkusze. Jeśli nie da się bezpiecznie oddzielić danych ucznia od znaczenia wpisu, przedstaw konkretny problem użytkownikowi bez przepisywania danych osobowych.
+Skrypt usuwa nazwy dzienników z rozpoznawanej kolumny; dziennikom nauczania indywidualnego zostawia sam znacznik `IND` (bez danych ucznia), żeby generatory obu serwisów mogły je pominąć. **Nie jest pełnym wykrywaczem danych osobowych.** Osobno sprawdź pozostałe kolumny, uwagi, komentarze i arkusze. Jeśli nie da się bezpiecznie oddzielić danych ucznia od znaczenia wpisu, przedstaw konkretny problem użytkownikowi bez przepisywania danych osobowych.
 
 Po oczyszczeniu porównaj wszystkie dane planu z oryginałem. Sprawdź, czy usunięte teksty nie pozostały w archiwum XLSX, np. w `sharedStrings.xml`. Ukrycie kolumny lub pominięcie jej na stronie nie usuwa danych z pliku. Konwersja arkusza nie może przesunąć komórek ani zmienić przypisania sal i uwag.
 
@@ -58,6 +59,7 @@ Istniały także stare kopie i referencje zamkniętego PR-a wymagające interwen
 - Rozróżniaj brak wpisów od błędu odczytu. Błąd importu nie może opublikować pustej listy.
 - Sprawdź zgodność okresów obu plików. Nie dopowiadaj brakujących danych.
 - Zachowaj znaczenie wpisów takich jak `-`, `Zastępstwo`, odwołanie lekcji czy brak wskazanego zastępcy.
+- Policz osobno wpisy pominięte jako `IND` i podaj tę liczbę w raporcie — brak wpisu na stronie ma być świadomy, nie przypadkowy.
 - Uwzględniaj przeniesienia między godzinami i datami, nie tylko zmiany sal.
 - Przyjmij nową paczkę jako aktualizację zgodnie z jej zakresem; nie doklejaj automatycznie poprzedniego tygodnia ani nie usuwaj innych danych bez podstawy.
 
@@ -66,7 +68,7 @@ Istniały także stare kopie i referencje zamkniętego PR-a wymagające interwen
 1. Dopiero oczyszczone pliki umieść pod nazwami wskazanymi w `publication.json`.
 2. Użyj istniejącego procesu budowania danych.
 3. Zachowaj obsługę zastępstw lekcyjnych, przeniesień, zastępstw dyżurów i dodatkowych zajęć z arkusza `Dzienniki zajeć innych`.
-4. Dodatkowe zajęcia mają pozostać widoczne bez nazw dzienników identyfikujących uczniów.
+4. Dodatkowe zajęcia mają pozostać widoczne bez nazw dzienników identyfikujących uczniów — poza zajęciami nauczania indywidualnego (`IND`), których nie publikujemy w ogóle. Jeżeli wszystkie wpisy w paczce są oznaczone `IND`, pusta sekcja zajęć innych jest poprawnym wynikiem, nie błędem odczytu.
 5. Nie zmieniaj planu bazowego, grafiku kadry kierowniczej, kalendarza ani układu strony, jeśli zlecenie tego nie dotyczy.
 6. Zachowaj tabelaryczny plan nauczyciela i małe kafelki dyżurów między lekcjami.
 

@@ -165,31 +165,55 @@ const changes = JSON.parse(
     ),
   ),
 );
+// Individual tuition is never published: the diary belongs to one named pupil,
+// so both sites skip every row the export marks IND.
+const INDIVIDUAL_MARKER = "IND";
+const isIndividual = (value) => /^\s*IND?\b/i.test(String(value ?? ""));
+const branchIsIndividual = (branch) =>
+  !!branch &&
+  (isIndividual(branch.className) || isIndividual(branch.groupName));
+for (const key of ["substitutions", "transfers", "dutyChanges"])
+  if (Array.isArray(changes[key]))
+    changes[key] = changes[key].filter((e) => !branchIsIndividual(e.branch));
 // Only scheduling fields are public; diary titles can identify individual pupils.
 const substitutionBook = XLSX.read(
   await fs.readFile(config.sources.substitutions),
   { type: "buffer" },
 );
 const otherSheet = substitutionBook.Sheets["Dzienniki zajeć innych"];
-if (otherSheet && XLSX.utils.sheet_to_json(otherSheet).some(row => row["Dziennik zajęć innych"]))
-  throw Error("Przed publikacją usuń nazwy dzienników: python3 scripts/privacy_xlsx.py --sanitize InformacjeOZastepstwach.xlsx");
+if (
+  otherSheet &&
+  XLSX.utils
+    .sheet_to_json(otherSheet)
+    .some(
+      (row) =>
+        row["Dziennik zajęć innych"] &&
+        String(row["Dziennik zajęć innych"]).trim() !== INDIVIDUAL_MARKER,
+    )
+)
+  throw Error(
+    "Przed publikacją usuń nazwy dzienników: python3 scripts/privacy_xlsx.py --sanitize InformacjeOZastepstwach.xlsx",
+  );
 changes.otherActivities = otherSheet
-  ? XLSX.utils.sheet_to_json(otherSheet, { defval: "" }).map((row) => {
-      const parts = String(row["Dzień"]).split(".");
-      const date = parts.length === 3 ? parts.reverse().join("-") : "";
-      const time = String(row["Godzina"]);
-      if (!/^\d{4}-\d{2}-\d{2}$/.test(date) || !time || !row["Nauczyciel"])
-        throw Error("Niekompletny wpis zajęć innych");
-      return {
-        date,
-        time,
-        absentTeacherName: String(row["Nauczyciel"]),
-        subject: String(row["Opis zajęć"]),
-        room: String(row["Sala"]),
-        message: String(row["Zastępca"]) || "-",
-        note: String(row["Uwagi"]),
-      };
-    })
+  ? XLSX.utils
+      .sheet_to_json(otherSheet, { defval: "" })
+      .filter((row) => !isIndividual(row["Dziennik zajęć innych"]))
+      .map((row) => {
+        const parts = String(row["Dzień"]).split(".");
+        const date = parts.length === 3 ? parts.reverse().join("-") : "";
+        const time = String(row["Godzina"]);
+        if (!/^\d{4}-\d{2}-\d{2}$/.test(date) || !time || !row["Nauczyciel"])
+          throw Error("Niekompletny wpis zajęć innych");
+        return {
+          date,
+          time,
+          absentTeacherName: String(row["Nauczyciel"]),
+          subject: String(row["Opis zajęć"]),
+          room: String(row["Sala"]),
+          message: String(row["Zastępca"]) || "-",
+          note: String(row["Uwagi"]),
+        };
+      })
   : [];
 for (const s of changes.substitutions)
   if (!s.date || !s.period || !s.branch.className)
