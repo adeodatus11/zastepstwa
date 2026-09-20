@@ -1408,6 +1408,15 @@
 
         const DAY_NAMES = ["Poniedziałek", "Wtorek", "Środa", "Czwartek", "Piątek"];
 
+        // Doraźne zmiany w grafiku dyżurów kadry kierowniczej (klucz: data dnia).
+        // Dni nieujęte poniżej obowiązują zgodnie z grafikiem wzorcowym z pliku nadzoru.
+        const SUPERVISORY_DUTY_OVERRIDES = {
+            "2026-09-21": [
+                { shift: "08:00 - 13:30", name: "Małgorzata Kończyńska" },
+                { shift: "13:30 - 18:00", name: "Wiesław Filipiak" }
+            ]
+        };
+
         const DB = {
             teachers: {},
             teacherOrder: [],
@@ -2695,6 +2704,24 @@
             log(`Widok: ${refs.selectionInfo.textContent} • tydzień ${refs.weekRangeText.textContent}`);
         }
 
+        function getSupervisoryDutyOverride(date) {
+            const entries = SUPERVISORY_DUTY_OVERRIDES[dateToIso(date)];
+            if (!entries?.length) {
+                return null;
+            }
+
+            return entries.map((entry) => {
+                const [start, end] = entry.shift.split("-").map((part) => part.trim());
+                return {
+                    name: entry.name,
+                    shift: `${padTime(start)} - ${padTime(end)}`,
+                    endLabel: padTime(end),
+                    startMinutes: timeToMinutes(start),
+                    endMinutes: timeToMinutes(end)
+                };
+            });
+        }
+
         function getCurrentSupervisoryDuty() {
             const now = new Date();
             const dayOfWeek = now.getDay();
@@ -2703,6 +2730,16 @@
             }
 
             const currentMinutes = now.getHours() * 60 + now.getMinutes();
+
+            const override = getSupervisoryDutyOverride(now);
+            if (override) {
+                const active = override.find((entry) => currentMinutes >= entry.startMinutes && currentMinutes < entry.endMinutes);
+                if (!active) {
+                    return null;
+                }
+                return { name: active.name, shift: active.shift, isWednesdayExtended: false };
+            }
+
             let shiftKey = "";
             let isWednesdayExtended = false;
 
@@ -2779,7 +2816,13 @@
             if (!duty) {
                 const currentMinutes = now.getHours() * 60 + now.getMinutes();
                 let message = "Brak zaplanowanego dyżuru nadzoru w tym czasie.";
-                if (dayOfWeek === 3 && currentMinutes > 940) {
+                const override = getSupervisoryDutyOverride(now);
+                if (override) {
+                    const lastShift = override.reduce((latest, entry) => (entry.endMinutes > latest.endMinutes ? entry : latest));
+                    if (currentMinutes >= lastShift.endMinutes) {
+                        message = `Zakończono dyżur nadzoru na dziś (po ${lastShift.endLabel}).`;
+                    }
+                } else if (dayOfWeek === 3 && currentMinutes > 940) {
                     message = "Zakończono dyżur nadzoru na dziś (po 15:40).";
                 } else if (dayOfWeek !== 3 && currentMinutes >= 1140) {
                     message = "Zakończono dyżur nadzoru na dziś (po 19:00).";
