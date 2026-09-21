@@ -139,7 +139,10 @@ Jeżeli nie masz dostępu do repozytoriów, terminala lub publikacji, powiedz do
 
 Runbook krok po kroku dla obu repozytoriów, z komendami i obejściami, jest w
 repozytorium planu uczniowskiego: `AKTUALIZACJA_ZASTEPSTW.md` (wejście:
-`CLAUDE.md`). Ta instrukcja pozostaje nadrzędna — tamten plik jej nie zmienia.
+`CLAUDE.md`). Reguły trwałe — pomijanie nauczania indywidualnego (`IND`),
+przeniesienia z datą docelową poza okresem paczki, wymagane kontrole — są tam
+w skillu `.claude/skills/zastepstwa/SKILL.md`. Ta instrukcja pozostaje nadrzędna
+— tamte pliki jej nie zmieniają.
 
 Rzeczy, które w tym środowisku zawodzą i mają udokumentowane obejścia:
 
