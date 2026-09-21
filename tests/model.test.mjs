@@ -13,6 +13,7 @@ import {
   substitutionMatches,
   transferMatches,
   tvPages,
+  excerpt,
 } from "../src/lib/model.mjs";
 const manifest = JSON.parse(fs.readFileSync("public/data/manifest.json"));
 const plan = JSON.parse(fs.readFileSync("public" + manifest.files.plan));
@@ -212,4 +213,34 @@ test("Other activity changes retain every scheduling entry without diary titles"
       !/^\s*IND?\b/i.test(event.branch.className) &&
         !/^\s*IND?\b/i.test(event.branch.groupName),
     );
+});
+test("Announcement excerpt skips salutations, headings and lists", () => {
+  const body = [
+    "Szanowni Państwo,",
+    "## Nagłówek",
+    "- punkt listy o wystarczającej długości, żeby nie odpadł przez limit",
+    "Pierwszy **akapit** z [linkiem](https://example.com) i resztą zdania.",
+  ].join("\n\n");
+  assert.equal(
+    excerpt(body),
+    "Pierwszy akapit z linkiem i resztą zdania.",
+    "zajawka bierze pierwszy prawdziwy akapit bez znaczników",
+  );
+  const long = "Zdanie o wyjściu edukacyjnym do Ossolineum. ".repeat(20);
+  const cut = excerpt(long, 80);
+  assert.ok(
+    cut.length <= 81 && cut.endsWith("…"),
+    "długi akapit jest skracany",
+  );
+  assert.ok(!cut.slice(0, -1).endsWith(" "), "skrót nie kończy się spacją");
+  assert.equal(excerpt("Krótko."), "", "sam krótki akapit nie daje zajawki");
+  for (const file of fs.readdirSync("src/content/aktualnosci")) {
+    const raw = fs
+      .readFileSync("src/content/aktualnosci/" + file, "utf8")
+      .replace(/^---[\s\S]*?\n---\n/, "");
+    assert.ok(
+      excerpt(raw).length >= 40,
+      `komunikat ${file} musi dać zajawkę na pulpit`,
+    );
+  }
 });

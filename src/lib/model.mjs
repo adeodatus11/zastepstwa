@@ -225,6 +225,28 @@ export const eventEndsAfter = (event, date) =>
       ? event.end > date + "T00:00:00"
       : event.end > date
     : event.start.slice(0, 10) >= date;
+export function excerpt(markdown, limit = 180) {
+  const plain = (block) =>
+    block
+      .replace(/!\[[^\]]*\]\([^)]*\)/g, "")
+      .replace(/\[([^\]]*)\]\([^)]*\)/g, "$1")
+      .replace(/<[^>]*>/g, "")
+      .replace(/[*_`#>]/g, "")
+      .replace(/\s+/g, " ")
+      .trim();
+  for (const block of String(markdown).split(/\n\s*\n/)) {
+    if (/^\s*(#|[-*+][ \t]|\d+\.[ \t]|<|\||```)/.test(block)) continue;
+    const text = plain(block);
+    if (text.length < 40) continue;
+    if (text.length <= limit) return text;
+    const cut = text.slice(0, limit),
+      space = cut.lastIndexOf(" ");
+    return (
+      (space > 0 ? cut.slice(0, space) : cut).replace(/[\s,;:–—-]+$/, "") + "…"
+    );
+  }
+  return "";
+}
 export function upcoming(events, date, limit = 4) {
   return events
     .filter((e) => eventEndsAfter(e, date))
