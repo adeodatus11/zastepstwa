@@ -1050,13 +1050,99 @@ th {
 }
 
 /* One Monday–Friday table for both contact schedules. */
-.contacts-week-wrap { width: 100%; overflow-x: auto; }
-.contacts-week { width: 100%; min-width: 900px; table-layout: fixed; border-collapse: collapse; }
-.contacts-week caption { text-align: left; padding: 0 0 16px; font-weight: 700; }
-.contacts-week th { width: 20%; text-align: left; text-transform: capitalize; }
-.contacts-week th, .contacts-week td { padding: 14px; border: 1px solid var(--line); vertical-align: top; }
-.contacts-week .row { padding: 14px 0; }
-.contacts-week .row:first-child { padding-top: 0; }
-.contacts-week .event-date { white-space: nowrap; font-weight: 700; }
-.contacts-week .contact-name { overflow-wrap: anywhere; }
-.contacts-week .contact-actions { flex-wrap: wrap; }
+.contacts-week-wrap {
+  width: 100%;
+  overflow-x: auto;
+}
+.contacts-week {
+  width: 100%;
+  min-width: 900px;
+  table-layout: fixed;
+  border-collapse: collapse;
+}
+.contacts-week caption {
+  text-align: left;
+  padding: 0 0 16px;
+  font-weight: 700;
+}
+.contacts-week th {
+  width: 20%;
+  text-align: left;
+  text-transform: capitalize;
+}
+.contacts-week th,
+.contacts-week td {
+  padding: 14px;
+  border: 1px solid var(--line);
+  vertical-align: top;
+}
+.contacts-week .row {
+  padding: 14px 0;
+}
+.contacts-week .row:first-child {
+  padding-top: 0;
+}
+.contacts-week .event-date {
+  white-space: nowrap;
+  font-weight: 700;
+}
+.contacts-week .contact-name {
+  overflow-wrap: anywhere;
+}
+.contacts-week .contact-actions {
+  flex-wrap: wrap;
+}
+
+/* Archiwum aktualności: kafelki z zajawką, pełna treść po rozwinięciu. */
+.news-intro {
+  margin: 0 0 20px;
+  color: var(--muted);
+}
+.news-grid {
+  display: grid;
+  gap: 20px;
+  align-items: start;
+}
+@media (min-width: 1200px) {
+  .news-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+.news-card h2 {
+  margin: 6px 0 10px;
+  font-size: 1.25rem;
+}
+.news-card .news-lead {
+  margin: 0 0 16px;
+  color: var(--muted);
+}
+.news-card .news-body > :first-child {
+  margin-top: 0;
+}
+.news-card .news-body,
+.news-card .news-close {
+  display: none;
+}
+.news-card:target {
+  grid-column: 1 / -1;
+  border-color: var(--green);
+}
+.news-card:target .news-body {
+  display: block;
+}
+.news-card:target .news-close {
+  display: inline-flex;
+  margin-top: 16px;
+}
+.news-card:target .news-lead,
+.news-card:target .news-open {
+  display: none;
+}
+@media print {
+  .news-card .news-body {
+    display: block;
+  }
+  .news-toggle {
+    display: none;
+  }
+}

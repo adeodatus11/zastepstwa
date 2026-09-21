@@ -324,20 +324,37 @@ const externalFacilitiesExcludedDays = [
     }
     {
       page === "aktualnosci" && (
-        <section class="panel news-content" aria-label="Wszystkie komunikaty">
-          <p>Wszystkie komunikaty, od najnowszych do najstarszych.</p>
-          {news.map(({ frontmatter, slug, Content }) => (
-            <article class="row" id={slug}>
-              <p class="event-date">
-                <time datetime={frontmatter.date}>
-                  {newsDate(frontmatter.date)}
-                </time>
-              </p>
-              <h2>{frontmatter.title}</h2>
-              <Content />
-            </article>
-          ))}
-        </section>
+        <>
+          <p class="news-intro" id="lista-komunikatow">
+            Wszystkie komunikaty, od najnowszych do najstarszych. Kliknij
+            „Czytaj całość”, aby rozwinąć wybrany wpis.
+          </p>
+          <section class="news-grid" aria-label="Wszystkie komunikaty">
+            {news.map(({ frontmatter, slug, lead, Content }) => (
+              <article class="panel news-card" id={slug}>
+                <p class="event-date">
+                  <time datetime={frontmatter.date}>
+                    {newsDate(frontmatter.date)}
+                  </time>
+                </p>
+                <h2>{frontmatter.title}</h2>
+                {lead && <p class="news-lead">{lead}</p>}
+                <a class="button news-toggle news-open" href={`#${slug}`}>
+                  Czytaj całość ↓
+                </a>
+                <div class="news-body">
+                  <Content />
+                </div>
+                <a
+                  class="button news-toggle news-close"
+                  href="#lista-komunikatow"
+                >
+                  Zwiń ↑
+                </a>
+              </article>
+            ))}
+          </section>
+        </>
       )
     }
     {

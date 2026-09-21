@@ -40,7 +40,7 @@ Nie otwieraj plików przez `file://` ani nie serwuj głównego katalogu jako now
 | Kalendarz | XLSX `sources.calendar`; zakres roku w `calendarFrom`, `calendarTo`, `schoolYear` |
 | Komunikaty | Nowy lub zmieniony plik Markdown w `src/content/aktualnosci/` |
 
-Pulpit pokazuje pięć najnowszych komunikatów jako zajawki: datę, tytuł i pierwszy akapit skrócony do 180 znaków. Zajawka powstaje automatycznie — pomija powitanie, nagłówki i listy, więc pierwszy pełny akapit wpisu powinien streszczać sprawę. Kliknięcie prowadzi do pełnej treści w archiwum `/aktualnosci.html#<nazwa-pliku>`; archiwum trzyma wszystkie wpisy i jest dostępne z głównego menu. Obrazy (np. kody QR) umieszczaj w `public/` i odwołuj się do nich adresem od `/`.
+Pulpit pokazuje pięć najnowszych komunikatów jako zajawki: datę, tytuł i pierwszy akapit skrócony do 180 znaków. Zajawka powstaje automatycznie — pomija powitanie, nagłówki i listy, więc pierwszy pełny akapit wpisu powinien streszczać sprawę. Kliknięcie prowadzi do archiwum `/aktualnosci.html#<nazwa-pliku>`, gdzie wskazany wpis od razu się rozwija. Archiwum trzyma wszystkie komunikaty jako kafelki z zajawką (dwie kolumny od 1200 px); pełną treść rozwija odnośnik „Czytaj całość” i sam adres z kotwicą, bez JavaScriptu — strona archiwum celowo nie ładuje żadnego skryptu. Obrazy (np. kody QR) umieszczaj w `public/` i odwołuj się do nich adresem od `/`.
 
 Komunikat z `pinned: true` trafia przed wszystkie pozostałe, niezależnie od daty — dzięki temu ważny wpis zostaje na pulpicie, gdy dochodzą nowsze. Przypięć używaj pojedynczo i usuwaj pole, gdy sprawa jest nieaktualna; wpisy bez tego pola porządkuje sama data.
 
