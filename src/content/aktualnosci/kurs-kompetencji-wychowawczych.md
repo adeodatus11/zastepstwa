@@ -26,6 +26,6 @@ Zajęcia prowadzą mgr Dorota Urbańczyk (pedagog) i mgr Joanna Arsłanowow (psy
 
 ### Zapisy
 
-Zgłoszenia przyjmuje formularz na stronie poradni [ppp9-wroc.pl](https://ppp9-wroc.pl/kurs-kompetencji-wychowawczych-dla-rodzicow-w-oparciu-o-metode-faber-i-mazlish-3/) — poradnia zapowiadała jego publikację na 21 września. W formularzu wskazuje się preferowany dzień (wtorek albo środa). **O przyjęciu decyduje kolejność zgłoszeń**, a zakwalifikowani uczestnicy dostaną wiadomość mailową lub telefon z terminem pierwszego spotkania.
+Zgłoszenia przyjmuje [formularz na stronie poradni](https://ppp9-wroc.pl/kurs-kompetencji-wychowawczych-dla-rodzicow-w-oparciu-o-metode-faber-i-mazlish-3/), już dostępny. W formularzu wskazuje się preferowany dzień (wtorek albo środa). **O przyjęciu decyduje kolejność zgłoszeń**, a zakwalifikowani uczestnicy dostaną wiadomość mailową lub telefon z terminem pierwszego spotkania.
 
 Osoby, które nie zmieszczą się w tej edycji, poradnia zaprasza do śledzenia swojej strony i [profilu na Facebooku](https://www.facebook.com/poradnia9) oraz do zapisów na kolejną edycję w lutym 2027 r.
