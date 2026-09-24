@@ -1,5 +1,5 @@
 import { connect } from "./data";
-import { daily, today, dateLabel, tvPages, esc } from "./model.mjs";
+import { daily, today, dateLabel, tvDayPages, esc } from "./model.mjs";
 export async function init() {
   let slides: any[] = [],
     index = 0,
@@ -25,7 +25,7 @@ export async function init() {
         rows.filter((l: any) => l.classNames.includes(name)),
       ])
       .filter(([, rows]: any) => rows.length);
-    slides = tvPages(groups, 2);
+    slides = tvDayPages(groups, 2);
   }
   function show() {
     if (!slides.length) {
@@ -34,12 +34,57 @@ export async function init() {
       return;
     }
     index %= slides.length;
+    const badge = (l: any) =>
+      l.status !== "base"
+        ? ` <strong class="tv-badge">${l.status === "transfer" ? "Przeniesienie" : l.status === "cancelled" ? "Odwołana / później" : "Zastępstwo"}</strong>`
+        : "";
+    const details = (l: any) =>
+      `Sala ${esc(l.roomNames.join(" / "))}${l.groupNames.length ? " · " + esc(l.groupNames.join(", ")) : ""}${l.teacherNames.length ? " · " + esc(l.teacherNames.join(", ")) : ""}`;
+    // Grupy tej samej lekcji w jednym wierszu: numer i przedmiot raz, pod spodem grupy.
+    const periods = (entries: any[]) => {
+      const out: any[][] = [];
+      for (const l of [...entries].sort((x, y) => x.period - y.period)) {
+        const last = out.at(-1);
+        if (last && last[0].period === l.period) last.push(l);
+        else out.push([l]);
+      }
+      return out;
+    };
     content.innerHTML = slides[index]
       .map(
         (c: any) =>
-          `<section class="tv-card"><h2>${esc(c.name)}${c.continued ? "<small>ciąg dalszy</small>" : ""}</h2>${c.entries.map((l: any) => `<article class="tv-lesson"><p class="tv-time">${esc(l.start)}–${esc(l.end)} · ${l.period}</p>${l.status !== "base" ? `<strong class="tv-badge">${l.status === "transfer" ? "Przeniesienie" : l.status === "cancelled" ? "Odwołana / później" : "Zastępstwo"}</strong>` : ""}<h3>${esc(l.subject)}</h3><p>${esc(l.teacherNames.join(", "))}</p><p>Sala ${esc(l.roomNames.join(" / "))}${l.groupNames.length ? " · " + esc(l.groupNames.join(", ")) : ""}</p></article>`).join("")}</section>`,
+          `<section class="tv-card"><h2>${esc(c.name)}</h2><div class="tv-day">${periods(
+            c.entries,
+          )
+            .map((group) => {
+              const first = group[0],
+                same = group.every((l) => l.subject === first.subject),
+                changed = group.some((l) => l.status !== "base");
+              const body = same
+                ? `<h3>${esc(first.subject)}${group.length === 1 ? badge(first) : ""}</h3>${group.map((l) => `<p>${details(l)}${group.length > 1 ? badge(l) : ""}</p>`).join("")}`
+                : group
+                    .map(
+                      (l) =>
+                        `<h3>${esc(l.subject)}${badge(l)}</h3><p>${details(l)}</p>`,
+                    )
+                    .join("");
+              return `<article class="tv-lesson${changed ? " changed" : ""}"><p class="tv-nr">${first.period}<small>${esc(first.start)}</small></p><div>${body}</div></article>`;
+            })
+            .join("")}</div></section>`,
       )
       .join("");
+    fit();
+  }
+  // Klasy z dużą liczbą lekcji: zmniejsz czcionkę karty, aż cały dzień się zmieści.
+  function fit() {
+    content.querySelectorAll<HTMLElement>(".tv-card").forEach((card) => {
+      let scale = 1;
+      card.style.setProperty("--tv-scale", "1");
+      while (card.scrollHeight > card.clientHeight + 1 && scale > 0.6) {
+        scale = Math.round((scale - 0.05) * 100) / 100;
+        card.style.setProperty("--tv-scale", String(scale));
+      }
+    });
   }
   await connect(["plan", "changes"], (d, m) => {
     plan = d.plan;

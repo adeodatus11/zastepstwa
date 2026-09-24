@@ -954,51 +954,73 @@ body.tv-mode .header-guide,
 .tv-mode #tv-content {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  grid-template-rows: repeat(2, 564px);
+  grid-template-rows: 1130px;
   gap: 16px;
 }
 .tv-card {
-  padding: 16px 20px;
+  --tv-scale: 1;
+  padding: 14px 18px;
   background: #1c392d;
   border: 1px solid #456456;
   border-radius: 8px;
   min-width: 0;
+  overflow: hidden;
 }
 .tv-card h2 {
   font-size: 46px;
   line-height: 1.1;
-  padding-bottom: 10px;
+  padding-bottom: 8px;
   border-bottom: 2px solid #89ad99;
 }
-.tv-card h2 small {
-  font-size: 20px;
-  display: block;
-}
 .tv-lesson {
-  padding: 12px 0;
+  display: grid;
+  grid-template-columns: calc(58px * var(--tv-scale)) minmax(0, 1fr);
+  gap: 10px;
+  align-items: center;
+  padding: calc(7px * var(--tv-scale)) 0;
   border-bottom: 1px solid #456456;
   overflow-wrap: anywhere;
 }
+.tv-lesson.changed {
+  background: linear-gradient(90deg, rgba(255, 228, 177, 0.14), transparent);
+}
+.tv-lesson .tv-nr {
+  margin: 0;
+  font-size: calc(30px * var(--tv-scale));
+  font-weight: 700;
+  line-height: 1;
+  text-align: center;
+  color: #9ad3b0;
+}
+.tv-nr small {
+  display: block;
+  font-size: calc(15px * var(--tv-scale));
+  font-weight: 400;
+  color: #c7ddd1;
+  margin-top: 2px;
+}
 .tv-lesson h3 {
-  font-size: 25px;
+  font-size: calc(25px * var(--tv-scale));
   line-height: 1.15;
+  margin: 0;
+}
+.tv-lesson p + h3 {
+  margin-top: 4px;
 }
 .tv-lesson p {
-  font-size: 24px;
+  font-size: calc(20px * var(--tv-scale));
   line-height: 1.2;
-}
-.tv-lesson .tv-time {
-  font-size: 27px;
-  font-weight: 600;
-  margin: 0 0 6px;
+  margin: 2px 0 0;
+  color: #d8efe2;
 }
 .tv-badge {
-  font-size: 20px;
+  font-size: calc(16px * var(--tv-scale));
   display: inline-block;
+  vertical-align: middle;
   background: #ffe4b1;
   color: #39220a;
-  padding: 3px 8px;
-  margin-bottom: 6px;
+  padding: 1px 6px;
+  border-radius: 4px;
 }
 .tv-empty {
   font-size: 40px;

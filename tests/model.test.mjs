@@ -13,6 +13,7 @@ import {
   substitutionMatches,
   transferMatches,
   tvPages,
+  tvDayPages,
   excerpt,
 } from "../src/lib/model.mjs";
 const manifest = JSON.parse(fs.readFileSync("public/data/manifest.json"));
@@ -184,6 +185,19 @@ test("TV pagination retains all lessons, no more than four class panels per slid
   );
   assert.ok(slides.every((s) => s.length <= 4));
   assert.equal(slides.flat().flatMap((c) => c.entries).length, 54);
+});
+test("TV day pages keep each class's whole day on one slide", () => {
+  const entries = Array.from({ length: 17 }, (_, id) => ({ id }));
+  const slides = tvDayPages(
+    [
+      ["1A", entries],
+      ["2B", entries],
+      ["3C", entries],
+    ],
+    2,
+  );
+  assert.equal(slides.length, 2);
+  assert.ok(slides.flat().every((c) => c.entries.length === 17));
 });
 test("Built assets stay within shared and plan budgets and do not ship XLSX parser", () => {
   const assets = fs.readdirSync("dist/_astro").filter((f) => f.endsWith(".js"));

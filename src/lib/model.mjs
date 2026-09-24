@@ -253,6 +253,17 @@ export function upcoming(events, date, limit = 4) {
     .sort((a, b) => a.start.localeCompare(b.start))
     .slice(0, limit);
 }
+// Ekran TV: cały dzień każdej klasy na jednym slajdzie, po `perSlide` klas.
+export function tvDayPages(rows, perSlide = 2) {
+  const slides = [];
+  for (let first = 0; first < rows.length; first += perSlide)
+    slides.push(
+      rows
+        .slice(first, first + perSlide)
+        .map(([name, entries]) => ({ name, continued: false, entries })),
+    );
+  return slides;
+}
 export function tvPages(rows, size = 2) {
   const slides = [];
   for (let first = 0; first < rows.length; first += 4) {
