@@ -18,6 +18,7 @@ const pages = [
   "wykaz-podzialow-grup",
   "sale-sg-obiekty-zewnetrzne-2026-2027",
   "materialy",
+  "przewodnik",
 ];
 for (const width of [320, 390, 768, 834, 1024, 1440])
   test(`All routes at ${width}px: loading, errors, overflow`, async ({
@@ -36,6 +37,7 @@ for (const width of [320, 390, 768, 834, 1024, 1440])
           "aktualnosci",
           "materialy",
           "sale-sg-obiekty-zewnetrzne-2026-2027",
+          "przewodnik",
         ].includes(name)
       )
         await expect(page.locator("#data-status[data-loaded]")).toContainText(

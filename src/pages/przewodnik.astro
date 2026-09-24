@@ -1,0 +1,35 @@
+---
+import Shell from "../layouts/Shell.astro";
+import { splitGuide } from "../lib/guide.mjs";
+import source from "../content/przewodnik.html?raw";
+// Plik przewodnika powstaje poza serwisem (build.py); tu tylko go osadzamy.
+const guide = splitGuide(source);
+---
+
+<Shell
+  title="Przewodnik dla nauczyciela"
+  section="Przewodnik dla nauczyciela"
+  plain
+>
+  <style is:inline set:html={guide.css}></style>
+  <style is:inline>
+    /* Odstępy daje już <main> serwisu. */
+    .guide {
+      padding-inline: 0;
+    }
+    .guide .choose {
+      padding-top: 0;
+    }
+    .guide .eyebrow {
+      margin: 0;
+    }
+    /* Długie adresy (np. nauczyciel.szkolamistrzow.info) łamią się na 320 px. */
+    .guide .hero > *,
+    .guide .short li > span {
+      min-width: 0;
+      overflow-wrap: anywhere;
+    }
+  </style>
+  <div class="guide" set:html={guide.markup} />
+  {guide.scripts.map((js) => <script is:inline set:html={js} />)}
+</Shell>

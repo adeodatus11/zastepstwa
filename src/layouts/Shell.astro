@@ -6,8 +6,10 @@ import "@fontsource/source-sans-3/latin-400.css";
 import "@fontsource/source-sans-3/latin-600.css";
 import "@fontsource/source-sans-3/latin-700.css";
 import "../styles/site.css";
-import { Image } from "astro:assets";
-import logo from "../../public/logo.png";
+import { getImage, Image } from "astro:assets";
+import tvLogo from "../../public/logo.png";
+import logoDesktop from "../assets/logo/logo-komputer.png";
+import logoPhone from "../assets/logo/logo-telefon.png";
 import fs from "node:fs";
 const publication = JSON.parse(
   fs.readFileSync("public/data/manifest.json", "utf8"),
@@ -16,7 +18,25 @@ const publicationLabel = new Date(publication.generatedAt).toLocaleString(
   "pl-PL",
   { timeZone: "Europe/Warsaw" },
 );
-const { title, section = "Pulpit", tv = false } = Astro.props;
+const {
+  title,
+  section = "Pulpit",
+  tv = false,
+  // Strona z własnym nagłówkiem (przewodnik): bez tytułu i stanu danych.
+  plain = false,
+} = Astro.props;
+// Logotypy wg CZYTAJ.txt: komputer 64 px wysokości, telefon 44 px.
+const desktopLogo = await getImage({
+  src: logoDesktop,
+  widths: [552, 1104],
+  format: "webp",
+});
+const phoneLogo = await getImage({
+  src: logoPhone,
+  widths: [242, 484],
+  format: "webp",
+});
+const guide = "/przewodnik.html";
 const menu = [
   ["Pulpit", "/index.html"],
   ["Plan", "/plan.html"],
@@ -24,10 +44,10 @@ const menu = [
   ["Dyżury", "/dyzury-nadzoru.html"],
   ["Kalendarz", "/calendar-2026-2027.html"],
   ["Linki", "/materialy.html"],
-  ["Przewodnik dla nauczyciela", "/przewodnik.html"],
+  ["Przewodnik dla nauczyciela", guide],
   ["Poczta / Outlook ↗", "https://outlook.office365.com/mail/"],
   [
-    "Biblioteka dokumentów / SharePoint ↗",
+    "Dokumenty / SharePoint ↗",
     "https://zespolszkolzawodowychnr5.sharepoint.com/sites/rokszkolny20262027/Shared%20Documents/Forms/AllItems.aspx",
   ],
 ];
@@ -45,7 +65,10 @@ const menu = [
     /><meta
       name="description"
       content="Plan lekcji, zastępstwa, dyżury i kalendarz ZSZ5 we Wrocławiu."
-    /><link rel="icon" href="/favicon.png" /><title>
+    /><link rel="icon" href="/favicon.png" sizes="32x32" /><link
+      rel="apple-touch-icon"
+      href="/apple-touch-icon.png"
+    /><title>
       {title} — Szkoła Mistrzów
     </title></head
   >
@@ -57,16 +80,48 @@ const menu = [
           class="brand"
           href="/index.html"
           aria-label="Szkoła Mistrzów — pulpit"
-          ><Image
-            src={logo}
-            alt="ZSZ5 we Wrocławiu — Szkoła Mistrzów"
-            width={480}
-            widths={[240, 480]}
-            sizes="(min-width: 768px) 240px, 220px"
-            loading="eager"
-            fetchpriority="high"
-            format="webp"
-          /></a
+          >{
+            tv ? (
+              <Image
+                src={tvLogo}
+                alt="ZSZ5 we Wrocławiu — Szkoła Mistrzów"
+                width={480}
+                widths={[240, 480]}
+                sizes="(min-width: 768px) 240px, 220px"
+                loading="eager"
+                fetchpriority="high"
+                format="webp"
+              />
+            ) : (
+              <picture>
+                <>
+                  <source
+                    media="(max-width: 767px)"
+                    srcset={phoneLogo.srcSet.attribute}
+                    sizes="242px"
+                    type="image/webp"
+                  />
+                  <img
+                    src={desktopLogo.src}
+                    srcset={desktopLogo.srcSet.attribute}
+                    sizes="552px"
+                    width="552"
+                    height="64"
+                    alt="ZSZ5 we Wrocławiu — Szkoła Mistrzów, Strefa Nauczyciela"
+                    loading="eager"
+                    fetchpriority="high"
+                    decoding="async"
+                  />
+                </>
+              </picture>
+            )
+          }</a
+        ><a
+          class="header-guide"
+          href={guide}
+          aria-current={section === "Przewodnik dla nauczyciela"
+            ? "page"
+            : undefined}>Przewodnik dla nauczyciela</a
         ><button
           class="menu-toggle"
           aria-expanded="false"
@@ -79,6 +134,7 @@ const menu = [
                 target={href.startsWith("https:") ? "_blank" : undefined}
                 rel={href.startsWith("https:") ? "noopener" : undefined}
                 aria-current={section === name ? "page" : undefined}
+                class={href === guide ? "nav-guide" : undefined}
               >
                 {name}
               </a>
@@ -94,7 +150,7 @@ const menu = [
         )
       }
       {
-        section !== "Pulpit" && (
+        section !== "Pulpit" && !plain && (
           <div class="page-heading">
             {section !== "Pulpit" && (
               <a class="back" href="/index.html">
@@ -108,9 +164,13 @@ const menu = [
             </>
           </div>
         )
-      }<div id="data-status" class="status" role="status" aria-live="polite">
-        Dane opublikowane {publicationLabel}
-      </div><slot />
+      }{
+        !plain && (
+          <div id="data-status" class="status" role="status" aria-live="polite">
+            Dane opublikowane {publicationLabel}
+          </div>
+        )
+      }<slot />
     </main>
     <footer class="site-footer">
       <span>Szkoła Mistrzów · ZSZ5 we Wrocławiu</span><div>
