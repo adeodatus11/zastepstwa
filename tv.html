@@ -322,16 +322,66 @@
         }
 
         footer {
-            height: 50px;
+            height: 240px;
             background-color: #064e3b;
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            padding: 0 30px;
-            font-size: 1rem;
+            gap: 30px;
+            padding: 20px 30px;
             color: #a7f3d0;
-            border-top: 2px solid #047857;
+            border-top: 4px solid #047857;
             flex-shrink: 0;
+        }
+
+        .footer-text {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            min-width: 0;
+        }
+
+        .footer-lead {
+            font-size: 2rem;
+            font-weight: 600;
+            color: #d1fae5;
+            line-height: 1.2;
+        }
+
+        .footer-url {
+            font-size: 3.1rem;
+            font-weight: 800;
+            color: #ffffff;
+            letter-spacing: 1px;
+            line-height: 1.2;
+            margin-top: 6px;
+            white-space: nowrap;
+        }
+
+        .footer-meta {
+            font-size: 1rem;
+            color: #6ee7b7;
+            margin-top: 14px;
+            opacity: 0.8;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .footer-qr {
+            height: 200px;
+            width: 200px;
+            flex-shrink: 0;
+            background: #ffffff;
+            border-radius: 8px;
+            padding: 4px;
+        }
+
+        .footer-qr img {
+            width: 100%;
+            height: 100%;
+            display: block;
+            image-rendering: pixelated;
         }
 
         .fullscreen-msg {
@@ -369,8 +419,14 @@
         </div>
 
         <footer>
-            <div>ZSZ5 Wrocław • Panel informacyjny TV</div>
-            <div id="update-info">Ładowanie danych...</div>
+            <div class="footer-text">
+                <div class="footer-lead">Plan lekcji dostępny także na stronie:</div>
+                <div class="footer-url">plan.szkolamistrzow.info</div>
+                <div class="footer-meta">ZSZ5 Wrocław • <span id="update-info">Ładowanie danych...</span></div>
+            </div>
+            <div class="footer-qr">
+                <img src="qr_plan.svg" alt="Kod QR: plan.szkolamistrzow.info">
+            </div>
         </footer>
     </div>
 
