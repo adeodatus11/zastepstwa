@@ -79,4 +79,13 @@ export async function init() {
   };
   clock();
   setInterval(clock, 1000);
+  // Komunikaty w stopce zmieniają się niezależnie od slajdów planu.
+  const notes = document.querySelectorAll(".tv-footer-slide");
+  let note = 0;
+  if (notes.length > 1)
+    setInterval(() => {
+      notes[note].classList.remove("active");
+      note = (note + 1) % notes.length;
+      notes[note].classList.add("active");
+    }, 10000);
 }

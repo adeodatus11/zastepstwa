@@ -7,7 +7,7 @@ import "@fontsource/source-sans-3/latin-600.css";
 import "@fontsource/source-sans-3/latin-700.css";
 import "../styles/site.css";
 import { getImage, Image } from "astro:assets";
-import tvLogo from "../../public/logo.png";
+import tvLogo from "../assets/logo/logo-komputer-biale.png";
 import logoDesktop from "../assets/logo/logo-komputer.png";
 import logoPhone from "../assets/logo/logo-telefon.png";
 import fs from "node:fs";
@@ -84,10 +84,10 @@ const menu = [
             tv ? (
               <Image
                 src={tvLogo}
-                alt="ZSZ5 we Wrocławiu — Szkoła Mistrzów"
-                width={480}
-                widths={[240, 480]}
-                sizes="(min-width: 768px) 240px, 220px"
+                alt="ZSZ5 we Wrocławiu — Szkoła Mistrzów, Plan lekcji"
+                width={1120}
+                widths={[560, 1120]}
+                sizes="560px"
                 loading="eager"
                 fetchpriority="high"
                 format="webp"
@@ -116,7 +116,17 @@ const menu = [
               </picture>
             )
           }</a
-        ><a
+        >{
+          tv && (
+            <img
+              class="tv-qr"
+              src="/qr-plan.svg"
+              width="190"
+              height="190"
+              alt="Kod QR: plan.szkolamistrzow.info"
+            />
+          )
+        }<a
           class="header-guide"
           href={guide}
           aria-current={section === "Przewodnik dla nauczyciela"
@@ -172,6 +182,61 @@ const menu = [
         )
       }<slot />
     </main>
+    {
+      tv && (
+        <footer class="tv-footer">
+          <div class="tv-footer-slides">
+            <div class="tv-footer-slide centered active">
+              <div class="tv-footer-body">
+                <p class="tv-footer-lead">
+                  Plan lekcji dostępny także na stronie:
+                </p>
+                <p class="tv-footer-url">plan.szkolamistrzow.info</p>
+              </div>
+            </div>
+            <div class="tv-footer-slide">
+              <div class="tv-footer-body">
+                <p class="tv-footer-title">
+                  Gdzie odbywa się wychowanie fizyczne?
+                </p>
+                <ul class="tv-footer-list">
+                  <li>
+                    <b>Siłownia / ping-pong</b> – piwnica, wejście środkową
+                    klatką schodową
+                  </li>
+                  <li>
+                    <b>Sala 8</b> – sala z lustrami, parter (obok portierni)
+                  </li>
+                  <li>
+                    <b>Sala 39</b> – III piętro
+                  </li>
+                </ul>
+                <p class="tv-footer-text">
+                  Część zajęć odbywa się w obiektach zewnętrznych – zgodnie z
+                  grafikiem przekazywanym przez nauczycieli WF.
+                </p>
+              </div>
+            </div>
+            <div class="tv-footer-slide">
+              <div class="tv-footer-body">
+                <p class="tv-footer-title">Nie możesz znaleźć swojej sali?</p>
+                <p class="tv-footer-text">
+                  Zeskanuj kod – prosta nawigacja po budynkach ZSZ5:
+                </p>
+                <p class="tv-footer-url small">nawigacja.szkolamistrzow.info</p>
+              </div>
+              <img
+                class="tv-qr"
+                src="/qr-nawigacja.svg"
+                width="190"
+                height="190"
+                alt="Kod QR: nawigacja.szkolamistrzow.info"
+              />
+            </div>
+          </div>
+        </footer>
+      )
+    }
     <footer class="site-footer">
       <span>Szkoła Mistrzów · ZSZ5 we Wrocławiu</span><div>
         <a href="/tv.html">Ekran TV</a><a
