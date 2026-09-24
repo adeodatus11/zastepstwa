@@ -199,6 +199,26 @@ test("TV day pages keep each class's whole day on one slide", () => {
   assert.equal(slides.length, 2);
   assert.ok(slides.flat().every((c) => c.entries.length === 17));
 });
+test("TV day pages give a long day a full column, four cells per slide", () => {
+  const short = [{ id: 1 }],
+    long = Array.from({ length: 16 }, (_, id) => ({ id }));
+  const slides = tvDayPages(
+    [
+      ["1A", short],
+      ["1B", long],
+      ["1C", short],
+      ["1D", short],
+      ["1E", long],
+      ["1F", long],
+    ],
+    4,
+    (entries) => entries.length > 10,
+  );
+  assert.deepEqual(
+    slides.map((s) => s.map((c) => c.name + (c.tall ? "*" : ""))),
+    [["1A", "1B*", "1C"], ["1D", "1E*"], ["1F*"]],
+  );
+});
 test("Built assets stay within shared and plan budgets and do not ship XLSX parser", () => {
   const assets = fs.readdirSync("dist/_astro").filter((f) => f.endsWith(".js"));
   let total = 0;

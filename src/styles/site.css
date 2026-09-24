@@ -954,8 +954,12 @@ body.tv-mode .header-guide,
 .tv-mode #tv-content {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  grid-template-rows: 1130px;
+  grid-template-rows: repeat(2, 557px);
+  grid-auto-flow: column dense;
   gap: 16px;
+}
+.tv-card.tall {
+  grid-row: span 2;
 }
 .tv-card {
   --tv-scale: 1;
@@ -983,6 +987,14 @@ body.tv-mode .header-guide,
 }
 .tv-lesson.changed {
   background: linear-gradient(90deg, rgba(255, 228, 177, 0.14), transparent);
+}
+/* Trwająca lekcja: inny kolor, bez dodatkowego miejsca. */
+.tv-lesson.now {
+  background: rgba(250, 204, 21, 0.2);
+  box-shadow: inset 5px 0 0 #facc15;
+}
+.tv-lesson.now .tv-nr {
+  color: #facc15;
 }
 .tv-lesson .tv-nr {
   margin: 0;
