@@ -15,6 +15,9 @@
     return stripAccents(compactSpaces(value)).toLowerCase();
   }
 
+  // Tytuły nie są częścią nazwiska: plan pisze "ks. Paweł Stypa", eksport "Stypa Paweł".
+  const PERSON_TITLES = new Set(["ks", "ksiadz", "dr", "mgr", "inz", "prof", "hab"]);
+
   function normalizePersonKey(value) {
     return normalizeText(
       compactSpaces(value)
@@ -24,7 +27,7 @@
     )
       .replace(/[^a-z0-9\s]/g, " ")
       .split(/\s+/)
-      .filter(Boolean)
+      .filter((token) => token && !PERSON_TITLES.has(token))
       .sort()
       .join(" ");
   }

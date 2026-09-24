@@ -113,6 +113,22 @@ test("Names of extra teachers have stable IDs", () => {
     if (e.substituteTeacherName)
       assert.ok(plan.teachers[e.substituteTeacherId]);
 });
+test("Titles do not split one teacher into two", () => {
+  // Plan pisze "ks. Paweł Stypa", eksport "Stypa Paweł" — to ta sama osoba.
+  const key = ref.normalizePersonKey;
+  assert.equal(key("ks. Paweł Stypa"), key("Stypa Paweł"));
+  assert.equal(key("dr inż. Jan Kowalski"), key("Kowalski Jan"));
+  assert.notEqual(key("Paweł Stypa"), key("Paweł Stypka"));
+  // Nieobecność nauczyciela z planu nie może tworzyć osoby "extra" o tym samym nazwisku.
+  const planKeys = new Set(
+    Object.values(plan.teachers)
+      .filter((t) => !String(t.id).startsWith("extra-"))
+      .map((t) => key(t.name)),
+  );
+  for (const t of Object.values(plan.teachers))
+    if (String(t.id).startsWith("extra-"))
+      assert.ok(!planKeys.has(key(t.name)), `Zdublowany nauczyciel: ${t.name}`);
+});
 test("Week and timezone work through Sunday, year boundary and Warsaw DST", () => {
   assert.equal(week("2026-09-13")[0], "2026-09-07");
   assert.equal(week("2027-01-01")[0], "2026-12-28");
