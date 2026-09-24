@@ -967,17 +967,17 @@ body.tv-mode .header-guide,
   overflow: hidden;
 }
 .tv-card h2 {
-  font-size: 46px;
+  font-size: 40px;
   line-height: 1.1;
   padding-bottom: 8px;
   border-bottom: 2px solid #89ad99;
 }
 .tv-lesson {
   display: grid;
-  grid-template-columns: calc(58px * var(--tv-scale)) minmax(0, 1fr);
+  grid-template-columns: calc(50px * var(--tv-scale)) minmax(0, 1fr);
   gap: 10px;
   align-items: center;
-  padding: calc(7px * var(--tv-scale)) 0;
+  padding: calc(6px * var(--tv-scale)) 0;
   border-bottom: 1px solid #456456;
   overflow-wrap: anywhere;
 }
@@ -986,7 +986,7 @@ body.tv-mode .header-guide,
 }
 .tv-lesson .tv-nr {
   margin: 0;
-  font-size: calc(30px * var(--tv-scale));
+  font-size: calc(25px * var(--tv-scale));
   font-weight: 700;
   line-height: 1;
   text-align: center;
@@ -994,13 +994,13 @@ body.tv-mode .header-guide,
 }
 .tv-nr small {
   display: block;
-  font-size: calc(15px * var(--tv-scale));
+  font-size: calc(13px * var(--tv-scale));
   font-weight: 400;
   color: #c7ddd1;
   margin-top: 2px;
 }
 .tv-lesson h3 {
-  font-size: calc(25px * var(--tv-scale));
+  font-size: calc(21px * var(--tv-scale));
   line-height: 1.15;
   margin: 0;
 }
@@ -1008,13 +1008,13 @@ body.tv-mode .header-guide,
   margin-top: 4px;
 }
 .tv-lesson p {
-  font-size: calc(20px * var(--tv-scale));
+  font-size: calc(17px * var(--tv-scale));
   line-height: 1.2;
   margin: 2px 0 0;
   color: #d8efe2;
 }
 .tv-badge {
-  font-size: calc(16px * var(--tv-scale));
+  font-size: calc(14px * var(--tv-scale));
   display: inline-block;
   vertical-align: middle;
   background: #ffe4b1;
