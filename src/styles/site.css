@@ -897,9 +897,11 @@ th {
   border-radius: 8px 8px 0 0;
   flex-shrink: 0;
 }
+/* body.tv-mode + #navigation: wygrywa z regułami menu od 1200 px. */
+body.tv-mode #navigation,
 .tv-mode nav,
 .tv-mode .menu-toggle,
-.tv-mode .header-guide,
+body.tv-mode .header-guide,
 .tv-mode .back,
 .tv-mode .eyebrow,
 .tv-mode .site-footer,

@@ -326,3 +326,13 @@ test("Timetable aligns lesson slots and duty replacements retain source details"
     "Brak zastępstw dyżurów",
   );
 });
+
+test("TV hides the site menu on wide screens", async ({ page }) => {
+  for (const width of [1080, 1440, 1920]) {
+    await page.setViewportSize({ width, height: 1920 });
+    await page.goto("/tv.html");
+    await expect(page.locator("#navigation")).toBeHidden();
+    await expect(page.locator(".site-header .header-guide")).toBeHidden();
+    await expect(page.locator(".site-header .tv-qr")).toBeVisible();
+  }
+});
