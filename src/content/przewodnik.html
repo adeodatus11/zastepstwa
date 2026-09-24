@@ -275,6 +275,71 @@ button.sp-row[aria-pressed="true"]{background:var(--sp-sel);box-shadow:inset 3px
 .wd-toast{position:absolute;left:50%;bottom:18px;transform:translate(-50%,10px);background:#107c41;color:#fff;border-radius:6px;padding:10px 16px;font-weight:600;opacity:0;transition:.25s;z-index:7;white-space:nowrap}
 .wd-toast.show{opacity:1;transform:translate(-50%,0)}
 
+/* ćwiczenie: szablony dokumentów */
+.recipe ol{margin:0;padding-left:1.3em;display:grid;gap:6px}
+.sp-row .nm{display:flex;align-items:center;justify-content:space-between;gap:8px;min-width:0}
+.sp-row .nm>span:first-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sp-row .dots{opacity:0;font-weight:800;padding:0 8px;border-radius:4px;letter-spacing:1px;flex:none}
+.sp-row.hov{background:var(--sp-sel)}
+.sp-row.hov .dots{opacity:1;background:var(--sp-bg)}
+.sp-menu,.fx-menu{position:absolute;z-index:6;background:var(--sp-bg);color:var(--sp-ink);border:1px solid var(--sp-line);border-radius:6px;box-shadow:0 8px 24px rgba(0,0,0,.2);padding:4px 0;min-width:170px;display:none;font-size:13px}
+.sp-menu.show,.fx-menu.show{display:block}
+.sp-menu div,.fx-menu div{padding:7px 14px;white-space:nowrap}
+.sp-menu .sepl{height:1px;background:var(--sp-line);padding:0;margin:4px 0}
+.sp-menu .pick,.fx-menu .pick{font-weight:700}
+.dl-pop{position:absolute;right:10px;top:8px;z-index:7;background:#fff;color:#202124;border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,.25);padding:10px 14px;display:none;gap:4px;min-width:220px;font-family:system-ui,sans-serif;font-size:13px}
+.dl-pop.show{display:grid}
+.dl-pop small{color:#5f6368}
+.dl-pop .file{display:inline-block;vertical-align:-3px;margin-right:6px}
+.bnav .bback{display:inline-block}
+.wd-rib .wd-plik{color:#252423;font-weight:600}
+.wd-back{position:absolute;inset:0;z-index:4;background:#fff;display:none;grid-template-columns:170px 1fr;color:#252423}
+.wd-back.show{display:grid}
+.bk-nav{background:#185abd;color:#fff;padding:12px 0;display:grid;align-content:start;gap:2px}
+.bk-nav div{padding:8px 16px}
+.bk-nav .bk-print.on{background:rgba(255,255,255,.22);font-weight:600}
+.bk-main{padding:20px 24px;display:grid;align-content:start;gap:12px}
+.bk-main h4{margin:0;font-size:22px;font-weight:600}
+.bk-opt{border:1px solid #e1dfdd;border-radius:6px;padding:12px 14px;display:none;gap:2px;max-width:320px}
+.bk-opt.show{display:grid}
+.bk-opt small{color:#605e5c}
+.player.narrow .wd-back{grid-template-columns:105px 1fr}
+.pr-row{display:grid;grid-template-columns:80px 1fr;gap:10px;align-items:center}
+.pr-sel{border:1px solid #8a8886;border-radius:4px;padding:5px 8px}
+.wd-page .doc-title{font-weight:700;font-size:15px}
+.desk{background:linear-gradient(135deg,#1f4e8c,#3a78d8)}
+.taskbar{position:absolute;left:0;right:0;bottom:0;height:46px;background:rgba(243,243,243,.94);display:flex;justify-content:center;align-items:center;gap:16px}
+.tb-start{width:22px;height:22px;display:grid;grid-template-columns:1fr 1fr;gap:2px}
+.tb-start i{background:#0f6cbd;border-radius:1px}
+.tb-fx{width:28px;height:21px;background:#f2c94c;border-radius:3px;box-shadow:inset 0 6px 0 #e0b23a}
+.fx{background:#f3f3f3;color:#1b1b1b;font-family:"Segoe UI",system-ui,sans-serif;font-size:13px;display:flex;flex-direction:column}
+.fx-top{display:flex;align-items:center;gap:8px;padding:9px 12px;background:#e9e9e9;font-weight:600}
+.fx-top .ico{width:16px;height:13px;background:#f2c94c;border-radius:2px;flex:none}
+.fx-top .wc{margin-left:auto;letter-spacing:12px;color:#555;font-weight:400}
+.fx-bar{padding:6px 12px;background:#fff;border-bottom:1px solid #e0e0e0}
+.fx-path{display:inline-block;border:1px solid #d0d0d0;border-radius:4px;padding:4px 10px;min-width:60%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.fx-main{flex:1;display:grid;grid-template-columns:170px 1fr;min-height:0;background:#fff}
+.fx-nav{border-right:1px solid #e0e0e0;padding:8px 0;background:#fafafa}
+.fx-nav div{padding:7px 12px;display:flex;align-items:center;gap:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fx-nav .on{background:#cce4f7}
+.fx-nav i{width:14px;height:11px;border-radius:2px;background:var(--c,#f2c94c);flex:none}
+.fx-nav .usb.in{animation:rowin .5s ease-out both}
+.fx-list{padding:8px 12px;min-width:0}
+.fx-head,.fx-row{display:grid;grid-template-columns:18px 1fr 90px;gap:8px;align-items:center;padding:6px;border-bottom:1px solid #f0f0f0}
+.fx-head{color:#666;font-size:12px}
+.fx-row span:nth-child(2){overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.fx-row.sel{background:#cce4f7}
+.fx-row.in{animation:rowin .3s ease-out both}
+.fx-empty{color:#777;padding:28px 6px}
+.fx .d{color:#666}
+.fx-toast{position:absolute;right:14px;bottom:14px;z-index:7;background:#fff;border-left:4px solid #0f6cbd;box-shadow:0 8px 24px rgba(0,0,0,.25);border-radius:6px;padding:10px 14px;display:none;gap:2px;max-width:280px}
+.fx-toast.show{display:grid}
+.fx-toast small{color:#555}
+.player.narrow .fx-main{grid-template-columns:146px 1fr}
+.player.narrow .fx-nav div{padding:7px 8px;gap:6px}
+.player.narrow .fx-head,.player.narrow .fx-row{grid-template-columns:18px 1fr}
+.player.narrow .fx-head .d,.player.narrow .fx-row .d{display:none}
+
 /* path chooser */
 .choose{padding-block:36px 8px;display:grid;gap:14px}
 .paths{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(min(100%,380px),1fr));margin-top:6px}
@@ -487,6 +552,7 @@ footer{margin-top:56px;padding-block:24px 40px;border-top:1px solid var(--line);
   <a href="#droga">Jak wejść</a>
   <a href="#mapa">Co gdzie jest</a>
   <a href="#chce">Chcę znaleźć…</a>
+  <a href="#szablony">Ćwiczenie: szablony</a>
   <a href="#obsluga">Jak korzystać</a>
   <a href="#edycja">Prośba o edycję</a>
   <a href="#zakladka">Zakładka</a>
@@ -679,6 +745,108 @@ footer{margin-top:56px;padding-block:24px 40px;border-top:1px solid var(--line);
         <div class="path"><span>szablony dokumentów</span><i>·</i><span>programy i podręczniki 2026-2027</span><i>·</i><span>rozkłady materiału 2026_2027</span></div>
         <p>Potrzebujesz wzoru pisma albo formularza? Nie szukaj starych plików na dysku, weź aktualny wzór z folderu <b>szablony dokumentów</b>.</p>
       </article>
+    </div>
+  </section>
+
+  <!-- SZABLONY -->
+  <section id="szablony">
+    <div class="sec-head">
+      <span class="eyebrow">Ćwiczenie krok po kroku</span>
+      <h2>Poćwicz na folderze „szablony dokumentów”</h2>
+      <p>W tym folderze nie ma danych uczniów, więc możesz w nim spokojnie klikać: wchodzić do folderów, wracać, pobierać i drukować. Obejrzyj trzy krótkie animacje, a potem zrób to samo u siebie.</p>
+      <p class="muted">Nazwy podfolderów i plików na animacjach są przykładowe. U siebie zobaczysz aktualną zawartość folderu.</p>
+    </div>
+
+    <div class="sub">
+      <h3>1. Wchodzenie do folderów i cofanie się</h3>
+      <div class="player" data-script="tnav" aria-label="Animacja: wchodzenie do folderu szablony dokumentów i cofanie się">
+        <div class="player-title">Animacja: wejdź do folderu i wróć na początek</div>
+      </div>
+      <div class="recipes">
+        <article class="recipe">
+          <h3>Jak wejść do folderu</h3>
+          <ol>
+            <li>Kliknij <b>nazwę</b> folderu, czyli tekst obok kolorowej ikonki. Wystarczy jedno kliknięcie.</li>
+            <li>Otworzy się zawartość folderu. Nad listą zobaczysz <b>ścieżkę</b>, np. <b>Dokumenty › szablony dokumentów</b>.</li>
+            <li>W środku mogą być kolejne foldery. Wchodzisz do nich tak samo.</li>
+          </ol>
+        </article>
+        <article class="recipe">
+          <h3>Jak się cofnąć: trzy sposoby</h3>
+          <ol>
+            <li><b>Ścieżka nad listą:</b> kliknij nazwę folderu, do którego chcesz wrócić. <b>Dokumenty</b>, pierwsze słowo ścieżki, to zawsze folder główny.</li>
+            <li><b>Strzałka ‹ (Wstecz)</b> w lewym górnym rogu przeglądarki cofa o jeden krok. Działa też skrót <kbd>Alt</kbd> + <kbd>←</kbd> (na Macu <kbd>⌘</kbd> + <kbd>[</kbd>).</li>
+            <li><b>Od nowa:</b> na pulpicie nauczyciela kliknij jeszcze raz <b>Pliki rok szkolny 2026/2027 / SharePoint</b>.</li>
+          </ol>
+        </article>
+      </div>
+    </div>
+
+    <div class="sub">
+      <h3>2. Pobieranie i drukowanie</h3>
+      <div class="player" data-script="tdl" aria-label="Animacja: pobieranie i drukowanie szablonu">
+        <div class="player-title">Animacja: pobierz plik i wydrukuj go</div>
+      </div>
+      <div class="recipes">
+        <article class="recipe">
+          <h3>Jak pobrać plik</h3>
+          <ol>
+            <li>Najedź myszką na plik. Obok nazwy pojawią się trzy kropki <b>⋯</b> (Pokaż akcje).</li>
+            <li>Kliknij <b>⋯</b> i wybierz <b>Pobierz</b>.</li>
+            <li>Plik trafi do folderu <b>Pobrane</b> na komputerze. Przeglądarka pokaże go w prawym górnym rogu (ikona strzałki w dół). Kliknij go, żeby otworzyć.</li>
+          </ol>
+          <p class="muted">Kilka plików naraz: zaznacz kółka po lewej stronie nazw i kliknij <b>Pobierz</b> na pasku nad listą. Dostaniesz jeden spakowany plik .zip.</p>
+          <p class="muted">Jeśli przeglądarka zapyta, gdzie zapisać plik, możesz od razu wybrać pendrive.</p>
+        </article>
+        <article class="recipe">
+          <h3>Jak wydrukować</h3>
+          <ol>
+            <li>Kliknij nazwę pliku. Dokument Word otworzy się w przeglądarce.</li>
+            <li>Kliknij <b>Plik</b> → <b>Drukuj</b> → <b>Drukuj ten dokument</b>. Możesz też nacisnąć <kbd>Ctrl</kbd> + <kbd>P</kbd> (na Macu <kbd>⌘</kbd> + <kbd>P</kbd>).</li>
+            <li>W oknie drukowania wybierz drukarkę i liczbę kopii, a potem kliknij <b>Drukuj</b>.</li>
+          </ol>
+          <p class="muted">Plik PDF otworzy się w podglądzie: kliknij ikonę drukarki w prawym górnym rogu albo naciśnij <kbd>Ctrl</kbd> + <kbd>P</kbd>. Żeby wydrukować, nie musisz niczego pobierać.</p>
+        </article>
+      </div>
+      <div class="note warn measure">
+        <strong class="lbl">Szablon to wzór dla wszystkich</strong>
+        <p>Nie wpisuj niczego w oryginalny plik w bibliotece: zmiany od razu zobaczą inni nauczyciele. Pobierz szablon i wypełniaj swoją kopię.</p>
+      </div>
+    </div>
+
+    <div class="sub">
+      <h3>3. Zapisywanie na pendrive</h3>
+      <div class="player" data-script="tusb" aria-label="Animacja: kopiowanie pobranego pliku na pendrive">
+        <div class="player-title">Animacja: skopiuj pobrany plik na pendrive (Windows)</div>
+      </div>
+      <div class="recipes">
+        <article class="recipe">
+          <h3>Windows</h3>
+          <ol>
+            <li>Włóż pendrive do portu USB.</li>
+            <li>Otwórz <b>Eksplorator plików</b>: ikona żółtego folderu na pasku zadań albo klawisze <kbd>Windows</kbd> + <kbd>E</kbd>.</li>
+            <li>Po lewej kliknij <b>Pobrane</b>.</li>
+            <li>Kliknij plik prawym przyciskiem myszy i wybierz <b>Kopiuj</b>.</li>
+            <li>Po lewej kliknij pendrive (np. <b>PENDRIVE (E:)</b> albo <b>Dysk USB</b>).</li>
+            <li>Kliknij prawym przyciskiem w pustym miejscu i wybierz <b>Wklej</b>.</li>
+            <li>Na koniec kliknij pendrive prawym przyciskiem, wybierz <b>Wysuń</b> i dopiero wtedy go wyjmij.</li>
+          </ol>
+          <p class="muted">Szybciej: przeciągnij plik myszką z „Pobrane” na nazwę pendrive'a w lewym panelu. Na komputerze szkolnym po skopiowaniu usuń plik z „Pobrane”.</p>
+        </article>
+        <article class="recipe">
+          <h3>Mac</h3>
+          <ol>
+            <li>Włóż pendrive. Pojawi się na biurku i w <b>Finderze</b> po lewej stronie.</li>
+            <li>Otwórz <b>Finder</b> i kliknij <b>Pobrane</b>.</li>
+            <li>Przeciągnij plik na nazwę pendrive'a w lewym panelu.</li>
+            <li>Przed wyjęciem kliknij ⏏ obok nazwy pendrive'a (Wysuń).</li>
+          </ol>
+        </article>
+      </div>
+      <div class="note lock measure">
+        <strong class="lbl">Na pendrive tylko pliki bez danych uczniów</strong>
+        <p>Szablony, programy i rozkłady materiału: tak. Opinie, dostosowania i dokumenty wychowawcy z nazwiskami uczniów: nie zapisuj ich na pendrive ani na prywatnym komputerze.</p>
+      </div>
     </div>
   </section>
 
@@ -1228,15 +1396,20 @@ const LEVELS={
   tech:{crumb:["Teczka wychowawcy 26_27","Technikum"],rows:[{n:"1 TA – J. Kowalska",c:"#6aa6e8"},{n:"2 TB – A. Nowak",c:"#6aa6e8"},{n:"3 TC – M. Wiśniewski",c:"#6aa6e8"},{n:"4 TD – K. Zielińska",c:"#6aa6e8"}]},
   klasa:{crumb:["Teczka wychowawcy 26_27","Technikum","2 TB – A. Nowak"],rows:"files"},
   zp:{crumb:["Zespoły przedmiotowe"],rows:[{n:"Humanistyczny",c:"#9b6fd6"},{n:"Przedmiotów zawodowych",c:"#9b6fd6"},{n:"Wychowania fizycznego i EDB, SZS",c:"#9b6fd6"},{n:"Języków obcych",c:"#9b6fd6"},{n:"Matematyczno-przyrodniczy",c:"#9b6fd6"}]},
-  human:{crumb:["Zespoły przedmiotowe","Humanistyczny"],rows:"files"}
+  human:{crumb:["Zespoły przedmiotowe","Humanistyczny"],rows:"files"},
+  szab:{crumb:["szablony dokumentów"],rows:[{n:"Pisma i wnioski",c:"#b3b3b3"},{n:"Wycieczki i wyjścia",c:"#b3b3b3"},{n:"Zebrania z rodzicami",c:"#b3b3b3"},{n:"Wniosek o zwolnienie z lekcji.docx",f:"docx"},{n:"Protokół – wzór.docx",f:"docx"}]},
+  wyc:{crumb:["szablony dokumentów","Wycieczki i wyjścia"],rows:[{n:"Karta wycieczki.docx",f:"docx"},{n:"Zgoda rodzica na wyjście.docx",f:"docx"},{n:"Lista uczestników.xlsx",f:"xlsx"},{n:"Regulamin wycieczki.pdf",f:"pdf"}]}
 };
+const EXT={docx:"#2b579a",xlsx:"#217346",pdf:"#d13438",drive:"#8a8886"};
 function renderSP(scene,key,animate){
   const L=LEVELS[key];
   const cr=["Dokumenty",...L.crumb];
   scene.querySelector(".sp-crumb").innerHTML=cr.map((c,i)=>`<span class="${i<cr.length-1?"up":""}" data-crumb="${esc(c)}">${esc(c)}</span>`).join('<span class="sep">›</span>');
   const rows=L.rows==="files"
     ? [["#2b579a","62%"],["#217346","48%"],["#2b579a","70%"],["#2b579a","40%"],["#217346","55%"]].map(([c,w])=>`<div class="sp-row${animate?" in":""}"><span class="file" style="--c:${c}"></span><span class="bar" style="--w:${w}"></span><span class="d"></span></div>`).join("")
-    : L.rows.map((r,i)=>`<div class="sp-row${animate?" in":""}" data-name="${esc(r.n)}" style="animation-delay:${i*30}ms"><span class="fold" style="--c:${r.c}"></span><span>${esc(r.n)}</span><span class="d"></span></div>`).join("");
+    : L.rows.map((r,i)=>r.f
+      ? `<div class="sp-row${animate?" in":""}" data-name="${esc(r.n)}" style="animation-delay:${i*30}ms"><span class="file" style="--c:${EXT[r.f]}"></span><span class="nm"><span>${esc(r.n)}</span><span class="dots" aria-hidden="true">⋯</span></span><span class="d"></span></div>`
+      : `<div class="sp-row${animate?" in":""}" data-name="${esc(r.n)}" style="animation-delay:${i*30}ms"><span class="fold" style="--c:${r.c}"></span><span>${esc(r.n)}</span><span class="d"></span></div>`).join("");
   scene.querySelector(".sp-rows").innerHTML=rows;
 }
 
@@ -1246,7 +1419,7 @@ class Player{
     root.insertAdjacentHTML("beforeend",`
       <div class="stage">
         <div class="bchrome"><div class="btabs"><span class="btab on t1"></span></div>
-          <div class="baddr"><span class="bnav">‹ › ↻</span><span class="addr"><span class="addr-text"></span></span></div></div>
+          <div class="baddr"><span class="bnav"><span class="bback">‹</span> › ↻</span><span class="addr"><span class="addr-text"></span></span></div></div>
         <div class="viewport">${def.scenes}</div>
         <svg class="cursor fast"><use href="#cur"/></svg>
         <div class="keycap">Enter ⏎</div>
@@ -1264,6 +1437,7 @@ class Player{
       </div>`);
     this.$=s=>root.querySelector(s);
     this.stage=this.$(".stage");this.cursor=this.$(".cursor");
+    if(def.chrome===false)this.$(".bchrome").style.display="none";
     this.$(".play").onclick=()=>this.playing?this.pause():this.play();
     this.$(".prev").onclick=()=>this.go(Math.max(0,this.cur-1),false);
     this.$(".next").onclick=()=>this.go(Math.min(this.steps.length-1,this.cur+1),false);
@@ -1486,7 +1660,122 @@ const MAILDEF={
   ]}
 };
 
-const DEFS={road:ROAD,folders:FOLD,edit:EDIT,mail:MAILDEF};
+/* ---- ćwiczenie: szablony dokumentów ---- */
+function placeAt(scene,el,target,dx,dy){
+  const s=scene.getBoundingClientRect(),r=target.getBoundingClientRect();
+  el.classList.add("show");const w=el.offsetWidth;
+  el.style.left=Math.max(8,Math.min(r.left-s.left+(dx||0),s.width-w-8))+"px";
+  el.style.top=(r.bottom-s.top+(dy||0))+"px";
+}
+const TNAV={
+  scenes:`<div class="scene sp" data-scene="sp">${spShell()}</div>`,
+  reset(p){p.setTabs(["rok szkolny 2026/2027 - Dokumenty"]);p.setAddr(SP_URL.replace("https://",""),true);p.scene("sp");renderSP(p.sceneEl("sp"),"root");
+    p.cursor.classList.add("fast");p.cursor.style.transform=`translate(${p.stage.clientWidth*0.6}px,${p.stage.clientHeight*0.4}px)`},
+  steps:()=>{
+    const S=p=>p.sceneEl("sp");
+    const row=(p,n)=>S(p).querySelector(`.sp-row[data-name="${CSS.escape(n)}"]`);
+    const crumb=(p,n)=>S(p).querySelector(`[data-crumb="${CSS.escape(n)}"]`);
+    const go=async(p,t,el,lvl,ax)=>{await p.click(t,el,ax);renderSP(S(p),lvl,!p.fast);await p.wait(t,500)};
+    return [
+      {cap:"To folder główny biblioteki. Kliknij nazwę folderu „szablony dokumentów”.",run:async(p,t)=>{await p.wait(t,700);await go(p,t,row(p,"szablony dokumentów"),"szab",90)}},
+      {cap:"Jesteś w folderze. Ścieżka nad listą pokazuje, gdzie jesteś: Dokumenty › szablony dokumentów.",run:async(p,t)=>{await p.move(t,crumb(p,"szablony dokumentów"));await p.wait(t,900)}},
+      {cap:"W środku są kolejne foldery. Kliknij „Wycieczki i wyjścia”.",run:async(p,t)=>{await go(p,t,row(p,"Wycieczki i wyjścia"),"wyc",90)}},
+      {cap:"Ścieżka wydłużyła się o jeden poziom. Każde słowo w ścieżce można kliknąć.",run:async(p,t)=>{await p.move(t,crumb(p,"Wycieczki i wyjścia"));await p.wait(t,900)}},
+      {cap:"Cofnij się o jeden poziom: kliknij „szablony dokumentów” w ścieżce.",run:async(p,t)=>{await go(p,t,crumb(p,"szablony dokumentów"),"szab")}},
+      {cap:"Wróć na sam początek: kliknij „Dokumenty”, pierwsze słowo ścieżki.",run:async(p,t)=>{await go(p,t,crumb(p,"Dokumenty"),"root")}},
+      {cap:"Drugi sposób na cofanie. Wejdź jeszcze raz do „szablony dokumentów”…",run:async(p,t)=>{await go(p,t,row(p,"szablony dokumentów"),"szab",90)}},
+      {cap:"…i kliknij strzałkę ‹ (Wstecz) w lewym górnym rogu przeglądarki. Wracasz o jeden krok.",run:async(p,t)=>{await go(p,t,p.$(".bback"),"root")}}
+    ]}
+};
+
+const SPMENU=`<div class="sp-menu"><div>Otwórz</div><div>Podgląd</div><div>Udostępnij</div><div>Kopiuj link</div><div class="pick">Pobierz</div><div class="sepl"></div><div>Zmień nazwę</div></div>`;
+const DLPOP=`<div class="dl-pop"><b>Pobrane pliki</b><span><span class="file" style="--c:${EXT.docx}"></span>Karta wycieczki.docx</span><small>Gotowe. Plik jest w folderze „Pobrane”.</small></div>`;
+const WDP=`<div class="scene wd" data-scene="wdp">
+    <div class="wd-top"><b>Word</b><span class="doc">Karta wycieczki.docx · Zapisano w programie SharePoint</span></div>
+    <div class="wd-rib"><span class="wd-plik">Plik</span><span>Narzędzia główne</span><span>Wstawianie</span><span>Układ</span><span class="wd-mode">Wyświetlanie ▾</span></div>
+    <div class="wd-body"><div class="wd-page"><span class="doc-title">KARTA WYCIECZKI</span><span class="bar" style="--w:95%"></span><span class="bar" style="--w:88%"></span><span class="bar" style="--w:60%"></span><span class="bar" style="--w:0;height:6px"></span><span class="bar" style="--w:90%"></span><span class="bar" style="--w:84%"></span><span class="bar" style="--w:70%"></span></div></div>
+    <div class="wd-back"><div class="bk-nav"><div>← Wróć</div><div>Nowy</div><div>Otwórz</div><div>Informacje</div><div>Zapisz jako</div><div class="bk-print">Drukuj</div><div>Udostępnij</div></div>
+      <div class="bk-main"><h4>Drukuj</h4><div class="bk-opt"><b>Drukuj ten dokument</b><small>Otwiera okno drukowania z podglądem.</small></div></div></div>
+    <div class="wd-dlg pr"><div class="wd-box"><h4>Drukuj</h4>
+      <div class="pr-row"><span>Drukarka</span><span class="pr-sel">Drukarka w pokoju nauczycielskim ▾</span></div>
+      <div class="pr-row"><span>Kopie</span><span class="pr-sel">1</span></div>
+      <div class="pr-row"><span>Strony</span><span class="pr-sel">Wszystkie</span></div>
+      <span class="wd-send pr-go">Drukuj</span></div></div>
+    <div class="wd-toast">✓ Wysłano do drukarki</div>
+  </div>`;
+const TDL={
+  scenes:`<div class="scene sp" data-scene="sp">${spShell()}${SPMENU}${DLPOP}</div>${WDP}`,
+  reset(p){p.setTabs(["rok szkolny 2026/2027 - Dokumenty"]);p.setAddr(SP_URL.replace("https://",""),true);p.scene("sp");
+    const s=p.sceneEl("sp");renderSP(s,"wyc");s.querySelector(".sp-menu").classList.remove("show");s.querySelector(".dl-pop").classList.remove("show");
+    const w=p.sceneEl("wdp");w.querySelector(".wd-back").classList.remove("show");w.querySelector(".bk-opt").classList.remove("show");w.querySelector(".bk-print").classList.remove("on");
+    w.querySelector(".pr").classList.remove("show");w.querySelector(".wd-toast").classList.remove("show");
+    p.cursor.classList.add("fast");p.cursor.style.transform=`translate(${p.stage.clientWidth*0.6}px,${p.stage.clientHeight*0.6}px)`},
+  steps:()=>{
+    const S=p=>p.sceneEl("sp"),W=p=>p.sceneEl("wdp");
+    const row=p=>S(p).querySelector('.sp-row[data-name="Karta wycieczki.docx"]');
+    return [
+      {cap:"Jesteś w folderze z szablonami. Najedź myszką na plik, który chcesz pobrać. Obok nazwy pojawią się trzy kropki.",run:async(p,t)=>{await p.wait(t,600);await p.move(t,row(p),120);row(p).classList.add("hov");await p.wait(t,700)}},
+      {cap:"Kliknij trzy kropki. Otworzy się lista poleceń.",run:async(p,t)=>{row(p).classList.add("hov");const d=row(p).querySelector(".dots");await p.click(t,d);placeAt(S(p),S(p).querySelector(".sp-menu"),d,-140,4);await p.wait(t,500)}},
+      {cap:"Wybierz „Pobierz”.",run:async(p,t)=>{await p.click(t,S(p).querySelector(".sp-menu .pick"),40);S(p).querySelector(".sp-menu").classList.remove("show");row(p).classList.remove("hov");S(p).querySelector(".dl-pop").classList.add("show");await p.wait(t,600)}},
+      {cap:"Gotowe. Plik zapisał się w folderze „Pobrane” na tym komputerze. Przeglądarka pokazuje go w prawym górnym rogu.",run:async(p,t)=>{await p.move(t,S(p).querySelector(".dl-pop"),60);await p.wait(t,1000)}},
+      {cap:"Żeby wydrukować, kliknij nazwę pliku. Otworzy się w Wordzie w przeglądarce.",run:async(p,t)=>{S(p).querySelector(".dl-pop").classList.remove("show");await p.click(t,row(p).querySelector(".nm span"),40);
+        p.addTab("Karta wycieczki.docx");p.setAddr("zespolszkolzawodowychnr5.sharepoint.com/…/Karta wycieczki.docx",true);p.scene("wdp");await p.wait(t,700)}},
+      {cap:"Kliknij „Plik” w lewym górnym rogu.",run:async(p,t)=>{await p.click(t,W(p).querySelector(".wd-plik"));W(p).querySelector(".wd-back").classList.add("show");await p.wait(t,500)}},
+      {cap:"Kliknij „Drukuj”, a potem „Drukuj ten dokument”.",run:async(p,t)=>{const w=W(p);await p.click(t,w.querySelector(".bk-print"),40);w.querySelector(".bk-print").classList.add("on");w.querySelector(".bk-opt").classList.add("show");
+        await p.wait(t,400);await p.click(t,w.querySelector(".bk-opt"),80);w.querySelector(".pr").classList.add("show");await p.wait(t,400)}},
+      {cap:"Sprawdź drukarkę i liczbę kopii, a potem kliknij „Drukuj”. Gotowe!",run:async(p,t)=>{const w=W(p);await p.move(t,w.querySelector(".pr-sel"));await p.wait(t,700);await p.click(t,w.querySelector(".pr-go"));
+        w.querySelector(".pr").classList.remove("show");w.querySelector(".wd-back").classList.remove("show");w.querySelector(".wd-toast").classList.add("show");await p.wait(t,1200)}}
+    ]}
+};
+
+const FXL={
+  pc:{title:"Ten komputer",path:"Ten komputer",rows:[["Dysk lokalny (C:)","drive",""]]},
+  dl:{title:"Pobrane",path:"Ten komputer › Pobrane",rows:[["Karta wycieczki.docx","docx","przed chwilą"],["Regulamin wycieczki.pdf","pdf","wczoraj"],["Lista uczestników.xlsx","xlsx","wczoraj"]]},
+  usb:{title:"PENDRIVE (E:)",path:"Ten komputer › PENDRIVE (E:)",rows:[]}
+};
+function renderFX(sc,key,animate,extra){
+  const L=FXL[key],rows=[...L.rows,...(extra||[])];
+  sc.querySelector(".fx-title").textContent=L.title;sc.querySelector(".fx-path").textContent=L.path;
+  sc.querySelectorAll(".fx-nav [data-fx]").forEach(d=>d.classList.toggle("on",d.dataset.fx===key));
+  sc.querySelector(".fx-list").innerHTML=`<div class="fx-head"><span></span><span>Nazwa</span><span class="d">Data</span></div>`+
+    (rows.length?rows.map(r=>`<div class="fx-row${animate?" in":""}" data-name="${esc(r[0])}"><span class="file" style="--c:${EXT[r[1]]}"></span><span>${esc(r[0])}</span><span class="d">${esc(r[2])}</span></div>`).join(""):`<div class="fx-empty">Ten folder jest pusty.</div>`);
+}
+function fxMenu(sc,items,target,dx,dy){
+  const m=sc.querySelector(".fx-menu");m.innerHTML=items.map(([l,k])=>`<div class="${k?"pick":""}">${esc(l)}</div>`).join("");placeAt(sc,m,target,dx,dy);return m;
+}
+const TUSB={
+  chrome:false,
+  scenes:`<div class="scene desk" data-scene="desk"><div class="taskbar"><span class="tb-start"><i></i><i></i><i></i><i></i></span><span class="tb-fx" aria-label="Eksplorator plików"></span></div></div>
+  <div class="scene fx" data-scene="fx">
+    <div class="fx-top"><span class="ico"></span><span class="fx-title"></span><span class="wc">– ☐ ✕</span></div>
+    <div class="fx-bar"><span class="fx-path"></span></div>
+    <div class="fx-main"><div class="fx-nav"><div data-fx="desk"><i style="--c:#3a78d8"></i>Pulpit</div><div data-fx="dl"><i style="--c:#3b8a4f"></i>Pobrane</div><div data-fx="docs"><i></i>Dokumenty</div><div data-fx="pc"><i style="--c:#8a8886"></i>Ten komputer</div><div data-fx="usb" class="usb"><i style="--c:#e8804a"></i>PENDRIVE (E:)</div></div>
+      <div class="fx-list"></div></div>
+    <div class="fx-menu"></div>
+    <div class="fx-toast"><b>Można bezpiecznie usunąć urządzenie</b><small>PENDRIVE (E:) możesz teraz wyjąć z komputera.</small></div>
+  </div>`,
+  reset(p){p.scene("desk");const f=p.sceneEl("fx");renderFX(f,"pc");const u=f.querySelector(".usb");u.style.display="none";u.classList.remove("in");
+    f.querySelector(".fx-menu").classList.remove("show");f.querySelector(".fx-toast").classList.remove("show");
+    p.cursor.classList.add("fast");p.cursor.style.transform=`translate(${p.stage.clientWidth*0.5}px,${p.stage.clientHeight*0.4}px)`},
+  steps:()=>{
+    const F=p=>p.sceneEl("fx");
+    return [
+      {cap:"Otwórz Eksplorator plików: kliknij ikonę żółtego folderu na pasku zadań albo naciśnij klawisze Windows + E.",run:async(p,t)=>{await p.wait(t,600);await p.click(t,p.sceneEl("desk").querySelector(".tb-fx"));p.scene("fx");await p.wait(t,500)}},
+      {cap:"Włóż pendrive do portu USB. Po chwili pojawi się w lewym panelu, na przykład jako „PENDRIVE (E:)”.",run:async(p,t)=>{await p.wait(t,700);const u=F(p).querySelector(".usb");u.style.display="";if(!p.fast)u.classList.add("in");await p.move(t,u,60);await p.wait(t,700)}},
+      {cap:"Kliknij „Pobrane”. Tu przeglądarka zapisuje pobrane pliki.",run:async(p,t)=>{await p.click(t,F(p).querySelector('[data-fx="dl"]'),50);renderFX(F(p),"dl",!p.fast);await p.wait(t,500)}},
+      {cap:"Kliknij pobrany plik prawym przyciskiem myszy i wybierz „Kopiuj”.",run:async(p,t)=>{const r=F(p).querySelector('.fx-row[data-name="Karta wycieczki.docx"]');await p.click(t,r,80);r.classList.add("sel");
+        const m=fxMenu(F(p),[["Otwórz"],["Wyślij do ›"],["Kopiuj",1],["Usuń"],["Właściwości"]],r,40,-6);await p.wait(t,500);await p.click(t,m.querySelector(".pick"),30);m.classList.remove("show");await p.wait(t,300)}},
+      {cap:"Teraz kliknij pendrive „PENDRIVE (E:)” w lewym panelu.",run:async(p,t)=>{await p.click(t,F(p).querySelector(".usb"),60);renderFX(F(p),"usb",!p.fast);await p.wait(t,500)}},
+      {cap:"Kliknij prawym przyciskiem w pustym miejscu i wybierz „Wklej”. Plik jest już na pendrivie.",run:async(p,t)=>{const e=F(p).querySelector(".fx-empty");await p.click(t,e,60);
+        const m=fxMenu(F(p),[["Widok ›"],["Sortuj według ›"],["Wklej",1],["Nowy ›"]],e,40,-6);await p.wait(t,500);await p.click(t,m.querySelector(".pick"),30);m.classList.remove("show");
+        renderFX(F(p),"usb",!p.fast,[["Karta wycieczki.docx","docx","przed chwilą"]]);await p.wait(t,700)}},
+      {cap:"Zanim wyjmiesz pendrive, kliknij go prawym przyciskiem i wybierz „Wysuń”. Poczekaj na komunikat.",run:async(p,t)=>{const u=F(p).querySelector(".usb");await p.click(t,u,60);
+        const m=fxMenu(F(p),[["Otwórz"],["Formatuj…"],["Wysuń",1],["Właściwości"]],u,30,-6);await p.wait(t,500);await p.click(t,m.querySelector(".pick"),30);m.classList.remove("show");
+        F(p).querySelector(".fx-toast").classList.add("show");await p.wait(t,1400)}}
+    ]}
+};
+
+const DEFS={road:ROAD,folders:FOLD,edit:EDIT,mail:MAILDEF,tnav:TNAV,tdl:TDL,tusb:TUSB};
 document.querySelectorAll(".player[data-script]").forEach(el=>new Player(el,DEFS[el.dataset.script]));
 </script>
 
