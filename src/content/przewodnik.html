@@ -1397,8 +1397,8 @@ const LEVELS={
   klasa:{crumb:["Teczka wychowawcy 26_27","Technikum","2 TB – A. Nowak"],rows:"files"},
   zp:{crumb:["Zespoły przedmiotowe"],rows:[{n:"Humanistyczny",c:"#9b6fd6"},{n:"Przedmiotów zawodowych",c:"#9b6fd6"},{n:"Wychowania fizycznego i EDB, SZS",c:"#9b6fd6"},{n:"Języków obcych",c:"#9b6fd6"},{n:"Matematyczno-przyrodniczy",c:"#9b6fd6"}]},
   human:{crumb:["Zespoły przedmiotowe","Humanistyczny"],rows:"files"},
-  szab:{crumb:["szablony dokumentów"],rows:[{n:"Pisma i wnioski",c:"#b3b3b3"},{n:"Wycieczki i wyjścia",c:"#b3b3b3"},{n:"Zebrania z rodzicami",c:"#b3b3b3"},{n:"Wniosek o zwolnienie z lekcji.docx",f:"docx"},{n:"Protokół – wzór.docx",f:"docx"}]},
-  wyc:{crumb:["szablony dokumentów","Wycieczki i wyjścia"],rows:[{n:"Karta wycieczki.docx",f:"docx"},{n:"Zgoda rodzica na wyjście.docx",f:"docx"},{n:"Lista uczestników.xlsx",f:"xlsx"},{n:"Regulamin wycieczki.pdf",f:"pdf"}]}
+  szab:{crumb:["szablony dokumentów"],rows:[{n:"dyplomy",c:"#b3b3b3"},{n:"wyjścia ze szkoły",c:"#b3b3b3"},{n:"karta obiegowa.docx",f:"docx"},{n:"wniosek o udzielenie nagany dyrektora.docx",f:"docx"},{n:"wniosek o skreślenie z listy uczniów.pdf",f:"pdf"}]},
+  wyc:{crumb:["szablony dokumentów","wyjścia ze szkoły"],rows:[{n:"zgoda na udział w zawodach.docx",f:"docx"},{n:"zgoda na udział w zawodach.pdf",f:"pdf"},{n:"zgoda na wyjście i samodzielny powrót.docx",f:"docx"},{n:"zgoda na wyjście i samodzielny powrót.pdf",f:"pdf"}]}
 };
 const EXT={docx:"#2b579a",xlsx:"#217346",pdf:"#d13438",drive:"#8a8886"};
 function renderSP(scene,key,animate){
@@ -1679,8 +1679,8 @@ const TNAV={
     return [
       {cap:"To folder główny biblioteki. Kliknij nazwę folderu „szablony dokumentów”.",run:async(p,t)=>{await p.wait(t,700);await go(p,t,row(p,"szablony dokumentów"),"szab",90)}},
       {cap:"Jesteś w folderze. Ścieżka nad listą pokazuje, gdzie jesteś: Dokumenty › szablony dokumentów.",run:async(p,t)=>{await p.move(t,crumb(p,"szablony dokumentów"));await p.wait(t,900)}},
-      {cap:"W środku są kolejne foldery. Kliknij „Wycieczki i wyjścia”.",run:async(p,t)=>{await go(p,t,row(p,"Wycieczki i wyjścia"),"wyc",90)}},
-      {cap:"Ścieżka wydłużyła się o jeden poziom. Każde słowo w ścieżce można kliknąć.",run:async(p,t)=>{await p.move(t,crumb(p,"Wycieczki i wyjścia"));await p.wait(t,900)}},
+      {cap:"W środku są kolejne foldery. Kliknij „wyjścia ze szkoły”.",run:async(p,t)=>{await go(p,t,row(p,"wyjścia ze szkoły"),"wyc",90)}},
+      {cap:"Ścieżka wydłużyła się o jeden poziom. Każde słowo w ścieżce można kliknąć.",run:async(p,t)=>{await p.move(t,crumb(p,"wyjścia ze szkoły"));await p.wait(t,900)}},
       {cap:"Cofnij się o jeden poziom: kliknij „szablony dokumentów” w ścieżce.",run:async(p,t)=>{await go(p,t,crumb(p,"szablony dokumentów"),"szab")}},
       {cap:"Wróć na sam początek: kliknij „Dokumenty”, pierwsze słowo ścieżki.",run:async(p,t)=>{await go(p,t,crumb(p,"Dokumenty"),"root")}},
       {cap:"Drugi sposób na cofanie. Wejdź jeszcze raz do „szablony dokumentów”…",run:async(p,t)=>{await go(p,t,row(p,"szablony dokumentów"),"szab",90)}},
@@ -1689,11 +1689,11 @@ const TNAV={
 };
 
 const SPMENU=`<div class="sp-menu"><div>Otwórz</div><div>Podgląd</div><div>Udostępnij</div><div>Kopiuj link</div><div class="pick">Pobierz</div><div class="sepl"></div><div>Zmień nazwę</div></div>`;
-const DLPOP=`<div class="dl-pop"><b>Pobrane pliki</b><span><span class="file" style="--c:${EXT.docx}"></span>Karta wycieczki.docx</span><small>Gotowe. Plik jest w folderze „Pobrane”.</small></div>`;
+const DLPOP=`<div class="dl-pop"><b>Pobrane pliki</b><span><span class="file" style="--c:${EXT.docx}"></span>zgoda na udział w zawodach.docx</span><small>Gotowe. Plik jest w folderze „Pobrane”.</small></div>`;
 const WDP=`<div class="scene wd" data-scene="wdp">
-    <div class="wd-top"><b>Word</b><span class="doc">Karta wycieczki.docx · Zapisano w programie SharePoint</span></div>
+    <div class="wd-top"><b>Word</b><span class="doc">zgoda na udział w zawodach.docx · Zapisano w programie SharePoint</span></div>
     <div class="wd-rib"><span class="wd-plik">Plik</span><span>Narzędzia główne</span><span>Wstawianie</span><span>Układ</span><span class="wd-mode">Wyświetlanie ▾</span></div>
-    <div class="wd-body"><div class="wd-page"><span class="doc-title">KARTA WYCIECZKI</span><span class="bar" style="--w:95%"></span><span class="bar" style="--w:88%"></span><span class="bar" style="--w:60%"></span><span class="bar" style="--w:0;height:6px"></span><span class="bar" style="--w:90%"></span><span class="bar" style="--w:84%"></span><span class="bar" style="--w:70%"></span></div></div>
+    <div class="wd-body"><div class="wd-page"><span class="doc-title">ZGODA NA UDZIAŁ W ZAWODACH</span><span class="bar" style="--w:95%"></span><span class="bar" style="--w:88%"></span><span class="bar" style="--w:60%"></span><span class="bar" style="--w:0;height:6px"></span><span class="bar" style="--w:90%"></span><span class="bar" style="--w:84%"></span><span class="bar" style="--w:70%"></span></div></div>
     <div class="wd-back"><div class="bk-nav"><div>← Wróć</div><div>Nowy</div><div>Otwórz</div><div>Informacje</div><div>Zapisz jako</div><div class="bk-print">Drukuj</div><div>Udostępnij</div></div>
       <div class="bk-main"><h4>Drukuj</h4><div class="bk-opt"><b>Drukuj ten dokument</b><small>Otwiera okno drukowania z podglądem.</small></div></div></div>
     <div class="wd-dlg pr"><div class="wd-box"><h4>Drukuj</h4>
@@ -1712,14 +1712,14 @@ const TDL={
     p.cursor.classList.add("fast");p.cursor.style.transform=`translate(${p.stage.clientWidth*0.6}px,${p.stage.clientHeight*0.6}px)`},
   steps:()=>{
     const S=p=>p.sceneEl("sp"),W=p=>p.sceneEl("wdp");
-    const row=p=>S(p).querySelector('.sp-row[data-name="Karta wycieczki.docx"]');
+    const row=p=>S(p).querySelector('.sp-row[data-name="zgoda na udział w zawodach.docx"]');
     return [
       {cap:"Jesteś w folderze z szablonami. Najedź myszką na plik, który chcesz pobrać. Obok nazwy pojawią się trzy kropki.",run:async(p,t)=>{await p.wait(t,600);await p.move(t,row(p),120);row(p).classList.add("hov");await p.wait(t,700)}},
       {cap:"Kliknij trzy kropki. Otworzy się lista poleceń.",run:async(p,t)=>{row(p).classList.add("hov");const d=row(p).querySelector(".dots");await p.click(t,d);placeAt(S(p),S(p).querySelector(".sp-menu"),d,-140,4);await p.wait(t,500)}},
       {cap:"Wybierz „Pobierz”.",run:async(p,t)=>{await p.click(t,S(p).querySelector(".sp-menu .pick"),40);S(p).querySelector(".sp-menu").classList.remove("show");row(p).classList.remove("hov");S(p).querySelector(".dl-pop").classList.add("show");await p.wait(t,600)}},
       {cap:"Gotowe. Plik zapisał się w folderze „Pobrane” na tym komputerze. Przeglądarka pokazuje go w prawym górnym rogu.",run:async(p,t)=>{await p.move(t,S(p).querySelector(".dl-pop"),60);await p.wait(t,1000)}},
       {cap:"Żeby wydrukować, kliknij nazwę pliku. Otworzy się w Wordzie w przeglądarce.",run:async(p,t)=>{S(p).querySelector(".dl-pop").classList.remove("show");await p.click(t,row(p).querySelector(".nm span"),40);
-        p.addTab("Karta wycieczki.docx");p.setAddr("zespolszkolzawodowychnr5.sharepoint.com/…/Karta wycieczki.docx",true);p.scene("wdp");await p.wait(t,700)}},
+        p.addTab("zgoda na udział w zawodach.docx");p.setAddr("zespolszkolzawodowychnr5.sharepoint.com/…/zgoda na udział w zawodach.docx",true);p.scene("wdp");await p.wait(t,700)}},
       {cap:"Kliknij „Plik” w lewym górnym rogu.",run:async(p,t)=>{await p.click(t,W(p).querySelector(".wd-plik"));W(p).querySelector(".wd-back").classList.add("show");await p.wait(t,500)}},
       {cap:"Kliknij „Drukuj”, a potem „Drukuj ten dokument”.",run:async(p,t)=>{const w=W(p);await p.click(t,w.querySelector(".bk-print"),40);w.querySelector(".bk-print").classList.add("on");w.querySelector(".bk-opt").classList.add("show");
         await p.wait(t,400);await p.click(t,w.querySelector(".bk-opt"),80);w.querySelector(".pr").classList.add("show");await p.wait(t,400)}},
@@ -1730,7 +1730,7 @@ const TDL={
 
 const FXL={
   pc:{title:"Ten komputer",path:"Ten komputer",rows:[["Dysk lokalny (C:)","drive",""]]},
-  dl:{title:"Pobrane",path:"Ten komputer › Pobrane",rows:[["Karta wycieczki.docx","docx","przed chwilą"],["Regulamin wycieczki.pdf","pdf","wczoraj"],["Lista uczestników.xlsx","xlsx","wczoraj"]]},
+  dl:{title:"Pobrane",path:"Ten komputer › Pobrane",rows:[["zgoda na udział w zawodach.docx","docx","przed chwilą"],["karta obiegowa.pdf","pdf","wczoraj"],["wniosek o skreślenie z listy uczniów.pdf","pdf","wczoraj"]]},
   usb:{title:"PENDRIVE (E:)",path:"Ten komputer › PENDRIVE (E:)",rows:[]}
 };
 function renderFX(sc,key,animate,extra){
@@ -1763,12 +1763,12 @@ const TUSB={
       {cap:"Otwórz Eksplorator plików: kliknij ikonę żółtego folderu na pasku zadań albo naciśnij klawisze Windows + E.",run:async(p,t)=>{await p.wait(t,600);await p.click(t,p.sceneEl("desk").querySelector(".tb-fx"));p.scene("fx");await p.wait(t,500)}},
       {cap:"Włóż pendrive do portu USB. Po chwili pojawi się w lewym panelu, na przykład jako „PENDRIVE (E:)”.",run:async(p,t)=>{await p.wait(t,700);const u=F(p).querySelector(".usb");u.style.display="";if(!p.fast)u.classList.add("in");await p.move(t,u,60);await p.wait(t,700)}},
       {cap:"Kliknij „Pobrane”. Tu przeglądarka zapisuje pobrane pliki.",run:async(p,t)=>{await p.click(t,F(p).querySelector('[data-fx="dl"]'),50);renderFX(F(p),"dl",!p.fast);await p.wait(t,500)}},
-      {cap:"Kliknij pobrany plik prawym przyciskiem myszy i wybierz „Kopiuj”.",run:async(p,t)=>{const r=F(p).querySelector('.fx-row[data-name="Karta wycieczki.docx"]');await p.click(t,r,80);r.classList.add("sel");
+      {cap:"Kliknij pobrany plik prawym przyciskiem myszy i wybierz „Kopiuj”.",run:async(p,t)=>{const r=F(p).querySelector('.fx-row[data-name="zgoda na udział w zawodach.docx"]');await p.click(t,r,80);r.classList.add("sel");
         const m=fxMenu(F(p),[["Otwórz"],["Wyślij do ›"],["Kopiuj",1],["Usuń"],["Właściwości"]],r,40,-6);await p.wait(t,500);await p.click(t,m.querySelector(".pick"),30);m.classList.remove("show");await p.wait(t,300)}},
       {cap:"Teraz kliknij pendrive „PENDRIVE (E:)” w lewym panelu.",run:async(p,t)=>{await p.click(t,F(p).querySelector(".usb"),60);renderFX(F(p),"usb",!p.fast);await p.wait(t,500)}},
       {cap:"Kliknij prawym przyciskiem w pustym miejscu i wybierz „Wklej”. Plik jest już na pendrivie.",run:async(p,t)=>{const e=F(p).querySelector(".fx-empty");await p.click(t,e,60);
         const m=fxMenu(F(p),[["Widok ›"],["Sortuj według ›"],["Wklej",1],["Nowy ›"]],e,40,-6);await p.wait(t,500);await p.click(t,m.querySelector(".pick"),30);m.classList.remove("show");
-        renderFX(F(p),"usb",!p.fast,[["Karta wycieczki.docx","docx","przed chwilą"]]);await p.wait(t,700)}},
+        renderFX(F(p),"usb",!p.fast,[["zgoda na udział w zawodach.docx","docx","przed chwilą"]]);await p.wait(t,700)}},
       {cap:"Zanim wyjmiesz pendrive, kliknij go prawym przyciskiem i wybierz „Wysuń”. Poczekaj na komunikat.",run:async(p,t)=>{const u=F(p).querySelector(".usb");await p.click(t,u,60);
         const m=fxMenu(F(p),[["Otwórz"],["Formatuj…"],["Wysuń",1],["Właściwości"]],u,30,-6);await p.wait(t,500);await p.click(t,m.querySelector(".pick"),30);m.classList.remove("show");
         F(p).querySelector(".fx-toast").classList.add("show");await p.wait(t,1400)}}
