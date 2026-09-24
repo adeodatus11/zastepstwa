@@ -322,28 +322,57 @@
         }
 
         footer {
-            height: 150px;
+            height: 280px;
             background-color: #064e3b;
             display: flex;
             flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 12px 30px;
+            padding: 16px 30px 10px;
             color: #a7f3d0;
             border-top: 4px solid #047857;
             flex-shrink: 0;
+        }
+
+        .footer-slides {
+            position: relative;
+            flex: 1;
+        }
+
+        .footer-slide {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            gap: 30px;
+            opacity: 0;
+            transition: opacity 0.8s ease;
+        }
+
+        .footer-slide.active {
+            opacity: 1;
+        }
+
+        .footer-slide-body {
+            flex: 1;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .footer-slide.centered .footer-slide-body {
+            align-items: center;
             text-align: center;
         }
 
         .footer-lead {
-            font-size: 1.7rem;
+            font-size: 1.9rem;
             font-weight: 600;
             color: #d1fae5;
             line-height: 1.2;
         }
 
         .footer-url {
-            font-size: 3rem;
+            font-size: 3.2rem;
             font-weight: 800;
             color: #ffffff;
             letter-spacing: 0.5px;
@@ -351,15 +380,68 @@
             white-space: nowrap;
         }
 
+        .footer-url.small {
+            font-size: 2.2rem;
+            letter-spacing: 0;
+            margin-top: 8px;
+        }
+
+        .footer-title {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: #ffffff;
+            line-height: 1.2;
+            margin-bottom: 6px;
+        }
+
+        .footer-text {
+            font-size: 1.35rem;
+            color: #d1fae5;
+            line-height: 1.3;
+        }
+
+        .footer-list {
+            list-style: none;
+            margin: 4px 0;
+            font-size: 1.35rem;
+            line-height: 1.35;
+            color: #ffffff;
+        }
+
+        .footer-list li::before {
+            content: "▸ ";
+            color: #4ade80;
+        }
+
+        .footer-list b {
+            color: #fbbf24;
+        }
+
+        .footer-qr {
+            height: 190px;
+            width: 190px;
+            flex-shrink: 0;
+            background: #ffffff;
+            border-radius: 8px;
+            padding: 4px;
+        }
+
+        .footer-qr img {
+            width: 100%;
+            height: 100%;
+            display: block;
+            image-rendering: pixelated;
+        }
+
         .footer-meta {
-            font-size: 1rem;
+            font-size: 0.9rem;
             color: #6ee7b7;
-            margin-top: 6px;
-            opacity: 0.8;
+            opacity: 0.7;
+            text-align: center;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            max-width: 100%;
+            flex-shrink: 0;
         }
 
         .fullscreen-msg {
@@ -396,8 +478,35 @@
         </div>
 
         <footer>
-            <div class="footer-lead">Plan lekcji dostępny także na stronie:</div>
-            <div class="footer-url">plan.szkolamistrzow.info</div>
+            <div class="footer-slides">
+                <div class="footer-slide centered active">
+                    <div class="footer-slide-body">
+                        <div class="footer-lead">Plan lekcji dostępny także na stronie:</div>
+                        <div class="footer-url">plan.szkolamistrzow.info</div>
+                    </div>
+                </div>
+                <div class="footer-slide">
+                    <div class="footer-slide-body">
+                        <div class="footer-title">Gdzie odbywa się wychowanie fizyczne?</div>
+                        <ul class="footer-list">
+                            <li><b>Siłownia / ping-pong</b> – piwnica, wejście środkową klatką schodową</li>
+                            <li><b>Sala 8</b> – sala z lustrami, parter (obok portierni)</li>
+                            <li><b>Sala 39</b> – III piętro</li>
+                        </ul>
+                        <div class="footer-text">Część zajęć odbywa się w obiektach zewnętrznych – zgodnie z grafikiem przekazywanym przez nauczycieli WF.</div>
+                    </div>
+                </div>
+                <div class="footer-slide">
+                    <div class="footer-slide-body">
+                        <div class="footer-title">Nie możesz znaleźć swojej sali?</div>
+                        <div class="footer-text">Zeskanuj kod – prosta nawigacja po budynkach ZSZ5:</div>
+                        <div class="footer-url small">nawigacja.szkolamistrzow.info</div>
+                    </div>
+                    <div class="footer-qr">
+                        <img src="qr_nawigacja.svg" alt="Kod QR: nawigacja.szkolamistrzow.info">
+                    </div>
+                </div>
+            </div>
             <div class="footer-meta">ZSZ5 Wrocław • <span id="update-info">Ładowanie danych...</span></div>
         </footer>
     </div>
@@ -410,6 +519,7 @@
             transfersInfo: [],
             refreshInterval: 120000,
             slideDuration: 10000,
+            footerSlideDuration: 10000,
             classesPerSlide: 4
         };
 
@@ -1136,8 +1246,20 @@
             }
         }
 
+        function startFooterRotation() {
+            const slides = document.querySelectorAll(".footer-slide");
+            if (slides.length < 2) return;
+            let current = 0;
+            setInterval(() => {
+                slides[current].classList.remove("active");
+                current = (current + 1) % slides.length;
+                slides[current].classList.add("active");
+            }, CONFIG.footerSlideDuration);
+        }
+
         window.addEventListener("load", async () => {
             startClock();
+            startFooterRotation();
             await reloadData();
             setInterval(reloadData, CONFIG.refreshInterval);
         });
