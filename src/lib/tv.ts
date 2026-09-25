@@ -54,6 +54,38 @@ function fit(el: HTMLElement) {
   }
   return scale;
 }
+// Dopasowanie do rzeczywistego ekranu: widok 1080×1920 skalowany i
+// wyśrodkowany w oknie; marginesy (ramka) z parametrów adresu, np.
+// tv.html?top=140&bottom=40&left=90&right=90. Parametr ?diag pokazuje
+// wymiary okna, żeby łatwiej dobrać marginesy na danym telewizorze.
+function setupScreen() {
+  const params = new URLSearchParams(location.search),
+    body = document.body;
+  for (const side of ["top", "bottom", "left", "right"]) {
+    const value = Number(params.get(side));
+    if (params.has(side) && Number.isFinite(value) && value >= 0)
+      body.style.setProperty(`padding-${side}`, `${Math.min(value, 400)}px`);
+  }
+  if ("scrollRestoration" in history) history.scrollRestoration = "manual";
+  const diag = params.has("diag") ? document.createElement("div") : null;
+  if (diag) {
+    diag.className = "tv-diag";
+    body.after(diag);
+  }
+  const fitScreen = () => {
+    const scale = Math.min(innerWidth / 1080, innerHeight / 1920);
+    body.style.transform =
+      scale === 1 && innerWidth === 1080 && innerHeight === 1920
+        ? ""
+        : `translate(${(innerWidth - 1080 * scale) / 2}px, ${(innerHeight - 1920 * scale) / 2}px) scale(${scale})`;
+    scrollTo(0, 0);
+    if (diag)
+      diag.textContent = `okno ${innerWidth}×${innerHeight} · DPR ${devicePixelRatio} · skala ${scale.toFixed(3)} · ekran ${screen.width}×${screen.height}`;
+  };
+  fitScreen();
+  addEventListener("resize", fitScreen);
+  setInterval(fitScreen, 60000);
+}
 export async function init() {
   let slides: any[] = [],
     index = 0,
@@ -62,6 +94,7 @@ export async function init() {
     manifest: any,
     date = "";
   const content = document.getElementById("tv-content")!;
+  setupScreen();
   function prepare() {
     date = today();
     if (date < manifest.validFrom || date > manifest.validTo) {
