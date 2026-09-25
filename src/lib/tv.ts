@@ -11,7 +11,19 @@ const nowTime = () =>
 // Grupy tej samej lekcji w jednym wierszu: numer i przedmiot raz, pod spodem grupy.
 function periods(entries: any[]) {
   const out: any[][] = [];
+  const seen = new Set<string>();
   for (const l of [...entries].sort((x, y) => x.period - y.period)) {
+    // Te same zajęcia wpisane kilka razy (np. religia łącząca klasy) — raz.
+    const key = JSON.stringify([
+      l.period,
+      l.subject,
+      l.status,
+      l.roomNames,
+      [...new Set(l.groupNames)],
+      l.teacherNames,
+    ]);
+    if (seen.has(key)) continue;
+    seen.add(key);
     const last = out.at(-1);
     if (last && last[0].period === l.period) last.push(l);
     else out.push([l]);
@@ -23,7 +35,7 @@ const badge = (l: any) =>
     ? ` <strong class="tv-badge">${l.status === "transfer" ? "Przeniesienie" : l.status === "cancelled" ? "Odwołana / później" : "Zastępstwo"}</strong>`
     : "";
 const details = (l: any) =>
-  `Sala ${esc(l.roomNames.join(" / "))}${l.groupNames.length ? " · " + esc(l.groupNames.join(", ")) : ""}${l.teacherNames.length ? " · " + esc(l.teacherNames.join(", ")) : ""}`;
+  `Sala ${esc(l.roomNames.join(" / "))}${l.groupNames.length ? " · " + esc([...new Set(l.groupNames)].join(", ")) : ""}${l.teacherNames.length ? " · " + esc(l.teacherNames.join(", ")) : ""}`;
 function card(c: any, now: string) {
   const lessons = periods(c.entries)
     .map((group) => {
