@@ -355,6 +355,37 @@ button.sp-row[aria-pressed="true"]{background:var(--sp-sel);box-shadow:inset 3px
 .path-card[aria-current="true"]{border-color:var(--green);box-shadow:0 0 0 4px var(--pale)}
 .pc-ico.spi{width:56px;height:62px}
 .pc-ico.mli{width:58px;height:55px}
+/* ścieżka 3: strona szkoły (edupage) */
+.edi{display:inline-grid;place-items:center;width:1.2em;height:1.2em;border-radius:.25em;background:#1d3f72;color:#fff;font-weight:800;font-size:.55em;letter-spacing:.02em;vertical-align:-.15em;flex:none}
+.pc-ico.edi{width:56px;height:56px;font-size:15px;border-radius:12px}
+.brandrow .edi{width:48px;height:48px;font-size:14px;border-radius:10px}
+.lg{display:inline-grid;place-items:center;width:22px;height:22px;border-radius:5px;color:#fff;font-weight:800;font-size:12px;flex:none}
+.lg-teams{background:#5059c9}
+.lg-vulcan{background:#c8102e;font-size:11px}
+.lg-sp,.lg-ol{background:center/contain no-repeat;border-radius:0}
+.lg-sp{background-image:var(--spicon)}
+.lg-ol{background-image:var(--olicon)}
+.logo-grid{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr))}
+.logo-item{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:16px 18px;display:grid;gap:8px;align-content:start}
+.logo-item .lg{width:40px;height:40px;font-size:20px;border-radius:9px}
+.logo-item .lg-sp,.logo-item .lg-ol{border-radius:0}
+.ed{background:#fff;color:#222;font-family:system-ui,-apple-system,"Segoe UI",sans-serif;font-size:13px;overflow:hidden}
+.ed-inner{transition:transform 1s ease}
+.ed-top{background:#1d3f72;color:#fff;padding:12px 16px;display:flex;align-items:center;gap:10px;font-weight:700}
+.ed-top .crest{width:30px;height:30px;border-radius:6px;background:#fff;color:#1d3f72;display:grid;place-items:center;font-size:10px;font-weight:800;flex:none}
+.ed-nav{display:flex;flex-wrap:wrap;gap:2px;background:#16335d;padding:0 8px}
+.ed-nav span{color:#dfe7f3;padding:9px 10px;white-space:nowrap}
+.ed-nav .dz{color:#fff;font-weight:700}
+.ed-nav .dz.hl{outline:3px solid var(--mark);outline-offset:-3px;border-radius:6px;background:rgba(255,255,255,.14)}
+.ed-body{padding:16px;display:grid;gap:12px}
+.ed-card{border:1px solid #e3e3e3;border-radius:8px;padding:12px;display:grid;gap:8px}
+.ed-card b{font-size:14px}
+.ed-card .bar{background:#eceff3}
+.ed-foot{background:#f2f4f7;border-top:1px solid #e0e0e0;padding:18px 16px 28px;display:grid;gap:10px}
+.ed-foot small{color:#666}
+.ed-logos{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.ed-logo{display:flex;align-items:center;gap:8px;background:#fff;border:1px solid #e0e0e0;border-radius:8px;padding:7px 11px;font-weight:600;transition:box-shadow .2s}
+.ed-logo.hl{outline:3px solid var(--mark);box-shadow:0 0 0 6px var(--mark-soft)}
 .pc-txt{display:grid;gap:1px}
 .pc-num{font-size:.75rem;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:var(--green)}
 .pc-txt b{font-size:1.35rem;line-height:1.2}
@@ -515,7 +546,7 @@ footer{margin-top:56px;padding-block:24px 40px;border-top:1px solid var(--line);
   <div class="choose">
     <span class="eyebrow">Przewodnik dla nauczycieli · rok 2026/2027</span>
     <h1>Z czym potrzebujesz pomocy?</h1>
-    <p class="lead">Wybierz jedną z dwóch ścieżek. Obie korzystają z tego samego konta szkolnego: <b>login@zsz5.edupage.org</b>, np. <b>jkowalski@zsz5.edupage.org</b>. Nie znasz swojego loginu? Zgłoś się do <b>Macieja Najwera</b>.</p>
+    <p class="lead">Wybierz jedną z trzech ścieżek. Poczta i SharePoint korzystają z tego samego konta szkolnego: <b>login@zsz5.edupage.org</b>, np. <b>jkowalski@zsz5.edupage.org</b>. Nie znasz swojego loginu? Zgłoś się do <b>Macieja Najwera</b>.</p>
     <div class="paths">
       <a class="path-card" href="#sharepoint" data-go="sharepoint">
         <span class="spi pc-ico"></span>
@@ -525,6 +556,11 @@ footer{margin-top:56px;padding-block:24px 40px;border-top:1px solid var(--line);
       <a class="path-card" href="#poczta" data-go="poczta">
         <span class="mli pc-ico"></span>
         <span class="pc-txt"><span class="pc-num">Ścieżka 2</span><b>Poczta służbowa</b><em>Outlook</em><small>Czytanie i wysyłanie szkolnych e-maili, poczta w telefonie.</small></span>
+        <span class="pc-go" aria-hidden="true">→</span>
+      </a>
+      <a class="path-card" href="#szkola" data-go="szkola">
+        <span class="edi pc-ico">ZSZ5</span>
+        <span class="pc-txt"><span class="pc-num">Ścieżka 3</span><b>Strona szkoły</b><em>zsz5.edupage.org</em><small>Gdzie jest dziennik nauczyciela i skróty do Outlooka, SharePointa, Teams i Vulcana.</small></span>
         <span class="pc-go" aria-hidden="true">→</span>
       </a>
     </div>
@@ -1288,6 +1324,109 @@ footer{margin-top:56px;padding-block:24px 40px;border-top:1px solid var(--line);
 </main>
 </div>
 
+<div class="track" id="szkola" data-track="szkola" hidden>
+<div class="wrap">
+  <div class="hero">
+    <div class="hero-text">
+      <span class="eyebrow">Ścieżka 3 · Strona internetowa szkoły</span>
+      <div class="brandrow"><span class="edi" role="img" aria-label="ZSZ5">ZSZ5</span><h2 class="h1">Strona szkoły <span class="nick">zsz5.edupage.org</span></h2></div>
+      <p class="lead">Na stronie szkoły są dwa ważne miejsca dla nauczyciela: zakładka <b>„Dziennik nauczyciel”</b> na górze oraz <b>logotypy z linkami</b> na samym dole strony: Outlook, SharePoint, Teams i Vulcan (dziennik).</p>
+    </div>
+    <div class="short">
+      <h3>Najkrótsza droga</h3>
+      <ol>
+        <li><span>Wejdź na <b>zsz5.edupage.org</b><small>Albo kliknij „Strona szkoły ↗” na dole pulpitu nauczyciela.</small></span></li>
+        <li><span><b>Dziennik:</b> kliknij na górze zakładkę <b>„Dziennik nauczyciel”</b></span></li>
+        <li><span><b>Poczta, dokumenty, Teams, Vulcan:</b> przewiń na sam dół strony i kliknij logo</span></li>
+      </ol>
+    </div>
+  </div>
+</div>
+<nav class="toc" aria-label="Spis treści: strona szkoły"><div>
+  <span class="toc-tag"><span class="edi">ZSZ5</span> Strona szkoły</span>
+  <a href="#s-wejscie">Jak wejść</a>
+  <a href="#s-dziennik">Dziennik</a>
+  <a href="#s-linki">Linki na dole</a>
+  <a href="#s-problemy">Problemy</a>
+</div></nav>
+<main class="wrap">
+  <section id="s-wejscie">
+    <div class="sec-head">
+      <span class="eyebrow">Jak wejść</span>
+      <h2>Od paska adresu do linków na dole strony</h2>
+      <p>Obejrzyj animację. Możesz ją zatrzymać i przewijać strzałkami.</p>
+      <p class="muted">Animacja pokazuje uproszczony wygląd strony szkoły. Kolory i układ mogą się trochę różnić, ale zakładka i logotypy są w tych samych miejscach.</p>
+    </div>
+    <div class="player" data-script="school" aria-label="Animacja: strona szkoły, dziennik i linki na dole">
+      <div class="player-title">Animacja: strona szkoły krok po kroku</div>
+    </div>
+    <div class="urlbox"><strong>Strona szkoły</strong><code id="s-url">zsz5.edupage.org</code><button class="btn ghost" data-copy="s-url">Kopiuj</button></div>
+    <p class="muted measure">Nie musisz wpisywać „https://” ani „www”. Na pulpicie nauczyciela link <b>Strona szkoły ↗</b> jest w stopce, na samym dole.</p>
+  </section>
+
+  <section id="s-dziennik">
+    <div class="sec-head">
+      <span class="eyebrow">Dziennik</span>
+      <h2>Zakładka „Dziennik nauczyciel” na górze strony</h2>
+      <p>Na górze strony jest pasek z zakładkami. Kliknij <b>„Dziennik nauczyciel”</b>, żeby przejść do dziennika elektronicznego dla nauczycieli.</p>
+    </div>
+    <div class="notes">
+      <div class="note">
+        <strong class="lbl">Na telefonie</strong>
+        <p>Pasek zakładek może być schowany pod przyciskiem menu (☰) w rogu strony. Stuknij go, a zobaczysz „Dziennik nauczyciel”.</p>
+      </div>
+      <div class="note">
+        <strong class="lbl">Druga droga do dziennika</strong>
+        <p>Do dziennika Vulcan prowadzi też logo <b>Vulcan</b> w linkach na dole strony.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="s-linki">
+    <div class="sec-head">
+      <span class="eyebrow">Linki na dole strony</span>
+      <h2>Cztery logotypy: co otwiera każde z nich</h2>
+      <p>Przewiń stronę szkoły <b>na sam dół</b>. W linkach są logotypy usług, z których korzystasz w pracy. Kliknij logo, a strona otworzy się w nowej karcie.</p>
+    </div>
+    <div class="logo-grid">
+      <div class="logo-item"><span class="lg lg-ol" role="img" aria-label="Logo Outlook"></span><h3>Outlook</h3><p>Poczta służbowa. Logujesz się kontem szkolnym. <a href="#poczta">Więcej o poczcie</a></p></div>
+      <div class="logo-item"><span class="lg lg-sp" role="img" aria-label="Logo SharePoint"></span><h3>SharePoint</h3><p>Pliki na rok szkolny 2026/2027: teczki, dostosowania, szablony. Logujesz się kontem szkolnym. <a href="#sharepoint">Więcej o SharePoincie</a></p></div>
+      <div class="logo-item"><span class="lg lg-teams" aria-hidden="true">T</span><h3>Teams</h3><p>Zespoły, czaty i spotkania online. Logujesz się tym samym kontem szkolnym.</p></div>
+      <div class="logo-item"><span class="lg lg-vulcan" aria-hidden="true">V</span><h3>Vulcan</h3><p>Dziennik elektroniczny. Logowanie do dziennika może być inne niż do konta szkolnego Microsoft.</p></div>
+    </div>
+    <div class="note measure">
+      <strong class="lbl">To samo, co na pulpicie nauczyciela</strong>
+      <p>Outlook i SharePoint otworzysz też z górnego menu pulpitu nauczyciela: <b>Poczta / Outlook</b> i <b>Pliki rok szkolny 2026/2027 / SharePoint</b>. Wybierz drogę, która jest dla Ciebie wygodniejsza.</p>
+    </div>
+  </section>
+
+  <section id="s-problemy">
+    <div class="sec-head">
+      <span class="eyebrow">Coś nie działa</span>
+      <h2>Najczęstsze problemy</h2>
+    </div>
+    <div class="faq">
+      <details>
+        <summary>Nie widzę logotypów na dole strony</summary>
+        <div><p>Przewiń stronę do samego końca, pod wszystkie aktualności. Na telefonie logotypy mogą być ułożone jeden pod drugim, więc przewiń jeszcze niżej.</p></div>
+      </details>
+      <details>
+        <summary>Po kliknięciu logo widzę okno logowania Microsoft</summary>
+        <div><p>Tak ma być przy Outlooku, SharePoincie i Teams. Zaloguj się kontem szkolnym <b>login@zsz5.edupage.org</b>. Jeśli widzisz swoje prywatne konto, zobacz <a href="#problemy">„Coś nie działa” w ścieżce SharePoint</a>.</p></div>
+      </details>
+      <details>
+        <summary>Nie pamiętam danych do dziennika Vulcan</summary>
+        <div><p>Dziennik może mieć osobne logowanie. Na ekranie logowania dziennika użyj opcji przypomnienia hasła albo napisz do nas (niżej).</p></div>
+      </details>
+    </div>
+    <div class="contact">
+      <h3>Nadal nie działa?</h3>
+      <p>Napisz do <b>Macieja Fludera</b> lub <b>Macieja Najwera</b> i opisz, co jest nie tak: co klikasz i jaki komunikat widzisz.</p>
+    </div>
+  </section>
+</main>
+</div>
+
 <div class="wrap"><footer>
   <p>Przewodnik dla nauczycieli Zespołu Szkół Zawodowych nr 5 we Wrocławiu · rok szkolny 2026/2027</p>
 </footer></div>
@@ -1798,7 +1937,42 @@ const TUSB={
     ]}
 };
 
-const DEFS={road:ROAD,folders:FOLD,edit:EDIT,mail:MAILDEF,tnav:TNAV,tdl:TDL,tusb:TUSB};
+/* ---- ścieżka 3: strona szkoły ---- */
+const ED_LOGOS=[["ol","Outlook"],["sp","SharePoint"],["teams","Teams"],["vulcan","Vulcan"]];
+const SCHOOL={
+  scenes:`<div class="scene" data-scene="blank" style="background:var(--br-tab)"></div>
+  <div class="scene ed" data-scene="ed"><div class="ed-inner">
+    <div class="ed-top"><span class="crest">ZSZ5</span>Zespół Szkół Zawodowych nr 5 we Wrocławiu</div>
+    <div class="ed-nav"><span>Strona główna</span><span>O szkole</span><span>Rekrutacja</span><span>Uczniowie</span><span>Rodzice</span><span class="dz">Dziennik nauczyciel</span></div>
+    <div class="ed-body">
+      ${["Aktualności","Ogłoszenia","Kalendarz wydarzeń","Galeria"].map((h,i)=>`<div class="ed-card"><b>${h}</b><span class="bar" style="--w:${92-i*6}%"></span><span class="bar" style="--w:${78-i*5}%"></span><span class="bar" style="--w:${55+i*4}%"></span></div>`).join("")}
+    </div>
+    <div class="ed-foot"><small>Linki</small><div class="ed-logos">${ED_LOGOS.map(([k,n])=>`<span class="ed-logo" data-logo="${k}"><span class="lg lg-${k}">${k==="teams"?"T":k==="vulcan"?"V":""}</span>${n}</span>`).join("")}</div>
+      <small>© Zespół Szkół Zawodowych nr 5 we Wrocławiu</small></div>
+  </div></div>
+  <div class="scene sp" data-scene="sp">${spShell()}</div>`,
+  reset(p){p.setTabs(["Nowa karta"]);p.setAddr("Wyszukaj lub wpisz adres");p.focusAddr(false);p.scene("blank");
+    const e=p.sceneEl("ed"),inner=e.querySelector(".ed-inner");inner.style.transition="none";inner.style.transform="";void inner.offsetHeight;inner.style.transition="";
+    e.querySelectorAll(".hl").forEach(x=>x.classList.remove("hl"));renderSP(p.sceneEl("sp"),"root");
+    p.cursor.classList.add("fast");p.cursor.style.transform=`translate(${p.stage.clientWidth*0.55}px,${p.stage.clientHeight*0.55}px)`},
+  steps:()=>{
+    const E=p=>p.sceneEl("ed");
+    return [
+      {cap:"Otwórz przeglądarkę i kliknij pasek adresu na samej górze okna.",run:async(p,t)=>{await p.wait(t,600);await p.click(t,p.$(".addr"),120);p.focusAddr(true);p.setAddr("",true)}},
+      {cap:"Wpisz adres strony szkoły: zsz5.edupage.org i naciśnij Enter.",run:async(p,t)=>{await p.type(t,p.$(".addr-text"),"zsz5.edupage.org");p.$(".addr-text").classList.add("typed");await p.key(t,"Enter ⏎");
+        p.focusAddr(false);p.setTitle("Zespół Szkół Zawodowych nr 5");p.scene("ed");await p.wait(t,700)}},
+      {cap:"Na górze strony, w pasku zakładek, jest „Dziennik nauczyciel”. To wejście do dziennika elektronicznego.",run:async(p,t)=>{const d=E(p).querySelector(".dz");await p.move(t,d);d.classList.add("hl");await p.wait(t,1200)}},
+      {cap:"Skróty do poczty, dokumentów, Teams i dziennika Vulcan są na samym dole strony. Przewiń w dół.",run:async(p,t)=>{E(p).querySelector(".dz").classList.remove("hl");
+        const e=E(p),inner=e.querySelector(".ed-inner");if(p.fast)inner.style.transition="none";
+        inner.style.transform=`translateY(${-Math.max(0,inner.scrollHeight-e.clientHeight)}px)`;void inner.offsetHeight;if(p.fast)inner.style.transition="";await p.wait(t,1200)}},
+      {cap:"Tu są logotypy: Outlook (poczta), SharePoint (dokumenty), Teams oraz Vulcan (dziennik).",run:async(p,t)=>{for(const [k] of ED_LOGOS){const l=E(p).querySelector(`[data-logo="${k}"]`);
+        await p.move(t,l);l.classList.add("hl");await p.wait(t,650);l.classList.remove("hl")}}},
+      {cap:"Kliknij logo, na przykład SharePoint. Otworzy się w nowej karcie. Jeśli trzeba, zaloguj się kontem szkolnym.",run:async(p,t)=>{const l=E(p).querySelector('[data-logo="sp"]');l.classList.add("hl");await p.click(t,l);l.classList.remove("hl");
+        p.addTab("rok szkolny 2026/2027 - Dokumenty");p.setAddr(SP_URL.replace("https://",""),true);p.scene("sp");await p.wait(t,900)}}
+    ]}
+};
+
+const DEFS={road:ROAD,folders:FOLD,edit:EDIT,mail:MAILDEF,tnav:TNAV,tdl:TDL,tusb:TUSB,school:SCHOOL};
 document.querySelectorAll(".player[data-script]").forEach(el=>new Player(el,DEFS[el.dataset.script]));
 </script>
 
