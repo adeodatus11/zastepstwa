@@ -2,6 +2,47 @@
 
 Instrukcja dla Claude i innych agentów realizujących zleconą przez użytkownika aktualizację. Doprowadź ją do publikacji i sprawdzenia stron. Nie kończ na przygotowaniu plików ani wykonaniu commita. Aktualizacja nie obejmuje zmian ustawień dostępu, historii Git ani wysyłania wiadomości do zewnętrznych odbiorców.
 
+## 0. Zwykła aktualizacja — strona `aktualizuj.html`
+
+Użytkownik aktualizuje zastępstwa sam na https://nauczyciel.szkolamistrzow.info/aktualizuj.html
+(strona poza menu i wyszukiwarkami):
+
+1. Wrzuca oba surowe eksporty. Przeglądarka czyta je i czyści **lokalnie**
+   (`src/lib/update/sanitize.mjs` — ten sam wynik co `scripts/privacy_xlsx.py`,
+   pilnuje tego `tests/update.test.mjs`). Surowy plik nie opuszcza komputera.
+2. Strona pokazuje podsumowanie i kontrole (`src/lib/update/checks.mjs`):
+   - **błędy** (brak kolumn, nieczytelny okres, niekompletne wiersze) blokują publikację;
+   - **uwagi** wymagają potwierdzenia „Przejrzałem uwagi — publikuj mimo to”:
+     - złączenie grup — sala musi być salą grupy, do której się dołącza
+       (tam, gdzie zastępca uczy wtedy według planu); wyjątek: wychowanie fizyczne;
+     - każde złączenie grup (także z inną klasą) — forma płatności `Bezpłatne`;
+     - zajęcia biblioteczne — `Bezpłatne`;
+     - różnice wobec opublikowanej paczki: krótszy okres, znikające zastępstwa
+       i przeniesienia, nadpisanie ręcznej poprawki (`złączenie grup` w uwagach).
+   Złączenie rozpoznawane jest po frazie `złączenie grup` w uwagach albo po tym,
+   że zastępca ma w planie własną lekcję w tym czasie (i nie jest z niej zwolniony
+   w tym samym eksporcie).
+3. „Opublikuj na obu stronach” wysyła oczyszczone pliki jednym commitem na
+   `przebudowa` (token użytkownika, trzymany tylko w jego przeglądarce).
+   Workflow `site.yml` buduje i wdraża serwis nauczyciela, a zadanie
+   `plan-uczniowski` przebudowuje `student-changes.json` w repozytorium planu
+   (`scripts/plan_uczniowski.sh` — generator, kontrole ze skilla, test
+   `test_student_changes.cjs`) i wypycha go na `main`. Strona śledzi przebieg.
+
+Wymagane jednorazowo:
+
+| Co | Gdzie | Uprawnienia |
+|---|---|---|
+| token do strony | GitHub → Settings → Developer settings → Fine-grained tokens; wkleja się go w polu na stronie | tylko repozytorium `zastepstwa`: Contents — Read and write, Actions — Read |
+| sekret `PLAN_REPO_TOKEN` | `zastepstwa` → Settings → Secrets and variables → Actions | fine-grained token tylko do `plan-4-maja-2026`: Contents — Read and write |
+
+Bez sekretu zadanie `plan-uczniowski` kończy się błędem z czytelnym komunikatem,
+a serwis nauczyciela i tak się publikuje. Ręczna aktualizacja przez Claude według
+dalszej części tej instrukcji nadal działa — każdy push na `przebudowa`
+przebuduje też plan uczniowski, więc `student-changes.json` edytowany ręcznie
+w repozytorium planu zostanie nadpisany. Ręczne poprawki wpisuj do oczyszczonych
+XLSX w `zastepstwa`, nie do JSON.
+
 ## 1. Kontekst i repozytoria
 
 ### Serwis nauczyciela i ekran TV

@@ -27,6 +27,8 @@ Nie otwieraj plików przez `file://` ani nie serwuj głównego katalogu jako now
 
 ## Aktualizacja danych
 
+Zastępstwa i przeniesienia aktualizuje się przez stronę `/aktualizuj.html`: czyści eksporty w przeglądarce, sprawdza je (m.in. sale i płatność przy złączeniu grup, zajęcia biblioteczne) i publikuje na obu stronach — szczegóły w `INSTRUKCJA_AKTUALIZACJI_ZASTEPSTW.md`, sekcja 0.
+
 `publication.json` jest rejestrem źródeł oraz okresów obowiązywania. Dotychczasowe pliki Excel/XML pozostają wejściem; nie przepisujemy ich ręcznie do JSON.
 
 | Co aktualizujesz | Co zmienić |

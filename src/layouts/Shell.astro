@@ -24,6 +24,8 @@ const {
   tv = false,
   // Strona z własnym nagłówkiem (przewodnik): bez tytułu i stanu danych.
   plain = false,
+  // Strona robocza (aktualizacja zastępstw): poza wyszukiwarkami.
+  noindex = false,
 } = Astro.props;
 // Logotypy wg CZYTAJ.txt: komputer 64 px wysokości, telefon 44 px.
 const desktopLogo = await getImage({
@@ -65,10 +67,11 @@ const menu = [
     /><meta
       name="description"
       content="Plan lekcji, zastępstwa, dyżury i kalendarz ZSZ5 we Wrocławiu."
-    /><link rel="icon" href="/favicon.png" sizes="32x32" /><link
-      rel="apple-touch-icon"
-      href="/apple-touch-icon.png"
-    /><title>
+    />{noindex && <meta name="robots" content="noindex, nofollow" />}<link
+      rel="icon"
+      href="/favicon.png"
+      sizes="32x32"
+    /><link rel="apple-touch-icon" href="/apple-touch-icon.png" /><title>
       {title} — Szkoła Mistrzów
     </title></head
   >

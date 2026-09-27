@@ -61,3 +61,53 @@ jobs:
     steps:
       - uses: actions/deploy-pages@v4
         id: deployment
+  plan-uczniowski:
+    # Plan uczniowski w osobnym repozytorium: po udanym wdrożeniu serwisu
+    # nauczyciela przebudowuje student-changes.json z tych samych plików.
+    needs: deploy
+    runs-on: ubuntu-latest
+    concurrency:
+      group: plan-uczniowski
+      cancel-in-progress: false
+    env:
+      PLAN_REPO_TOKEN: ${{ secrets.PLAN_REPO_TOKEN }}
+    steps:
+      - name: Sprawdź dostęp do repozytorium planu
+        if: env.PLAN_REPO_TOKEN == ''
+        run: |
+          echo "::error::Brak sekretu PLAN_REPO_TOKEN — plan.szkolamistrzow.info nie został zaktualizowany. Instrukcja: INSTRUKCJA_AKTUALIZACJI_ZASTEPSTW.md, sekcja o stronie aktualizacji."
+          exit 1
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          repository: adeodatus11/plan-4-maja-2026
+          ref: main
+          path: plan
+          token: ${{ secrets.PLAN_REPO_TOKEN }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements-build.txt
+      - run: npm install --prefix "$RUNNER_TEMP/jsdom" --no-save --no-package-lock jsdom@26.1.0
+      - name: Zbuduj, sprawdź i wypchnij nakładkę zmian
+        env:
+          NODE_PATH: ${{ runner.temp }}/jsdom/node_modules
+        run: |
+          git -C plan config user.name "github-actions[bot]"
+          git -C plan config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          for attempt in 1 2 3; do
+            scripts/plan_uczniowski.sh
+            if git -C plan diff --quiet -- student-changes.json; then
+              echo "Plan uczniowski już aktualny."
+              exit 0
+            fi
+            git -C plan commit -m "Aktualizacja zastępstw z serwisu nauczyciela" -m "Źródło: ${{ github.repository }}@${{ github.sha }}" -- student-changes.json
+            git -C plan push origin HEAD:main && exit 0
+            git -C plan fetch origin main
+            git -C plan reset --hard origin/main
+          done
+          echo "::error::Nie udało się wypchnąć planu uczniowskiego po 3 próbach."
+          exit 1

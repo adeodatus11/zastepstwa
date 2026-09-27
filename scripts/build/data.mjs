@@ -46,6 +46,12 @@ const teachers = map("teacher", (n) => ({
 }));
 const classes = map("class", (n) => a(n, "name")),
   rooms = map("classroom", (n) => a(n, "name")),
+  // Eksport dziennika pisze sale i oddziały skrótem (prs, 3K); strona
+  // aktualizacji porównuje go z planem, więc skróty trafiają do danych.
+  shorts = {
+    rooms: map("classroom", (n) => a(n, "short")),
+    classes: map("class", (n) => a(n, "short")),
+  },
   groups = map("group", (n) => a(n, "name")),
   subjects = map("subject", (n) => a(n, "name"));
 const periods = nodes("period")
@@ -302,7 +308,17 @@ for (const match of legacy.matchAll(
 if (!lessons.length || !calendar.length || !supervision.length)
   throw Error("Puste wymagane dane");
 const payloads = {
-  plan: { teachers, classes, rooms, groups, periods, lessons, duties, aliases },
+  plan: {
+    teachers,
+    classes,
+    rooms,
+    groups,
+    periods,
+    lessons,
+    duties,
+    aliases,
+    shorts,
+  },
   changes,
   calendar,
   contacts: {

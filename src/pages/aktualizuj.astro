@@ -1,0 +1,221 @@
+---
+import Shell from "../layouts/Shell.astro";
+---
+
+<Shell title="Aktualizacja zastępstw" section="Aktualizacja zastępstw" noindex>
+  <p slot="intro">
+    Wrzuć dwa eksporty z dziennika:
+    <b>InformacjeOZastepstwach</b> i <b>InformacjeOPrzeniesieniach</b>. Pliki są
+    czytane i czyszczone w tej przeglądarce — na GitHuba trafiają tylko wersje
+    bez nazw dzienników uczniów. Po publikacji obie strony aktualizują się same.
+  </p>
+  <div class="update">
+    <section class="card" aria-labelledby="step-files">
+      <h2 id="step-files">1. Pliki z dziennika</h2>
+      <label id="drop" class="drop" for="files">
+        <span>Przeciągnij tu oba pliki .xlsx albo</span>
+        <span class="button">wybierz z dysku</span>
+        <input
+          id="files"
+          type="file"
+          accept=".xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+          multiple
+        />
+      </label>
+      <ul id="file-list" class="file-list"></ul>
+      <p id="files-status" class="status" role="status" aria-live="polite"></p>
+    </section>
+    <section id="review" class="card" aria-labelledby="step-review" hidden>
+      <h2 id="step-review">2. Kontrola paczki</h2>
+      <dl id="summary" class="summary"></dl>
+      <p id="review-status" class="status" role="status" aria-live="polite"></p>
+      <div id="messages"></div>
+    </section>
+    <section class="card" aria-labelledby="step-publish">
+      <h2 id="step-publish">3. Publikacja</h2>
+      <label for="token">Token GitHub</label>
+      <input id="token" type="password" autocomplete="off" spellcheck="false" />
+      <p class="meta">
+        Token dostępu do repozytorium <span id="repo"></span>. Zostaje w tej
+        przeglądarce i jest wysyłany tylko do api.github.com.
+      </p>
+      <div class="row">
+        <label class="check"
+          ><input id="remember" type="checkbox" /> Zapamiętaj na tym komputerze</label
+        ><button id="forget" type="button">Usuń token</button>
+      </div>
+      <label id="confirm-row" class="check confirm" hidden
+        ><input id="confirm" type="checkbox" /> Przejrzałem uwagi — publikuj mimo
+        to</label
+      >
+      <div class="row">
+        <button id="publish" class="primary" type="button" disabled
+          >Opublikuj na obu stronach</button
+        ><button id="download" type="button" disabled
+          >Pobierz oczyszczone pliki</button
+        >
+      </div>
+      <p id="publish-status" class="status" role="status" aria-live="polite">
+      </p>
+      <ul id="jobs" class="jobs"></ul>
+    </section>
+  </div>
+  <style>
+    .update {
+      display: grid;
+      gap: 20px;
+      max-width: 900px;
+    }
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 20px;
+      min-width: 0;
+    }
+    .card h2 {
+      margin: 0 0 12px;
+      font-size: 1.25rem;
+    }
+    .drop {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 12px;
+      padding: 24px;
+      border: 2px dashed #879b90;
+      border-radius: var(--radius);
+      cursor: pointer;
+    }
+    .drop.over,
+    .drop:focus-within {
+      border-color: var(--green);
+      background: var(--pale);
+    }
+    .drop input {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      opacity: 0;
+    }
+    .file-list,
+    .jobs {
+      padding-left: 20px;
+      overflow-wrap: anywhere;
+    }
+    .file-list :global(.missing) {
+      color: var(--muted);
+    }
+    .summary {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+      gap: 8px;
+      margin: 0 0 16px;
+    }
+    .summary :global(div) {
+      background: var(--pale);
+      border-radius: 8px;
+      padding: 8px 12px;
+    }
+    .summary :global(dt) {
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+    .summary :global(dd) {
+      margin: 0;
+      font-weight: 700;
+    }
+    .update :global(.status.ok),
+    .update :global(.status.warning) {
+      padding: 14px 18px;
+      border-radius: 6px;
+      margin: 16px 0;
+    }
+    .update :global(.status.ok) {
+      background: var(--pale);
+      color: var(--dark);
+      border-left: 3px solid var(--green);
+    }
+    .update :global(.status.warning) {
+      background: #fff5e8;
+      color: var(--warning);
+      border-left: 3px solid #b46320;
+    }
+    .update :global(.check-group h3) {
+      font-size: 1rem;
+      margin: 16px 0 4px;
+    }
+    .update :global(.check-group h3 span) {
+      color: var(--muted);
+      font-weight: 400;
+    }
+    .update :global(.check-group ul) {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: grid;
+      gap: 6px;
+    }
+    .update :global(.check-group li) {
+      padding: 8px 12px;
+      border-radius: 6px;
+      border-left: 3px solid var(--line);
+      background: var(--bg);
+      overflow-wrap: anywhere;
+    }
+    .update :global(.check-error) {
+      border-left-color: var(--red) !important;
+    }
+    .update :global(.check-warn) {
+      border-left-color: #b46320 !important;
+    }
+    .update :global(.check-level) {
+      font-weight: 700;
+    }
+    .update :global(.check-error .check-level) {
+      color: var(--red);
+    }
+    .update :global(.check-warn .check-level) {
+      color: var(--warning);
+    }
+    .update :global(.job-ok) {
+      color: var(--dark);
+    }
+    .update :global(.job-fail) {
+      color: var(--red);
+    }
+    label[for="token"] {
+      font-weight: 600;
+      display: block;
+      margin-bottom: 4px;
+    }
+    .row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+      margin: 12px 0;
+    }
+    .check {
+      display: inline-flex;
+      gap: 8px;
+      align-items: center;
+      min-height: 44px;
+    }
+    .check input {
+      width: auto;
+      min-height: 0;
+    }
+    .confirm {
+      font-weight: 600;
+      color: var(--warning);
+    }
+    button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  </style>
+  <script>
+    import "../lib/update/page.mjs";
+  </script>
+</Shell>
