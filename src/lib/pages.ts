@@ -8,6 +8,7 @@ import {
   esc,
   norm,
   upcoming,
+  week,
   DAYS,
 } from "./model.mjs";
 const get = (id: string) => document.getElementById(id)!;
@@ -30,6 +31,10 @@ function specialists(data: any) {
     }),
   );
 }
+// Wpisy nadzoru mają konkretną datę; grafik specjalistów powtarza się co tydzień.
+const onDate = (e: any, date: string) =>
+  e.date ? e.date === date : e.day === dayOf(date);
+const shortDate = (date: string) => `${date.slice(8, 10)}.${date.slice(5, 7)}`;
 function current(entries: any[], validity?: any) {
   if (validity && today() > validity.validTo)
     return `<p class="notice">Grafik obowiązywał do ${esc(validity.validTo)}. Oczekujemy na aktualizację.</p>`;
@@ -42,7 +47,7 @@ function current(entries: any[], validity?: any) {
     }).format(new Date());
   const active = entries.filter(
     (e) =>
-      e.day === dayOf(date) &&
+      onDate(e, date) &&
       e.start <= parts &&
       e.end > parts &&
       (!validity || date >= validity.validFrom),
@@ -51,7 +56,7 @@ function current(entries: any[], validity?: any) {
   for (let i = 0; i < 8; i++) {
     const next = addDays(date, i),
       item = entries
-        .filter((e) => e.day === dayOf(next) && (i > 0 || e.start > parts))
+        .filter((e) => onDate(e, next) && (i > 0 || e.start > parts))
         .sort((a, b) => a.start.localeCompare(b.start))[0];
     if (
       item &&
@@ -191,38 +196,75 @@ export async function init(page: string) {
     return;
   }
   let data: any;
+  const supervision = page === "dyzury-nadzoru";
   const sel = get("contact-day") as HTMLSelectElement;
-  sel.value = String(
-    dayOf(today()) >= 1 && dayOf(today()) <= 5 ? dayOf(today()) : 1,
-  );
+  // W weekend pokazujemy nadchodzący tydzień.
+  const thisMonday = () => {
+    const d = today();
+    return week(dayOf(d) === 6 || dayOf(d) === 0 ? addDays(d, 2) : d)[0];
+  };
+  let monday = thisMonday();
+  const todayDay = dayOf(today());
+  sel.value =
+    innerWidth >= 768 || todayDay < 1 || todayDay > 5
+      ? "all"
+      : String(todayDay);
   function render() {
     if (!data) return;
-    const entries =
-      page === "dyzury-nadzoru"
-        ? data.supervision
-        : specialists(data.specialists);
+    const dates = week(monday);
+    get("contact-week").textContent =
+      `${shortDate(dates[0])} – ${shortDate(dates[4])}.${dates[4].slice(0, 4)}`;
+    get("contact-this-week").hidden = monday === thisMonday();
+    const all = supervision ? data.supervision : specialists(data.specialists);
+    const entries = all.filter((e: any) => !e.date || dates.includes(e.date));
     get("contacts-current").innerHTML =
       "<h2>Aktualny lub najbliższy dyżur</h2>" +
-      current(entries, page === "dyzury-nadzoru" ? data : undefined);
+      current(all, supervision ? data : undefined);
     const days = sel.value === "all" ? [1, 2, 3, 4, 5] : [+sel.value];
     const weekly = sel.value === "all";
     get("contacts").className = weekly ? "contacts-week-wrap" : "grid two";
+    if (supervision && !entries.length) {
+      get("contacts").innerHTML =
+        `<section class="panel"><p class="notice">Brak grafiku dyżurów kadry kierowniczej na tydzień ${esc(get("contact-week").textContent)}.</p></section>`;
+      return;
+    }
+    const notice = (day: number) =>
+      supervision && data.notes?.[dates[day - 1]]
+        ? `<p class="notice">${esc(data.notes[dates[day - 1]])}</p>`
+        : "";
+    const list = (day: number) =>
+      entries
+        .filter((e: any) => e.day === day)
+        .sort(
+          (a: any, b: any) =>
+            a.start.localeCompare(b.start) || a.end.localeCompare(b.end),
+        )
+        .map(contact)
+        .join("") || '<p class="empty">Brak dyżuru.</p>';
+    const heading = (day: number) =>
+      `${DAYS[day]} <span class="muted">${shortDate(dates[day - 1])}</span>`;
     if (weekly) {
-      get("contacts").innerHTML = `<table class="contacts-week"><caption>${page === "dyzury-nadzoru" ? `Dyżury kadry kierowniczej · ${esc(data.validFrom)} – ${esc(data.validTo)}` : "Pomoc psychologiczno-pedagogiczna · grafik tygodniowy"}</caption><thead><tr>${days.map(day => `<th scope="col">${DAYS[day]}</th>`).join("")}</tr></thead><tbody><tr>${days.map(day => `<td>${page === "dyzury-nadzoru" && data.notes?.[day] ? `<p class="notice">${esc(data.notes[day])}</p>` : ""}${entries.filter((e: any) => e.day === day).sort((a: any, b: any) => a.start.localeCompare(b.start) || a.end.localeCompare(b.end)).map(contact).join("") || '<p class="empty">Brak dyżuru.</p>'}</td>`).join("")}</tr></tbody></table>`;
+      get("contacts").innerHTML =
+        `<table class="contacts-week"><caption>${supervision ? "Dyżury kadry kierowniczej" : "Pomoc psychologiczno-pedagogiczna"} · ${esc(get("contact-week").textContent)}</caption><thead><tr>${days.map((day) => `<th scope="col"${dates[day - 1] === today() ? ' class="today"' : ""}>${heading(day)}</th>`).join("")}</tr></thead><tbody><tr>${days.map((day) => `<td>${notice(day)}${list(day)}</td>`).join("")}</tr></tbody></table>`;
       return;
     }
     get("contacts").innerHTML = days
       .map(
         (day) =>
-          `<section class="panel"><h2 style="text-transform:capitalize;margin-bottom:16px">${DAYS[day]}</h2>${page === "dyzury-nadzoru" ? `<p class="meta">Grafik: ${esc(data.validFrom)} – ${esc(data.validTo)}</p>${data.notes?.[day] ? `<p class="notice">${esc(data.notes[day])}</p>` : ""}` : ""}${
-            entries
-              .filter((e: any) => e.day === day)
-              .map(contact)
-              .join("") || '<p class="empty">Brak dyżuru.</p>'
-          }</section>`,
+          `<section class="panel"><h2 style="text-transform:capitalize;margin-bottom:16px">${heading(day)}</h2>${notice(day)}${list(day)}</section>`,
       )
       .join("");
   }
+  const move = (weeks: number) => {
+    monday = addDays(monday, weeks * 7);
+    render();
+  };
+  get("contact-prev").onclick = () => move(-1);
+  get("contact-next").onclick = () => move(1);
+  get("contact-this-week").onclick = () => {
+    monday = thisMonday();
+    render();
+  };
   await connect(["contacts"], (d) => {
     data = d.contacts;
     render();

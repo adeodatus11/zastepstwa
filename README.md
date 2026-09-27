@@ -37,7 +37,7 @@ Zastępstwa i przeniesienia aktualizuje się przez stronę `/aktualizuj.html`: c
 | Przeniesienia | Arkusz `sources.transfers`, zakładka „Oddziały” |
 | Plan bazowy, wykazy, sale, dyżury nauczycieli | XML `sources.xml`; daty `validFrom` / `validTo`. Wykazy i sale wyliczają się z niego automatycznie |
 | Dawne linki do planu | HTML `sources.legacyPlan` służy tylko do mapowania kotwic na osoby, klasy i sale; nowy interfejs nie kopiuje jego tabel |
-| Nadzór | XLSX `sources.supervision` i daty `supervisionValidFrom` / `supervisionValidTo`; uwagi do dni w `supervisionNotes` |
+| Nadzór | XLSX `sources.supervision`: każdy tydzień to osobny arkusz `grafik RRRR-MM-DD` (data poniedziałku), nazwiska w komórkach dni. Uwagi do konkretnych dni w `supervisionNotes` (klucz `RRRR-MM-DD`) |
 | Specjaliści | `src/content/specialists.json` — jedyne źródło ich grafiku |
 | Kalendarz | XLSX `sources.calendar`; zakres roku w `calendarFrom`, `calendarTo`, `schoolYear` |
 | Komunikaty | Nowy lub zmieniony plik Markdown w `src/content/aktualnosci/` |
@@ -59,7 +59,7 @@ Treść komunikatu. Można dodawać zwykłe linki Markdown.
 
 Generator zachowuje parser zastępstw z `schedule-changes.js`. Nowe osoby występujące tylko w arkuszu dostają stabilny identyfikator. Brak wymaganego źródła, niepoprawne kolumny lub dane przerywają budowanie. Poprawny arkusz zawierający tylko nagłówki oznacza brak zmian i jest dozwolony.
 
-Dyżury nadzoru po końcu wskazanego okresu nie są przedstawiane jako aktualne. Przy nowym tygodniu trzeba podmienić grafik i jego zakres. Kalendarz szkolny wykorzystuje istniejący generator dla roku 2026/2027; przy przejściu na nowy rok należy również zaktualizować jego reguły szkolne i przetestować nowy arkusz.
+Dyżury nadzoru po ostatnim tygodniu z arkusza nie są przedstawiane jako aktualne. Na nowy tydzień dodaj kolejny arkusz `grafik RRRR-MM-DD`; poprzednie zostają i można je przeglądać wyborem tygodnia. Strony dyżurów i pomocy psychologiczno-pedagogicznej od 768 px otwierają się na całym bieżącym tygodniu (w weekend — na nadchodzącym). Kalendarz szkolny wykorzystuje istniejący generator dla roku 2026/2027; przy przejściu na nowy rok należy również zaktualizować jego reguły szkolne i przetestować nowy arkusz.
 
 ## Architektura i utrzymanie
 

@@ -14,9 +14,8 @@
   "schoolYear": "2026/2027",
   "calendarFrom": "2026-09-01",
   "calendarTo": "2027-08-31",
-  "supervisionValidFrom": "2026-09-21",
-  "supervisionValidTo": "2026-09-25",
   "supervisionNotes": {
-    "5": "Święto Szkoły — po 13:30 nie ma dyżuru kadry kierowniczej."
+    "2026-09-25": "Święto Szkoły — po 13:30 nie ma dyżuru kadry kierowniczej.",
+    "2026-09-29": "Dyżur 08:00–13:30 — do ustalenia."
   }
 }

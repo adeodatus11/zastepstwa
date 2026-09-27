@@ -493,17 +493,49 @@ const externalFacilitiesExcludedDays = [
               <>
                 <div>
                   <>
+                    <label id="contact-week-label">Tydzień</label>
+                    <div
+                      class="date-controls"
+                      role="group"
+                      aria-labelledby="contact-week-label"
+                    >
+                      <>
+                        <button
+                          id="contact-prev"
+                          aria-label="Poprzedni tydzień"
+                        >
+                          ←
+                        </button>
+                        <output
+                          id="contact-week"
+                          class="week-value"
+                          aria-live="polite"
+                        >
+                          …
+                        </output>
+                        <button id="contact-next" aria-label="Następny tydzień">
+                          →
+                        </button>
+                      </>
+                    </div>
+                    <button id="contact-this-week" class="week-reset" hidden>
+                      Bieżący tydzień
+                    </button>
+                  </>
+                </div>
+                <div>
+                  <>
                     <label for="contact-day">Dzień tygodnia</label>
                     <select id="contact-day">
                       {[
+                        "Cały tydzień",
                         "Poniedziałek",
                         "Wtorek",
                         "Środa",
                         "Czwartek",
                         "Piątek",
-                        "Cały tydzień",
                       ].map((d, i) => (
-                        <option value={i === 5 ? "all" : i + 1}>{d}</option>
+                        <option value={i === 0 ? "all" : i}>{d}</option>
                       ))}
                     </select>
                   </>
