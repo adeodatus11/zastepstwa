@@ -7,7 +7,10 @@ Instrukcja dla Claude i innych agentów realizujących zleconą przez użytkowni
 Użytkownik aktualizuje zastępstwa sam na https://nauczyciel.szkolamistrzow.info/aktualizuj.html
 (strona poza menu i wyszukiwarkami):
 
-1. Wrzuca oba surowe eksporty. Przeglądarka czyta je i czyści **lokalnie**
+1. Wrzuca surowe eksporty: `InformacjeOZastepstwach` (wymagany),
+   `InformacjeOPrzeniesieniach` (opcjonalny — bez niego zostają opublikowane
+   przeniesienia) i `ZbiorczeZestawienieZmian` (opcjonalny, patrz niżej).
+   Przeglądarka czyta je i czyści **lokalnie**
    (`src/lib/update/sanitize.mjs` — ten sam wynik co `scripts/privacy_xlsx.py`,
    pilnuje tego `tests/update.test.mjs`). Surowy plik nie opuszcza komputera.
 2. Strona pokazuje podsumowanie i kontrole (`src/lib/update/checks.mjs`):
@@ -19,9 +22,20 @@ Użytkownik aktualizuje zastępstwa sam na https://nauczyciel.szkolamistrzow.inf
      - zajęcia biblioteczne — `Bezpłatne`;
      - różnice wobec opublikowanej paczki: krótszy okres, znikające zastępstwa
        i przeniesienia, nadpisanie ręcznej poprawki (`złączenie grup` w uwagach).
-   Złączenie rozpoznawane jest po frazie `złączenie grup` w uwagach albo po tym,
-   że zastępca ma w planie własną lekcję w tym czasie (i nie jest z niej zwolniony
-   w tym samym eksporcie).
+   Złączenie rozpoznawane jest po frazie `złączenie grup` w uwagach, po skutku
+   „Złączenie grup” w zestawieniu albo po tym, że zastępca ma w planie własną
+   lekcję w tym czasie (i nie jest z niej zwolniony w tym samym eksporcie, a jego
+   oddział nie jest nieobecny). Gdy oddział zastępcy jest nieobecny (np. wycieczka)
+   i zastępstwo jest płatne, strona pokazuje uwagę „Oddział nieobecny” do
+   sprawdzenia — to na razie celowo tylko uwaga, nie reguła.
+
+   **Zbiorcze zestawienie zmian** zawiera powody nieobecności nauczycieli (także
+   zwolnienia lekarskie) i nazwy dzienników uczniów. Strona zaraz po odczycie
+   zostawia z niego wyłącznie okres, arkusz `Dane nieobecności oddziałów` (data,
+   lekcja, oddział z grupą, przedmiot) i z `Dane zastępstwa` datę, lekcję,
+   oddział, zastępcę i skutek; resztę odrzuca (`reduceOverview`). Plik nie jest
+   wysyłany ani zapisywany. Tego pliku nigdy nie dodawaj do Git ani nie kopiuj
+   do repozytoriów; jeśli trafi do Claude, usuń go z sesji po użyciu.
 3. „Opublikuj na obu stronach” wysyła oczyszczone pliki jednym commitem na
    `przebudowa` (token użytkownika, trzymany tylko w jego przeglądarce).
    Workflow `site.yml` buduje i wdraża serwis nauczyciela, a zadanie

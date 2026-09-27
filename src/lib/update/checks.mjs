@@ -1,6 +1,9 @@
 // Kontrole paczki przed publikacją — to, co dotąd sprawdzał człowiek:
 // struktura plików, okres, co znika i co się zmienia względem opublikowanej
 // paczki, oraz reguły szkoły dla złączeń grup i zajęć bibliotecznych.
+// Zbiorcze zestawienie zmian (opcjonalne) dokłada nieobecności oddziałów
+// (wycieczki) i złączenia grup zapisane wprost w dzienniku. Zawiera powody
+// nieobecności nauczycieli, więc służy tylko do kontroli i nie jest wysyłane.
 import { isIndividual } from "./sanitize.mjs";
 
 const SUBS = [
@@ -26,7 +29,7 @@ const lower = (v) => clean(v).toLocaleLowerCase("pl");
 
 /** Wiersze arkusza jako obiekty {nagłówek: wartość}. */
 export function table(sheets, name) {
-  const [head = [], ...body] = sheets[name] ?? [];
+  const [head = [], ...body] = sheets?.[name] ?? [];
   const keys = head.map(clean);
   return body
     .filter((r) => r.some((v) => clean(v)))
@@ -38,6 +41,7 @@ export function identify(sheets) {
   const head = (sheets["Oddziały"]?.[0] ?? []).map(clean);
   if (head.includes("Przeniesiono z")) return "transfers";
   if (head.includes("Zastępca")) return "substitutions";
+  if (sheets[ABSENT] || sheets["Dane zastępstwa"]) return "overview";
   return null;
 }
 
@@ -51,10 +55,29 @@ export function periodOf(sheets) {
     : null;
 }
 
+const ABSENT = "Dane nieobecności oddziałów";
+const ABSENT_COLS = [
+  "Data",
+  "Numer lekcji",
+  "Oddział/dziennik/grupa z podziałem",
+  "Nazwa zajęć",
+];
 const plDate = (isoDate) => isoDate.split("-").reverse().join(".");
 const period = (lekcja) => Number(/^\d+/.exec(clean(lekcja))?.[0]);
 const rowDate = (dzien) =>
   /^\d{2}\.\d{2}\.\d{4}$/.test(clean(dzien)) ? iso(clean(dzien)) : "";
+/** Data z komórki zestawienia: liczba seryjna Excela albo dd.mm.rrrr. */
+const cellDate = (v) => {
+  const t = clean(v);
+  if (/^\d+(\.\d+)?$/.test(t))
+    return new Date(Date.UTC(1899, 11, 30) + Math.floor(Number(t)) * 864e5)
+      .toISOString()
+      .slice(0, 10);
+  return (
+    rowDate(t.slice(0, 10)) ||
+    (/^\d{4}-\d{2}-\d{2}/.test(t) ? t.slice(0, 10) : "")
+  );
+};
 const moveDate = (v) =>
   /^(\d{2}\.\d{2}\.\d{4}),\s*(\d+).*?sala:\s*(\S+)/.exec(clean(v));
 
@@ -133,14 +156,17 @@ function structure(kind, sheets) {
 }
 
 /** Liczby do podsumowania. */
-export function summarize(subs, moves) {
+export function summarize(subs, moves, overview) {
   const rows = table(subs, "Oddziały");
   const other = table(subs, "Dzienniki zajeć innych");
   const ind = (r) => r["Oddział"].split("|").some(isIndividual);
   return {
     period: periodOf(subs),
     substitutions: rows.filter((r) => !ind(r)).length,
-    transfers: table(moves, "Oddziały").filter((r) => !ind(r)).length,
+    transfers: moves
+      ? table(moves, "Oddziały").filter((r) => !ind(r)).length
+      : null,
+    classAbsences: overview ? table(overview, ABSENT).length : null,
     duties: table(subs, "Dyżury").length,
     other: other.filter((r) => !isIndividual(r["Dziennik zajęć innych"]))
       .length,
@@ -197,6 +223,7 @@ function compare(subs, moves, published) {
         text: `${where(r)} — dziennik zapisał tę lekcję inaczej niż opublikowana poprawka: ${changed.map((k) => `${k.toLowerCase()} „${r[k]}” → „${n[k]}”`).join(", ")}.`,
       });
   }
+  if (!moves) return out;
   const freshMoves = new Set(table(moves, "Oddziały").map(moveKey));
   for (const r of table(published.moves, "Oddziały")) {
     const target = moveDate(r["Przeniesiono na"]);
@@ -214,9 +241,77 @@ function compare(subs, moves, published) {
   return out;
 }
 
+/** Kolumny zestawienia, których potrzebuje kontrola; reszta jest odrzucana. */
+const OVERVIEW_KEEP = {
+  "Opis parametrów": null,
+  [ABSENT]: ABSENT_COLS,
+  "Dane zastępstwa": [
+    "Data",
+    "Numer lekcji",
+    "Oddział/dziennik/grupa/miejsce dyżuru z podziałem",
+    "Zastępstwo",
+    "Skutek nieobecności",
+  ],
+};
+
+/**
+ * Zestawienie okrojone zaraz po odczycie: bez powodów nieobecności nauczycieli,
+ * bez arkusza „Dane nieobecności” (tam bywają też nazwy dzienników uczniów)
+ * i bez raportów. Nic poza tym wynikiem nie jest przechowywane.
+ */
+export function reduceOverview(sheets) {
+  const out = {};
+  for (const [name, cols] of Object.entries(OVERVIEW_KEEP)) {
+    const rows = sheets[name];
+    if (!rows) continue;
+    if (!cols) {
+      out[name] = rows.map((r) =>
+        r.map((v) => (/\d{2}\.\d{2}\.\d{4}/.test(v) ? v : "")),
+      );
+      continue;
+    }
+    const head = (rows[0] ?? []).map(clean);
+    const idx = cols.map((c) => head.indexOf(c));
+    out[name] = rows.map((r, y) =>
+      idx.map((i, x) => (y === 0 ? cols[x] : i < 0 ? "" : clean(r[i]))),
+    );
+  }
+  return out;
+}
+
+/** Z zestawienia: lekcje nieobecnych oddziałów i złączenia grup z dziennika. */
+export function overviewFacts(overview) {
+  const absent = new Map();
+  for (const r of table(overview, ABSENT)) {
+    const [code, group = ""] =
+      r["Oddział/dziennik/grupa z podziałem"].split("|");
+    const k = [cellDate(r["Data"]), period(r["Numer lekcji"]), code].join("|");
+    absent.set(k, [
+      ...(absent.get(k) ?? []),
+      { group: lower(group), subject: lower(r["Nazwa zajęć"]) },
+    ]);
+  }
+  const merges = new Set(
+    table(overview, "Dane zastępstwa")
+      .filter((r) => lower(r["Skutek nieobecności"]) === "złączenie grup")
+      .map((r) =>
+        [
+          cellDate(r["Data"]),
+          period(r["Numer lekcji"]),
+          r["Oddział/dziennik/grupa/miejsce dyżuru z podziałem"],
+          personKey(r["Zastępstwo"].replace(/\[[^\]]*\]/g, "")),
+        ].join("|"),
+      ),
+  );
+  return { absent, merges };
+}
+
 /** Reguły szkoły: złączenie grup (sala i płatność) i zajęcia biblioteczne. */
-export function schoolRules(subs, moves, plan) {
+export function schoolRules(subs, moves, plan, overview) {
   const out = [];
+  const facts = overview
+    ? overviewFacts(overview)
+    : { absent: new Map(), merges: new Set() };
   const rows = table(subs, "Oddziały");
   const shortOf = (dict, id) => clean(plan.shorts?.[dict]?.[id]);
   const roomCodes = (l) =>
@@ -228,6 +323,23 @@ export function schoolRules(subs, moves, plan) {
           lower(l.roomNames[i]).split(/[\s(]/)[0],
         ])
         .filter(Boolean),
+    );
+  // Kody oddziału w eksporcie dla klasy z planu: nazwa i skrót.
+  const codesOf = new Map(
+    Object.entries(plan.classes).map(([id, name]) => [
+      name,
+      [name, shortOf("classes", id)].filter(Boolean),
+    ]),
+  );
+  // Lekcja z planu odwołana, bo oddział jest nieobecny (np. wycieczka).
+  const classAway = (l, date, p) =>
+    l.classNames.length > 0 &&
+    l.classNames.every((c) =>
+      (codesOf.get(c) ?? [c]).some((code) =>
+        (facts.absent.get([date, p, code].join("|")) ?? []).some(
+          (a) => !a.group || a.subject === lower(l.subject),
+        ),
+      ),
     );
   const classNames = (code) =>
     new Set(
@@ -278,17 +390,31 @@ export function schoolRules(subs, moves, plan) {
     const day = new Date(date + "T12:00:00Z").getUTCDay(),
       p = period(r["Lekcja"]);
     const who = [personKey(sub), r["Dzień"], p].join("|");
-    const busy = freed.has(who)
+    const planned = freed.has(who)
       ? []
       : (slots.get([personKey(sub), day, p].join("|")) ?? []);
-    if (!busy.length && !lower(r["Uwagi"]).includes("złączenie grup")) continue;
+    const busy = planned.filter((l) => !classAway(l, date, p));
+    const marked =
+      lower(r["Uwagi"]).includes("złączenie grup") ||
+      facts.merges.has([date, p, r["Oddział"], personKey(sub)].join("|"));
+    if (!busy.length && !marked) {
+      // Zastępca wolny, bo jego oddział wyjechał — płatność zostaje do sprawdzenia.
+      const away = planned.filter((l) => classAway(l, date, p));
+      if (away.length && pay !== "Bezpłatne")
+        out.push({
+          level: "warn",
+          group: "Oddział nieobecny",
+          text: `${where(r)}: ${sub} ma wtedy według planu lekcję z ${away.flatMap((l) => l.classNames).join("/")} (${away.map((l) => l.subject).join("/")}), ale ten oddział jest nieobecny. Zastępstwo jest „${pay}” — sprawdź, czy płatność jest właściwa.`,
+        });
+      continue;
+    }
     const mine = classNames(r["Oddział"].split("|")[0]);
     const host =
       busy.find((l) => l.classNames.some((c) => mine.has(c))) ?? busy[0];
     const other = host && !host.classNames.some((c) => mine.has(c));
     const label = host
       ? `${sub} prowadzi wtedy ${host.groupNames.join("/") === "Cała klasa" ? "" : `grupę ${host.groupNames.join("/")} `}${other ? `klasy ${host.classNames.join("/")}` : "tej samej klasy"} (${host.subject})`
-      : `${sub} ma złączenie grup`;
+      : `${sub} ma złączenie grup${marked && !lower(r["Uwagi"]).includes("złączenie grup") ? " (według dziennika)" : ""}`;
     if (pay !== "Bezpłatne")
       out.push({
         level: "warn",
@@ -310,14 +436,43 @@ export function schoolRules(subs, moves, plan) {
   return out;
 }
 
-/** Pełny przegląd paczki. published i plan są opcjonalne. */
-export function review({ subs, moves, published, plan }) {
+/** Pełny przegląd paczki. Tylko plik zastępstw jest wymagany. */
+export function review({ subs, moves, overview, published, plan }) {
   const messages = [
     ...structure("substitutions", subs),
-    ...structure("transfers", moves),
+    ...(moves ? structure("transfers", moves) : []),
   ];
   const a = periodOf(subs),
-    b = periodOf(moves);
+    b = moves && periodOf(moves),
+    c = overview && periodOf(overview);
+  if (!moves)
+    messages.push({
+      level: "info",
+      group: "Pliki",
+      text: "Bez pliku przeniesień — na stronach zostają obecnie opublikowane przeniesienia.",
+    });
+  if (!overview)
+    messages.push({
+      level: "info",
+      group: "Pliki",
+      text: "Bez zbiorczego zestawienia zmian — kontrola nie wie o nieobecnościach oddziałów (np. wycieczkach) ani o złączeniach zapisanych w dzienniku.",
+    });
+  else if (
+    !ABSENT_COLS.every((k) =>
+      (overview[ABSENT]?.[0] ?? []).map(clean).includes(k),
+    )
+  )
+    messages.push({
+      level: "warn",
+      group: "Pliki",
+      text: `W zbiorczym zestawieniu brak arkusza „${ABSENT}” albo jego kolumn — nieobecności oddziałów nie zostały uwzględnione.`,
+    });
+  if (a && c && (a.from !== c.from || a.to !== c.to))
+    messages.push({
+      level: "warn",
+      group: "Okres",
+      text: `Zbiorcze zestawienie obejmuje ${plDate(c.from)}–${plDate(c.to)}, a zastępstwa ${plDate(a.from)}–${plDate(a.to)}. Nieobecności oddziałów spoza tego okresu nie są znane.`,
+    });
   if (a && b && (a.from !== b.from || a.to !== b.to))
     messages.push({
       level: "warn",
@@ -326,7 +481,7 @@ export function review({ subs, moves, published, plan }) {
     });
   if (!messages.some((m) => m.level === "error")) {
     if (published) messages.push(...compare(subs, moves, published));
-    if (plan) messages.push(...schoolRules(subs, moves, plan));
+    if (plan) messages.push(...schoolRules(subs, moves, plan, overview));
   }
-  return { summary: summarize(subs, moves), messages };
+  return { summary: summarize(subs, moves, overview), messages };
 }

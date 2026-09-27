@@ -16,6 +16,7 @@ import {
   identify,
   periodOf,
   review,
+  reduceOverview,
   schoolRules,
 } from "../src/lib/update/checks.mjs";
 
@@ -304,4 +305,207 @@ test("Library lessons must be free of charge", () => {
     /Zajęcia biblioteczne|zastępca Wrzeszcz Barbara: forma płatności „Płatne”/,
   );
   assert.deepEqual(rules(lib.with(8, "Bezpłatne")), []);
+});
+
+// Zbiorcze zestawienie (syntetyczne): 28.09.2026 to liczba seryjna 46293.
+const ABSENT_HEAD = [
+  "Data",
+  "Godzina od",
+  "Godzina do",
+  "Numer lekcji",
+  "Liczba godzin",
+  "Typ danych",
+  "Oddział/dziennik/grupa",
+  "Oddział/dziennik/grupa z podziałem",
+  "Nazwa zajęć",
+];
+const overview = (absent = [], merges = []) => ({
+  "Opis parametrów": [["Okres: 28.09.2026 (pon.) - 04.10.2026 (niedz.)"]],
+  "Dane nieobecności oddziałów": [ABSENT_HEAD, ...absent],
+  "Dane zastępstwa": [
+    [
+      "Data",
+      "Numer lekcji",
+      "Oddział/dziennik/grupa/miejsce dyżuru z podziałem",
+      "Zastępstwo",
+      "Skutek nieobecności",
+    ],
+    ...merges,
+  ],
+});
+const paidSub = [
+  "28.09.2026",
+  "2",
+  "Kowalska Anna",
+  "1TFH",
+  "Biologia",
+  "12",
+  "Skarupa Agnieszka",
+  "",
+  "Dodatkowo płatne",
+];
+const withOverview = (ov, ...rows) =>
+  schoolRules({ Oddziały: [HEAD, ...rows] }, undefined, plan, ov).map(
+    (m) => m.text,
+  );
+
+test("Class away on a trip: no merge, paid substitution stays as a warning", () => {
+  assert.equal(identify(overview()), "overview");
+  const trip = overview([
+    [
+      "46293",
+      "08:50",
+      "09:35",
+      "2",
+      "1",
+      "Oddział",
+      "3K",
+      "3K|sprzedawca",
+      "Obsługa klienta",
+    ],
+  ]);
+  const out = withOverview(trip, paidSub);
+  assert.equal(out.length, 1);
+  assert.match(
+    out[0],
+    /lekcję z 3KS \(Obsługa klienta\), ale ten oddział jest nieobecny\. Zastępstwo jest „Dodatkowo płatne”/,
+  );
+  assert.deepEqual(withOverview(trip, paidSub.with(8, "Bezpłatne")), []);
+  // Nieobecna inna grupa tej klasy nie zwalnia zastępcy.
+  const other = overview([
+    [
+      "46293",
+      "08:50",
+      "09:35",
+      "2",
+      "1",
+      "Oddział",
+      "3K",
+      "3K|kucharz",
+      "Technologia",
+    ],
+  ]);
+  assert.match(
+    withOverview(other, paidSub)[0],
+    /złączenie powinno być „Bezpłatne”/,
+  );
+});
+
+test("Merge recorded only in the diary is still checked", () => {
+  const sub = [
+    "28.09.2026",
+    "2",
+    "Kowalska Anna",
+    "2A",
+    "Matematyka",
+    "12",
+    "Wrzeszcz Barbara",
+    "",
+    "Dodatkowo płatne",
+  ];
+  assert.deepEqual(withOverview(overview(), sub), []);
+  const out = withOverview(
+    overview(
+      [],
+      [["46293", "2", "2A", "Wrzeszcz Barbara [WB]", "Złączenie grup"]],
+    ),
+    sub,
+  );
+  assert.equal(out.length, 1);
+  assert.match(
+    out[0],
+    /ma złączenie grup \(według dziennika\) — złączenie powinno być „Bezpłatne”/,
+  );
+});
+
+test("Only the substitutions file is required", async () => {
+  const subs = (await readWorkbook(published, DOMParser)).sheets;
+  const { summary, messages } = review({ subs });
+  assert.equal(summary.transfers, null);
+  assert.equal(summary.classAbsences, null);
+  assert.deepEqual(
+    messages.filter((m) => m.level !== "info"),
+    [],
+  );
+  assert.ok(messages.some((m) => m.text.startsWith("Bez pliku przeniesień")));
+  assert.ok(
+    messages.some((m) => m.text.startsWith("Bez zbiorczego zestawienia")),
+  );
+  const withOv = review({ subs, overview: overview() });
+  assert.equal(withOv.summary.classAbsences, 0);
+});
+
+test("Combined overview keeps no absence reasons and no diary names", () => {
+  const raw = {
+    ...overview([
+      [
+        "46293",
+        "08:50",
+        "09:35",
+        "2",
+        "1",
+        "Oddział",
+        "3K",
+        "3K|sprzedawca",
+        "Obsługa klienta",
+      ],
+    ]),
+    "Dane nieobecności": [
+      [
+        "Data",
+        "Oddział/dziennik/grupa/miejsce dyżuru",
+        "Prowadzący",
+        "Powód nieobecności",
+      ],
+      [
+        "46293",
+        "IN - Nazwisko Imie [1A]",
+        "Kowalska Anna",
+        "Zwolnienie lekarskie",
+      ],
+    ],
+    "Dane zastępstwa": [
+      [
+        "Data",
+        "Numer lekcji",
+        "Oddział/dziennik/grupa/miejsce dyżuru z podziałem",
+        "Prowadzący",
+        "Zastępstwo",
+        "Powód nieobecności",
+        "Skutek nieobecności",
+      ],
+      [
+        "46293",
+        "2",
+        "2A",
+        "Kowalska Anna",
+        "Wrzeszcz Barbara [WB]",
+        "Zwolnienie lekarskie",
+        "Złączenie grup",
+      ],
+    ],
+    "Raport nieobecności": [["Powód nieobecności", "Zwolnienie lekarskie"]],
+  };
+  const reduced = reduceOverview(raw);
+  const text = JSON.stringify(reduced);
+  for (const secret of ["Zwolnienie", "Powód", "Nazwisko", "Kowalska"])
+    assert.ok(!text.includes(secret), secret);
+  assert.deepEqual(Object.keys(reduced).sort(), [
+    "Dane nieobecności oddziałów",
+    "Dane zastępstwa",
+    "Opis parametrów",
+  ]);
+  const sub = [
+    "28.09.2026",
+    "2",
+    "Kowalska Anna",
+    "2A",
+    "Matematyka",
+    "12",
+    "Wrzeszcz Barbara",
+    "",
+    "Dodatkowo płatne",
+  ];
+  assert.match(withOverview(reduced, sub)[0], /według dziennika/);
+  assert.equal(periodOf(reduced).from, "2026-09-28");
 });

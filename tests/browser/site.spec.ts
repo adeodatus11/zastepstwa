@@ -338,3 +338,64 @@ test("TV hides the site menu on wide screens", async ({ page }) => {
     await expect(page.locator(".site-header .tv-qr")).toBeVisible();
   }
 });
+test("Update page: checks the package and commits only the provided files", async ({
+  page,
+}) => {
+  const trees: string[][] = [];
+  await page.route("https://api.github.com/**", async (route) => {
+    const request = route.request();
+    const p = new URL(request.url()).pathname;
+    const json = (body: unknown) =>
+      route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify(body),
+      });
+    if (p.includes("/contents/"))
+      return route.fulfill({
+        status: 200,
+        body: fs.readFileSync(decodeURIComponent(p.split("/contents/")[1])),
+      });
+    if (p === "/user") return json({ login: "test" });
+    if (p.endsWith("/git/ref/heads/przebudowa"))
+      return json({ object: { sha: "p1" } });
+    if (p.endsWith("/git/commits/p1")) return json({ tree: { sha: "t0" } });
+    if (p.endsWith("/git/blobs")) return json({ sha: "b1" });
+    if (p.endsWith("/git/trees")) {
+      trees.push(
+        JSON.parse(request.postData()!).tree.map(
+          (t: { path: string }) => t.path,
+        ),
+      );
+      return json({ sha: "t1" });
+    }
+    if (p.endsWith("/git/commits"))
+      return json({ sha: "c1c1c1c", html_url: "https://github.com/" });
+    if (p.endsWith("/git/refs/heads/przebudowa")) return json({});
+    if (p.endsWith("/actions/runs")) return json({ workflow_runs: [] });
+    return route.fulfill({ status: 500 });
+  });
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/aktualizuj.html");
+  await expect(page.locator("#publish")).toBeDisabled();
+  await page.locator("#files").setInputFiles(["InformacjeOZastepstwach.xlsx"]);
+  await expect(page.locator("#review-status")).toHaveClass(/ok|warning/);
+  await expect(page.locator("#summary")).toContainText("bez pliku");
+  await expect(page.locator("#messages")).toContainText(
+    "Bez pliku przeniesień",
+  );
+  await page.locator("#token").fill("test-token");
+  if (await page.locator("#confirm-row").isVisible())
+    await page.locator("#confirm").check();
+  await page.locator("#publish").click();
+  await expect(page.locator("#publish-status")).toContainText("Wysłano");
+  expect(trees).toEqual([["InformacjeOZastepstwach.xlsx"]]);
+  expect(
+    await page.evaluate(() => sessionStorage.getItem("zastepstwa-token")),
+  ).toBe("test-token");
+  expect(
+    await page.evaluate(
+      () => document.documentElement.scrollWidth <= innerWidth,
+    ),
+  ).toBe(true);
+});

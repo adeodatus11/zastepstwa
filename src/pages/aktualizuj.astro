@@ -4,16 +4,20 @@ import Shell from "../layouts/Shell.astro";
 
 <Shell title="Aktualizacja zastępstw" section="Aktualizacja zastępstw" noindex>
   <p slot="intro">
-    Wrzuć dwa eksporty z dziennika:
-    <b>InformacjeOZastepstwach</b> i <b>InformacjeOPrzeniesieniach</b>. Pliki są
-    czytane i czyszczone w tej przeglądarce — na GitHuba trafiają tylko wersje
-    bez nazw dzienników uczniów. Po publikacji obie strony aktualizują się same.
+    Wrzuć eksport <b>InformacjeOZastepstwach</b> z dziennika. Opcjonalnie dołóż <b
+      >InformacjeOPrzeniesieniach</b
+    > oraz
+    <b>ZbiorczeZestawienieZmian</b> — z tego ostatniego kontrola bierze nieobecności
+    oddziałów (np. wycieczki). Pliki są czytane i czyszczone w tej przeglądarce —
+    na GitHuba trafiają tylko zastępstwa i przeniesienia bez nazw dzienników uczniów;
+    zestawienie nie jest wysyłane nigdzie. Po publikacji obie strony aktualizują się
+    same.
   </p>
   <div class="update">
     <section class="card" aria-labelledby="step-files">
       <h2 id="step-files">1. Pliki z dziennika</h2>
       <label id="drop" class="drop" for="files">
-        <span>Przeciągnij tu oba pliki .xlsx albo</span>
+        <span>Przeciągnij tu pliki .xlsx albo</span>
         <span class="button">wybierz z dysku</span>
         <input
           id="files"

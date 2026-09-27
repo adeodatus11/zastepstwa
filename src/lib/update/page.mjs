@@ -2,7 +2,7 @@
 // i czyszczone w tej przeglądarce; na GitHuba trafiają tylko pliki oczyszczone.
 import { sanitize } from "./sanitize.mjs";
 import { readWorkbook } from "./xlsx.mjs";
-import { identify, review } from "./checks.mjs";
+import { identify, reduceOverview, review } from "./checks.mjs";
 import {
   REPO,
   commitFiles,
@@ -15,7 +15,13 @@ const PATHS = {
   substitutions: "InformacjeOZastepstwach.xlsx",
   transfers: "InformacjeOPrzeniesieniach.xlsx",
 };
-const LABELS = { substitutions: "Zastępstwa", transfers: "Przeniesienia" };
+const LABELS = {
+  substitutions: "Zastępstwa",
+  transfers: "Przeniesienia",
+  overview: "Zbiorcze zestawienie zmian",
+};
+// Na GitHuba idą tylko te pliki, które użytkownik wrzucił.
+const uploads = () => Object.keys(PATHS).filter((k) => state.files[k]);
 const JOBS = {
   build: "Sprawdzenie i budowa serwisu nauczyciela",
   deploy: "Publikacja nauczyciel.szkolamistrzow.info",
@@ -113,15 +119,23 @@ async function addFiles(list) {
   for (const file of list) {
     try {
       const raw = new Uint8Array(await file.arrayBuffer());
-      const clean = await sanitize(raw, { DOMParser, XMLSerializer });
-      const kind = identify(clean.sheets);
+      const { sheets } = await readWorkbook(raw, DOMParser);
+      const kind = identify(sheets);
       if (!kind) {
         notes.push(
-          `<b>${esc(file.name)}</b>: to nie jest eksport zastępstw ani przeniesień z dziennika.`,
+          `<b>${esc(file.name)}</b>: to nie jest eksport zastępstw, przeniesień ani zbiorcze zestawienie zmian z dziennika.`,
         );
         continue;
       }
-      state.files[kind] = { name: file.name, ...clean };
+      // Zestawienie: od razu tylko potrzebne kolumny, bez powodów nieobecności.
+      // Nie jest ani czyszczone do wysyłki, ani wysyłane.
+      state.files[kind] =
+        kind === "overview"
+          ? { name: file.name, sheets: reduceOverview(sheets) }
+          : {
+              name: file.name,
+              ...(await sanitize(raw, { DOMParser, XMLSerializer })),
+            };
     } catch (e) {
       notes.push(
         `<b>${esc(file.name)}</b>: ${esc(e.message || "nie da się odczytać pliku.")}`,
@@ -133,26 +147,42 @@ async function addFiles(list) {
 }
 
 function renderFiles(notes) {
-  $("file-list").innerHTML = Object.keys(PATHS)
+  const missing = {
+    substitutions: "brak pliku — wymagany",
+    transfers: "brak — opcjonalny; na stronach zostają obecne przeniesienia",
+    overview:
+      "brak — opcjonalny; pozwala uwzględnić nieobecności oddziałów (np. wycieczki)",
+  };
+  $("file-list").innerHTML = Object.keys(LABELS)
     .map((kind) => {
       const f = state.files[kind];
-      return `<li class="${f ? "ready" : "missing"}"><b>${LABELS[kind]}:</b> ${f ? `${esc(f.name)} — oczyszczony${f.removed ? ` (usunięto ${f.removed} ${f.removed === 1 ? "nazwę dziennika" : "nazw dzienników"})` : ""}` : "brak pliku"}</li>`;
+      const done =
+        kind === "overview"
+          ? "tylko do kontroli; powody nieobecności odrzucone, plik nie jest wysyłany"
+          : `oczyszczony${f?.removed ? ` (usunięto ${f.removed} ${f.removed === 1 ? "nazwę dziennika" : "nazw dzienników"})` : ""}`;
+      return `<li class="${f ? "ready" : "missing"}"><b>${LABELS[kind]}:</b> ${f ? `${esc(f.name)} — ${done}` : missing[kind]}</li>`;
     })
     .join("");
   say("files-status", notes.join("<br>"), notes.length ? "error" : "");
 }
 
 async function check() {
-  const { substitutions: s, transfers: m } = state.files;
+  const { substitutions: s, transfers: m, overview: o } = state.files;
   state.result = null;
-  $("review").hidden = !(s && m);
-  if (!s || !m) return updateButtons();
+  $("review").hidden = !s;
+  if (!s) return updateButtons();
   say("review-status", "Sprawdzam paczkę…");
   const [plan, published] = await Promise.all([
     loadPlan().catch(() => null),
     loadPublished(),
   ]);
-  state.result = review({ subs: s.sheets, moves: m.sheets, published, plan });
+  state.result = review({
+    subs: s.sheets,
+    moves: m?.sheets,
+    overview: o?.sheets,
+    published,
+    plan,
+  });
   if (!plan)
     state.result.messages.push({
       level: "info",
@@ -179,7 +209,10 @@ function renderReview() {
         : "nieczytelny",
     ],
     ["Zastępstwa", x.substitutions],
-    ["Przeniesienia", x.transfers],
+    ["Przeniesienia", x.transfers ?? "bez pliku"],
+    ...(x.classAbsences === null
+      ? []
+      : [["Nieobecności oddziałów (lekcje)", x.classAbsences]]),
     ["Dyżury", x.duties],
     ["Zajęcia inne", x.other],
     ["Pominięte (IND)", x.individual],
@@ -208,7 +241,10 @@ function renderReview() {
     )
     .join("");
   $("confirm-row").hidden = !warnings || !!errors;
-  $("confirm").checked = false;
+  // Potwierdzenie obowiązuje tylko dla tej samej listy uwag.
+  const seen = messages.map((m) => m.level + m.text).join("\n");
+  if (seen !== state.seen) $("confirm").checked = false;
+  state.seen = seen;
 }
 
 function updateButtons() {
@@ -224,7 +260,7 @@ function updateButtons() {
 }
 
 function download() {
-  for (const kind of Object.keys(PATHS)) {
+  for (const kind of uploads()) {
     const url = URL.createObjectURL(
       new Blob([state.files[kind].bytes], {
         type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
@@ -249,10 +285,13 @@ async function publish() {
   try {
     const who = await whoami(token);
     const p = state.result.summary.period;
-    const message = `Aktualizacja zastępstw i przeniesień ${plDate(p.from)}–${plDate(p.to)}\n\nOczyszczone eksporty z dziennika wgrane przez stronę aktualizacji (${who}).`;
+    const what = state.files.transfers
+      ? "zastępstw i przeniesień"
+      : "zastępstw";
+    const message = `Aktualizacja ${what} ${plDate(p.from)}–${plDate(p.to)}\n\nOczyszczone eksporty z dziennika wgrane przez stronę aktualizacji (${who}).`;
     const res = await commitFiles(
       token,
-      Object.keys(PATHS).map((k) => ({
+      uploads().map((k) => ({
         path: PATHS[k],
         bytes: state.files[k].bytes,
       })),
