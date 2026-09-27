@@ -133,6 +133,12 @@ test("Calendar filters and all views; groups and school contacts", async ({
   await page.goto("/dyzury-nadzoru.html");
   await page.locator("#contact-day").selectOption("all");
   await expect(page.locator(".contacts-week th")).toHaveCount(5);
+  const thisWeek = await page.locator("#contact-week").innerText();
+  await page.locator("#contact-next").click();
+  await expect(page.locator("#contact-week")).not.toHaveText(thisWeek);
+  await page.locator("#contact-this-week").click();
+  await expect(page.locator("#contact-week")).toHaveText(thisWeek);
+  await expect(page.locator("#contact-this-week")).toBeHidden();
   expect(
     await page.locator("#contacts a").first().getAttribute("href"),
   ).toMatch(/^tel:\+48\d+,\d+$/);

@@ -64,6 +64,8 @@ export function assertPayload(key, value) {
     ok =
       value &&
       Array.isArray(value.supervision) &&
+      Array.isArray(value.weeks) &&
+      value.weeks.every((w) => validDate(w.from) && validDate(w.to)) &&
       value.specialists &&
       Array.isArray(value.specialists.specjalisci);
   if (!ok) throw Error("Nieprawidłowe dane: " + key);

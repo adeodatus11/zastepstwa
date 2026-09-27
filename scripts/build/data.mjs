@@ -244,14 +244,8 @@ for (const e of [
       teachers[id] ??= { id, name, short: "" };
       e[prefix + "Id"] = id;
     }
-const w = book("supervision"),
-  sheet = w.Sheets["grafik"] || w.Sheets["grafik dyżurów"];
-if (!sheet) throw Error("Brak grafiku nadzoru");
-const rows = XLSX.utils.sheet_to_json(sheet, {
-  header: 1,
-  defval: "",
-  raw: false,
-});
+// Nadzór: każdy tydzień to osobny arkusz „grafik RRRR-MM-DD” (data poniedziałku).
+const w = book("supervision");
 const phones = w.Sheets["numery telefonów"]
   ? XLSX.utils.sheet_to_json(w.Sheets["numery telefonów"], {
       header: 1,
@@ -259,29 +253,55 @@ const phones = w.Sheets["numery telefonów"]
       raw: false,
     })
   : [];
-const supervision = [];
-for (const row of rows.slice(1)) {
-  const i = row.findIndex((c) => /\d{1,2}:\d{2}\s*-\s*\d{1,2}:\d{2}/.test(c));
-  if (i < 0) continue;
-  const [start, end] = row[i].match(/\d{1,2}:\d{2}/g).map(pad);
-  rows[0].forEach((h, j) => {
-    const day =
-      ["poniedziałek", "wtorek", "środa", "czwartek", "piątek"].findIndex((d) =>
-        h.toLowerCase().includes(d),
-      ) + 1;
-    if (day && j > i && row[j]) {
-      const phone = phones.find((p) => p[0] === row[j]);
-      supervision.push({
-        day,
-        start,
-        end,
-        name: row[j],
-        phone: phone?.[1] || "71 798 69 34",
-        extension: String(phone?.[2] || "").replace(/\D/g, ""),
-      });
-    }
+const shiftDate = (date, n) => {
+  const d = new Date(`${date}T12:00:00Z`);
+  d.setUTCDate(d.getUTCDate() + n);
+  return d.toISOString().slice(0, 10);
+};
+const supervision = [],
+  supervisionWeeks = [];
+for (const sheetName of w.SheetNames) {
+  const from = sheetName.match(/^grafik\s+(\d{4}-\d{2}-\d{2})$/i)?.[1];
+  if (!from) continue;
+  if (!validDate(from) || new Date(`${from}T12:00:00Z`).getUTCDay() !== 1)
+    throw Error(`Arkusz „${sheetName}”: data musi być poniedziałkiem`);
+  supervisionWeeks.push({ from, to: shiftDate(from, 4) });
+  const rows = XLSX.utils.sheet_to_json(w.Sheets[sheetName], {
+    header: 1,
+    defval: "",
+    raw: false,
   });
+  for (const row of rows.slice(1)) {
+    const i = row.findIndex((c) => /\d{1,2}:\d{2}\s*-\s*\d{1,2}:\d{2}/.test(c));
+    if (i < 0) continue;
+    const [start, end] = row[i].match(/\d{1,2}:\d{2}/g).map(pad);
+    rows[0].forEach((h, j) => {
+      const day =
+        ["poniedziałek", "wtorek", "środa", "czwartek", "piątek"].findIndex(
+          (d) => h.toLowerCase().includes(d),
+        ) + 1;
+      const name = String(row[j]).trim();
+      if (day && j > i && name) {
+        const phone = phones.find((p) => p[0] === name);
+        supervision.push({
+          date: shiftDate(from, day - 1),
+          day,
+          start,
+          end,
+          name,
+          phone: phone?.[1] || "71 798 69 34",
+          extension: String(phone?.[2] || "").replace(/\D/g, ""),
+        });
+      }
+    });
+  }
 }
+if (!supervisionWeeks.length)
+  throw Error("Brak grafiku nadzoru (arkusz „grafik RRRR-MM-DD”)");
+supervisionWeeks.sort((x, y) => x.from.localeCompare(y.from));
+for (const date of Object.keys(config.supervisionNotes || {}))
+  if (!validDate(date))
+    throw Error(`supervisionNotes: klucz „${date}” musi być datą RRRR-MM-DD`);
 const calendar = JSON.parse(
   execFileSync(
     process.env.PYTHON || "python3",
@@ -324,9 +344,10 @@ const payloads = {
   contacts: {
     supervision,
     specialists,
-    validFrom: config.supervisionValidFrom,
-    validTo: config.supervisionValidTo,
-    notes: config.supervisionNotes,
+    weeks: supervisionWeeks,
+    validFrom: supervisionWeeks[0].from,
+    validTo: supervisionWeeks.at(-1).to,
+    notes: config.supervisionNotes || {},
   },
 };
 for (const [key, value] of Object.entries(payloads)) assertPayload(key, value);
