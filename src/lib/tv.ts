@@ -172,8 +172,11 @@ export async function init() {
           : time > (plan?.periods.at(-1)?.end || "20:00")
             ? "Po lekcjach"
             : "Przerwa";
+    // Tymczasowo: wymiary okna na telewizorze, do dopasowania ramki.
+    const foot = document.querySelector(".tv-footer")?.getBoundingClientRect();
+    const probe = `okno ${innerWidth}×${innerHeight} · ekran ${screen.width}×${screen.height} · DPR ${devicePixelRatio} · stopka ${Math.round(foot?.top ?? 0)}–${Math.round(foot?.bottom ?? 0)} · ${esc((navigator.userAgent.match(/(Chrome|Firefox|Version)\/[\d.]+/) || [navigator.userAgent.slice(0, 40)])[0])}`;
     document.getElementById("tv-clock")!.innerHTML =
-      `${esc(dateLabel(today()))} · ${esc(time)} <span class="tv-live">${esc(status)}</span>`;
+      `${esc(dateLabel(today()))} · ${esc(time)} <span class="tv-live">${esc(status)}</span><small class="tv-probe">${probe}</small>`;
     if (plan && date !== today()) {
       prepare();
       show();

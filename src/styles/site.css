@@ -965,7 +965,7 @@ body.tv-mode .header-guide,
 .tv-mode #tv-clock {
   font-size: 30px;
   font-weight: 600;
-  height: 56px;
+  min-height: 56px;
   flex-shrink: 0;
   text-transform: capitalize;
 }
@@ -1344,6 +1344,17 @@ body.tv-mode .header-guide,
   }
 }
 
+/* Tymczasowa linijka diagnostyczna pod datą (dopasowanie ramki do TV). */
+.tv-probe {
+  display: block;
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 1.2;
+  color: #facc15;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 .tv-diag {
   position: fixed;
   left: 0;
