@@ -894,8 +894,8 @@ th {
   background: #000;
   color: #fff;
   /* Telewizor na korytarzu powiększa obraz i ucina ok. 85 px z boków oraz
-     ok. 150 px u góry i u dołu (zdjęcie z 28.09.2026), stąd szeroka ramka. */
-  padding: 185px 110px 185px;
+     ok. 150 px u góry i u dołu (zdjęcia z 28.09.2026); u góry ucina więcej. */
+  padding: 215px 110px 185px;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
