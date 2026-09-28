@@ -255,23 +255,23 @@ export function upcoming(events, date, limit = 4) {
 }
 // Ekran TV: cały dzień każdej klasy na jednym slajdzie. Slajd ma dwie
 // kolumny po dwie karty; klasa z bardzo długim dniem (`isTall`) zajmuje
-// całą kolumnę.
+// całą kolumnę. Karty trafiają do pierwszego slajdu z wolnym miejscem,
+// więc zwykła klasa może wypełnić lukę przed klasą na całą kolumnę.
 export function tvDayPages(rows, perSlide = 4, isTall = (_entries) => false) {
-  const slides = [];
-  let slide = [],
-    used = 0;
+  const slides = [],
+    used = [];
   for (const [name, entries] of rows) {
     const tall = perSlide === 4 && isTall(entries),
       cost = tall ? 2 : 1;
-    if (used + cost > perSlide || (tall && used === 3)) {
-      slides.push(slide);
-      slide = [];
-      used = 0;
+    let i = used.findIndex((u) => u + cost <= perSlide && !(tall && u === 3));
+    if (i < 0) {
+      slides.push([]);
+      used.push(0);
+      i = slides.length - 1;
     }
-    slide.push({ name, continued: false, entries, tall });
-    used += cost;
+    slides[i].push({ name, continued: false, entries, tall });
+    used[i] += cost;
   }
-  if (slide.length) slides.push(slide);
   return slides;
 }
 export function tvPages(rows, size = 2) {

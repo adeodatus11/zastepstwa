@@ -218,6 +218,21 @@ test("TV day pages give a long day a full column, four cells per slide", () => {
     slides.map((s) => s.map((c) => c.name + (c.tall ? "*" : ""))),
     [["1A", "1B*", "1C"], ["1D", "1E*"], ["1F*"]],
   );
+  // Luka przed klasą na całą kolumnę wypełniona następną zwykłą klasą.
+  assert.deepEqual(
+    tvDayPages(
+      [
+        ["1A", short],
+        ["1B", short],
+        ["1C", short],
+        ["1D", long],
+        ["1E", short],
+      ],
+      4,
+      (entries) => entries.length > 10,
+    ).map((s) => s.map((c) => c.name + (c.tall ? "*" : ""))),
+    [["1A", "1B", "1C", "1E"], ["1D*"]],
+  );
 });
 test("Built assets stay within shared and plan budgets and do not ship XLSX parser", () => {
   const assets = fs.readdirSync("dist/_astro").filter((f) => f.endsWith(".js"));

@@ -1,7 +1,7 @@
 import { connect } from "./data";
 import { daily, today, dateLabel, tvDayPages, esc } from "./model.mjs";
 // Poniżej tej skali czcionki klasa dostaje całą kolumnę slajdu.
-const MIN_SCALE = 0.8;
+const MIN_SCALE = 0.75;
 const nowTime = () =>
   new Date().toLocaleTimeString("pl-PL", {
     timeZone: "Europe/Warsaw",

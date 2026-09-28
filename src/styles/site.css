@@ -893,9 +893,9 @@ th {
   overflow: hidden;
   background: #000;
   color: #fff;
-  /* Telewizor na korytarzu ucina górę obrazu, a dół pokazuje z zapasem
-     (zdjęcie z 25.09.2026), stąd większy margines u góry. */
-  padding: 140px 90px 50px;
+  /* Telewizor na korytarzu powiększa obraz i ucina ok. 85 px z boków oraz
+     ok. 150 px u góry i u dołu (zdjęcie z 28.09.2026), stąd szeroka ramka. */
+  padding: 185px 110px 185px;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
@@ -998,15 +998,35 @@ body.tv-mode .header-guide,
 }
 .tv-lesson {
   display: grid;
-  grid-template-columns: calc(50px * var(--tv-scale)) minmax(0, 1fr);
+  grid-template-columns: calc(62px * var(--tv-scale)) minmax(0, 1fr);
   gap: 10px;
   align-items: center;
   padding: calc(6px * var(--tv-scale)) 0;
   border-bottom: 1px solid #456456;
   overflow-wrap: anywhere;
 }
+/* Zmiany (zastępstwa, przeniesienia, odwołania): czerwone. */
 .tv-lesson.changed {
-  background: linear-gradient(90deg, rgba(255, 228, 177, 0.14), transparent);
+  background: rgba(239, 68, 68, 0.22);
+  box-shadow: inset 5px 0 0 #ef4444;
+}
+.tv-lesson.changed .tv-nr {
+  color: #fca5a5;
+}
+.tv-lesson .tv-nr {
+  margin: 0;
+  font-size: calc(38px * var(--tv-scale));
+  font-weight: 700;
+  line-height: 1;
+  text-align: center;
+  color: #9ad3b0;
+}
+.tv-nr small {
+  display: block;
+  font-size: calc(14px * var(--tv-scale));
+  font-weight: 400;
+  color: #c7ddd1;
+  margin-top: 2px;
 }
 /* Trwająca lekcja: inny kolor, bez dodatkowego miejsca. */
 .tv-lesson.now {
@@ -1016,21 +1036,7 @@ body.tv-mode .header-guide,
 .tv-lesson.now .tv-nr {
   color: #facc15;
 }
-.tv-lesson .tv-nr {
-  margin: 0;
-  font-size: calc(25px * var(--tv-scale));
-  font-weight: 700;
-  line-height: 1;
-  text-align: center;
-  color: #9ad3b0;
-}
-.tv-nr small {
-  display: block;
-  font-size: calc(13px * var(--tv-scale));
-  font-weight: 400;
-  color: #c7ddd1;
-  margin-top: 2px;
-}
+
 .tv-lesson h3 {
   font-size: calc(21px * var(--tv-scale));
   line-height: 1.15;
@@ -1049,8 +1055,8 @@ body.tv-mode .header-guide,
   font-size: calc(14px * var(--tv-scale));
   display: inline-block;
   vertical-align: middle;
-  background: #ffe4b1;
-  color: #39220a;
+  background: #dc2626;
+  color: #fff;
   padding: 1px 6px;
   border-radius: 4px;
 }
