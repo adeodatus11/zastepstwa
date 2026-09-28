@@ -1,0 +1,712 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Rozliczanie godzin</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="description" content="Moduł 5 przewodnika dla nauczycieli ZSZ5: kiedy godziny ponadwymiarowe są płatne, co to jest gotowość do pracy, wycieczki, delegowanie, szkolenia, L4, zwolnienia i wnioski.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600;700;800&display=swap">
+<style>
+:root{
+  --bg:#f4f6f5; --surface:#fff; --ink:#192a25; --muted:#53645d; --line:#d7e0db;
+  --green:#176247; --dark:#104834; --pale:#eaf4ee; --warning:#854512; --warn-bg:#fbf1e6;
+  --red:#a12a32; --red-bg:#fbeced; --mark:#e39a2d; --mark-soft:rgba(227,154,45,.2);
+  --yes:#176247; --yes-bg:#e3f2e9; --no:#a12a32; --no-bg:#fbeced; --half:#854512; --half-bg:#fbf1e6;
+  --radius:12px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --bg:#0e1714; --surface:#15221d; --ink:#e4ede8; --muted:#9fb3aa; --line:#2a3b34;
+    --green:#6cc79f; --dark:#9fdcbf; --pale:#1a3029; --warning:#f0b577; --warn-bg:#2d2217;
+    --red:#f09aa0; --red-bg:#301a1c; --mark:#f0ac45; --mark-soft:rgba(240,172,69,.22);
+    --yes:#8fdcb6; --yes-bg:#173427; --no:#f5a9ae; --no-bg:#3a1d20; --half:#f3c48f; --half-bg:#35271a;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#0e1714; --surface:#15221d; --ink:#e4ede8; --muted:#9fb3aa; --line:#2a3b34;
+  --green:#6cc79f; --dark:#9fdcbf; --pale:#1a3029; --warning:#f0b577; --warn-bg:#2d2217;
+  --red:#f09aa0; --red-bg:#301a1c; --mark:#f0ac45; --mark-soft:rgba(240,172,69,.22);
+  --yes:#8fdcb6; --yes-bg:#173427; --no:#f5a9ae; --no-bg:#3a1d20; --half:#f3c48f; --half-bg:#35271a;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Source Sans 3",system-ui,-apple-system,"Segoe UI",sans-serif;font-size:18px;line-height:1.55;padding-inline:16px}
+@media (max-width:600px){body{font-size:17px}}
+a{color:var(--green)}
+a:focus-visible,button:focus-visible,summary:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--mark);outline-offset:2px;border-radius:6px}
+.wrap{max-width:1080px;margin:0 auto}
+h1,h2,h3{text-wrap:balance;line-height:1.2;margin:0}
+h1{font-size:clamp(2rem,6vw,3rem);font-weight:800;letter-spacing:-.01em}
+h2{font-size:clamp(1.45rem,3.6vw,1.8rem);font-weight:800}
+h3{font-size:1.15rem;font-weight:700}
+p{margin:0;overflow-wrap:anywhere}
+.muted{color:var(--muted)}
+.measure{max-width:70ch}
+
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-block:18px;border-bottom:1px solid var(--line)}
+.brand{font-weight:700;font-size:.95rem;color:var(--muted);line-height:1.25}
+.brand b{display:block;color:var(--ink);font-size:1.05rem}
+.back{font-weight:600;font-size:.95rem;text-decoration:none;white-space:nowrap}
+.back:hover{text-decoration:underline}
+
+.hero{padding-block:40px 28px;display:grid;gap:18px;grid-template-columns:1fr;align-items:start}
+@media (min-width:900px){.hero{grid-template-columns:1.1fr 1fr;gap:40px}}
+.hero-text{display:grid;gap:14px}
+.eyebrow{font-size:.8rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--green)}
+.lead{font-size:1.2rem;color:var(--muted);max-width:60ch}
+
+.short{background:var(--dark);color:#fff;border-radius:var(--radius);padding:22px 22px 24px;display:grid;gap:14px}
+:root[data-theme="dark"] .short{color:var(--bg)}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .short{color:var(--bg)}}
+.short h2{font-size:1.15rem;color:inherit}
+.short ol{margin:0;padding:0;list-style:none;display:grid;gap:12px;counter-reset:s}
+.short li{display:grid;grid-template-columns:34px 1fr;gap:10px;align-items:start;counter-increment:s}
+.short li::before{content:counter(s);width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,.16);display:grid;place-items:center;font-weight:800}
+:root[data-theme="dark"] .short li::before{background:rgba(0,0,0,.14)}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .short li::before{background:rgba(0,0,0,.14)}}
+.short small{display:block;opacity:.85;font-size:.92rem}
+
+.rule{border-left:5px solid var(--green);background:var(--surface);border-radius:0 var(--radius) var(--radius) 0;padding:16px 18px;display:grid;gap:6px;border-top:1px solid var(--line);border-right:1px solid var(--line);border-bottom:1px solid var(--line)}
+.rule p{font-size:1.12rem;font-weight:600}
+
+.toc{position:sticky;top:env(safe-area-inset-top,0px);z-index:30;background:var(--bg);border-bottom:1px solid var(--line);margin-inline:-16px;padding:10px 16px;overflow-x:auto;white-space:nowrap;scrollbar-width:none}
+.toc::-webkit-scrollbar{display:none}
+.toc div{max-width:1080px;margin:0 auto;display:flex;gap:6px}
+.toc a{display:inline-block;text-decoration:none;color:var(--ink);font-weight:600;font-size:.92rem;padding:7px 13px;border-radius:999px;border:1px solid var(--line);background:var(--surface)}
+.toc a:hover{border-color:var(--green);color:var(--green)}
+
+section{padding-block:52px 8px;display:grid;gap:20px;scroll-margin-top:64px}
+.sec-head{display:grid;gap:6px;max-width:70ch}
+
+.notes{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr))}
+.note{border-radius:var(--radius);padding:16px 18px;display:grid;gap:8px;align-content:start;border:1px solid var(--line);background:var(--surface)}
+.note.warn{background:var(--warn-bg);border-color:transparent}
+.note.warn .lbl{color:var(--warning)}
+.note.lock{background:var(--red-bg);border-color:transparent}
+.note.lock .lbl{color:var(--red)}
+.note ul,.note ol{margin:0;padding-left:1.2em;display:grid;gap:4px}
+.lbl{font-size:.78rem;letter-spacing:.07em;text-transform:uppercase;font-weight:800;color:var(--green)}
+
+/* podstawa prawna */
+.law{display:inline-block;font-size:.8rem;font-weight:700;line-height:1.3;padding:2px 9px;border-radius:999px;background:var(--pale);color:var(--dark);text-decoration:none;border:1px solid transparent;white-space:nowrap;vertical-align:1px}
+.law:hover{border-color:var(--green)}
+.law.men{background:transparent;border-color:var(--line);color:var(--muted)}
+.law.men:hover{border-color:var(--green);color:var(--green)}
+.laws{display:flex;flex-wrap:wrap;gap:6px}
+
+/* tabela sytuacji */
+.filter{display:inline-flex;gap:4px;padding:4px;border-radius:10px;background:var(--pale);flex-wrap:wrap;justify-self:start}
+.filter button{font:inherit;font-weight:700;font-size:.92rem;border:0;border-radius:7px;padding:7px 14px;background:transparent;color:var(--dark);cursor:pointer;min-height:40px}
+.filter button[aria-pressed="true"]{background:var(--surface);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.12)}
+.cases{display:grid;gap:10px}
+.case{display:grid;grid-template-columns:118px 1fr;gap:14px;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:14px 16px;align-items:start}
+@media (max-width:640px){.case{grid-template-columns:1fr;gap:8px}}
+.case h3{font-size:1.05rem}
+.case-body{display:grid;gap:6px;min-width:0}
+.case-body p{max-width:75ch}
+.verdict{font-weight:800;font-size:.9rem;border-radius:8px;padding:6px 10px;text-align:center;justify-self:start;width:100%;max-width:118px}
+.v-yes{background:var(--yes-bg);color:var(--yes)}
+.v-no{background:var(--no-bg);color:var(--no)}
+.v-half{background:var(--half-bg);color:var(--half)}
+
+/* kroki */
+.steps{list-style:none;margin:0;padding:0;display:grid;gap:26px;counter-reset:st}
+.step{display:grid;grid-template-columns:40px 1fr;gap:14px;counter-increment:st}
+.step::before{content:counter(st);width:36px;height:36px;border-radius:50%;background:var(--green);color:var(--surface);font-weight:800;display:grid;place-items:center;font-size:1.05rem}
+.step-body{display:grid;gap:8px;min-width:0}
+.step-body > h3{padding-top:5px}
+.step-body > p{max-width:70ch}
+@media (max-width:600px){.step{grid-template-columns:1fr;gap:8px}}
+
+/* drzewko decyzji */
+.paths{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr))}
+.path{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:16px 18px;display:grid;gap:10px;align-content:start}
+.path .q{font-weight:700;color:var(--muted);font-size:.95rem}
+.path h3{display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.pill{font-size:.78rem;font-weight:800;border-radius:999px;padding:2px 9px;white-space:nowrap}
+.path ul{margin:0;padding-left:1.2em;display:grid;gap:4px}
+
+/* kalkulator */
+.calc{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:18px;display:grid;gap:16px}
+.fields{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr))}
+.field{display:grid;gap:4px}
+.field label{font-weight:700;font-size:.95rem}
+.field small{color:var(--muted);font-size:.85rem;line-height:1.35}
+.field input,.field select{font:inherit;font-size:1.05rem;padding:8px 10px;border-radius:8px;border:1px solid var(--line);background:var(--bg);color:var(--ink);min-height:44px;width:100%}
+.result{display:grid;gap:8px;background:var(--pale);border-radius:10px;padding:14px 16px}
+.result ol{margin:0;padding-left:1.3em;display:grid;gap:4px}
+.big{font-size:1.5rem;font-weight:800;color:var(--dark)}
+.examples{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.btn{font:inherit;font-weight:700;font-size:.9rem;border-radius:8px;border:1px solid var(--green);background:transparent;color:var(--green);padding:6px 12px;cursor:pointer;min-height:40px}
+.btn:hover{background:var(--pale)}
+
+.quote{border-left:4px solid var(--line);padding:4px 0 4px 14px;color:var(--muted);font-style:italic;max-width:75ch}
+
+/* faq */
+.faq{display:grid;gap:10px}
+.faq details{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius)}
+.faq summary{cursor:pointer;font-weight:700;padding:14px 16px;list-style:none;display:flex;justify-content:space-between;gap:12px}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{content:"+";font-weight:800;color:var(--green);font-size:1.2rem;line-height:1}
+.faq details[open] summary::after{content:"–"}
+.faq details > div{padding:0 16px 16px;display:grid;gap:8px}
+
+/* przepisy */
+.src{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr))}
+.src ul{margin:0;padding-left:1.2em;display:grid;gap:6px}
+.src li small{color:var(--muted)}
+
+.contact{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:18px;display:grid;gap:6px;margin-top:10px}
+footer{padding-block:40px;color:var(--muted);font-size:.9rem;border-top:1px solid var(--line);margin-top:48px}
+@media print{.toc,.filter,.calc .examples{display:none}body{background:#fff}section{padding-block:20px 0}.faq details{break-inside:avoid}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="brand"><b>Szkoła Mistrzów</b>Zespół Szkół Zawodowych nr 5</div>
+    <a class="back" href="https://nauczyciel.szkolamistrzow.info/">← Pulpit nauczyciela</a>
+  </header>
+
+  <div class="hero">
+    <div class="hero-text">
+      <span class="eyebrow">Ścieżka 5 · Kadry i rozliczenia</span>
+      <h1>Rozliczanie godzin</h1>
+      <p class="lead">Kiedy godziny, które się nie odbyły, są płatne, a kiedy nie? Co zrobić, gdy klasa wyjeżdża na wycieczkę, gdy dyrektor wysyła Cię na konferencję albo gdy musisz się zwolnić? Wszystko w jednym miejscu, z podstawą prawną przy każdej zasadzie.</p>
+      <div class="rule">
+        <span class="lbl">Zasada w jednym zdaniu</span>
+        <p>Płatne są godziny zrealizowane oraz te, które nie odbyły się z przyczyn po stronie szkoły, jeżeli w tym czasie byłeś gotowy do pracy.</p>
+        <div class="laws"><a class="law" href="https://api.sejm.gov.pl/eli/acts/DU/2026/515/text.pdf#page=46">art. 35 ust. 3d KN</a><a class="law" href="https://api.sejm.gov.pl/eli/acts/DU/2026/515/text.pdf#page=47">art. 35 ust. 3e KN</a></div>
+      </div>
+    </div>
+    <div class="short">
+      <h2>Trzy pytania, które wszystko rozstrzygają</h2>
+      <ol>
+        <li><span><b>Dlaczego lekcja się nie odbyła?</b><small>Z przyczyn po stronie szkoły (wycieczka klasy, święto szkoły, polecenie dyrektora) czy z Twoich (choroba, sprawa prywatna)?</small></span></li>
+        <li><span><b>Gdzie byłeś w tym czasie?</b><small>W szkole albo tam, gdzie wysłał Cię dyrektor, i do dyspozycji dyrekcji. To jest „gotowość do pracy”.</small></span></li>
+        <li><span><b>Czy jest to na piśmie?</b><small>Komunikat dyrektora, polecenie wyjazdu, podpisany wniosek. Bez dokumentu nie ma podstawy do rozliczenia.</small></span></li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="note measure">
+    <strong class="lbl">Kogo to dotyczy</strong>
+    <p>Nauczycieli naszej <b>szkoły publicznej</b>, zatrudnionych na podstawie <b>Karty Nauczyciela</b>. Karta jest tu przepisem podstawowym. Kodeks pracy stosujemy tylko w sprawach, których Karta nie reguluje, bo tak stanowi <a class="law" href="https://api.sejm.gov.pl/eli/acts/DU/2026/515/text.pdf#page=80">art. 91c ust. 1 KN</a>. Stan prawny: <b>28 września 2026 r.</b> (Karta Nauczyciela, tekst jednolity Dz.U. 2026 poz. 515).</p>
+  </div>
+</div>
+
+<nav class="toc" aria-label="Spis treści"><div>
+  <a href="#r-pojecia">Pojęcia</a>
+  <a href="#r-sytuacje">Płatne czy nie?</a>
+  <a href="#r-gotowosc">Gotowość do pracy</a>
+  <a href="#r-wycieczki">Wycieczki</a>
+  <a href="#r-wyjazdy">Delegowanie i szkolenia</a>
+  <a href="#r-zwolnienie">Muszę się zwolnić</a>
+  <a href="#r-tydzien">Tydzień z dniem wolnym</a>
+  <a href="#r-wnioski">Wnioski</a>
+  <a href="#r-pytania">Pytania</a>
+  <a href="#r-przepisy">Przepisy</a>
+</div></nav>
+
+<main class="wrap">
+
+  <!-- POJĘCIA -->
+  <section id="r-pojecia">
+    <div class="sec-head">
+      <span class="eyebrow">Zaczynamy</span>
+      <h2>Pięć pojęć, które warto znać</h2>
+    </div>
+    <div class="notes">
+      <div class="note"><strong class="lbl">Pensum</strong><p>Tygodniowy obowiązkowy wymiar godzin zajęć, np. 18 godzin. Jest opłacony w wynagrodzeniu zasadniczym.</p><div class="laws"><a class="law" href="https://api.sejm.gov.pl/eli/acts/DU/2026/515/text.pdf#page=48">art. 42 ust. 2 pkt 1 KN</a></div></div>
+      <div class="note"><strong class="lbl">Godzina ponadwymiarowa</strong><p>Każda <b>przydzielona</b> godzina ponad pensum. Nie jest „przypięta” do konkretnej lekcji: jeśli masz 23 godziny przy pensum 18, masz 5 godzin ponadwymiarowych, a każda nieodbyta lekcja jest traktowana jak nieodbyta godzina ponadwymiarowa.</p><div class="laws"><a class="law" href="https://api.sejm.gov.pl/eli/acts/DU/2026/515/text.pdf#page=46">art. 35 ust. 2 KN</a><a class="law men" href="https://www.gov.pl/web/edukacja/zmiany-w-zakresie-wynagradzania-nauczycieli-za-godziny-ponadwymiarowe#:~:text=Godziny%20ponadwymiarowe%20nie%20s%C4%85%20znaczone">MEN 29.12.2025</a></div></div>
+      <div class="note"><strong class="lbl">Doraźne zastępstwo</strong><p>Godzina ponad pensum, którą prowadzisz <b>za nieobecnego nauczyciela</b>. Płatna, jeżeli wykraczasz nią poza swój plan.</p><div class="laws"><a class="law" href="https://api.sejm.gov.pl/eli/acts/DU/2026/515/text.pdf#page=46">art. 35 ust. 2a KN</a></div></div>
+      <div class="note"><strong class="lbl">Gotowość do pracy</strong><p>Jesteś w szkole (albo w miejscu wskazanym przez dyrektora), możesz od razu podjąć pracę i jesteś do dyspozycji dyrekcji. Szczegóły niżej.</p><div class="laws"><a class="law" href="https://api.sejm.gov.pl/eli/acts/DU/2026/515/text.pdf#page=47">art. 35 ust. 3e KN</a><a class="law men" href="https://www.gov.pl/web/edukacja/zmiany-w-zakresie-wynagradzania-nauczycieli-za-godziny-ponadwymiarowe#:~:text=Cechy%20istotne%20gotowo%C5%9Bci%20do%20wykonywania%20pracy">MEN 29.12.2025</a></div></div>
+      <div class="note"><strong class="lbl">Okres rozliczeniowy</strong><p>Godziny ponadwymiarowe liczy się <b>tydzień po tygodniu</b> i wypłaca za dany miesiąc. Wszystko, co trzeba odpracować, odpracowujemy w tym samym okresie, najlepiej w tym samym tygodniu.</p><div class="laws"><a class="law" href="https://api.sejm.gov.pl/eli/acts/DU/2026/515/text.pdf#page=47">art. 35 ust. 3f KN</a></div></div>
+    </div>
+  </section>
+
+  <!-- SYTUACJE -->
+  <section id="r-sytuacje">
+    <div class="sec-head">
+      <span class="eyebrow">Ściągawka</span>
+      <h2>Lekcja się nie odbyła. Płatne czy nie?</h2>
+      <p>Znajdź swoją sytuację. Pod każdą jest podstawa prawna: kliknij, a otworzy się właściwe miejsce w ustawie albo w wyjaśnieniach Ministerstwa Edukacji.</p>
+    </div>
+    <div class="filter" role="group" aria-label="Filtr sytuacji">
+      <button type="button" data-f="all" aria-pressed="true">Wszystkie</button>
+      <button type="button" data-f="yes" aria-pressed="false">Płatne</button>
+      <button type="button" data-f="no" aria-pressed="false">Niepłatne</button>
+    </div>
+    <div class="cases">
+      <article class="case" data-v="yes">
+        <span class="verdict v-yes">Płatne</span>
+        <div class="case-body">
+          <h3>Święto szkoły, akademia, apel: dyrektor odwołuje lekcje</h3>
+          <p>Przykład: dyrektor ogłasza, że lekcje po 13:10 są odwołane, bo cała szkoła, nauczyciele i delegacje uczniów, jest na akademii. Zostajesz w pracy, tylko wykonujesz inne zadanie. Odwołane godziny, także ponadwymiarowe, rozliczamy tak, jakby się odbyły.</p>
+          <div class="laws"><a class="law" href="https://api.sejm.gov.pl/eli/acts/DU/2026/515/text.pdf#page=47">art. 35 ust. 3e KN</a><a class="law" href="https://api.sejm.gov.pl/eli/acts/DU/2026/515/text.pdf#page=48">art. 42 ust. 2 pkt 2 KN</a><a class="law men" href="https://www.gov.pl/web/edukacja/zmiany-w-zakresie-wynagradzania-nauczycieli-za-godziny-ponadwymiarowe#:~:text=Nauczyciel%2C%20kt%C3%B3ry%20sprawuje%20opiek%C4%99%20nad%20uczniami%20na%20wycieczce%20szkolnej%2C%20nie%20realizuje">MEN: „imprezie szkolnej”</a></div>
+        </div>
+      </article>
+      <article class="case" data-v="yes">
+        <span class="verdict v-yes">Płatne</span>
+        <div class="case-body">
+          <h3>Klasa wyszła na wycieczkę, a Ty zostajesz w szkole</h3>
+          <p>Płatne, <b>pod warunkiem że jesteś w szkole w gotowości do pracy</b>. W tym czasie możesz dostać zastępstwo albo inne zadanie, bez dodatkowej zapłaty. Więcej w części <a href="#r-wycieczki">Wycieczki</a>.</p>
+          <div class="laws"><a class="law" href="https://api.sejm.gov.pl/eli/acts/DU/2026/515/text.pdf#page=47">art. 35 ust. 3e KN</a><a class="law men" href="https://www.gov.pl/web/edukacja/zmiany-w-zakresie-wynagradzania-nauczycieli-za-godziny-ponadwymiarowe#:~:text=Nauczyciel%2C%20kt%C3%B3ry%20nie%20zrealizuje%20przydzielonych%20mu%20godzin%20ponadwymiarowych%20z%20powodu%20wyjazdu">MEN 29.12.2025</a></div>
+        </div>
+      </article>
+      <article class="case" data-v="yes">
+        <span class="verdict v-yes">Płatne</span>
+        <div class="case-body">
+          <h3>Jesteś opiekunem na wycieczce, zawodach, konkursie</h3>
+          <p>Wykonujesz zadanie powierzone przez dyrektora. Zaplanowane godziny, także ponadwymiarowe, są płatne.</p>
+          <div class="laws"><a class="law" href="https://api.sejm.gov.pl/eli/acts/DU/2026/515/text.pdf#page=47">art. 35 ust. 3e zd. 2 KN</a><a class="law men" href="https://www.gov.pl/web/edukacja/zmiany-w-zakresie-wynagradzania-nauczycieli-za-godziny-ponadwymiarowe#:~:text=Nauczyciel%2C%20kt%C3%B3ry%20sprawuje%20opiek%C4%99%20nad%20uczniami%20na%20wycieczce%20szkolnej%2C%20nie%20realizuje">MEN 29.12.2025</a></div>
+        </div>
+      </article>
+      <article class="case" data-v="yes">
+        <span class="verdict v-yes">Płatne</span>
+        <div class="case-body">
+          <h3>Dyrektor deleguje Cię służbowo, np. na spotkanie projektu Erasmus+</h3>
+          <p>Jedziesz na polecenie dyrektora, żeby wykonać zadanie szkoły. Twoje lekcje są odwołane, ale Ty jesteś w pracy, tylko w innym miejscu. Godziny są płatne.</p>
+          <div class="laws"><a class="law" href="https://api.sejm.gov.pl/eli/acts/DU/2026/515/text.pdf#page=47">art. 35 ust. 3e zd. 2 KN</a><a class="law" href="https://api.sejm.gov.pl/eli/acts/DU/2026/515/text.pdf#page=48">art. 42 ust. 2 pkt 2 KN</a></div>
+        </div>
+      </article>
+      <article class="case" data-v="yes">
+        <span class="verdict v-yes">Płatne</span>
+        <div class="case-body">
+          <h3>Szkolenie, kurs, konferencja w ramach doskonalenia zawodowego, na które kieruje Cię dyrektor</h3>
+          <p>Płatne, ale <b>liczone inaczej</b>: jak za urlop wypoczynkowy, z uwzględnieniem godzin ponadwymiarowych. Kwotę wylicza księgowość według przepisów o wynagrodzeniu za czas zwolnienia od pracy. To samo dotyczy szkolenia, na które dyrektor wyraził zgodę <b>jako na doskonalenie zawodowe</b>. Zobacz <a href="#r-wyjazdy">Delegowanie i szkolenia</a>.</p>
+          <div class="laws"><a class="law" href="https://api.sejm.gov.pl/eli/acts/DU/2026/515/text.pdf#page=80">art. 91c ust. 1 KN</a><a class="law" href="https://api.sejm.gov.pl/eli/acts/DU/2026/1245/text.pdf#page=44">art. 103¹ KP</a><a class="law" href="https://api.sejm.gov.pl/eli/acts/DU/2017/927/text.pdf">§ 5 rozp. z 29.05.1996</a><a class="law" href="https://api.sejm.gov.pl/eli/acts/DU/2026/515/text.pdf#page=58">art. 67 ust. 1 KN</a><a class="law men" href="https://www.gov.pl/web/edukacja/zmiany-w-zakresie-wynagradzania-nauczycieli-za-godziny-ponadwymiarowe#:~:text=Tak%20wi%C4%99c%20za%20czas%20zwolnienia%20od%20pracy%2C%20w%20kt%C3%B3rym%20nauczyciel%20uczestniczy%C5%82%20w%20doskonaleniu">MEN 29.12.2025</a></div>
+        </div>
+      </article>
+      <article class="case" data-v="yes">
+        <span class="verdict v-yes">Płatne</span>
+        <div class="case-body">
+          <h3>Uczeń nie przyszedł na zajęcia indywidualne albo rewalidacyjne</h3>
+          <p>Płatne, jeśli byłeś gotowy do prowadzenia zajęć. Nie ma znaczenia, kiedy dowiedziałeś się, że zajęć nie będzie. Wyjątek: dyrektor formalnie zawiesił nauczanie indywidualne.</p>
+          <div class="laws"><a class="law" href="https://api.sejm.gov.pl/eli/acts/DU/2026/515/text.pdf#page=47">art. 35 ust. 3e KN</a><a class="law men" href="https://www.gov.pl/web/edukacja/zmiany-w-zakresie-wynagradzania-nauczycieli-za-godziny-ponadwymiarowe#:~:text=Dla%20zachowania%20prawa%20do%20wynagrodzenia%20za%20niezrealizowane%20godziny%20ponadwymiarowe%20nie%20ma%20znaczenia">MEN 29.12.2025</a></div>
+        </div>
+      </article>
+      <article class="case" data-v="yes">
+        <span class="verdict v-yes">Płatne</span>
+        <div class="case-body">
+          <h3>Oddanie krwi, praca w komisji dyscyplinarnej, doraźna czynność związkowa</h3>
+          <p>Płatne na podstawie osobnych przepisów. Krwiodawstwo i czynności związkowe rozlicza się jak urlop, a komisję dyscyplinarną jak zwykłą pracę.</p>
+          <div class="laws"><a class="law men" href="https://www.gov.pl/web/edukacja/zmiany-w-zakresie-wynagradzania-nauczycieli-za-godziny-ponadwymiarowe#:~:text=Tak%20wi%C4%99c%20za%20okres%20zwolnienia%20od%20pracy%20udzielonego%20w%20celu%20oddania%20krwi">MEN: krwiodawstwo</a><a class="law men" href="https://www.gov.pl/web/edukacja/zmiany-w-zakresie-wynagradzania-nauczycieli-za-godziny-ponadwymiarowe#:~:text=wykonywanie%20zada%C5%84%20w%20komisji%20dyscyplinarnej%20przez%20jej%20cz%C5%82onk%C3%B3w">MEN: komisja</a></div>
+        </div>
+      </article>
+      <article class="case" data-v="yes">
+        <span class="verdict v-half">Płatne raz</span>
+        <div class="case-body">
+          <h3>W czasie „odwołanej” lekcji dostajesz zastępstwo</h3>
+          <p>Zastępstwo mieści się w godzinie, za którą i tak dostajesz wynagrodzenie. Nie jest płatne drugi raz, nawet jeśli w dzienniku VULCAN widnieje jako płatne.</p>
+          <div class="laws"><a class="law men" href="https://www.gov.pl/web/edukacja/zmiany-w-zakresie-wynagradzania-nauczycieli-za-godziny-ponadwymiarowe#:~:text=W%20takim%20przypadku%20nauczyciel%20b%C4%99dzie%20realizowa%C5%82%20godziny%20dora%C5%BAnych%20zast%C4%99pstw">MEN 29.12.2025</a></div>
+        </div>
+      </article>
+      <article class="case" data-v="no">
+        <span class="verdict v-no">Niepłatne</span>
+        <div class="case-body">
+          <h3>Zwolnienie lekarskie (L4)</h3>
+          <p>Nie jesteś zdolny do pracy, więc nie ma gotowości. Za czas choroby dostajesz wynagrodzenie chorobowe albo zasiłek, a nie zapłatę za godziny ponadwymiarowe. W tygodniu z dniem choroby pensum pomniejsza się o 1/5 za każdy taki dzień (zobacz <a href="#r-tydzien">kalkulator</a>).</p>
+          <div class="laws"><a class="law" href="https://api.sejm.gov.pl/eli/acts/DU/2026/515/text.pdf#page=47">art. 35 ust. 3e i 3f KN</a><a class="law men" href="https://www.gov.pl/web/edukacja/zmiany-w-zakresie-wynagradzania-nauczycieli-za-godziny-ponadwymiarowe#:~:text=Przez%20pozostawanie%20w%20dyspozycji%20pracodawcy%20nale%C5%BCy%20rozumie%C4%87">MEN: stan uniemożliwiający pracę</a></div>
+        </div>
+      </article>
+      <article class="case" data-v="no">
+        <span class="verdict v-no">Niepłatne</span>
+        <div class="case-body">
+          <h3>Urlop bezpłatny</h3>
+          <p>Za dni urlopu bezpłatnego nie przysługuje wynagrodzenie, ani za pensum, ani za godziny ponadwymiarowe.</p>
+          <div class="laws"><a class="law" href="https://api.sejm.gov.pl/eli/acts/DU/2026/515/text.pdf#page=80">art. 91c ust. 1 KN</a><a class="law" href="https://api.sejm.gov.pl/eli/acts/DU/2026/1245/text.pdf#page=61">art. 174 KP</a></div>
+        </div>
+      </article>
+      <article class="case" data-v="no">
+        <span class="verdict v-half">Połowa</span>
+        <div class="case-body">
+          <h3>Zwolnienie z powodu siły wyższej</h3>
+          <p>2 dni albo 16 godzin w roku, <b>tylko</b> w pilnej sprawie rodzinnej spowodowanej chorobą lub wypadkiem, gdy Twoja obecność jest natychmiast potrzebna. Przysługuje połowa wynagrodzenia, a nie pełna zapłata za nieodbyte godziny.</p>
+          <div class="laws"><a class="law" href="https://api.sejm.gov.pl/eli/acts/DU/2026/515/text.pdf#page=80">art. 91c ust. 1 KN</a><a class="law" href="https://api.sejm.gov.pl/eli/acts/DU/2026/1245/text.pdf#page=53">art. 148¹ KP</a></div>
+        </div>
+      </article>
+      <article class="case" data-v="no">
+        <span class="verdict v-no">Niepłatne</span>
+        <div class="case-body">
+          <h3>Sprawa prywatna: lekarz, urząd, wyjazd lub konferencja z własnej inicjatywy</h3>
+          <p>Przyczyna leży po Twojej stronie. Masz dwie drogi: <b>odpracować</b> godziny w tym samym tygodniu albo okresie rozliczeniowym, albo wziąć <b>urlop bezpłatny</b>. Zgoda dyrektora na nieobecność nie oznacza, że godziny są płatne. Zobacz <a href="#r-zwolnienie">Muszę się zwolnić</a>.</p>
+          <div class="laws"><a class="law" href="https://api.sejm.gov.pl/eli/acts/DU/2026/515/text.pdf#page=46">art. 35 ust. 3d KN</a><a class="law" href="https://api.sejm.gov.pl/eli/acts/DU/2026/1245/text.pdf#page=54">art. 151 § 2¹ KP</a><a class="law" href="https://api.sejm.gov.pl/eli/acts/DU/2026/1245/text.pdf#page=61">art. 174 KP</a></div>
+        </div>
+      </article>
+      <article class="case" data-v="no">
+        <span class="verdict v-no">Niepłatne</span>
+        <div class="case-body">
+          <h3>Dni wolne: święta ustawowe, Dzień Edukacji Narodowej, przerwy świąteczne, dni wolne ustalone przez dyrektora</h3>
+          <p>W takie dni nie przydziela się godzin ponadwymiarowych, więc nie ma czego wypłacać. W tygodniu z takim dniem pensum pomniejsza się o 1/5 za każdy dzień.</p>
+          <div class="laws"><a class="law" href="https://api.sejm.gov.pl/eli/acts/DU/2026/515/text.pdf#page=47">art. 35 ust. 3f KN</a><a class="law" href="https://api.sejm.gov.pl/eli/acts/DU/2026/515/text.pdf#page=64">art. 74 KN</a><a class="law" href="https://api.sejm.gov.pl/eli/acts/DU/2023/1211/text.pdf#page=3">§ 5 rozp. o organizacji roku szkolnego</a><a class="law men" href="https://www.gov.pl/web/edukacja/zmiany-w-zakresie-wynagradzania-nauczycieli-za-godziny-ponadwymiarowe#:~:text=Nauczycielom%20co%20do%20zasady%20nie%20przydziela%20si%C4%99%20godzin%20ponadwymiarowych">MEN 29.12.2025</a></div>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- GOTOWOŚĆ -->
+  <section id="r-gotowosc">
+    <div class="sec-head">
+      <span class="eyebrow">Najważniejszy warunek</span>
+      <h2>Gotowość do pracy: co to znaczy w praktyce</h2>
+      <p>Ministerstwo Edukacji wymienia cztery cechy gotowości. Muszą być spełnione <b>wszystkie naraz</b>:</p>
+    </div>
+    <div class="notes">
+      <div class="note"><strong class="lbl">1. Zamiar</strong><p>Chcesz wykonywać pracę.</p></div>
+      <div class="note"><strong class="lbl">2. Zdolność</strong><p>Możesz ją faktycznie wykonywać: nie jesteś chory ani w stanie, który to uniemożliwia.</p></div>
+      <div class="note"><strong class="lbl">3. Widoczność</strong><p>Twoja gotowość jest widoczna: jesteś w szkole, w pokoju nauczycielskim, dyrekcja wie, gdzie Cię znaleźć.</p></div>
+      <div class="note"><strong class="lbl">4. Dyspozycja</strong><p>Możesz <b>od razu</b> podjąć pracę na wezwanie, w szkole albo w miejscu wskazanym przez dyrektora.</p></div>
+    </div>
+    <p class="quote measure">Nie pozostaje w dyspozycji pracodawcy pracownik, który nie znajduje się w wyznaczonym przez pracodawcę miejscu do wykonywania pracy.<br><span style="font-style:normal">MEN, 29.12.2025, za wyrokiem SN z 23.09.2004, I PK 541/03 · <a class="law men" href="https://www.gov.pl/web/edukacja/zmiany-w-zakresie-wynagradzania-nauczycieli-za-godziny-ponadwymiarowe#:~:text=Przez%20pozostawanie%20w%20dyspozycji%20pracodawcy%20nale%C5%BCy%20rozumie%C4%87">zobacz akapit</a></span></p>
+    <div class="notes">
+      <div class="note warn">
+        <strong class="lbl">Za godzinę dostajesz pieniądze, więc jesteś w pracy</strong>
+        <ul>
+          <li>Jesteś w szkole zgodnie ze swoim planem, także wtedy, gdy wypadły Ci <b>pierwsze lekcje</b>. Przychodzisz na godzinę, na którą miały się zacząć.</li>
+          <li>Nie wychodzisz w tym czasie „na chwilę” w prywatnej sprawie. Wtedy nie ma gotowości, więc nie ma podstawy do wypłaty.</li>
+          <li>Pomyśl o bezpieczeństwie. Jeśli w opłaconych godzinach pracy jesteś poza miejscem pracy i np. doznasz urazu w tramwaju, pojawia się pytanie, dlaczego nie było Cię tam, gdzie według planu świadczysz pracę. Taki wypadek może nie zostać uznany za wypadek przy pracy.</li>
+        </ul>
+      </div>
+      <div class="note">
+        <strong class="lbl">Dyrektor może dać Ci inne zadanie, ale nie musi</strong>
+        <p>W czasie odwołanej lekcji dyrektor może przydzielić Ci zastępstwo, dyżur, opiekę nad uczniami albo inne zadanie statutowe. Jeśli nic nie przydzieli, a Ty jesteś w gotowości, wynagrodzenie i tak Ci przysługuje.</p>
+        <div class="laws"><a class="law" href="https://api.sejm.gov.pl/eli/acts/DU/2026/515/text.pdf#page=47">art. 35 ust. 3e zd. 2 KN</a><a class="law men" href="https://www.gov.pl/web/edukacja/zmiany-w-zakresie-wynagradzania-nauczycieli-za-godziny-ponadwymiarowe#:~:text=nie%20jest%20uzale%C5%BCnione%20od%20realizacji%20przez%20nauczyciela%20w%20tym%20czasie%20innych%20zada%C5%84">MEN 29.12.2025</a></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- WYCIECZKI -->
+  <section id="r-wycieczki">
+    <div class="sec-head">
+      <span class="eyebrow">Wycieczki i wyjścia</span>
+      <h2>Moja klasa wyszła na wycieczkę. Co teraz?</h2>
+    </div>
+    <ol class="steps">
+      <li class="step"><div class="step-body">
+        <h3>Godzina jest płatna, także ponadwymiarowa</h3>
+        <p>Lekcja nie odbyła się z przyczyn niezależnych od Ciebie. Jeśli jesteś w gotowości, rozliczamy ją tak, jakby się odbyła.</p>
+        <div class="laws"><a class="law" href="https://api.sejm.gov.pl/eli/acts/DU/2026/515/text.pdf#page=47">art. 35 ust. 3e KN</a><a class="law men" href="https://www.gov.pl/web/edukacja/zmiany-w-zakresie-wynagradzania-nauczycieli-za-godziny-ponadwymiarowe#:~:text=Nauczyciel%2C%20kt%C3%B3ry%20nie%20zrealizuje%20przydzielonych%20mu%20godzin%20ponadwymiarowych%20z%20powodu%20wyjazdu">MEN 29.12.2025</a></div>
+      </div></li>
+      <li class="step"><div class="step-body">
+        <h3>Zostajesz w szkole, w godzinach swojego planu</h3>
+        <p>To czas pracy. Bądź tam, gdzie dyrekcja może Cię znaleźć: w pokoju nauczycielskim albo w swojej sali. Sprawdź <b>listę zmian</b> na pulpicie nauczyciela.</p>
+      </div></li>
+      <li class="step"><div class="step-body">
+        <h3>Możesz dostać zastępstwo, bez dodatkowej zapłaty</h3>
+        <p>To właśnie te godziny są pierwszym wyborem przy planowaniu zastępstw. Zastępstwo prowadzisz <b>w ramach godziny, za którą już dostajesz wynagrodzenie</b>, czy to z pensum, czy ponadwymiarowej. Nie dostajesz zapłaty dwa razy za tę samą godzinę.</p>
+        <div class="laws"><a class="law men" href="https://www.gov.pl/web/edukacja/zmiany-w-zakresie-wynagradzania-nauczycieli-za-godziny-ponadwymiarowe#:~:text=W%20takim%20przypadku%20nauczyciel%20b%C4%99dzie%20realizowa%C5%82%20godziny%20dora%C5%BAnych%20zast%C4%99pstw">MEN: zastępstwa „w ramach wynagrodzenia”</a></div>
+      </div></li>
+      <li class="step"><div class="step-body">
+        <h3>Nie sugeruj się oznaczeniem w VULCANIE</h3>
+        <p>W module zastępstw takie godziny bywają oznaczone jako „płatne”. To oznaczenie techniczne. Przy rozliczeniu godzina liczy się <b>jeden raz</b>. Zastępstwo w innym czasie, poza Twoim planem, jest zwykłym płatnym doraźnym zastępstwem.</p>
+      </div></li>
+    </ol>
+  </section>
+
+  <!-- DELEGOWANIE -->
+  <section id="r-wyjazdy">
+    <div class="sec-head">
+      <span class="eyebrow">Wyjazdy służbowe i szkolenia</span>
+      <h2>Delegowanie, szkolenie, konferencja</h2>
+      <p>O tym, czy wyjazd jest płatny, decyduje <b>tryb, który zatwierdza dyrektor</b>, a nie sam fakt, że się zgodził na Twoją nieobecność. Ustal to <b>przed</b> wyjazdem.</p>
+    </div>
+    <div class="paths">
+      <div class="path">
+        <span class="q">Dyrektor wysyła Cię, żebyś wykonał zadanie szkoły</span>
+        <h3>Delegowanie <span class="pill v-yes">płatne</span></h3>
+        <ul>
+          <li>Np. spotkanie partnerów Erasmus+, reprezentowanie szkoły, opieka nad uczniami na zawodach.</li>
+          <li>Dokument: <b>polecenie wyjazdu służbowego</b> albo pisemne polecenie dyrektora.</li>
+          <li>Godziny rozliczamy jak zrealizowane.</li>
+        </ul>
+        <div class="laws"><a class="law" href="https://api.sejm.gov.pl/eli/acts/DU/2026/515/text.pdf#page=47">art. 35 ust. 3e zd. 2 KN</a><a class="law" href="https://api.sejm.gov.pl/eli/acts/DU/2026/515/text.pdf#page=48">art. 42 ust. 2 pkt 2 KN</a></div>
+      </div>
+      <div class="path">
+        <span class="q">Dyrektor kieruje Cię na szkolenie albo zatwierdza je jako doskonalenie zawodowe</span>
+        <h3>Doskonalenie zawodowe <span class="pill v-yes">płatne</span></h3>
+        <ul>
+          <li>Np. kurs, szkolenie branżowe, konferencja metodyczna.</li>
+          <li>Dokument: <b>skierowanie</b> albo wniosek o zgodę na udział w doskonaleniu, podpisany przez dyrektora.</li>
+          <li>Wynagrodzenie liczone <b>jak za urlop</b>, z uwzględnieniem godzin ponadwymiarowych.</li>
+        </ul>
+        <div class="laws"><a class="law" href="https://api.sejm.gov.pl/eli/acts/DU/2026/1245/text.pdf#page=44">art. 103¹ KP</a><a class="law" href="https://api.sejm.gov.pl/eli/acts/DU/2017/927/text.pdf">§ 5 rozp. z 29.05.1996</a><a class="law" href="https://api.sejm.gov.pl/eli/acts/DU/2026/515/text.pdf#page=58">art. 67 ust. 1 KN</a><a class="law men" href="https://www.gov.pl/web/edukacja/zmiany-w-zakresie-wynagradzania-nauczycieli-za-godziny-ponadwymiarowe#:~:text=Tak%20wi%C4%99c%20za%20czas%20zwolnienia%20od%20pracy%2C%20w%20kt%C3%B3rym%20nauczyciel%20uczestniczy%C5%82%20w%20doskonaleniu">MEN</a></div>
+      </div>
+      <div class="path">
+        <span class="q">Jedziesz z własnej inicjatywy, a dyrektor tylko daje Ci wolne</span>
+        <h3>Sprawa prywatna <span class="pill v-no">niepłatne</span></h3>
+        <ul>
+          <li>Np. wydarzenie niezwiązane z Twoją pracą w szkole albo takie, którego dyrektor nie zatwierdził jako doskonalenia.</li>
+          <li>Dokument: wniosek o <b>zwolnienie z odpracowaniem</b> albo o <b>urlop bezpłatny</b>.</li>
+          <li>Zgoda dyrektora na nieobecność ≠ płatne godziny.</li>
+        </ul>
+        <div class="laws"><a class="law" href="https://api.sejm.gov.pl/eli/acts/DU/2026/1245/text.pdf#page=54">art. 151 § 2¹ KP</a><a class="law" href="https://api.sejm.gov.pl/eli/acts/DU/2026/1245/text.pdf#page=61">art. 174 KP</a></div>
+      </div>
+    </div>
+    <div class="note warn measure">
+      <strong class="lbl">Dlaczego tryb jest tak ważny</strong>
+      <p>Kodeks pracy daje prawo do wynagrodzenia za czas szkolenia, na które pracownik idzie <b>z inicjatywy pracodawcy albo za jego zgodą</b> jako na podnoszenie kwalifikacji (art. 103¹ KP). Dlatego na wniosku musi być jasno napisane, o co prosisz: o zgodę na doskonalenie zawodowe czy o wolne w sprawie prywatnej.</p>
+    </div>
+  </section>
+
+  <!-- ZWOLNIENIE -->
+  <section id="r-zwolnienie">
+    <div class="sec-head">
+      <span class="eyebrow">Sytuacje jednorazowe</span>
+      <h2>Muszę się zwolnić. Którą drogę wybrać?</h2>
+      <p>Najpierw spróbuj przełożyć sprawę tak, żeby nie kolidowała z planem. Jeśli się nie da, wybierz drogę pasującą do Twojej sytuacji.</p>
+    </div>
+    <div class="paths">
+      <div class="path">
+        <span class="q">Nagła sprawa: choroba albo wypadek w rodzinie, musisz być na miejscu natychmiast</span>
+        <h3>Siła wyższa <span class="pill v-half">½ wynagrodzenia</span></h3>
+        <ul>
+          <li>2 dni albo 16 godzin w roku kalendarzowym. Dni czy godziny? Decydujesz w pierwszym wniosku w danym roku.</li>
+          <li>Wniosek najpóźniej <b>w dniu</b> zwolnienia. Najpierw zadzwoń do szkoły, a wniosek złóż w kadrach.</li>
+          <li>Wizyta u lekarza umówiona pół roku wcześniej to <b>nie jest</b> siła wyższa.</li>
+        </ul>
+        <div class="laws"><a class="law" href="https://api.sejm.gov.pl/eli/acts/DU/2026/1245/text.pdf#page=53">art. 148¹ KP</a></div>
+      </div>
+      <div class="path">
+        <span class="q">Wychowujesz dziecko do 14 lat</span>
+        <h3>Opieka nad dzieckiem <span class="pill v-yes">płatne</span></h3>
+        <ul>
+          <li>2 dni albo 16 godzin w roku, z zachowaniem wynagrodzenia (liczonego jak za urlop).</li>
+          <li>Możesz to wykorzystać także na zaplanowaną wizytę z dzieckiem u lekarza.</li>
+        </ul>
+        <div class="laws"><a class="law" href="https://api.sejm.gov.pl/eli/acts/DU/2026/1245/text.pdf#page=72">art. 188 KP</a></div>
+      </div>
+      <div class="path">
+        <span class="q">Członek rodziny wymaga opieki z poważnych względów medycznych</span>
+        <h3>Urlop opiekuńczy <span class="pill v-no">bezpłatny</span></h3>
+        <ul>
+          <li>5 dni w roku, wniosek co najmniej 1 dzień wcześniej.</li>
+        </ul>
+        <div class="laws"><a class="law" href="https://api.sejm.gov.pl/eli/acts/DU/2026/1245/text.pdf#page=61">art. 173¹ KP</a></div>
+      </div>
+      <div class="path">
+        <span class="q">Sprawa prywatna na 1–2 godziny lekcyjne (lekarz, urząd), a masz tego dnia np. 7 lekcji</span>
+        <h3>Zwolnienie z odpracowaniem <span class="pill v-yes">bez straty</span></h3>
+        <ul>
+          <li>Wniosek w kadrach o zwolnienie z konkretnych godzin.</li>
+          <li><b>Od razu</b> podaj, kiedy możesz odpracować: okienka, godzina przed lekcjami albo po nich.</li>
+          <li>Odpracowujesz w formie zastępstwa, nie zawsze z tą samą klasą.</li>
+          <li>Odpracowanie <b>w tym samym okresie rozliczeniowym</b>, najlepiej w tym samym tygodniu. Nie jest dodatkowo płatne.</li>
+        </ul>
+        <div class="laws"><a class="law" href="https://api.sejm.gov.pl/eli/acts/DU/2026/515/text.pdf#page=46">art. 35 ust. 3d KN</a><a class="law" href="https://api.sejm.gov.pl/eli/acts/DU/2026/1245/text.pdf#page=54">art. 151 § 2¹ KP</a></div>
+      </div>
+      <div class="path">
+        <span class="q">Nie masz kiedy odpracować, np. uczysz też w drugiej szkole</span>
+        <h3>Urlop bezpłatny <span class="pill v-no">niepłatne</span></h3>
+        <ul>
+          <li>Wniosek w kadrach, podpisuje dyrektor.</li>
+          <li>Za ten czas nie ma wynagrodzenia.</li>
+        </ul>
+        <div class="laws"><a class="law" href="https://api.sejm.gov.pl/eli/acts/DU/2026/1245/text.pdf#page=61">art. 174 KP</a></div>
+      </div>
+      <div class="path">
+        <span class="q">Jesteś chory</span>
+        <h3>Zwolnienie lekarskie (L4)</h3>
+        <ul>
+          <li>Poinformuj szkołę jak najszybciej, żeby zaplanować zastępstwa.</li>
+          <li>Godziny z dni choroby nie są płatne jako ponadwymiarowe, a pensum w tym tygodniu się pomniejsza.</li>
+        </ul>
+        <div class="laws"><a class="law" href="https://api.sejm.gov.pl/eli/acts/DU/2026/515/text.pdf#page=47">art. 35 ust. 3f KN</a></div>
+      </div>
+    </div>
+
+    <div class="note lock measure">
+      <strong class="lbl">Standard szkoły: nie „odliczamy z nadgodzin”</strong>
+      <p>Nie stosujemy już praktyki „zwolnię się z godziny, a potem odliczycie mi to z godzin ponadwymiarowych” ani „odrobię kiedyś”. Takie pojedyncze ustalenia często się potem nie domykały: ktoś szedł na L4, coś wypadało, i każdy przypadek trzeba było analizować dzień po dniu. Szkoła zatrudnia około 70 nauczycieli, a rozliczenia to pieniądze publiczne, które podlegają kontroli. Dlatego obowiązuje jeden standard:</p>
+      <ol>
+        <li><b>Odpracowanie w tym samym okresie rozliczeniowym</b>, najlepiej w tym samym tygodniu, tak aby liczba zrealizowanych godzin zgadzała się z planem.</li>
+        <li>Jeśli się nie da: <b>siła wyższa</b> (gdy spełnione są warunki) albo <b>urlop bezpłatny</b>.</li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- TYDZIEŃ -->
+  <section id="r-tydzien">
+    <div class="sec-head">
+      <span class="eyebrow">Jak to się liczy</span>
+      <h2>Tydzień z dniem wolnym, L4 albo urlopem</h2>
+      <p>Jeśli w tygodniu jest dzień usprawiedliwionej nieobecności (np. L4), święto albo dzień bez zajęć, <b>pensum pomniejsza się o 1/5</b> (przy czterodniowym tygodniu pracy o 1/4) za każdy taki dzień. Godziny ponadwymiarowe to godziny zrealizowane i zaliczone ponad tak pomniejszone pensum. Wynik zaokrągla się do pełnych godzin: do 0,5 w dół, powyżej 0,5 w górę. Nigdy nie może wyjść więcej, niż masz przydzielone.</p>
+      <div class="laws"><a class="law" href="https://api.sejm.gov.pl/eli/acts/DU/2026/515/text.pdf#page=47">art. 35 ust. 3f KN</a><a class="law" href="https://api.sejm.gov.pl/eli/acts/DU/2026/515/text.pdf#page=47">art. 35 ust. 3h KN</a></div>
+    </div>
+    <div class="calc" id="calc">
+      <div class="examples"><span class="muted">Przykłady:</span>
+        <button type="button" class="btn" data-ex="18,23,1,5,19">Święto we wtorek</button>
+        <button type="button" class="btn" data-ex="18,23,1,5,18">L4 w środę (5 lekcji)</button>
+        <button type="button" class="btn" data-ex="18,23,0,5,23">Klasa na wycieczce</button>
+      </div>
+      <div class="fields">
+        <div class="field"><label for="c-pensum">Pensum (godzin tygodniowo)</label><input id="c-pensum" type="number" min="1" max="40" step="1" value="18" inputmode="numeric"></div>
+        <div class="field"><label for="c-przydz">Przydzielone godziny tygodniowo</label><input id="c-przydz" type="number" min="1" max="60" step="1" value="23" inputmode="numeric"><small>Pensum plus godziny ponadwymiarowe.</small></div>
+        <div class="field"><label for="c-dni">Dni odliczane w tym tygodniu</label><input id="c-dni" type="number" min="0" max="5" step="1" value="1" inputmode="numeric"><small>L4, urlop, święto, dzień wolny od zajęć.</small></div>
+        <div class="field"><label for="c-tydz">Tydzień pracy</label><select id="c-tydz"><option value="5">5 dni</option><option value="4">4 dni</option></select></div>
+        <div class="field"><label for="c-real">Godziny zrealizowane i zaliczone</label><input id="c-real" type="number" min="0" max="60" step="1" value="19" inputmode="numeric"><small>Liczą się też godziny płatne mimo nieodbycia, np. klasa na wycieczce.</small></div>
+      </div>
+      <div class="result" aria-live="polite">
+        <ol id="c-steps"></ol>
+        <p>Godziny ponadwymiarowe do wypłaty w tym tygodniu: <span class="big" id="c-out">–</span></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- WNIOSKI -->
+  <section id="r-wnioski">
+    <div class="sec-head">
+      <span class="eyebrow">Dokumenty</span>
+      <h2>Najpierw wniosek, potem zastępstwa</h2>
+      <p>Informacja rzucona na korytarzu albo SMS nie trafia do dokumentacji. Przy kontroli finansowej nie da się jej pokazać. Każde zwolnienie, urlop czy wyjazd musi mieć ślad na papierze albo w formie elektronicznej, którą przyjmują kadry.</p>
+    </div>
+    <ol class="steps">
+      <li class="step"><div class="step-body"><h3>Pobierz wniosek w kadrach</h3><p>Wniosek o urlop bezpłatny, o zwolnienie z powodu siły wyższej, o zwolnienie z odpracowaniem albo o zgodę na udział w szkoleniu. Napisz, <b>w jakim trybie</b> prosisz o wolne.</p></div></li>
+      <li class="step"><div class="step-body"><h3>Porozmawiaj z dyrektorem i zostaw wniosek</h3><p>Dobrze jest przyjść osobiście i uprzedzić, że wniosek będzie w kadrach, albo złożyć go od razu u dyrektora. Przy odpracowaniu wpisz od razu, <b>kiedy możesz odpracować</b>.</p></div></li>
+      <li class="step"><div class="step-body"><h3>Dopiero wtedy planujemy zastępstwa</h3><p>Po podpisie dyrektora dyrekcja planuje zastępstwa. Zmiany zobaczysz w <b>Liście zmian</b> na pulpicie nauczyciela.</p></div></li>
+      <li class="step"><div class="step-body"><h3>Wyjątek: nagła siła wyższa</h3><p>Jeśli czegoś naprawdę nie dało się przewidzieć, najpierw zadzwoń do szkoły, a wniosek złóż najpóźniej w dniu zwolnienia.</p><div class="laws"><a class="law" href="https://api.sejm.gov.pl/eli/acts/DU/2026/1245/text.pdf#page=53">art. 148¹ § 3 KP</a></div></div></li>
+    </ol>
+  </section>
+
+  <!-- PYTANIA -->
+  <section id="r-pytania">
+    <div class="sec-head">
+      <span class="eyebrow">Pytania</span>
+      <h2>Najczęstsze pytania</h2>
+    </div>
+    <div class="faq">
+      <details><summary>Klasa wyjechała, a potem mam jeszcze jedną lekcję. Mogę na ten czas wyjść ze szkoły?</summary><div>
+        <p>Nie, jeśli ta godzina ma być płatna. Wynagrodzenie za nieodbytą godzinę przysługuje tylko wtedy, gdy jesteś w gotowości do pracy, czyli w szkole i do dyspozycji dyrekcji. Jeżeli musisz wyjść, potrzebujesz wniosku o zwolnienie, tak jak w każdej sprawie prywatnej.</p>
+      </div></details>
+      <details><summary>W VULCANIE zastępstwo jest oznaczone jako płatne. Dostanę za nie osobno?</summary><div>
+        <p>Nie, jeśli zastępstwo przypadło w godzinie, w której Twoja lekcja się nie odbyła, np. przez wycieczkę. Ta godzina jest już opłacona. Osobno płatne jest zastępstwo prowadzone <b>poza</b> Twoim planem.</p>
+      </div></details>
+      <details><summary>Byłem chory w środę. Czy tracę wszystkie godziny ponadwymiarowe z tego tygodnia?</summary><div>
+        <p>Nie. Pensum w tym tygodniu pomniejsza się o 1/5, a godziny ponadwymiarowe liczy się od pomniejszonego pensum. Przykład: pensum 18, przydział 23, w środę 5 lekcji. Pensum spada do 14,4, zrealizowanych godzin jest 18, różnica to 3,6, czyli <b>4 godziny</b> ponadwymiarowe zamiast 5. Sprawdź w <a href="#r-tydzien">kalkulatorze</a>.</p>
+      </div></details>
+      <details><summary>Dyrektor zgodził się, żebym pojechał na konferencję. Czy godziny będą płatne?</summary><div>
+        <p>To zależy od trybu. Jeśli dyrektor Cię <b>skierował</b> albo zatwierdził wyjazd <b>jako doskonalenie zawodowe</b>, dostajesz wynagrodzenie liczone jak za urlop. Jeśli prosiłeś o wolne w sprawie prywatnej, a dyrektor się na to zgodził, jest to urlop bezpłatny albo zwolnienie z odpracowaniem. Tryb ustalamy przed wyjazdem, na piśmie.</p>
+      </div></details>
+      <details><summary>Lekcje przepadły, bo w szkole był egzamin zawodowy albo matura.</summary><div>
+        <p>Jeśli dyrektor ustalił ten dzień jako <b>dzień wolny od zajęć dydaktyczno-wychowawczych</b>, godzin ponadwymiarowych nie ma, a pensum się pomniejsza. Jeśli dzień nie był wolny, a Twoje lekcje odwołano, bo uczniów nie było, jesteś w gotowości w szkole (albo pracujesz w komisji), więc godziny są płatne.</p>
+        <div class="laws"><a class="law" href="https://api.sejm.gov.pl/eli/acts/DU/2023/1211/text.pdf#page=3">§ 5 ust. 2 pkt 1 rozp. o organizacji roku szkolnego</a><a class="law" href="https://api.sejm.gov.pl/eli/acts/DU/2026/515/text.pdf#page=47">art. 35 ust. 3e i 3f KN</a></div>
+      </div></details>
+      <details><summary>Co z dniem rozpoczęcia i zakończenia roku szkolnego?</summary><div>
+        <p>Przepisy nie uznają tych dni automatycznie za wolne od zajęć. Jeśli nie zorganizowano w nie zajęć, godzin ponadwymiarowych się nie przydziela i nie są płatne.</p>
+        <div class="laws"><a class="law men" href="https://www.gov.pl/web/edukacja/zmiany-w-zakresie-wynagradzania-nauczycieli-za-godziny-ponadwymiarowe#:~:text=Obowi%C4%85zuj%C4%85ce%20przepisy%20nie%20ustanawiaj%C4%85%20wprost%20dni%20rozpocz%C4%99cia">MEN 29.12.2025</a></div>
+      </div></details>
+      <details><summary>Nie zdążę odpracować w tym tygodniu. Mogę w przyszłym miesiącu?</summary><div>
+        <p>Nie. Odpracowanie musi się zmieścić w tym samym okresie rozliczeniowym. Jeśli to niemożliwe, zamiast zwolnienia z odpracowaniem złóż wniosek o urlop bezpłatny (albo o zwolnienie z powodu siły wyższej, jeśli spełniasz warunki).</p>
+      </div></details>
+      <details><summary>Regulamin wynagradzania organu prowadzącego mówi coś innego. Co obowiązuje?</summary><div>
+        <p>Od 1 września 2025 r. zasady wynagradzania za godziny ponadwymiarowe i doraźne zastępstwa określa <b>Karta Nauczyciela</b>. Postanowienia regulaminów sprzeczne z Kartą nie obowiązują.</p>
+        <div class="laws"><a class="law men" href="https://www.gov.pl/web/edukacja/zmiany-w-zakresie-wynagradzania-nauczycieli-za-godziny-ponadwymiarowe#:~:text=Od%201%20wrze%C5%9Bnia%202025%20r.%20szczeg%C3%B3%C5%82owe%20warunki%20obliczania">MEN 29.12.2025</a></div>
+      </div></details>
+    </div>
+    <div class="contact">
+      <h3>Masz nietypową sytuację?</h3>
+      <p>Zanim cokolwiek ustalisz ustnie, zapytaj w <b>kadrach</b> albo u <b>dyrekcji</b>, jaki wniosek złożyć. Lepiej zapytać przed niż prostować po.</p>
+    </div>
+  </section>
+
+  <!-- PRZEPISY -->
+  <section id="r-przepisy">
+    <div class="sec-head">
+      <span class="eyebrow">Źródła</span>
+      <h2>Podstawy prawne i wyjaśnienia MEN</h2>
+      <p class="muted">Linki do ustaw prowadzą do oficjalnych tekstów jednolitych w Dzienniku Ustaw (api.sejm.gov.pl), otwartych na właściwej stronie. Linki do wyjaśnień MEN w Chrome i Edge podświetlają właściwy akapit.</p>
+    </div>
+    <div class="src">
+      <div class="note">
+        <strong class="lbl">Karta Nauczyciela · Dz.U. 2026 poz. 515</strong>
+        <ul>
+          <li><a href="https://api.sejm.gov.pl/eli/acts/DU/2026/515/text.pdf#page=46">art. 35 ust. 2, 2a, 3, 3d</a> <small>godzina ponadwymiarowa, doraźne zastępstwo, wynagrodzenie za godziny zrealizowane</small></li>
+          <li><a href="https://api.sejm.gov.pl/eli/acts/DU/2026/515/text.pdf#page=47">art. 35 ust. 3e</a> <small>przyczyny niedotyczące nauczyciela i gotowość do pracy</small></li>
+          <li><a href="https://api.sejm.gov.pl/eli/acts/DU/2026/515/text.pdf#page=47">art. 35 ust. 3f, 3h</a> <small>pomniejszanie pensum o 1/5, zaokrąglenia</small></li>
+          <li><a href="https://api.sejm.gov.pl/eli/acts/DU/2026/515/text.pdf#page=48">art. 42 ust. 2</a> <small>co nauczyciel realizuje w czasie pracy</small></li>
+          <li><a href="https://api.sejm.gov.pl/eli/acts/DU/2026/515/text.pdf#page=58">art. 67 ust. 1</a> <small>wynagrodzenie urlopowe z godzinami ponadwymiarowymi</small></li>
+          <li><a href="https://api.sejm.gov.pl/eli/acts/DU/2026/515/text.pdf#page=64">art. 74</a> <small>Dzień Edukacji Narodowej</small></li>
+          <li><a href="https://api.sejm.gov.pl/eli/acts/DU/2026/515/text.pdf#page=80">art. 91c ust. 1</a> <small>odesłanie do Kodeksu pracy</small></li>
+          <li><a href="https://isap.sejm.gov.pl/isap.nsf/DocDetails.xsp?id=WDU20260000515">karta aktu w ISAP</a></li>
+        </ul>
+      </div>
+      <div class="note">
+        <strong class="lbl">Kodeks pracy · Dz.U. 2026 poz. 1245</strong>
+        <ul>
+          <li><a href="https://api.sejm.gov.pl/eli/acts/DU/2026/1245/text.pdf#page=44">art. 103¹</a> <small>podnoszenie kwalifikacji z inicjatywy lub za zgodą pracodawcy</small></li>
+          <li><a href="https://api.sejm.gov.pl/eli/acts/DU/2026/1245/text.pdf#page=53">art. 148¹</a> <small>zwolnienie z powodu siły wyższej</small></li>
+          <li><a href="https://api.sejm.gov.pl/eli/acts/DU/2026/1245/text.pdf#page=54">art. 151 § 2¹</a> <small>odpracowanie zwolnienia w sprawach osobistych</small></li>
+          <li><a href="https://api.sejm.gov.pl/eli/acts/DU/2026/1245/text.pdf#page=61">art. 173¹, art. 174</a> <small>urlop opiekuńczy, urlop bezpłatny</small></li>
+          <li><a href="https://api.sejm.gov.pl/eli/acts/DU/2026/1245/text.pdf#page=72">art. 188</a> <small>opieka nad dzieckiem do 14 lat</small></li>
+          <li><a href="https://isap.sejm.gov.pl/isap.nsf/DocDetails.xsp?id=WDU20260001245">karta aktu w ISAP</a></li>
+        </ul>
+      </div>
+      <div class="note">
+        <strong class="lbl">Inne akty</strong>
+        <ul>
+          <li><a href="https://api.sejm.gov.pl/eli/acts/DU/2025/1849/text.pdf">Ustawa z 21.11.2025 o zmianie KN</a> <small>Dz.U. 2025 poz. 1849, nowe brzmienie art. 35 ust. 3e od 1.01.2026 (z mocą od 1.09.2025)</small></li>
+          <li><a href="https://api.sejm.gov.pl/eli/acts/DU/2017/927/text.pdf">Rozporządzenie MPiPS z 29.05.1996, § 5</a> <small>wynagrodzenie za czas zwolnienia od pracy, Dz.U. 2017 poz. 927</small></li>
+          <li><a href="https://api.sejm.gov.pl/eli/acts/DU/2023/1211/text.pdf#page=3">Rozporządzenie MEN z 11.08.2017, § 5</a> <small>dodatkowe dni wolne od zajęć, Dz.U. 2023 poz. 1211 z późn. zm.</small></li>
+        </ul>
+      </div>
+      <div class="note">
+        <strong class="lbl">Ministerstwo Edukacji Narodowej</strong>
+        <ul>
+          <li><a href="https://www.gov.pl/web/edukacja/zmiany-w-zakresie-wynagradzania-nauczycieli-za-godziny-ponadwymiarowe">Zmiany w zakresie wynagradzania nauczycieli za godziny ponadwymiarowe</a> <small>29.12.2025, pytania i odpowiedzi: gotowość, wycieczki, szkolenia, dni wolne</small></li>
+          <li><a href="https://www.gov.pl/web/edukacja/rozliczanie-godzin-ponadwymiarowych">Rozliczanie godzin ponadwymiarowych</a> <small>16.10.2025, częściowo nieaktualne po zmianie z 1.01.2026</small></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <p>Przewodnik dla nauczycieli Zespołu Szkół Zawodowych nr 5 we Wrocławiu · rok szkolny 2026/2027 · moduł 5: Rozliczanie godzin · stan prawny na 28.09.2026. Przewodnik porządkuje zasady obowiązujące w szkole. W sprawach indywidualnych rozstrzygają kadry i dyrektor szkoły.</p>
+  </footer>
+</main>
+
+<script>
+// filtr sytuacji
+document.querySelectorAll('.filter button').forEach(b=>b.addEventListener('click',()=>{
+  document.querySelectorAll('.filter button').forEach(x=>x.setAttribute('aria-pressed',x===b));
+  const f=b.dataset.f;
+  document.querySelectorAll('.case').forEach(c=>c.hidden=f!=='all'&&c.dataset.v!==f);
+}));
+
+// kalkulator art. 35 ust. 3f i 3h KN
+(function(){
+  const $=id=>document.getElementById(id);
+  const ids=['c-pensum','c-przydz','c-dni','c-tydz','c-real'];
+  const fmt=x=>x.toLocaleString('pl-PL',{maximumFractionDigits:1});
+  const round1=x=>Math.round(x*10)/10;
+  const toHours=x=>{const f=Math.floor(x);return x-f>0.5?f+1:f;};  // do pół godziny pomija się
+  function calc(){
+    const p=+$('c-pensum').value||0, a=+$('c-przydz').value||0, d=Math.max(0,+$('c-dni').value||0);
+    const w=+$('c-tydz').value, r=+$('c-real').value||0;
+    const cut=round1(p/w*d), pr=round1(Math.max(0,p-cut)), assigned=Math.max(0,a-p);
+    const diff=round1(Math.max(0,r-pr)), gp=Math.min(toHours(diff),assigned);
+    const s=[];
+    s.push(`Przydzielone godziny ponadwymiarowe: ${a} − ${p} = <b>${assigned}</b>`);
+    if(d>0) s.push(`Pensum pomniejszone: ${p} − ${d} × ${p}/${w} = <b>${fmt(pr)}</b>`);
+    else s.push(`Brak dni odliczanych, pensum bez zmian: <b>${p}</b>`);
+    s.push(`Ponad pensum: ${r} − ${fmt(pr)} = <b>${fmt(diff)}</b>`);
+    s.push(`Po zaokrągleniu (do 0,5 w dół, powyżej w górę)${toHours(diff)>assigned?' i ograniczeniu do przydziału':''}: <b>${gp}</b>`);
+    $('c-steps').innerHTML=s.map(x=>`<li>${x}</li>`).join('');
+    $('c-out').textContent=gp;
+  }
+  ids.forEach(i=>$(i).addEventListener('input',calc));
+  document.querySelectorAll('[data-ex]').forEach(b=>b.addEventListener('click',()=>{
+    const [p,a,d,w,r]=b.dataset.ex.split(',');
+    $('c-pensum').value=p;$('c-przydz').value=a;$('c-dni').value=d;$('c-tydz').value=w;$('c-real').value=r;calc();
+  }));
+  calc();
+})();
+</script>
+</body>
+</html>
