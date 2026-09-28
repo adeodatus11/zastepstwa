@@ -76,7 +76,7 @@ function setupScreen() {
   for (const side of ["top", "bottom", "left", "right"]) {
     const value = Number(params.get(side));
     if (params.has(side) && Number.isFinite(value) && value >= 0)
-      body.style.setProperty(`padding-${side}`, `${Math.min(value, 400)}px`);
+      body.style.setProperty(`--tv-${side}`, `${Math.min(value, 400)}px`);
   }
   if ("scrollRestoration" in history) history.scrollRestoration = "manual";
   const diag = params.has("diag") ? document.createElement("div") : null;
@@ -90,13 +90,17 @@ function setupScreen() {
       scale === 1 && innerWidth === 1080 && innerHeight === 1920
         ? ""
         : `translate(${(innerWidth - 1080 * scale) / 2}px, ${(innerHeight - 1920 * scale) / 2}px) scale(${scale})`;
+    // Strona nigdy nie może być przewinięta (Chrome na telewizorze przewijał).
     scrollTo(0, 0);
+    document.documentElement.scrollTop = 0;
+    body.scrollTop = 0;
     if (diag)
       diag.textContent = `okno ${innerWidth}×${innerHeight} · DPR ${devicePixelRatio} · skala ${scale.toFixed(3)} · ekran ${screen.width}×${screen.height}`;
   };
   fitScreen();
   addEventListener("resize", fitScreen);
-  setInterval(fitScreen, 60000);
+  addEventListener("scroll", fitScreen, true);
+  setInterval(fitScreen, 5000);
 }
 export async function init() {
   let slides: any[] = [],
@@ -174,7 +178,7 @@ export async function init() {
             : "Przerwa";
     // Tymczasowo: wymiary okna na telewizorze, do dopasowania ramki.
     const foot = document.querySelector(".tv-footer")?.getBoundingClientRect();
-    const probe = `okno ${innerWidth}×${innerHeight} · ekran ${screen.width}×${screen.height} · DPR ${devicePixelRatio} · stopka ${Math.round(foot?.top ?? 0)}–${Math.round(foot?.bottom ?? 0)} · ${esc((navigator.userAgent.match(/(Chrome|Firefox|Version)\/[\d.]+/) || [navigator.userAgent.slice(0, 40)])[0])}`;
+    const probe = `okno ${innerWidth}×${innerHeight} · ekran ${screen.width}×${screen.height} · DPR ${devicePixelRatio} · nagłówek ${Math.round(document.querySelector(".site-header")?.getBoundingClientRect().top ?? 0)} · stopka ${Math.round(foot?.top ?? 0)}–${Math.round(foot?.bottom ?? 0)} · przewinięcie ${Math.round(scrollY + document.body.scrollTop)} · ${esc((navigator.userAgent.match(/(Chrome|Firefox|Version)\/[\d.]+/) || [navigator.userAgent.slice(0, 40)])[0])}`;
     document.getElementById("tv-clock")!.innerHTML =
       `${esc(dateLabel(today()))} · ${esc(time)} <span class="tv-live">${esc(status)}</span><small class="tv-probe">${probe}</small>`;
     if (plan && date !== today()) {

@@ -895,10 +895,34 @@ th {
   color: #fff;
   /* Telewizor na korytarzu powiększa obraz i ucina ok. 85 px z boków oraz
      ok. 150 px u góry i u dołu (zdjęcie z 28.09.2026), stąd szeroka ramka. */
-  padding: 185px 110px 185px;
+  --tv-top: 185px;
+  --tv-bottom: 185px;
+  --tv-left: 110px;
+  --tv-right: 110px;
+  padding: var(--tv-top) var(--tv-right) var(--tv-bottom) var(--tv-left);
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
+}
+/* Wszystkie wysokości na sztywno: przeglądarka telewizora (Chrome 152)
+   rozciągała elastyczny układ i wypychała stopkę poza ekran. */
+.tv-mode .site-header {
+  height: 226px;
+  flex: none;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+.tv-mode main {
+  height: calc(1920px - var(--tv-top) - var(--tv-bottom) - 226px - 270px);
+  min-height: 0;
+  max-height: calc(1920px - var(--tv-top) - var(--tv-bottom) - 226px - 270px);
+  flex: none;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+.tv-mode .tv-footer {
+  flex: none;
+  overflow: hidden;
 }
 .tv-mode .site-header {
   background: linear-gradient(to right, #1f5a41, #173d2e 55%, #112a21);
@@ -947,9 +971,6 @@ body.tv-mode .header-guide,
 }
 .tv-mode main {
   padding: 16px 20px;
-  height: auto;
-  flex: 1;
-  min-height: 0;
   display: flex;
   flex-direction: column;
   max-width: none;
@@ -957,24 +978,25 @@ body.tv-mode .header-guide,
   background: #112a21;
 }
 .tv-mode #app {
-  flex: 1;
-  min-height: 0;
+  height: 100%;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
 }
 .tv-mode #tv-clock {
   font-size: 30px;
   font-weight: 600;
-  min-height: 56px;
-  flex-shrink: 0;
+  height: 76px;
+  overflow: hidden;
+  flex: none;
   text-transform: capitalize;
 }
 .tv-mode #tv-content {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   grid-template-rows: repeat(2, minmax(0, 1fr));
-  flex: 1;
-  min-height: 0;
+  height: calc(100% - 76px - 18px);
+  flex: none;
   grid-auto-flow: column dense;
   gap: 16px;
 }
