@@ -280,14 +280,22 @@ for (const sheetName of w.SheetNames) {
         ["poniedziałek", "wtorek", "środa", "czwartek", "piątek"].findIndex(
           (d) => h.toLowerCase().includes(d),
         ) + 1;
-      const name = String(row[j]).trim();
-      if (day && j > i && name) {
+      if (!day || j <= i) return;
+      // Komórka może dzielić zmianę: „Osoba A (8:00-9:00); Osoba B (9:00-13:30)”.
+      for (const part of String(row[j]).split(";")) {
+        const [, name = "", from_ = "", to_ = ""] =
+          part
+            .trim()
+            .match(
+              /^(.*?)\s*(?:\((\d{1,2}:\d{2})\s*-\s*(\d{1,2}:\d{2})\))?$/,
+            ) || [];
+        if (!name) continue;
         const phone = phones.find((p) => p[0] === name);
         supervision.push({
           date: shiftDate(from, day - 1),
           day,
-          start,
-          end,
+          start: from_ ? pad(from_) : start,
+          end: to_ ? pad(to_) : end,
           name,
           phone: phone?.[1] || "71 798 69 34",
           extension: String(phone?.[2] || "").replace(/\D/g, ""),
