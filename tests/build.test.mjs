@@ -95,3 +95,45 @@ test("A valid header-only substitution sheet publishes zero changes", async () =
     await fs.rm(dir, { recursive: true, force: true });
   }
 });
+test("Supervision cell may split a shift between people with their own hours", async () => {
+  const { dir, config } = await fixture();
+  try {
+    const w = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(
+      w,
+      XLSX.utils.aoa_to_sheet([
+        ["godziny", "poniedziałek", "wtorek"],
+        [
+          "08:00 - 13:30",
+          "Osoba A",
+          "Osoba A (8:00-9:00); Osoba B (9:00-13:30)",
+        ],
+        ["13:30 - 19:00", "", "Osoba C (12:00-17:20)"],
+      ]),
+      "grafik 2026-09-28",
+    );
+    await fs.writeFile(
+      path.join(dir, config.sources.supervision),
+      XLSX.write(w, { type: "buffer", bookType: "xlsx" }),
+    );
+    const result = run(dir);
+    assert.equal(result.status, 0, result.stderr);
+    const m = JSON.parse(
+      await fs.readFile(path.join(dir, "public/data/manifest.json")),
+    );
+    const contacts = JSON.parse(
+      await fs.readFile(path.join(dir, "public" + m.files.contacts)),
+    );
+    assert.deepEqual(
+      contacts.supervision.map((e) => [e.date, e.start, e.end, e.name]),
+      [
+        ["2026-09-28", "08:00", "13:30", "Osoba A"],
+        ["2026-09-29", "08:00", "09:00", "Osoba A"],
+        ["2026-09-29", "09:00", "13:30", "Osoba B"],
+        ["2026-09-29", "12:00", "17:20", "Osoba C"],
+      ],
+    );
+  } finally {
+    await fs.rm(dir, { recursive: true, force: true });
+  }
+});

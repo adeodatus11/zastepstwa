@@ -37,7 +37,7 @@ Zastępstwa i przeniesienia aktualizuje się przez stronę `/aktualizuj.html`: c
 | Przeniesienia | Arkusz `sources.transfers`, zakładka „Oddziały” |
 | Plan bazowy, wykazy, sale, dyżury nauczycieli | XML `sources.xml`; daty `validFrom` / `validTo`. Wykazy i sale wyliczają się z niego automatycznie |
 | Dawne linki do planu | HTML `sources.legacyPlan` służy tylko do mapowania kotwic na osoby, klasy i sale; nowy interfejs nie kopiuje jego tabel |
-| Nadzór | XLSX `sources.supervision`: każdy tydzień to osobny arkusz `grafik RRRR-MM-DD` (data poniedziałku), nazwiska w komórkach dni. Uwagi do konkretnych dni w `supervisionNotes` (klucz `RRRR-MM-DD`) |
+| Nadzór | XLSX `sources.supervision`: każdy tydzień to osobny arkusz `grafik RRRR-MM-DD` (data poniedziałku), nazwiska w komórkach dni. Zmianę podzieloną między osoby wpisz w jednej komórce: `Osoba A (8:00-9:00); Osoba B (9:00-13:30)` — godziny w nawiasie zastępują godziny wiersza. Uwagi do konkretnych dni w `supervisionNotes` (klucz `RRRR-MM-DD`) |
 | Specjaliści | `src/content/specialists.json` — jedyne źródło ich grafiku |
 | Kalendarz | XLSX `sources.calendar`; zakres roku w `calendarFrom`, `calendarTo`, `schoolYear` |
 | Komunikaty | Nowy lub zmieniony plik Markdown w `src/content/aktualnosci/` |
