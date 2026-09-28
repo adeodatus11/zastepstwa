@@ -1,0 +1,719 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Rozliczanie godzin</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="description" content="Moduł 5 przewodnika dla nauczycieli ZSZ5: kiedy godziny ponadwymiarowe są płatne, co to jest gotowość do pracy, wycieczki, delegowanie, szkolenia, L4, zwolnienia i wnioski.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600;700;800&display=swap">
+<style>
+:root{
+  --bg:#f4f6f5; --surface:#fff; --ink:#192a25; --muted:#53645d; --line:#d7e0db;
+  --green:#176247; --dark:#104834; --pale:#eaf4ee; --warning:#854512; --warn-bg:#fbf1e6;
+  --red:#a12a32; --red-bg:#fbeced; --mark:#e39a2d; --mark-soft:rgba(227,154,45,.2);
+  --yes:#176247; --yes-bg:#e3f2e9; --no:#a12a32; --no-bg:#fbeced; --half:#854512; --half-bg:#fbf1e6;
+  --radius:12px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --bg:#0e1714; --surface:#15221d; --ink:#e4ede8; --muted:#9fb3aa; --line:#2a3b34;
+    --green:#6cc79f; --dark:#9fdcbf; --pale:#1a3029; --warning:#f0b577; --warn-bg:#2d2217;
+    --red:#f09aa0; --red-bg:#301a1c; --mark:#f0ac45; --mark-soft:rgba(240,172,69,.22);
+    --yes:#8fdcb6; --yes-bg:#173427; --no:#f5a9ae; --no-bg:#3a1d20; --half:#f3c48f; --half-bg:#35271a;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#0e1714; --surface:#15221d; --ink:#e4ede8; --muted:#9fb3aa; --line:#2a3b34;
+  --green:#6cc79f; --dark:#9fdcbf; --pale:#1a3029; --warning:#f0b577; --warn-bg:#2d2217;
+  --red:#f09aa0; --red-bg:#301a1c; --mark:#f0ac45; --mark-soft:rgba(240,172,69,.22);
+  --yes:#8fdcb6; --yes-bg:#173427; --no:#f5a9ae; --no-bg:#3a1d20; --half:#f3c48f; --half-bg:#35271a;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Source Sans 3",system-ui,-apple-system,"Segoe UI",sans-serif;font-size:18px;line-height:1.55;padding-inline:16px}
+@media (max-width:600px){body{font-size:17px}}
+a{color:var(--green)}
+a:focus-visible,button:focus-visible,summary:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--mark);outline-offset:2px;border-radius:6px}
+.wrap{max-width:1080px;margin:0 auto}
+h1,h2,h3{text-wrap:balance;line-height:1.2;margin:0}
+h1{font-size:clamp(2rem,6vw,3rem);font-weight:800;letter-spacing:-.01em}
+h2{font-size:clamp(1.45rem,3.6vw,1.8rem);font-weight:800}
+h3{font-size:1.15rem;font-weight:700}
+p{margin:0;overflow-wrap:anywhere}
+.muted{color:var(--muted)}
+.measure{max-width:70ch}
+
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-block:18px;border-bottom:1px solid var(--line)}
+.brand{font-weight:700;font-size:.95rem;color:var(--muted);line-height:1.25}
+.brand b{display:block;color:var(--ink);font-size:1.05rem}
+.back{font-weight:600;font-size:.95rem;text-decoration:none;white-space:nowrap}
+.back:hover{text-decoration:underline}
+
+.hero{padding-block:40px 28px;display:grid;gap:18px;grid-template-columns:1fr;align-items:start}
+@media (min-width:900px){.hero{grid-template-columns:1.1fr 1fr;gap:40px}}
+.hero-text{display:grid;gap:14px}
+.eyebrow{font-size:.8rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--green)}
+.lead{font-size:1.2rem;color:var(--muted);max-width:60ch}
+.brandrow{display:flex;align-items:center;gap:16px}
+.rgi{width:112px;height:auto;flex:none}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .rgi{filter:invert(1)}}
+:root[data-theme="dark"] .rgi{filter:invert(1)}
+@media (max-width:520px){.rgi{width:84px}}
+.h1{font-size:clamp(2rem,6vw,3rem);font-weight:800;letter-spacing:-.01em}
+.nick{display:block;font-size:.5em;font-weight:700;color:var(--muted);letter-spacing:0;margin-top:4px}
+
+.short{background:var(--dark);color:#fff;border-radius:var(--radius);padding:22px 22px 24px;display:grid;gap:14px}
+:root[data-theme="dark"] .short{color:var(--bg)}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .short{color:var(--bg)}}
+.short h2{font-size:1.15rem;color:inherit}
+.short ol{margin:0;padding:0;list-style:none;display:grid;gap:12px;counter-reset:s}
+.short li{display:grid;grid-template-columns:34px 1fr;gap:10px;align-items:start;counter-increment:s}
+.short li::before{content:counter(s);width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,.16);display:grid;place-items:center;font-weight:800}
+:root[data-theme="dark"] .short li::before{background:rgba(0,0,0,.14)}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .short li::before{background:rgba(0,0,0,.14)}}
+.short small{display:block;opacity:.85;font-size:.92rem}
+
+.rule{border-left:5px solid var(--green);background:var(--surface);border-radius:0 var(--radius) var(--radius) 0;padding:16px 18px;display:grid;gap:6px;border-top:1px solid var(--line);border-right:1px solid var(--line);border-bottom:1px solid var(--line)}
+.rule p{font-size:1.12rem;font-weight:600}
+
+.toc{position:sticky;top:env(safe-area-inset-top,0px);z-index:30;background:var(--bg);border-bottom:1px solid var(--line);margin-inline:-16px;padding:10px 16px;overflow-x:auto;white-space:nowrap;scrollbar-width:none}
+.toc::-webkit-scrollbar{display:none}
+.toc div{max-width:1080px;margin:0 auto;display:flex;gap:6px}
+.toc a{display:inline-block;text-decoration:none;color:var(--ink);font-weight:600;font-size:.92rem;padding:7px 13px;border-radius:999px;border:1px solid var(--line);background:var(--surface)}
+.toc a:hover{border-color:var(--green);color:var(--green)}
+
+section{padding-block:52px 8px;display:grid;gap:20px;scroll-margin-top:64px}
+.sec-head{display:grid;gap:6px;max-width:70ch}
+
+.notes{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr))}
+.note{border-radius:var(--radius);padding:16px 18px;display:grid;gap:8px;align-content:start;border:1px solid var(--line);background:var(--surface)}
+.note.warn{background:var(--warn-bg);border-color:transparent}
+.note.warn .lbl{color:var(--warning)}
+.note.lock{background:var(--red-bg);border-color:transparent}
+.note.lock .lbl{color:var(--red)}
+.note ul,.note ol{margin:0;padding-left:1.2em;display:grid;gap:4px}
+.lbl{font-size:.78rem;letter-spacing:.07em;text-transform:uppercase;font-weight:800;color:var(--green)}
+
+/* podstawa prawna */
+.law{display:inline-block;font-size:.8rem;font-weight:700;line-height:1.3;padding:2px 9px;border-radius:999px;background:var(--pale);color:var(--dark);text-decoration:none;border:1px solid transparent;white-space:nowrap;vertical-align:1px}
+.law:hover{border-color:var(--green)}
+.law.men{background:transparent;border-color:var(--line);color:var(--muted)}
+.law.men:hover{border-color:var(--green);color:var(--green)}
+.laws{display:flex;flex-wrap:wrap;gap:6px}
+
+/* tabela sytuacji */
+.filter{display:inline-flex;gap:4px;padding:4px;border-radius:10px;background:var(--pale);flex-wrap:wrap;justify-self:start}
+.filter button{font:inherit;font-weight:700;font-size:.92rem;border:0;border-radius:7px;padding:7px 14px;background:transparent;color:var(--dark);cursor:pointer;min-height:40px}
+.filter button[aria-pressed="true"]{background:var(--surface);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.12)}
+.cases{display:grid;gap:10px}
+.case{display:grid;grid-template-columns:118px 1fr;gap:14px;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:14px 16px;align-items:start}
+@media (max-width:640px){.case{grid-template-columns:1fr;gap:8px}}
+.case h3{font-size:1.05rem}
+.case-body{display:grid;gap:6px;min-width:0}
+.case-body p{max-width:75ch}
+.verdict{font-weight:800;font-size:.9rem;border-radius:8px;padding:6px 10px;text-align:center;justify-self:start;width:100%;max-width:118px}
+.v-yes{background:var(--yes-bg);color:var(--yes)}
+.v-no{background:var(--no-bg);color:var(--no)}
+.v-half{background:var(--half-bg);color:var(--half)}
+
+/* kroki */
+.steps{list-style:none;margin:0;padding:0;display:grid;gap:26px;counter-reset:st}
+.step{display:grid;grid-template-columns:40px 1fr;gap:14px;counter-increment:st}
+.step::before{content:counter(st);width:36px;height:36px;border-radius:50%;background:var(--green);color:var(--surface);font-weight:800;display:grid;place-items:center;font-size:1.05rem}
+.step-body{display:grid;gap:8px;min-width:0}
+.step-body > h3{padding-top:5px}
+.step-body > p{max-width:70ch}
+@media (max-width:600px){.step{grid-template-columns:1fr;gap:8px}}
+
+/* drzewko decyzji */
+.paths{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr))}
+.path{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:16px 18px;display:grid;gap:10px;align-content:start}
+.path .q{font-weight:700;color:var(--muted);font-size:.95rem}
+.path h3{display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.pill{font-size:.78rem;font-weight:800;border-radius:999px;padding:2px 9px;white-space:nowrap}
+.path ul{margin:0;padding-left:1.2em;display:grid;gap:4px}
+
+/* kalkulator */
+.calc{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:18px;display:grid;gap:16px}
+.fields{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr))}
+.field{display:grid;gap:4px}
+.field label{font-weight:700;font-size:.95rem}
+.field small{color:var(--muted);font-size:.85rem;line-height:1.35}
+.field input,.field select{font:inherit;font-size:1.05rem;padding:8px 10px;border-radius:8px;border:1px solid var(--line);background:var(--bg);color:var(--ink);min-height:44px;width:100%}
+.result{display:grid;gap:8px;background:var(--pale);border-radius:10px;padding:14px 16px}
+.result ol{margin:0;padding-left:1.3em;display:grid;gap:4px}
+.big{font-size:1.5rem;font-weight:800;color:var(--dark)}
+.examples{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.btn{font:inherit;font-weight:700;font-size:.9rem;border-radius:8px;border:1px solid var(--green);background:transparent;color:var(--green);padding:6px 12px;cursor:pointer;min-height:40px}
+.btn:hover{background:var(--pale)}
+
+.quote{border-left:4px solid var(--line);padding:4px 0 4px 14px;color:var(--muted);font-style:italic;max-width:75ch}
+
+/* faq */
+.faq{display:grid;gap:10px}
+.faq details{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius)}
+.faq summary{cursor:pointer;font-weight:700;padding:14px 16px;list-style:none;display:flex;justify-content:space-between;gap:12px}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{content:"+";font-weight:800;color:var(--green);font-size:1.2rem;line-height:1}
+.faq details[open] summary::after{content:"–"}
+.faq details > div{padding:0 16px 16px;display:grid;gap:8px}
+
+/* przepisy */
+.src{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr))}
+.src ul{margin:0;padding-left:1.2em;display:grid;gap:6px}
+.src li small{color:var(--muted)}
+
+.contact{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:18px;display:grid;gap:6px;margin-top:10px}
+footer{padding-block:40px;color:var(--muted);font-size:.9rem;border-top:1px solid var(--line);margin-top:48px}
+@media print{.toc,.filter,.calc .examples{display:none}body{background:#fff}section{padding-block:20px 0}.faq details{break-inside:avoid}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="brand"><b>Szkoła Mistrzów</b>Zespół Szkół Zawodowych nr 5</div>
+    <a class="back" href="https://nauczyciel.szkolamistrzow.info/">← Pulpit nauczyciela</a>
+  </header>
+
+  <div class="hero">
+    <div class="hero-text">
+      <span class="eyebrow">Przewodnik dla nauczyciela · Kadry i rozliczenia</span>
+      <div class="brandrow"><img class="rgi" src="data:image/webp;base64,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" alt="Logo poradnika Rozliczanie godzin ZSZ5 we Wrocławiu" width="480" height="348"><h1 class="h1">Rozliczanie godzin <span class="nick">godziny ponadwymiarowe, zwolnienia, wnioski</span></h1></div>
+      <p class="lead">Kiedy godziny, które się nie odbyły, są płatne, a kiedy nie? Co zrobić, gdy klasa wyjeżdża na wycieczkę, gdy dyrektor wysyła Cię na konferencję albo gdy musisz się zwolnić? Wszystko w jednym miejscu, z podstawą prawną przy każdej zasadzie.</p>
+      <div class="rule">
+        <span class="lbl">Zasada w jednym zdaniu</span>
+        <p>Płatne są godziny zrealizowane oraz te, które nie odbyły się z przyczyn po stronie szkoły, jeżeli w tym czasie byłeś gotowy do pracy.</p>
+        <div class="laws"><a class="law" href="https://api.sejm.gov.pl/eli/acts/DU/2026/515/text.pdf#page=46">art. 35 ust. 3d KN</a><a class="law" href="https://api.sejm.gov.pl/eli/acts/DU/2026/515/text.pdf#page=47">art. 35 ust. 3e KN</a></div>
+      </div>
+    </div>
+    <div class="short">
+      <h2>Trzy pytania, które wszystko rozstrzygają</h2>
+      <ol>
+        <li><span><b>Dlaczego lekcja się nie odbyła?</b><small>Z przyczyn po stronie szkoły (wycieczka klasy, święto szkoły, polecenie dyrektora) czy z Twoich (choroba, sprawa prywatna)?</small></span></li>
+        <li><span><b>Gdzie byłeś w tym czasie?</b><small>W szkole albo tam, gdzie wysłał Cię dyrektor, i do dyspozycji dyrekcji. To jest „gotowość do pracy”.</small></span></li>
+        <li><span><b>Czy jest to na piśmie?</b><small>Komunikat dyrektora, polecenie wyjazdu, podpisany wniosek. Bez dokumentu nie ma podstawy do rozliczenia.</small></span></li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="note measure">
+    <strong class="lbl">Kogo to dotyczy</strong>
+    <p>Nauczycieli naszej <b>szkoły publicznej</b>, zatrudnionych na podstawie <b>Karty Nauczyciela</b>. Karta jest tu przepisem podstawowym. Kodeks pracy stosujemy tylko w sprawach, których Karta nie reguluje, bo tak stanowi <a class="law" href="https://api.sejm.gov.pl/eli/acts/DU/2026/515/text.pdf#page=80">art. 91c ust. 1 KN</a>. Stan prawny: <b>28 września 2026 r.</b> (Karta Nauczyciela, tekst jednolity Dz.U. 2026 poz. 515).</p>
+  </div>
+</div>
+
+<nav class="toc" aria-label="Spis treści"><div>
+  <a href="#r-pojecia">Pojęcia</a>
+  <a href="#r-sytuacje">Płatne czy nie?</a>
+  <a href="#r-gotowosc">Gotowość do pracy</a>
+  <a href="#r-wycieczki">Wycieczki</a>
+  <a href="#r-wyjazdy">Delegowanie i szkolenia</a>
+  <a href="#r-zwolnienie">Muszę się zwolnić</a>
+  <a href="#r-tydzien">Tydzień z dniem wolnym</a>
+  <a href="#r-wnioski">Wnioski</a>
+  <a href="#r-pytania">Pytania</a>
+  <a href="#r-przepisy">Przepisy</a>
+</div></nav>
+
+<main class="wrap">
+
+  <!-- POJĘCIA -->
+  <section id="r-pojecia">
+    <div class="sec-head">
+      <span class="eyebrow">Zaczynamy</span>
+      <h2>Pięć pojęć, które warto znać</h2>
+    </div>
+    <div class="notes">
+      <div class="note"><strong class="lbl">Pensum</strong><p>Tygodniowy obowiązkowy wymiar godzin zajęć, np. 18 godzin. Jest opłacony w wynagrodzeniu zasadniczym.</p><div class="laws"><a class="law" href="https://api.sejm.gov.pl/eli/acts/DU/2026/515/text.pdf#page=48">art. 42 ust. 2 pkt 1 KN</a></div></div>
+      <div class="note"><strong class="lbl">Godzina ponadwymiarowa</strong><p>Każda <b>przydzielona</b> godzina ponad pensum. Nie jest „przypięta” do konkretnej lekcji: jeśli masz 23 godziny przy pensum 18, masz 5 godzin ponadwymiarowych, a każda nieodbyta lekcja jest traktowana jak nieodbyta godzina ponadwymiarowa.</p><div class="laws"><a class="law" href="https://api.sejm.gov.pl/eli/acts/DU/2026/515/text.pdf#page=46">art. 35 ust. 2 KN</a><a class="law men" href="https://www.gov.pl/web/edukacja/zmiany-w-zakresie-wynagradzania-nauczycieli-za-godziny-ponadwymiarowe#:~:text=Godziny%20ponadwymiarowe%20nie%20s%C4%85%20znaczone">MEN 29.12.2025</a></div></div>
+      <div class="note"><strong class="lbl">Doraźne zastępstwo</strong><p>Godzina ponad pensum, którą prowadzisz <b>za nieobecnego nauczyciela</b>. Płatna, jeżeli wykraczasz nią poza swój plan.</p><div class="laws"><a class="law" href="https://api.sejm.gov.pl/eli/acts/DU/2026/515/text.pdf#page=46">art. 35 ust. 2a KN</a></div></div>
+      <div class="note"><strong class="lbl">Gotowość do pracy</strong><p>Jesteś w szkole (albo w miejscu wskazanym przez dyrektora), możesz od razu podjąć pracę i jesteś do dyspozycji dyrekcji. Szczegóły niżej.</p><div class="laws"><a class="law" href="https://api.sejm.gov.pl/eli/acts/DU/2026/515/text.pdf#page=47">art. 35 ust. 3e KN</a><a class="law men" href="https://www.gov.pl/web/edukacja/zmiany-w-zakresie-wynagradzania-nauczycieli-za-godziny-ponadwymiarowe#:~:text=Cechy%20istotne%20gotowo%C5%9Bci%20do%20wykonywania%20pracy">MEN 29.12.2025</a></div></div>
+      <div class="note"><strong class="lbl">Okres rozliczeniowy</strong><p>Godziny ponadwymiarowe liczy się <b>tydzień po tygodniu</b> i wypłaca za dany miesiąc. Wszystko, co trzeba odpracować, odpracowujemy w tym samym okresie, najlepiej w tym samym tygodniu.</p><div class="laws"><a class="law" href="https://api.sejm.gov.pl/eli/acts/DU/2026/515/text.pdf#page=47">art. 35 ust. 3f KN</a></div></div>
+    </div>
+  </section>
+
+  <!-- SYTUACJE -->
+  <section id="r-sytuacje">
+    <div class="sec-head">
+      <span class="eyebrow">Ściągawka</span>
+      <h2>Lekcja się nie odbyła. Płatne czy nie?</h2>
+      <p>Znajdź swoją sytuację. Pod każdą jest podstawa prawna: kliknij, a otworzy się właściwe miejsce w ustawie albo w wyjaśnieniach Ministerstwa Edukacji.</p>
+    </div>
+    <div class="filter" role="group" aria-label="Filtr sytuacji">
+      <button type="button" data-f="all" aria-pressed="true">Wszystkie</button>
+      <button type="button" data-f="yes" aria-pressed="false">Płatne</button>
+      <button type="button" data-f="no" aria-pressed="false">Niepłatne</button>
+    </div>
+    <div class="cases">
+      <article class="case" data-v="yes">
+        <span class="verdict v-yes">Płatne</span>
+        <div class="case-body">
+          <h3>Święto szkoły, akademia, apel: dyrektor odwołuje lekcje</h3>
+          <p>Przykład: dyrektor ogłasza, że lekcje po 13:10 są odwołane, bo cała szkoła, nauczyciele i delegacje uczniów, jest na akademii. Zostajesz w pracy, tylko wykonujesz inne zadanie. Odwołane godziny, także ponadwymiarowe, rozliczamy tak, jakby się odbyły.</p>
+          <div class="laws"><a class="law" href="https://api.sejm.gov.pl/eli/acts/DU/2026/515/text.pdf#page=47">art. 35 ust. 3e KN</a><a class="law" href="https://api.sejm.gov.pl/eli/acts/DU/2026/515/text.pdf#page=48">art. 42 ust. 2 pkt 2 KN</a><a class="law men" href="https://www.gov.pl/web/edukacja/zmiany-w-zakresie-wynagradzania-nauczycieli-za-godziny-ponadwymiarowe#:~:text=Nauczyciel%2C%20kt%C3%B3ry%20sprawuje%20opiek%C4%99%20nad%20uczniami%20na%20wycieczce%20szkolnej%2C%20nie%20realizuje">MEN: „imprezie szkolnej”</a></div>
+        </div>
+      </article>
+      <article class="case" data-v="yes">
+        <span class="verdict v-yes">Płatne</span>
+        <div class="case-body">
+          <h3>Klasa wyszła na wycieczkę, a Ty zostajesz w szkole</h3>
+          <p>Płatne, <b>pod warunkiem że jesteś w szkole w gotowości do pracy</b>. W tym czasie możesz dostać zastępstwo albo inne zadanie, bez dodatkowej zapłaty. Więcej w części <a href="#r-wycieczki">Wycieczki</a>.</p>
+          <div class="laws"><a class="law" href="https://api.sejm.gov.pl/eli/acts/DU/2026/515/text.pdf#page=47">art. 35 ust. 3e KN</a><a class="law men" href="https://www.gov.pl/web/edukacja/zmiany-w-zakresie-wynagradzania-nauczycieli-za-godziny-ponadwymiarowe#:~:text=Nauczyciel%2C%20kt%C3%B3ry%20nie%20zrealizuje%20przydzielonych%20mu%20godzin%20ponadwymiarowych%20z%20powodu%20wyjazdu">MEN 29.12.2025</a></div>
+        </div>
+      </article>
+      <article class="case" data-v="yes">
+        <span class="verdict v-yes">Płatne</span>
+        <div class="case-body">
+          <h3>Jesteś opiekunem na wycieczce, zawodach, konkursie</h3>
+          <p>Wykonujesz zadanie powierzone przez dyrektora. Zaplanowane godziny, także ponadwymiarowe, są płatne.</p>
+          <div class="laws"><a class="law" href="https://api.sejm.gov.pl/eli/acts/DU/2026/515/text.pdf#page=47">art. 35 ust. 3e zd. 2 KN</a><a class="law men" href="https://www.gov.pl/web/edukacja/zmiany-w-zakresie-wynagradzania-nauczycieli-za-godziny-ponadwymiarowe#:~:text=Nauczyciel%2C%20kt%C3%B3ry%20sprawuje%20opiek%C4%99%20nad%20uczniami%20na%20wycieczce%20szkolnej%2C%20nie%20realizuje">MEN 29.12.2025</a></div>
+        </div>
+      </article>
+      <article class="case" data-v="yes">
+        <span class="verdict v-yes">Płatne</span>
+        <div class="case-body">
+          <h3>Dyrektor deleguje Cię służbowo, np. na spotkanie projektu Erasmus+</h3>
+          <p>Jedziesz na polecenie dyrektora, żeby wykonać zadanie szkoły. Twoje lekcje są odwołane, ale Ty jesteś w pracy, tylko w innym miejscu. Godziny są płatne.</p>
+          <div class="laws"><a class="law" href="https://api.sejm.gov.pl/eli/acts/DU/2026/515/text.pdf#page=47">art. 35 ust. 3e zd. 2 KN</a><a class="law" href="https://api.sejm.gov.pl/eli/acts/DU/2026/515/text.pdf#page=48">art. 42 ust. 2 pkt 2 KN</a></div>
+        </div>
+      </article>
+      <article class="case" data-v="yes">
+        <span class="verdict v-yes">Płatne</span>
+        <div class="case-body">
+          <h3>Szkolenie, kurs, konferencja w ramach doskonalenia zawodowego, na które kieruje Cię dyrektor</h3>
+          <p>Płatne, ale <b>liczone inaczej</b>: jak za urlop wypoczynkowy, z uwzględnieniem godzin ponadwymiarowych. Kwotę wylicza księgowość według przepisów o wynagrodzeniu za czas zwolnienia od pracy. To samo dotyczy szkolenia, na które dyrektor wyraził zgodę <b>jako na doskonalenie zawodowe</b>. Zobacz <a href="#r-wyjazdy">Delegowanie i szkolenia</a>.</p>
+          <div class="laws"><a class="law" href="https://api.sejm.gov.pl/eli/acts/DU/2026/515/text.pdf#page=80">art. 91c ust. 1 KN</a><a class="law" href="https://api.sejm.gov.pl/eli/acts/DU/2026/1245/text.pdf#page=44">art. 103¹ KP</a><a class="law" href="https://api.sejm.gov.pl/eli/acts/DU/2017/927/text.pdf">§ 5 rozp. z 29.05.1996</a><a class="law" href="https://api.sejm.gov.pl/eli/acts/DU/2026/515/text.pdf#page=58">art. 67 ust. 1 KN</a><a class="law men" href="https://www.gov.pl/web/edukacja/zmiany-w-zakresie-wynagradzania-nauczycieli-za-godziny-ponadwymiarowe#:~:text=Tak%20wi%C4%99c%20za%20czas%20zwolnienia%20od%20pracy%2C%20w%20kt%C3%B3rym%20nauczyciel%20uczestniczy%C5%82%20w%20doskonaleniu">MEN 29.12.2025</a></div>
+        </div>
+      </article>
+      <article class="case" data-v="yes">
+        <span class="verdict v-yes">Płatne</span>
+        <div class="case-body">
+          <h3>Uczeń nie przyszedł na zajęcia indywidualne albo rewalidacyjne</h3>
+          <p>Płatne, jeśli byłeś gotowy do prowadzenia zajęć. Nie ma znaczenia, kiedy dowiedziałeś się, że zajęć nie będzie. Wyjątek: dyrektor formalnie zawiesił nauczanie indywidualne.</p>
+          <div class="laws"><a class="law" href="https://api.sejm.gov.pl/eli/acts/DU/2026/515/text.pdf#page=47">art. 35 ust. 3e KN</a><a class="law men" href="https://www.gov.pl/web/edukacja/zmiany-w-zakresie-wynagradzania-nauczycieli-za-godziny-ponadwymiarowe#:~:text=Dla%20zachowania%20prawa%20do%20wynagrodzenia%20za%20niezrealizowane%20godziny%20ponadwymiarowe%20nie%20ma%20znaczenia">MEN 29.12.2025</a></div>
+        </div>
+      </article>
+      <article class="case" data-v="yes">
+        <span class="verdict v-yes">Płatne</span>
+        <div class="case-body">
+          <h3>Oddanie krwi, praca w komisji dyscyplinarnej, doraźna czynność związkowa</h3>
+          <p>Płatne na podstawie osobnych przepisów. Krwiodawstwo i czynności związkowe rozlicza się jak urlop, a komisję dyscyplinarną jak zwykłą pracę.</p>
+          <div class="laws"><a class="law men" href="https://www.gov.pl/web/edukacja/zmiany-w-zakresie-wynagradzania-nauczycieli-za-godziny-ponadwymiarowe#:~:text=Tak%20wi%C4%99c%20za%20okres%20zwolnienia%20od%20pracy%20udzielonego%20w%20celu%20oddania%20krwi">MEN: krwiodawstwo</a><a class="law men" href="https://www.gov.pl/web/edukacja/zmiany-w-zakresie-wynagradzania-nauczycieli-za-godziny-ponadwymiarowe#:~:text=wykonywanie%20zada%C5%84%20w%20komisji%20dyscyplinarnej%20przez%20jej%20cz%C5%82onk%C3%B3w">MEN: komisja</a></div>
+        </div>
+      </article>
+      <article class="case" data-v="yes">
+        <span class="verdict v-half">Płatne raz</span>
+        <div class="case-body">
+          <h3>W czasie „odwołanej” lekcji dostajesz zastępstwo</h3>
+          <p>Zastępstwo mieści się w godzinie, za którą i tak dostajesz wynagrodzenie. Nie jest płatne drugi raz, nawet jeśli w dzienniku VULCAN widnieje jako płatne.</p>
+          <div class="laws"><a class="law men" href="https://www.gov.pl/web/edukacja/zmiany-w-zakresie-wynagradzania-nauczycieli-za-godziny-ponadwymiarowe#:~:text=W%20takim%20przypadku%20nauczyciel%20b%C4%99dzie%20realizowa%C5%82%20godziny%20dora%C5%BAnych%20zast%C4%99pstw">MEN 29.12.2025</a></div>
+        </div>
+      </article>
+      <article class="case" data-v="no">
+        <span class="verdict v-no">Niepłatne</span>
+        <div class="case-body">
+          <h3>Zwolnienie lekarskie (L4)</h3>
+          <p>Nie jesteś zdolny do pracy, więc nie ma gotowości. Za czas choroby dostajesz wynagrodzenie chorobowe albo zasiłek, a nie zapłatę za godziny ponadwymiarowe. W tygodniu z dniem choroby pensum pomniejsza się o 1/5 za każdy taki dzień (zobacz <a href="#r-tydzien">kalkulator</a>).</p>
+          <div class="laws"><a class="law" href="https://api.sejm.gov.pl/eli/acts/DU/2026/515/text.pdf#page=47">art. 35 ust. 3e i 3f KN</a><a class="law men" href="https://www.gov.pl/web/edukacja/zmiany-w-zakresie-wynagradzania-nauczycieli-za-godziny-ponadwymiarowe#:~:text=Przez%20pozostawanie%20w%20dyspozycji%20pracodawcy%20nale%C5%BCy%20rozumie%C4%87">MEN: stan uniemożliwiający pracę</a></div>
+        </div>
+      </article>
+      <article class="case" data-v="no">
+        <span class="verdict v-no">Niepłatne</span>
+        <div class="case-body">
+          <h3>Urlop bezpłatny</h3>
+          <p>Za dni urlopu bezpłatnego nie przysługuje wynagrodzenie, ani za pensum, ani za godziny ponadwymiarowe.</p>
+          <div class="laws"><a class="law" href="https://api.sejm.gov.pl/eli/acts/DU/2026/515/text.pdf#page=80">art. 91c ust. 1 KN</a><a class="law" href="https://api.sejm.gov.pl/eli/acts/DU/2026/1245/text.pdf#page=61">art. 174 KP</a></div>
+        </div>
+      </article>
+      <article class="case" data-v="no">
+        <span class="verdict v-half">Połowa</span>
+        <div class="case-body">
+          <h3>Zwolnienie z powodu siły wyższej</h3>
+          <p>2 dni albo 16 godzin w roku, <b>tylko</b> w pilnej sprawie rodzinnej spowodowanej chorobą lub wypadkiem, gdy Twoja obecność jest natychmiast potrzebna. Przysługuje połowa wynagrodzenia, a nie pełna zapłata za nieodbyte godziny.</p>
+          <div class="laws"><a class="law" href="https://api.sejm.gov.pl/eli/acts/DU/2026/515/text.pdf#page=80">art. 91c ust. 1 KN</a><a class="law" href="https://api.sejm.gov.pl/eli/acts/DU/2026/1245/text.pdf#page=53">art. 148¹ KP</a></div>
+        </div>
+      </article>
+      <article class="case" data-v="no">
+        <span class="verdict v-no">Niepłatne</span>
+        <div class="case-body">
+          <h3>Sprawa prywatna: lekarz, urząd, wyjazd lub konferencja z własnej inicjatywy</h3>
+          <p>Przyczyna leży po Twojej stronie. Masz dwie drogi: <b>odpracować</b> godziny w tym samym tygodniu albo okresie rozliczeniowym, albo wziąć <b>urlop bezpłatny</b>. Zgoda dyrektora na nieobecność nie oznacza, że godziny są płatne. Zobacz <a href="#r-zwolnienie">Muszę się zwolnić</a>.</p>
+          <div class="laws"><a class="law" href="https://api.sejm.gov.pl/eli/acts/DU/2026/515/text.pdf#page=46">art. 35 ust. 3d KN</a><a class="law" href="https://api.sejm.gov.pl/eli/acts/DU/2026/1245/text.pdf#page=54">art. 151 § 2¹ KP</a><a class="law" href="https://api.sejm.gov.pl/eli/acts/DU/2026/1245/text.pdf#page=61">art. 174 KP</a></div>
+        </div>
+      </article>
+      <article class="case" data-v="no">
+        <span class="verdict v-no">Niepłatne</span>
+        <div class="case-body">
+          <h3>Dni wolne: święta ustawowe, Dzień Edukacji Narodowej, przerwy świąteczne, dni wolne ustalone przez dyrektora</h3>
+          <p>W takie dni nie przydziela się godzin ponadwymiarowych, więc nie ma czego wypłacać. W tygodniu z takim dniem pensum pomniejsza się o 1/5 za każdy dzień.</p>
+          <div class="laws"><a class="law" href="https://api.sejm.gov.pl/eli/acts/DU/2026/515/text.pdf#page=47">art. 35 ust. 3f KN</a><a class="law" href="https://api.sejm.gov.pl/eli/acts/DU/2026/515/text.pdf#page=64">art. 74 KN</a><a class="law" href="https://api.sejm.gov.pl/eli/acts/DU/2023/1211/text.pdf#page=3">§ 5 rozp. o organizacji roku szkolnego</a><a class="law men" href="https://www.gov.pl/web/edukacja/zmiany-w-zakresie-wynagradzania-nauczycieli-za-godziny-ponadwymiarowe#:~:text=Nauczycielom%20co%20do%20zasady%20nie%20przydziela%20si%C4%99%20godzin%20ponadwymiarowych">MEN 29.12.2025</a></div>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- GOTOWOŚĆ -->
+  <section id="r-gotowosc">
+    <div class="sec-head">
+      <span class="eyebrow">Najważniejszy warunek</span>
+      <h2>Gotowość do pracy: co to znaczy w praktyce</h2>
+      <p>Ministerstwo Edukacji wymienia cztery cechy gotowości. Muszą być spełnione <b>wszystkie naraz</b>:</p>
+    </div>
+    <div class="notes">
+      <div class="note"><strong class="lbl">1. Zamiar</strong><p>Chcesz wykonywać pracę.</p></div>
+      <div class="note"><strong class="lbl">2. Zdolność</strong><p>Możesz ją faktycznie wykonywać: nie jesteś chory ani w stanie, który to uniemożliwia.</p></div>
+      <div class="note"><strong class="lbl">3. Widoczność</strong><p>Twoja gotowość jest widoczna: jesteś w szkole, w pokoju nauczycielskim, dyrekcja wie, gdzie Cię znaleźć.</p></div>
+      <div class="note"><strong class="lbl">4. Dyspozycja</strong><p>Możesz <b>od razu</b> podjąć pracę na wezwanie, w szkole albo w miejscu wskazanym przez dyrektora.</p></div>
+    </div>
+    <p class="quote measure">Nie pozostaje w dyspozycji pracodawcy pracownik, który nie znajduje się w wyznaczonym przez pracodawcę miejscu do wykonywania pracy.<br><span style="font-style:normal">MEN, 29.12.2025, za wyrokiem SN z 23.09.2004, I PK 541/03 · <a class="law men" href="https://www.gov.pl/web/edukacja/zmiany-w-zakresie-wynagradzania-nauczycieli-za-godziny-ponadwymiarowe#:~:text=Przez%20pozostawanie%20w%20dyspozycji%20pracodawcy%20nale%C5%BCy%20rozumie%C4%87">zobacz akapit</a></span></p>
+    <div class="notes">
+      <div class="note warn">
+        <strong class="lbl">Za godzinę dostajesz pieniądze, więc jesteś w pracy</strong>
+        <ul>
+          <li>Jesteś w szkole zgodnie ze swoim planem, także wtedy, gdy wypadły Ci <b>pierwsze lekcje</b>. Przychodzisz na godzinę, na którą miały się zacząć.</li>
+          <li>Nie wychodzisz w tym czasie „na chwilę” w prywatnej sprawie. Wtedy nie ma gotowości, więc nie ma podstawy do wypłaty.</li>
+          <li>Pomyśl o bezpieczeństwie. Jeśli w opłaconych godzinach pracy jesteś poza miejscem pracy i np. doznasz urazu w tramwaju, pojawia się pytanie, dlaczego nie było Cię tam, gdzie według planu świadczysz pracę. Taki wypadek może nie zostać uznany za wypadek przy pracy.</li>
+        </ul>
+      </div>
+      <div class="note">
+        <strong class="lbl">Dyrektor może dać Ci inne zadanie, ale nie musi</strong>
+        <p>W czasie odwołanej lekcji dyrektor może przydzielić Ci zastępstwo, dyżur, opiekę nad uczniami albo inne zadanie statutowe. Jeśli nic nie przydzieli, a Ty jesteś w gotowości, wynagrodzenie i tak Ci przysługuje.</p>
+        <div class="laws"><a class="law" href="https://api.sejm.gov.pl/eli/acts/DU/2026/515/text.pdf#page=47">art. 35 ust. 3e zd. 2 KN</a><a class="law men" href="https://www.gov.pl/web/edukacja/zmiany-w-zakresie-wynagradzania-nauczycieli-za-godziny-ponadwymiarowe#:~:text=nie%20jest%20uzale%C5%BCnione%20od%20realizacji%20przez%20nauczyciela%20w%20tym%20czasie%20innych%20zada%C5%84">MEN 29.12.2025</a></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- WYCIECZKI -->
+  <section id="r-wycieczki">
+    <div class="sec-head">
+      <span class="eyebrow">Wycieczki i wyjścia</span>
+      <h2>Moja klasa wyszła na wycieczkę. Co teraz?</h2>
+    </div>
+    <ol class="steps">
+      <li class="step"><div class="step-body">
+        <h3>Godzina jest płatna, także ponadwymiarowa</h3>
+        <p>Lekcja nie odbyła się z przyczyn niezależnych od Ciebie. Jeśli jesteś w gotowości, rozliczamy ją tak, jakby się odbyła.</p>
+        <div class="laws"><a class="law" href="https://api.sejm.gov.pl/eli/acts/DU/2026/515/text.pdf#page=47">art. 35 ust. 3e KN</a><a class="law men" href="https://www.gov.pl/web/edukacja/zmiany-w-zakresie-wynagradzania-nauczycieli-za-godziny-ponadwymiarowe#:~:text=Nauczyciel%2C%20kt%C3%B3ry%20nie%20zrealizuje%20przydzielonych%20mu%20godzin%20ponadwymiarowych%20z%20powodu%20wyjazdu">MEN 29.12.2025</a></div>
+      </div></li>
+      <li class="step"><div class="step-body">
+        <h3>Zostajesz w szkole, w godzinach swojego planu</h3>
+        <p>To czas pracy. Bądź tam, gdzie dyrekcja może Cię znaleźć: w pokoju nauczycielskim albo w swojej sali. Sprawdź <b>listę zmian</b> na pulpicie nauczyciela.</p>
+      </div></li>
+      <li class="step"><div class="step-body">
+        <h3>Możesz dostać zastępstwo, bez dodatkowej zapłaty</h3>
+        <p>To właśnie te godziny są pierwszym wyborem przy planowaniu zastępstw. Zastępstwo prowadzisz <b>w ramach godziny, za którą już dostajesz wynagrodzenie</b>, czy to z pensum, czy ponadwymiarowej. Nie dostajesz zapłaty dwa razy za tę samą godzinę.</p>
+        <div class="laws"><a class="law men" href="https://www.gov.pl/web/edukacja/zmiany-w-zakresie-wynagradzania-nauczycieli-za-godziny-ponadwymiarowe#:~:text=W%20takim%20przypadku%20nauczyciel%20b%C4%99dzie%20realizowa%C5%82%20godziny%20dora%C5%BAnych%20zast%C4%99pstw">MEN: zastępstwa „w ramach wynagrodzenia”</a></div>
+      </div></li>
+      <li class="step"><div class="step-body">
+        <h3>Nie sugeruj się oznaczeniem w VULCANIE</h3>
+        <p>W module zastępstw takie godziny bywają oznaczone jako „płatne”. To oznaczenie techniczne. Przy rozliczeniu godzina liczy się <b>jeden raz</b>. Zastępstwo w innym czasie, poza Twoim planem, jest zwykłym płatnym doraźnym zastępstwem.</p>
+      </div></li>
+    </ol>
+  </section>
+
+  <!-- DELEGOWANIE -->
+  <section id="r-wyjazdy">
+    <div class="sec-head">
+      <span class="eyebrow">Wyjazdy służbowe i szkolenia</span>
+      <h2>Delegowanie, szkolenie, konferencja</h2>
+      <p>O tym, czy wyjazd jest płatny, decyduje <b>tryb, który zatwierdza dyrektor</b>, a nie sam fakt, że się zgodził na Twoją nieobecność. Ustal to <b>przed</b> wyjazdem.</p>
+    </div>
+    <div class="paths">
+      <div class="path">
+        <span class="q">Dyrektor wysyła Cię, żebyś wykonał zadanie szkoły</span>
+        <h3>Delegowanie <span class="pill v-yes">płatne</span></h3>
+        <ul>
+          <li>Np. spotkanie partnerów Erasmus+, reprezentowanie szkoły, opieka nad uczniami na zawodach.</li>
+          <li>Dokument: <b>polecenie wyjazdu służbowego</b> albo pisemne polecenie dyrektora.</li>
+          <li>Godziny rozliczamy jak zrealizowane.</li>
+        </ul>
+        <div class="laws"><a class="law" href="https://api.sejm.gov.pl/eli/acts/DU/2026/515/text.pdf#page=47">art. 35 ust. 3e zd. 2 KN</a><a class="law" href="https://api.sejm.gov.pl/eli/acts/DU/2026/515/text.pdf#page=48">art. 42 ust. 2 pkt 2 KN</a></div>
+      </div>
+      <div class="path">
+        <span class="q">Dyrektor kieruje Cię na szkolenie albo zatwierdza je jako doskonalenie zawodowe</span>
+        <h3>Doskonalenie zawodowe <span class="pill v-yes">płatne</span></h3>
+        <ul>
+          <li>Np. kurs, szkolenie branżowe, konferencja metodyczna.</li>
+          <li>Dokument: <b>skierowanie</b> albo wniosek o zgodę na udział w doskonaleniu, podpisany przez dyrektora.</li>
+          <li>Wynagrodzenie liczone <b>jak za urlop</b>, z uwzględnieniem godzin ponadwymiarowych.</li>
+        </ul>
+        <div class="laws"><a class="law" href="https://api.sejm.gov.pl/eli/acts/DU/2026/1245/text.pdf#page=44">art. 103¹ KP</a><a class="law" href="https://api.sejm.gov.pl/eli/acts/DU/2017/927/text.pdf">§ 5 rozp. z 29.05.1996</a><a class="law" href="https://api.sejm.gov.pl/eli/acts/DU/2026/515/text.pdf#page=58">art. 67 ust. 1 KN</a><a class="law men" href="https://www.gov.pl/web/edukacja/zmiany-w-zakresie-wynagradzania-nauczycieli-za-godziny-ponadwymiarowe#:~:text=Tak%20wi%C4%99c%20za%20czas%20zwolnienia%20od%20pracy%2C%20w%20kt%C3%B3rym%20nauczyciel%20uczestniczy%C5%82%20w%20doskonaleniu">MEN</a></div>
+      </div>
+      <div class="path">
+        <span class="q">Jedziesz z własnej inicjatywy, a dyrektor tylko daje Ci wolne</span>
+        <h3>Sprawa prywatna <span class="pill v-no">niepłatne</span></h3>
+        <ul>
+          <li>Np. wydarzenie niezwiązane z Twoją pracą w szkole albo takie, którego dyrektor nie zatwierdził jako doskonalenia.</li>
+          <li>Dokument: wniosek o <b>zwolnienie z odpracowaniem</b> albo o <b>urlop bezpłatny</b>.</li>
+          <li>Zgoda dyrektora na nieobecność ≠ płatne godziny.</li>
+        </ul>
+        <div class="laws"><a class="law" href="https://api.sejm.gov.pl/eli/acts/DU/2026/1245/text.pdf#page=54">art. 151 § 2¹ KP</a><a class="law" href="https://api.sejm.gov.pl/eli/acts/DU/2026/1245/text.pdf#page=61">art. 174 KP</a></div>
+      </div>
+    </div>
+    <div class="note warn measure">
+      <strong class="lbl">Dlaczego tryb jest tak ważny</strong>
+      <p>Kodeks pracy daje prawo do wynagrodzenia za czas szkolenia, na które pracownik idzie <b>z inicjatywy pracodawcy albo za jego zgodą</b> jako na podnoszenie kwalifikacji (art. 103¹ KP). Dlatego na wniosku musi być jasno napisane, o co prosisz: o zgodę na doskonalenie zawodowe czy o wolne w sprawie prywatnej.</p>
+    </div>
+  </section>
+
+  <!-- ZWOLNIENIE -->
+  <section id="r-zwolnienie">
+    <div class="sec-head">
+      <span class="eyebrow">Sytuacje jednorazowe</span>
+      <h2>Muszę się zwolnić. Którą drogę wybrać?</h2>
+      <p>Najpierw spróbuj przełożyć sprawę tak, żeby nie kolidowała z planem. Jeśli się nie da, wybierz drogę pasującą do Twojej sytuacji.</p>
+    </div>
+    <div class="paths">
+      <div class="path">
+        <span class="q">Nagła sprawa: choroba albo wypadek w rodzinie, musisz być na miejscu natychmiast</span>
+        <h3>Siła wyższa <span class="pill v-half">½ wynagrodzenia</span></h3>
+        <ul>
+          <li>2 dni albo 16 godzin w roku kalendarzowym. Dni czy godziny? Decydujesz w pierwszym wniosku w danym roku.</li>
+          <li>Wniosek najpóźniej <b>w dniu</b> zwolnienia. Najpierw zadzwoń do szkoły, a wniosek złóż w kadrach.</li>
+          <li>Wizyta u lekarza umówiona pół roku wcześniej to <b>nie jest</b> siła wyższa.</li>
+        </ul>
+        <div class="laws"><a class="law" href="https://api.sejm.gov.pl/eli/acts/DU/2026/1245/text.pdf#page=53">art. 148¹ KP</a></div>
+      </div>
+      <div class="path">
+        <span class="q">Wychowujesz dziecko do 14 lat</span>
+        <h3>Opieka nad dzieckiem <span class="pill v-yes">płatne</span></h3>
+        <ul>
+          <li>2 dni albo 16 godzin w roku, z zachowaniem wynagrodzenia (liczonego jak za urlop).</li>
+          <li>Możesz to wykorzystać także na zaplanowaną wizytę z dzieckiem u lekarza.</li>
+        </ul>
+        <div class="laws"><a class="law" href="https://api.sejm.gov.pl/eli/acts/DU/2026/1245/text.pdf#page=72">art. 188 KP</a></div>
+      </div>
+      <div class="path">
+        <span class="q">Członek rodziny wymaga opieki z poważnych względów medycznych</span>
+        <h3>Urlop opiekuńczy <span class="pill v-no">bezpłatny</span></h3>
+        <ul>
+          <li>5 dni w roku, wniosek co najmniej 1 dzień wcześniej.</li>
+        </ul>
+        <div class="laws"><a class="law" href="https://api.sejm.gov.pl/eli/acts/DU/2026/1245/text.pdf#page=61">art. 173¹ KP</a></div>
+      </div>
+      <div class="path">
+        <span class="q">Sprawa prywatna na 1–2 godziny lekcyjne (lekarz, urząd), a masz tego dnia np. 7 lekcji</span>
+        <h3>Zwolnienie z odpracowaniem <span class="pill v-yes">bez straty</span></h3>
+        <ul>
+          <li>Wniosek w kadrach o zwolnienie z konkretnych godzin.</li>
+          <li><b>Od razu</b> podaj, kiedy możesz odpracować: okienka, godzina przed lekcjami albo po nich.</li>
+          <li>Odpracowujesz w formie zastępstwa, nie zawsze z tą samą klasą.</li>
+          <li>Odpracowanie <b>w tym samym okresie rozliczeniowym</b>, najlepiej w tym samym tygodniu. Nie jest dodatkowo płatne.</li>
+        </ul>
+        <div class="laws"><a class="law" href="https://api.sejm.gov.pl/eli/acts/DU/2026/515/text.pdf#page=46">art. 35 ust. 3d KN</a><a class="law" href="https://api.sejm.gov.pl/eli/acts/DU/2026/1245/text.pdf#page=54">art. 151 § 2¹ KP</a></div>
+      </div>
+      <div class="path">
+        <span class="q">Nie masz kiedy odpracować, np. uczysz też w drugiej szkole</span>
+        <h3>Urlop bezpłatny <span class="pill v-no">niepłatne</span></h3>
+        <ul>
+          <li>Wniosek w kadrach, podpisuje dyrektor.</li>
+          <li>Za ten czas nie ma wynagrodzenia.</li>
+        </ul>
+        <div class="laws"><a class="law" href="https://api.sejm.gov.pl/eli/acts/DU/2026/1245/text.pdf#page=61">art. 174 KP</a></div>
+      </div>
+      <div class="path">
+        <span class="q">Jesteś chory</span>
+        <h3>Zwolnienie lekarskie (L4)</h3>
+        <ul>
+          <li>Poinformuj szkołę jak najszybciej, żeby zaplanować zastępstwa.</li>
+          <li>Godziny z dni choroby nie są płatne jako ponadwymiarowe, a pensum w tym tygodniu się pomniejsza.</li>
+        </ul>
+        <div class="laws"><a class="law" href="https://api.sejm.gov.pl/eli/acts/DU/2026/515/text.pdf#page=47">art. 35 ust. 3f KN</a></div>
+      </div>
+    </div>
+
+    <div class="note lock measure">
+      <strong class="lbl">Standard szkoły: nie „odliczamy z nadgodzin”</strong>
+      <p>Nie stosujemy już praktyki „zwolnię się z godziny, a potem odliczycie mi to z godzin ponadwymiarowych” ani „odrobię kiedyś”. Takie pojedyncze ustalenia często się potem nie domykały: ktoś szedł na L4, coś wypadało, i każdy przypadek trzeba było analizować dzień po dniu. Szkoła zatrudnia około 70 nauczycieli, a rozliczenia to pieniądze publiczne, które podlegają kontroli. Dlatego obowiązuje jeden standard:</p>
+      <ol>
+        <li><b>Odpracowanie w tym samym okresie rozliczeniowym</b>, najlepiej w tym samym tygodniu, tak aby liczba zrealizowanych godzin zgadzała się z planem.</li>
+        <li>Jeśli się nie da: <b>siła wyższa</b> (gdy spełnione są warunki) albo <b>urlop bezpłatny</b>.</li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- TYDZIEŃ -->
+  <section id="r-tydzien">
+    <div class="sec-head">
+      <span class="eyebrow">Jak to się liczy</span>
+      <h2>Tydzień z dniem wolnym, L4 albo urlopem</h2>
+      <p>Jeśli w tygodniu jest dzień usprawiedliwionej nieobecności (np. L4), święto albo dzień bez zajęć, <b>pensum pomniejsza się o 1/5</b> (przy czterodniowym tygodniu pracy o 1/4) za każdy taki dzień. Godziny ponadwymiarowe to godziny zrealizowane i zaliczone ponad tak pomniejszone pensum. Wynik zaokrągla się do pełnych godzin: do 0,5 w dół, powyżej 0,5 w górę. Nigdy nie może wyjść więcej, niż masz przydzielone.</p>
+      <div class="laws"><a class="law" href="https://api.sejm.gov.pl/eli/acts/DU/2026/515/text.pdf#page=47">art. 35 ust. 3f KN</a><a class="law" href="https://api.sejm.gov.pl/eli/acts/DU/2026/515/text.pdf#page=47">art. 35 ust. 3h KN</a></div>
+    </div>
+    <div class="calc" id="calc">
+      <div class="examples"><span class="muted">Przykłady:</span>
+        <button type="button" class="btn" data-ex="18,23,1,5,19">Święto we wtorek</button>
+        <button type="button" class="btn" data-ex="18,23,1,5,18">L4 w środę (5 lekcji)</button>
+        <button type="button" class="btn" data-ex="18,23,0,5,23">Klasa na wycieczce</button>
+      </div>
+      <div class="fields">
+        <div class="field"><label for="c-pensum">Pensum (godzin tygodniowo)</label><input id="c-pensum" type="number" min="1" max="40" step="1" value="18" inputmode="numeric"></div>
+        <div class="field"><label for="c-przydz">Przydzielone godziny tygodniowo</label><input id="c-przydz" type="number" min="1" max="60" step="1" value="23" inputmode="numeric"><small>Pensum plus godziny ponadwymiarowe.</small></div>
+        <div class="field"><label for="c-dni">Dni odliczane w tym tygodniu</label><input id="c-dni" type="number" min="0" max="5" step="1" value="1" inputmode="numeric"><small>L4, urlop, święto, dzień wolny od zajęć.</small></div>
+        <div class="field"><label for="c-tydz">Tydzień pracy</label><select id="c-tydz"><option value="5">5 dni</option><option value="4">4 dni</option></select></div>
+        <div class="field"><label for="c-real">Godziny zrealizowane i zaliczone</label><input id="c-real" type="number" min="0" max="60" step="1" value="19" inputmode="numeric"><small>Liczą się też godziny płatne mimo nieodbycia, np. klasa na wycieczce.</small></div>
+      </div>
+      <div class="result" aria-live="polite">
+        <ol id="c-steps"></ol>
+        <p>Godziny ponadwymiarowe do wypłaty w tym tygodniu: <span class="big" id="c-out">–</span></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- WNIOSKI -->
+  <section id="r-wnioski">
+    <div class="sec-head">
+      <span class="eyebrow">Dokumenty</span>
+      <h2>Najpierw wniosek, potem zastępstwa</h2>
+      <p>Informacja rzucona na korytarzu albo SMS nie trafia do dokumentacji. Przy kontroli finansowej nie da się jej pokazać. Każde zwolnienie, urlop czy wyjazd musi mieć ślad na papierze albo w formie elektronicznej, którą przyjmują kadry.</p>
+    </div>
+    <ol class="steps">
+      <li class="step"><div class="step-body"><h3>Pobierz wniosek w kadrach</h3><p>Wniosek o urlop bezpłatny, o zwolnienie z powodu siły wyższej, o zwolnienie z odpracowaniem albo o zgodę na udział w szkoleniu. Napisz, <b>w jakim trybie</b> prosisz o wolne.</p></div></li>
+      <li class="step"><div class="step-body"><h3>Porozmawiaj z dyrektorem i zostaw wniosek</h3><p>Dobrze jest przyjść osobiście i uprzedzić, że wniosek będzie w kadrach, albo złożyć go od razu u dyrektora. Przy odpracowaniu wpisz od razu, <b>kiedy możesz odpracować</b>.</p></div></li>
+      <li class="step"><div class="step-body"><h3>Dopiero wtedy planujemy zastępstwa</h3><p>Po podpisie dyrektora dyrekcja planuje zastępstwa. Zmiany zobaczysz w <b>Liście zmian</b> na pulpicie nauczyciela.</p></div></li>
+      <li class="step"><div class="step-body"><h3>Wyjątek: nagła siła wyższa</h3><p>Jeśli czegoś naprawdę nie dało się przewidzieć, najpierw zadzwoń do szkoły, a wniosek złóż najpóźniej w dniu zwolnienia.</p><div class="laws"><a class="law" href="https://api.sejm.gov.pl/eli/acts/DU/2026/1245/text.pdf#page=53">art. 148¹ § 3 KP</a></div></div></li>
+    </ol>
+  </section>
+
+  <!-- PYTANIA -->
+  <section id="r-pytania">
+    <div class="sec-head">
+      <span class="eyebrow">Pytania</span>
+      <h2>Najczęstsze pytania</h2>
+    </div>
+    <div class="faq">
+      <details><summary>Klasa wyjechała, a potem mam jeszcze jedną lekcję. Mogę na ten czas wyjść ze szkoły?</summary><div>
+        <p>Nie, jeśli ta godzina ma być płatna. Wynagrodzenie za nieodbytą godzinę przysługuje tylko wtedy, gdy jesteś w gotowości do pracy, czyli w szkole i do dyspozycji dyrekcji. Jeżeli musisz wyjść, potrzebujesz wniosku o zwolnienie, tak jak w każdej sprawie prywatnej.</p>
+      </div></details>
+      <details><summary>W VULCANIE zastępstwo jest oznaczone jako płatne. Dostanę za nie osobno?</summary><div>
+        <p>Nie, jeśli zastępstwo przypadło w godzinie, w której Twoja lekcja się nie odbyła, np. przez wycieczkę. Ta godzina jest już opłacona. Osobno płatne jest zastępstwo prowadzone <b>poza</b> Twoim planem.</p>
+      </div></details>
+      <details><summary>Byłem chory w środę. Czy tracę wszystkie godziny ponadwymiarowe z tego tygodnia?</summary><div>
+        <p>Nie. Pensum w tym tygodniu pomniejsza się o 1/5, a godziny ponadwymiarowe liczy się od pomniejszonego pensum. Przykład: pensum 18, przydział 23, w środę 5 lekcji. Pensum spada do 14,4, zrealizowanych godzin jest 18, różnica to 3,6, czyli <b>4 godziny</b> ponadwymiarowe zamiast 5. Sprawdź w <a href="#r-tydzien">kalkulatorze</a>.</p>
+      </div></details>
+      <details><summary>Dyrektor zgodził się, żebym pojechał na konferencję. Czy godziny będą płatne?</summary><div>
+        <p>To zależy od trybu. Jeśli dyrektor Cię <b>skierował</b> albo zatwierdził wyjazd <b>jako doskonalenie zawodowe</b>, dostajesz wynagrodzenie liczone jak za urlop. Jeśli prosiłeś o wolne w sprawie prywatnej, a dyrektor się na to zgodził, jest to urlop bezpłatny albo zwolnienie z odpracowaniem. Tryb ustalamy przed wyjazdem, na piśmie.</p>
+      </div></details>
+      <details><summary>Lekcje przepadły, bo w szkole był egzamin zawodowy albo matura.</summary><div>
+        <p>Jeśli dyrektor ustalił ten dzień jako <b>dzień wolny od zajęć dydaktyczno-wychowawczych</b>, godzin ponadwymiarowych nie ma, a pensum się pomniejsza. Jeśli dzień nie był wolny, a Twoje lekcje odwołano, bo uczniów nie było, jesteś w gotowości w szkole (albo pracujesz w komisji), więc godziny są płatne.</p>
+        <div class="laws"><a class="law" href="https://api.sejm.gov.pl/eli/acts/DU/2023/1211/text.pdf#page=3">§ 5 ust. 2 pkt 1 rozp. o organizacji roku szkolnego</a><a class="law" href="https://api.sejm.gov.pl/eli/acts/DU/2026/515/text.pdf#page=47">art. 35 ust. 3e i 3f KN</a></div>
+      </div></details>
+      <details><summary>Co z dniem rozpoczęcia i zakończenia roku szkolnego?</summary><div>
+        <p>Przepisy nie uznają tych dni automatycznie za wolne od zajęć. Jeśli nie zorganizowano w nie zajęć, godzin ponadwymiarowych się nie przydziela i nie są płatne.</p>
+        <div class="laws"><a class="law men" href="https://www.gov.pl/web/edukacja/zmiany-w-zakresie-wynagradzania-nauczycieli-za-godziny-ponadwymiarowe#:~:text=Obowi%C4%85zuj%C4%85ce%20przepisy%20nie%20ustanawiaj%C4%85%20wprost%20dni%20rozpocz%C4%99cia">MEN 29.12.2025</a></div>
+      </div></details>
+      <details><summary>Nie zdążę odpracować w tym tygodniu. Mogę w przyszłym miesiącu?</summary><div>
+        <p>Nie. Odpracowanie musi się zmieścić w tym samym okresie rozliczeniowym. Jeśli to niemożliwe, zamiast zwolnienia z odpracowaniem złóż wniosek o urlop bezpłatny (albo o zwolnienie z powodu siły wyższej, jeśli spełniasz warunki).</p>
+      </div></details>
+      <details><summary>Regulamin wynagradzania organu prowadzącego mówi coś innego. Co obowiązuje?</summary><div>
+        <p>Od 1 września 2025 r. zasady wynagradzania za godziny ponadwymiarowe i doraźne zastępstwa określa <b>Karta Nauczyciela</b>. Postanowienia regulaminów sprzeczne z Kartą nie obowiązują.</p>
+        <div class="laws"><a class="law men" href="https://www.gov.pl/web/edukacja/zmiany-w-zakresie-wynagradzania-nauczycieli-za-godziny-ponadwymiarowe#:~:text=Od%201%20wrze%C5%9Bnia%202025%20r.%20szczeg%C3%B3%C5%82owe%20warunki%20obliczania">MEN 29.12.2025</a></div>
+      </div></details>
+    </div>
+    <div class="contact">
+      <h3>Masz nietypową sytuację?</h3>
+      <p>Zanim cokolwiek ustalisz ustnie, zapytaj w <b>kadrach</b> albo u <b>dyrekcji</b>, jaki wniosek złożyć. Lepiej zapytać przed niż prostować po.</p>
+    </div>
+  </section>
+
+  <!-- PRZEPISY -->
+  <section id="r-przepisy">
+    <div class="sec-head">
+      <span class="eyebrow">Źródła</span>
+      <h2>Podstawy prawne i wyjaśnienia MEN</h2>
+      <p class="muted">Linki do ustaw prowadzą do oficjalnych tekstów jednolitych w Dzienniku Ustaw (api.sejm.gov.pl), otwartych na właściwej stronie. Linki do wyjaśnień MEN w Chrome i Edge podświetlają właściwy akapit.</p>
+    </div>
+    <div class="src">
+      <div class="note">
+        <strong class="lbl">Karta Nauczyciela · Dz.U. 2026 poz. 515</strong>
+        <ul>
+          <li><a href="https://api.sejm.gov.pl/eli/acts/DU/2026/515/text.pdf#page=46">art. 35 ust. 2, 2a, 3, 3d</a> <small>godzina ponadwymiarowa, doraźne zastępstwo, wynagrodzenie za godziny zrealizowane</small></li>
+          <li><a href="https://api.sejm.gov.pl/eli/acts/DU/2026/515/text.pdf#page=47">art. 35 ust. 3e</a> <small>przyczyny niedotyczące nauczyciela i gotowość do pracy</small></li>
+          <li><a href="https://api.sejm.gov.pl/eli/acts/DU/2026/515/text.pdf#page=47">art. 35 ust. 3f, 3h</a> <small>pomniejszanie pensum o 1/5, zaokrąglenia</small></li>
+          <li><a href="https://api.sejm.gov.pl/eli/acts/DU/2026/515/text.pdf#page=48">art. 42 ust. 2</a> <small>co nauczyciel realizuje w czasie pracy</small></li>
+          <li><a href="https://api.sejm.gov.pl/eli/acts/DU/2026/515/text.pdf#page=58">art. 67 ust. 1</a> <small>wynagrodzenie urlopowe z godzinami ponadwymiarowymi</small></li>
+          <li><a href="https://api.sejm.gov.pl/eli/acts/DU/2026/515/text.pdf#page=64">art. 74</a> <small>Dzień Edukacji Narodowej</small></li>
+          <li><a href="https://api.sejm.gov.pl/eli/acts/DU/2026/515/text.pdf#page=80">art. 91c ust. 1</a> <small>odesłanie do Kodeksu pracy</small></li>
+          <li><a href="https://isap.sejm.gov.pl/isap.nsf/DocDetails.xsp?id=WDU20260000515">karta aktu w ISAP</a></li>
+        </ul>
+      </div>
+      <div class="note">
+        <strong class="lbl">Kodeks pracy · Dz.U. 2026 poz. 1245</strong>
+        <ul>
+          <li><a href="https://api.sejm.gov.pl/eli/acts/DU/2026/1245/text.pdf#page=44">art. 103¹</a> <small>podnoszenie kwalifikacji z inicjatywy lub za zgodą pracodawcy</small></li>
+          <li><a href="https://api.sejm.gov.pl/eli/acts/DU/2026/1245/text.pdf#page=53">art. 148¹</a> <small>zwolnienie z powodu siły wyższej</small></li>
+          <li><a href="https://api.sejm.gov.pl/eli/acts/DU/2026/1245/text.pdf#page=54">art. 151 § 2¹</a> <small>odpracowanie zwolnienia w sprawach osobistych</small></li>
+          <li><a href="https://api.sejm.gov.pl/eli/acts/DU/2026/1245/text.pdf#page=61">art. 173¹, art. 174</a> <small>urlop opiekuńczy, urlop bezpłatny</small></li>
+          <li><a href="https://api.sejm.gov.pl/eli/acts/DU/2026/1245/text.pdf#page=72">art. 188</a> <small>opieka nad dzieckiem do 14 lat</small></li>
+          <li><a href="https://isap.sejm.gov.pl/isap.nsf/DocDetails.xsp?id=WDU20260001245">karta aktu w ISAP</a></li>
+        </ul>
+      </div>
+      <div class="note">
+        <strong class="lbl">Inne akty</strong>
+        <ul>
+          <li><a href="https://api.sejm.gov.pl/eli/acts/DU/2025/1849/text.pdf">Ustawa z 21.11.2025 o zmianie KN</a> <small>Dz.U. 2025 poz. 1849, nowe brzmienie art. 35 ust. 3e od 1.01.2026 (z mocą od 1.09.2025)</small></li>
+          <li><a href="https://api.sejm.gov.pl/eli/acts/DU/2017/927/text.pdf">Rozporządzenie MPiPS z 29.05.1996, § 5</a> <small>wynagrodzenie za czas zwolnienia od pracy, Dz.U. 2017 poz. 927</small></li>
+          <li><a href="https://api.sejm.gov.pl/eli/acts/DU/2023/1211/text.pdf#page=3">Rozporządzenie MEN z 11.08.2017, § 5</a> <small>dodatkowe dni wolne od zajęć, Dz.U. 2023 poz. 1211 z późn. zm.</small></li>
+        </ul>
+      </div>
+      <div class="note">
+        <strong class="lbl">Ministerstwo Edukacji Narodowej</strong>
+        <ul>
+          <li><a href="https://www.gov.pl/web/edukacja/zmiany-w-zakresie-wynagradzania-nauczycieli-za-godziny-ponadwymiarowe">Zmiany w zakresie wynagradzania nauczycieli za godziny ponadwymiarowe</a> <small>29.12.2025, pytania i odpowiedzi: gotowość, wycieczki, szkolenia, dni wolne</small></li>
+          <li><a href="https://www.gov.pl/web/edukacja/rozliczanie-godzin-ponadwymiarowych">Rozliczanie godzin ponadwymiarowych</a> <small>16.10.2025, częściowo nieaktualne po zmianie z 1.01.2026</small></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <p>Przewodnik dla nauczycieli Zespołu Szkół Zawodowych nr 5 we Wrocławiu · rok szkolny 2026/2027 · moduł 5: Rozliczanie godzin · stan prawny na 28.09.2026. Przewodnik porządkuje zasady obowiązujące w szkole. W sprawach indywidualnych rozstrzygają kadry i dyrektor szkoły.</p>
+  </footer>
+</main>
+
+<script>
+// filtr sytuacji
+document.querySelectorAll('.filter button').forEach(b=>b.addEventListener('click',()=>{
+  document.querySelectorAll('.filter button').forEach(x=>x.setAttribute('aria-pressed',x===b));
+  const f=b.dataset.f;
+  document.querySelectorAll('.case').forEach(c=>c.hidden=f!=='all'&&c.dataset.v!==f);
+}));
+
+// kalkulator art. 35 ust. 3f i 3h KN
+(function(){
+  const $=id=>document.getElementById(id);
+  const ids=['c-pensum','c-przydz','c-dni','c-tydz','c-real'];
+  const fmt=x=>x.toLocaleString('pl-PL',{maximumFractionDigits:1});
+  const round1=x=>Math.round(x*10)/10;
+  const toHours=x=>{const f=Math.floor(x);return x-f>0.5?f+1:f;};  // do pół godziny pomija się
+  function calc(){
+    const p=+$('c-pensum').value||0, a=+$('c-przydz').value||0, d=Math.max(0,+$('c-dni').value||0);
+    const w=+$('c-tydz').value, r=+$('c-real').value||0;
+    const cut=round1(p/w*d), pr=round1(Math.max(0,p-cut)), assigned=Math.max(0,a-p);
+    const diff=round1(Math.max(0,r-pr)), gp=Math.min(toHours(diff),assigned);
+    const s=[];
+    s.push(`Przydzielone godziny ponadwymiarowe: ${a} − ${p} = <b>${assigned}</b>`);
+    if(d>0) s.push(`Pensum pomniejszone: ${p} − ${d} × ${p}/${w} = <b>${fmt(pr)}</b>`);
+    else s.push(`Brak dni odliczanych, pensum bez zmian: <b>${p}</b>`);
+    s.push(`Ponad pensum: ${r} − ${fmt(pr)} = <b>${fmt(diff)}</b>`);
+    s.push(`Po zaokrągleniu (do 0,5 w dół, powyżej w górę)${toHours(diff)>assigned?' i ograniczeniu do przydziału':''}: <b>${gp}</b>`);
+    $('c-steps').innerHTML=s.map(x=>`<li>${x}</li>`).join('');
+    $('c-out').textContent=gp;
+  }
+  ids.forEach(i=>$(i).addEventListener('input',calc));
+  document.querySelectorAll('[data-ex]').forEach(b=>b.addEventListener('click',()=>{
+    const [p,a,d,w,r]=b.dataset.ex.split(',');
+    $('c-pensum').value=p;$('c-przydz').value=a;$('c-dni').value=d;$('c-tydz').value=w;$('c-real').value=r;calc();
+  }));
+  calc();
+})();
+</script>
+</body>
+</html>
