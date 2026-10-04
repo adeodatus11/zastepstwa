@@ -118,9 +118,16 @@ const duties = nodes("classroomsupervision").map((n, i) => {
   };
 });
 const book = (key) => XLSX.read(buffers[key], { type: "buffer" });
+// Pusty eksport z dziennika: bez arkusza „Oddziały”, w opisie „Brak informacji o …”.
+const emptyExport = (w) =>
+  !w.Sheets["Oddziały"] &&
+  XLSX.utils
+    .sheet_to_csv(w.Sheets["Opis parametrów"] ?? {})
+    .includes("Brak informacji o");
 function validateSheet(key, columns) {
-  const w = book(key),
-    s = w.Sheets["Oddziały"] || w.Sheets[w.SheetNames[0]];
+  const w = book(key);
+  if (emptyExport(w)) return 0;
+  const s = w.Sheets["Oddziały"] || w.Sheets[w.SheetNames[0]];
   if (!s) throw Error(`Brak arkusza ${key}`);
   const rows = XLSX.utils.sheet_to_json(s, { header: 1, defval: "" });
   if (!columns.every((c) => (rows[0] || []).includes(c)))

@@ -13,6 +13,13 @@ Użytkownik aktualizuje zastępstwa sam na https://nauczyciel.szkolamistrzow.inf
    Przeglądarka czyta je i czyści **lokalnie**
    (`src/lib/update/sanitize.mjs` — ten sam wynik co `scripts/privacy_xlsx.py`,
    pilnuje tego `tests/update.test.mjs`). Surowy plik nie opuszcza komputera.
+   Okres bez przeniesień dziennik eksportuje jako plik z samym arkuszem
+   „Opis parametrów” i tekstem „Brak informacji o przeniesieniach” (bez
+   arkusza „Oddziały”). To poprawny, pusty plik: strona, budowanie serwisu
+   i generator planu uczniowskiego traktują go jak zero przeniesień.
+   Nazwiska z eksportu są dopasowywane do planu najpierw dokładnie, a gdy to
+   się nie uda — w przybliżeniu (jeden człon podwójnego nazwiska, literówka;
+   inne imię przy podobnym nazwisku blokuje dopasowanie).
 2. Strona pokazuje podsumowanie i kontrole (`src/lib/update/checks.mjs`):
    - **błędy** (brak kolumn, nieczytelny okres, niekompletne wiersze) blokują publikację;
    - **uwagi** wymagają potwierdzenia „Przejrzałem uwagi — publikuj mimo to”:

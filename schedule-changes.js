@@ -32,6 +32,75 @@
       .join(" ");
   }
 
+  // Dopasowanie przybliżone, gdy dokładny klucz osoby nie istnieje: podwójne
+  // nazwisko (wystarczy jeden człon) albo literówka. Plan podaje „Imię Nazwisko”,
+  // więc pierwsze słowo planu to imię — samo imię nie wystarcza do dopasowania.
+  function personTokens(value) {
+    return normalizeText(compactSpaces(value).replace(/\[[^\]]+\]/g, "").replace(/[()-]/g, " "))
+      .replace(/[^a-z0-9\s]/g, " ")
+      .split(/\s+/)
+      .filter((token) => token && !PERSON_TITLES.has(token));
+  }
+
+  function editDistance(a, b) {
+    const row = Array.from({ length: b.length + 1 }, (_, i) => i);
+    for (let i = 1; i <= a.length; i += 1) {
+      let previous = row[0];
+      row[0] = i;
+      for (let j = 1; j <= b.length; j += 1) {
+        const current = row[j];
+        row[j] = Math.min(row[j] + 1, row[j - 1] + 1, previous + (a[i - 1] === b[j - 1] ? 0 : 1));
+        previous = current;
+      }
+    }
+    return row[b.length];
+  }
+
+  function closeTokens(a, b) {
+    if (a === b) {
+      return true;
+    }
+    const shorter = Math.min(a.length, b.length);
+    const distance = editDistance(a, b);
+    return (shorter >= 4 && distance <= 1) || (shorter >= 7 && distance <= 2);
+  }
+
+  const NOT_A_PERSON = /^(uczniowie|zastępstwo|zastepstwo|okienko|bez |zajęcia|zajecia|-)/i;
+
+  /** Najbardziej prawdopodobna osoba z planu albo null. people: [{id, name}]. */
+  function guessPerson(rawName, people) {
+    const text = compactSpaces(rawName);
+    if (!text || NOT_A_PERSON.test(text)) {
+      return null;
+    }
+    const query = personTokens(text);
+    let best = null;
+    let bestScore = 0;
+    people.forEach((person) => {
+      const [first = "", ...rest] = personTokens(person.name);
+      const last = rest.length ? rest : [first];
+      // Człon nazwiska: 1 (dokładnie) albo 0,7 (literówka); imię: 0,5;
+      // słowo bez odpowiednika (np. inne imię): -0,5. Próg: 1.
+      let score = 0;
+      query.forEach((token) => {
+        if (last.includes(token)) {
+          score += 1;
+        } else if (last.some((part) => closeTokens(token, part))) {
+          score += 0.7;
+        } else if (rest.length && closeTokens(token, first)) {
+          score += 0.5;
+        } else {
+          score -= 0.5;
+        }
+      });
+      if (score >= 1 && score > bestScore) {
+        best = person;
+        bestScore = score;
+      }
+    });
+    return best;
+  }
+
   function normalizeBranchClass(value) {
     return normalizeText(value).replace(/\s+/g, "");
   }
@@ -200,6 +269,8 @@
       }
     });
 
+    const people = Object.entries(byId).map(([id, teacher]) => ({ id, name: compactSpaces(teacher.name) }));
+
     function resolve(rawName) {
       const personKey = normalizePersonKey(rawName);
       if (personKey && byPersonKey[personKey]) {
@@ -214,6 +285,11 @@
           const id = byPersonKey[shortKey];
           return { id, name: byId[id].name };
         }
+      }
+
+      const guess = guessPerson(rawName, people);
+      if (guess) {
+        return { id: guess.id, name: guess.name };
       }
 
       return { id: "", name: compactSpaces(rawName) };
@@ -385,9 +461,22 @@
     return { substitutions, transfers };
   }
 
+  // Pusty eksport z dziennika nie ma arkusza „Oddziały”, tylko „Opis parametrów”
+  // z tekstem „Brak informacji o …” — wtedy nie ma żadnych wierszy zmian.
+  function changesSheet(workbook) {
+    if (workbook.Sheets["Oddziały"]) {
+      return workbook.Sheets["Oddziały"];
+    }
+    const description = workbook.Sheets["Opis parametrów"];
+    if (description && XLSX.utils.sheet_to_csv(description).includes("Brak informacji o")) {
+      return null;
+    }
+    return workbook.Sheets[workbook.SheetNames[0]];
+  }
+
   function parseInfoSubstitutions(workbook, teacherLookup) {
     const substitutions = new Map();
-    const sheet = workbook.Sheets["Oddziały"] || workbook.Sheets[workbook.SheetNames[0]];
+    const sheet = changesSheet(workbook);
     if (!sheet) {
       return substitutions;
     }
@@ -429,7 +518,7 @@
 
   function parseInfoTransfers(workbook, teacherLookup) {
     const transfers = new Map();
-    const sheet = workbook.Sheets["Oddziały"] || workbook.Sheets[workbook.SheetNames[0]];
+    const sheet = changesSheet(workbook);
     if (!sheet) {
       return transfers;
     }
@@ -643,6 +732,7 @@
     normalizeBranchClass,
     normalizeGroup,
     normalizePersonKey,
+    guessPerson,
     parseBranch,
     lessonMatchesBranch,
     lessonMatchesSubstitution,

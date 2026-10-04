@@ -130,6 +130,16 @@ test("Titles do not split one teacher into two", () => {
     if (String(t.id).startsWith("extra-"))
       assert.ok(!planKeys.has(key(t.name)), `Zdublowany nauczyciel: ${t.name}`);
 });
+test("Export names with a typo or one part of a double surname map to the plan", () => {
+  const people = Object.entries(plan.teachers)
+    .filter(([id]) => !id.startsWith("extra-"))
+    .map(([id, t]) => ({ id, name: t.name }));
+  const g = (n) => ref.guessPerson(n, people)?.name ?? null;
+  assert.equal(g("Smirnow Eleonora"), "Eleonora Smirnow-Zechman");
+  assert.equal(g("Biczyskp Wojciech"), "Wojciech Biczysko");
+  assert.equal(g("Filipiak Wiesław"), null);
+  assert.equal(g("Uczniowie zwolnieni do domu"), null);
+});
 test("Week and timezone work through Sunday, year boundary and Warsaw DST", () => {
   assert.equal(week("2026-09-13")[0], "2026-09-07");
   assert.equal(week("2027-01-01")[0], "2026-12-28");

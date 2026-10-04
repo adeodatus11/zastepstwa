@@ -13,6 +13,7 @@ import {
   INDIVIDUAL_MARKER,
 } from "../src/lib/update/sanitize.mjs";
 import {
+  guessPerson,
   identify,
   periodOf,
   review,
@@ -656,4 +657,82 @@ test("Different absence reasons on one day are flagged without the reasons", () 
   assert.deepEqual(out, [
     "28.09.2026 — Kowalska Anna: różne powody nieobecności tego dnia.",
   ]);
+});
+
+test("Empty transfers export (no „Oddziały” sheet) is recognised and passes", () => {
+  const empty = {
+    "Opis parametrów": [
+      ["Rok szkolny: 2026/2027"],
+      ["Okres: 05.10.2026 (pon.) - 05.10.2026 (pon.)"],
+      [""],
+      ["Brak informacji o przeniesieniach"],
+    ],
+  };
+  assert.equal(identify(empty), "transfers");
+  const subs = {
+    "Opis parametrów": [["Okres: 05.10.2026 (pon.) - 05.10.2026 (pon.)"]],
+    Oddziały: [HEAD],
+  };
+  const { summary, messages } = review({ subs, moves: empty });
+  assert.equal(summary.transfers, 0);
+  assert.deepEqual(
+    messages.filter((m) => m.level !== "info"),
+    [],
+  );
+  // Sam „Opis parametrów” bez tej frazy to nadal nie jest eksport.
+  assert.equal(
+    identify({ "Opis parametrów": [["Okres: 05.10.2026 - 05.10.2026"]] }),
+    null,
+  );
+});
+
+test("Names: double surname, one part or a typo still find the teacher", () => {
+  const names = [
+    "Eleonora Smirnow-Zechman",
+    "Anna Filipek",
+    "Wojciech Biczysko",
+    "Krystyna Dalach",
+    "Sławomir Dalach",
+    "ks. Paweł Stypa",
+  ];
+  const g = (n) => guessPerson(n, names);
+  assert.equal(g("Smirnow Eleonora"), "Eleonora Smirnow-Zechman");
+  assert.equal(g("Zechman Eleonora"), "Eleonora Smirnow-Zechman");
+  assert.equal(g("Biczyskp Wojciech"), "Wojciech Biczysko");
+  assert.equal(g("Dalach Sławomir"), "Sławomir Dalach");
+  assert.equal(g("Stypa Paweł"), "ks. Paweł Stypa");
+  // Inna osoba o podobnym nazwisku i innym imieniu — nie zgadujemy.
+  assert.equal(g("Filipiak Wiesław"), null);
+  assert.equal(g("Kowalska Anna"), null);
+  assert.equal(g("Uczniowie zwolnieni do domu"), null);
+  assert.equal(g("Zastępstwo"), null);
+  // Literówka w nazwisku zastępcy nie wyłącza kontroli złączenia.
+  const out = rules([
+    "28.09.2026",
+    "2",
+    "Kowalska Anna",
+    "3K|kucharz",
+    "Technologia",
+    "41",
+    "Skarpa Agnieszka",
+    "",
+    "Dodatkowo płatne",
+  ]);
+  assert.equal(out.length, 1);
+  assert.match(out[0], /prowadzi wtedy grupę sprzedawca/);
+  // Bibliotekarka z literówką to nadal bibliotekarka.
+  assert.equal(
+    rules([
+      "29.09.2026",
+      "5",
+      "Kowalska Anna",
+      "2A",
+      "Matematyka",
+      "bib",
+      "Zajac Ewa",
+      "",
+      "Bezpłatne",
+    ]).length,
+    1,
+  );
 });

@@ -36,11 +36,26 @@ export function table(sheets, name) {
     .map((r) => Object.fromEntries(keys.map((k, i) => [k, clean(r[i])])));
 }
 
+/**
+ * Pusty eksport: dziennik pomija wtedy arkusz „Oddziały” i pisze w „Opisie
+ * parametrów” „Brak informacji o przeniesieniach” (albo „…o zastępstwach”).
+ * Zwraca rodzaj pliku albo null.
+ */
+export function emptyExport(sheets) {
+  if (sheets["Oddziały"]) return null;
+  const all = lower((sheets["Opis parametrów"] ?? []).flat().join(" "));
+  if (all.includes("brak informacji o przeniesieniach")) return "transfers";
+  if (all.includes("brak informacji o zastępstwach")) return "substitutions";
+  return null;
+}
+
 /** Który to plik: po zawartości, nie po nazwie. */
 export function identify(sheets) {
   const head = (sheets["Oddziały"]?.[0] ?? []).map(clean);
   if (head.includes("Przeniesiono z")) return "transfers";
   if (head.includes("Zastępca")) return "substitutions";
+  const empty = emptyExport(sheets);
+  if (empty) return empty;
   if (sheets[ABSENT] || sheets["Dane zastępstwa"]) return "overview";
   return null;
 }
@@ -95,6 +110,67 @@ export function personKey(v) {
     .join(" ");
 }
 
+/**
+ * Dopasowanie przybliżone nazwiska z eksportu do osoby z planu — ta sama reguła
+ * co guessPerson w schedule-changes.js: podwójne nazwisko (wystarczy jeden
+ * człon) albo literówka. Plan podaje „Imię Nazwisko”, samo imię nie wystarcza.
+ */
+const tokens = (v) =>
+  personKey(clean(v).replace(/\[[^\]]*\]/g, ""))
+    ? clean(v)
+        .replace(/\[[^\]]*\]/g, "")
+        .normalize("NFKD")
+        .replace(/[̀-ͯ]/g, "")
+        .toLowerCase()
+        .replace(/ł/g, "l")
+        .match(/[a-z0-9]+/g)
+        .filter((x) => !TITLES.has(x))
+    : [];
+function editDistance(a, b) {
+  const row = Array.from({ length: b.length + 1 }, (_, i) => i);
+  for (let i = 1; i <= a.length; i++) {
+    let prev = row[0];
+    row[0] = i;
+    for (let j = 1; j <= b.length; j++) {
+      const cur = row[j];
+      row[j] = Math.min(
+        row[j] + 1,
+        row[j - 1] + 1,
+        prev + (a[i - 1] !== b[j - 1]),
+      );
+      prev = cur;
+    }
+  }
+  return row[b.length];
+}
+const close = (a, b) => {
+  const n = Math.min(a.length, b.length),
+    d = editDistance(a, b);
+  return a === b || (n >= 4 && d <= 1) || (n >= 7 && d <= 2);
+};
+const NOT_A_PERSON = /^(uczniowie|zastępstwo|okienko|bez |zajęcia|-)/i;
+export function guessPerson(raw, names) {
+  if (!clean(raw) || NOT_A_PERSON.test(clean(raw))) return null;
+  const query = tokens(raw);
+  let best = null,
+    bestScore = 0;
+  for (const name of names) {
+    const [first = "", ...rest] = tokens(name);
+    const last = rest.length ? rest : [first];
+    let score = 0;
+    for (const t of query)
+      score += last.includes(t)
+        ? 1
+        : last.some((p) => close(t, p))
+          ? 0.7
+          : rest.length && close(t, first)
+            ? 0.5
+            : -0.5;
+    if (score >= 1 && score > bestScore) [best, bestScore] = [name, score];
+  }
+  return best;
+}
+
 const isMessage = (v) => {
   const s = lower(v);
   return (
@@ -106,10 +182,8 @@ const isMessage = (v) => {
   );
 };
 const isPE = (v) => lower(v).includes("wychowanie fizyczne");
-/** Zawsze zajęcia biblioteczne i zawsze „Bezpłatne”. */
-const LIBRARIANS = new Set(
-  ["Wrzeszcz Barbara", "Zając Ewa"].map((n) => personKey(n)),
-);
+/** Zawsze zajęcia biblioteczne i zawsze „Bezpłatne” (jak w planie: „Imię Nazwisko”). */
+const LIBRARIANS = ["Barbara Wrzeszcz", "Ewa Zając"];
 const where = (r) =>
   `${r["Dzień"]}, lekcja ${period(r["Lekcja"])}, ${r["Oddział"]} (${r["Przedmiot"]})`;
 
@@ -117,7 +191,8 @@ function structure(kind, sheets) {
   const out = [];
   const need = kind === "substitutions" ? SUBS : MOVES;
   const head = (sheets["Oddziały"]?.[0] ?? []).map(clean);
-  const missing = need.filter((c) => !head.includes(c));
+  const missing =
+    emptyExport(sheets) === kind ? [] : need.filter((c) => !head.includes(c));
   if (missing.length)
     out.push({
       level: "error",
@@ -317,7 +392,7 @@ export function reduceOverview(sheets) {
 }
 
 /** Z zestawienia: lekcje nieobecnych oddziałów i złączenia grup z dziennika. */
-export function overviewFacts(overview) {
+export function overviewFacts(overview, who = personKey) {
   const absent = new Map();
   for (const r of table(overview, ABSENT)) {
     const [code, group = ""] =
@@ -336,7 +411,7 @@ export function overviewFacts(overview) {
           cellDate(r["Data"]),
           period(r["Numer lekcji"]),
           r["Oddział/dziennik/grupa/miejsce dyżuru z podziałem"],
-          personKey(r["Zastępstwo"].replace(/\[[^\]]*\]/g, "")),
+          who(r["Zastępstwo"].replace(/\[[^\]]*\]/g, "")),
         ].join("|"),
       ),
   );
@@ -346,8 +421,21 @@ export function overviewFacts(overview) {
 /** Reguły szkoły: złączenie grup (sala i płatność) i zajęcia biblioteczne. */
 export function schoolRules(subs, moves, plan, overview) {
   const out = [];
+  // Klucz osoby: dokładny, a gdy nikogo takiego nie ma w planie — zgadnięty.
+  const planNames = [...new Set(plan.lessons.flatMap((l) => l.teacherNames))];
+  const planKeys = new Set(planNames.map(personKey));
+  const known = new Map();
+  const who = (name) => {
+    const k = personKey(name);
+    if (planKeys.has(k)) return k;
+    if (!known.has(k)) {
+      const guess = guessPerson(name, planNames);
+      known.set(k, guess ? personKey(guess) : k);
+    }
+    return known.get(k);
+  };
   const facts = overview
-    ? overviewFacts(overview)
+    ? overviewFacts(overview, who)
     : { absent: new Map(), merges: new Set() };
   const rows = table(subs, "Oddziały");
   const shortOf = (dict, id) => clean(plan.shorts?.[dict]?.[id]);
@@ -395,9 +483,7 @@ export function schoolRules(subs, moves, plan, overview) {
   // Zastępca jest wolny, jeśli jego własna lekcja tego dnia też jest w eksporcie.
   const freed = new Set(
     rows.map((r) =>
-      [personKey(r["Nauczyciel/wakat"]), r["Dzień"], period(r["Lekcja"])].join(
-        "|",
-      ),
+      [who(r["Nauczyciel/wakat"]), r["Dzień"], period(r["Lekcja"])].join("|"),
     ),
   );
   const moved = new Map();
@@ -406,7 +492,7 @@ export function schoolRules(subs, moves, plan, overview) {
       b = moveDate(r["Przeniesiono na"]);
     if (a && b && a[1] === b[1] && a[2] === b[2])
       moved.set(
-        [personKey(r["Nauczyciel/wakat"]), a[1], Number(a[2])].join("|"),
+        [who(r["Nauczyciel/wakat"]), a[1], Number(a[2])].join("|"),
         lower(b[3]),
       );
   }
@@ -417,7 +503,7 @@ export function schoolRules(subs, moves, plan, overview) {
     const pay = r["Forma płatności"],
       sub = r["Zastępca"],
       library = lower(r["Przedmiot"]).includes("biblioteczn");
-    if (LIBRARIANS.has(personKey(sub))) {
+    if (guessPerson(sub, LIBRARIANS)) {
       // Bibliotekarki zawsze prowadzą zajęcia biblioteczne, zawsze bezpłatnie.
       if (!library)
         out.push({
@@ -442,23 +528,23 @@ export function schoolRules(subs, moves, plan, overview) {
     if (isMessage(sub) && !lower(r["Uwagi"]).includes("złączenie grup"))
       continue;
     if (!rowDate(r["Dzień"])) continue;
-    const k = [personKey(sub), r["Dzień"], period(r["Lekcja"])].join("|");
+    const k = [who(sub), r["Dzień"], period(r["Lekcja"])].join("|");
     groups.set(k, [...(groups.get(k) ?? []), r]);
   }
-  for (const [who, same] of groups) {
+  for (const [slot, same] of groups) {
     const [r0] = same,
       sub = r0["Zastępca"],
       date = rowDate(r0["Dzień"]),
       p = period(r0["Lekcja"]);
     const day = new Date(date + "T12:00:00Z").getUTCDay();
-    const planned = freed.has(who)
+    const planned = freed.has(slot)
       ? []
-      : (slots.get([personKey(sub), day, p].join("|")) ?? []);
+      : (slots.get([who(sub), day, p].join("|")) ?? []);
     const busy = planned.filter((l) => !classAway(l, date, p));
     const away = planned.filter((l) => classAway(l, date, p));
     const isMarked = (r) =>
       lower(r["Uwagi"]).includes("złączenie grup") ||
-      facts.merges.has([date, p, r["Oddział"], personKey(sub)].join("|"));
+      facts.merges.has([date, p, r["Oddział"], who(sub)].join("|"));
     const at = `${r0["Dzień"]}, lekcja ${p}`;
     const list = same.map((r) => `${r["Oddział"]} „${r["Forma płatności"]}”`);
     if (!busy.length && same.length > 1) {
@@ -510,8 +596,8 @@ export function schoolRules(subs, moves, plan, overview) {
           text: `${where(r)}: ${label} — złączenie powinno być „Bezpłatne”, jest „${pay}”.`,
         });
       if (host && !isPE(r["Przedmiot"]) && !isPE(host.subject)) {
-        const expected = moved.has(who)
-          ? new Set([moved.get(who)])
+        const expected = moved.has(slot)
+          ? new Set([moved.get(slot)])
           : roomCodes(host);
         if (expected.size && !expected.has(lower(r["Sala"])))
           out.push({
