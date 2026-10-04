@@ -353,7 +353,7 @@ const withOverview = (ov, ...rows) =>
     (m) => m.text,
   );
 
-test("Class away on a trip: no merge, paid substitution stays as a warning", () => {
+test("Class away on a trip: no merge, the hour is to be counted", () => {
   assert.equal(identify(overview()), "overview");
   const trip = overview([
     [
@@ -372,9 +372,13 @@ test("Class away on a trip: no merge, paid substitution stays as a warning", () 
   assert.equal(out.length, 1);
   assert.match(
     out[0],
-    /lekcję z 3KS \(Obsługa klienta\), ale ten oddział jest nieobecny\. Zastępstwo jest „Dodatkowo płatne”/,
+    /lekcję z 3KS \(Obsługa klienta\), ale ten oddział jest nieobecny\. Zastępstwo powinno być „Godzina do zliczenia”, jest „Dodatkowo płatne”/,
   );
-  assert.deepEqual(withOverview(trip, paidSub.with(8, "Bezpłatne")), []);
+  assert.equal(withOverview(trip, paidSub.with(8, "Bezpłatne")).length, 1);
+  assert.deepEqual(
+    withOverview(trip, paidSub.with(8, "Godzina do zliczenia")),
+    [],
+  );
   // Nieobecna inna grupa tej klasy nie zwalnia zastępcy.
   const other = overview([
     [
@@ -403,16 +407,13 @@ test("Merge recorded only in the diary is still checked", () => {
     "2A",
     "Matematyka",
     "12",
-    "Wrzeszcz Barbara",
+    "Nowicka Ewa",
     "",
     "Dodatkowo płatne",
   ];
   assert.deepEqual(withOverview(overview(), sub), []);
   const out = withOverview(
-    overview(
-      [],
-      [["46293", "2", "2A", "Wrzeszcz Barbara [WB]", "Złączenie grup"]],
-    ),
+    overview([], [["46293", "2", "2A", "Nowicka Ewa [NE]", "Złączenie grup"]]),
     sub,
   );
   assert.equal(out.length, 1);
@@ -483,7 +484,7 @@ test("Combined overview keeps no absence reasons and no diary names", () => {
         "2",
         "2A",
         "Kowalska Anna",
-        "Wrzeszcz Barbara [WB]",
+        "Nowicka Ewa [NE]",
         "Zwolnienie lekarskie",
         "Złączenie grup",
       ],
@@ -498,6 +499,7 @@ test("Combined overview keeps no absence reasons and no diary names", () => {
     "Dane nieobecności oddziałów",
     "Dane zastępstwa",
     "Opis parametrów",
+    "Różne powody nieobecności",
   ]);
   const sub = [
     "28.09.2026",
@@ -506,10 +508,152 @@ test("Combined overview keeps no absence reasons and no diary names", () => {
     "2A",
     "Matematyka",
     "12",
-    "Wrzeszcz Barbara",
+    "Nowicka Ewa",
     "",
     "Dodatkowo płatne",
   ];
   assert.match(withOverview(reduced, sub)[0], /według dziennika/);
   assert.equal(periodOf(reduced).from, "2026-09-28");
+});
+
+test("Librarians always teach library lessons, free of charge", () => {
+  const lib = [
+    "29.09.2026",
+    "5",
+    "Kowalska Anna",
+    "2A",
+    "Zajęcia biblioteczne",
+    "bib",
+    "Zając Ewa",
+    "",
+    "Bezpłatne",
+  ];
+  assert.deepEqual(rules(lib), []);
+  const subject = rules(lib.with(4, "Matematyka"));
+  assert.equal(subject.length, 1);
+  assert.match(
+    subject[0],
+    /Zając Ewa powinna mieć zajęcia biblioteczne, w eksporcie jest „Matematyka”/,
+  );
+  const both = rules(lib.with(4, "Matematyka").with(8, "Dodatkowo płatne"));
+  assert.equal(both.length, 2);
+  assert.match(
+    both[1],
+    /forma płatności „Dodatkowo płatne”, powinno być „Bezpłatne”/,
+  );
+});
+
+test("Two groups at once: exactly one paid, the other free", () => {
+  // Nowicka nie ma lekcji w planie; dostaje dwie grupy 2K na tej samej lekcji.
+  const g = (group, pay) => [
+    "28.09.2026",
+    "2",
+    "Kowalska Anna",
+    `2K|${group}`,
+    "Język angielski",
+    "43",
+    "Nowicka Ewa",
+    "",
+    pay,
+  ];
+  assert.deepEqual(
+    rules(g("gr1", "Dodatkowo płatne"), g("gr2", "Bezpłatne")),
+    [],
+  );
+  assert.deepEqual(
+    rules(g("gr1", "Bezpłatne"), g("gr2", "Dodatkowo płatne")),
+    [],
+  );
+  const paid = rules(
+    g("gr1", "Dodatkowo płatne"),
+    g("gr2", "Dodatkowo płatne"),
+  );
+  assert.equal(paid.length, 1);
+  assert.match(
+    paid[0],
+    /Nowicka Ewa ma jednocześnie 2 zastępstwa .*Płatna może być tylko jedna grupa/,
+  );
+  const free = rules(g("gr1", "Bezpłatne"), g("gr2", "Bezpłatne"));
+  assert.equal(free.length, 1);
+  assert.match(free[0], /Żadna grupa nie jest płatna/);
+  // Złączenie zapisane w dzienniku przy obu grupach nie zmienia oceny pary.
+  const ov = overview(
+    [],
+    [
+      ["46293", "2", "2K|gr1", "Nowicka Ewa [NE]", "Złączenie grup"],
+      ["46293", "2", "2K|gr2", "Nowicka Ewa [NE]", "Złączenie grup"],
+    ],
+  );
+  assert.deepEqual(
+    withOverview(ov, g("gr1", "Dodatkowo płatne"), g("gr2", "Bezpłatne")),
+    [],
+  );
+});
+
+test("Own lesson at that hour: an extra substitution is never paid", () => {
+  const out = rules([
+    "28.09.2026",
+    "2",
+    "Kowalska Anna",
+    "3K|kucharz",
+    "Technologia",
+    "41",
+    "Skarupa Agnieszka",
+    "",
+    "Dodatkowo płatne",
+  ]);
+  assert.equal(out.length, 1);
+  assert.match(
+    out[0],
+    /prowadzi wtedy grupę sprzedawca .* powinno być „Bezpłatne”, jest „Dodatkowo płatne”/,
+  );
+});
+
+test("Different absence reasons on one day are flagged without the reasons", () => {
+  const raw = {
+    ...overview(),
+    "Dane nieobecności": [
+      ["Data", "Numer lekcji", "Prowadzący", "Powód nieobecności"],
+      ["46293", "1", "Kowalska Anna [KA]", "Powód A"],
+      ["46293", "2", "Kowalska Anna [KA]", "Powód A"],
+      ["46293", "1", "Nowak Jan [NJ]", "Powód A"],
+      ["46294", "1", "Kowalska Anna [KA]", "Powód A"],
+    ],
+    "Dane zastępstwa": [
+      [
+        "Data",
+        "Numer lekcji",
+        "Oddział/dziennik/grupa/miejsce dyżuru z podziałem",
+        "Prowadzący",
+        "Zastępstwo",
+        "Powód nieobecności",
+        "Skutek nieobecności",
+      ],
+      [
+        "46293",
+        "3",
+        "2A",
+        "Kowalska Anna [KA]",
+        "Nowicka Ewa [NE]",
+        "Powód B",
+        "Zastępstwo",
+      ],
+      [
+        "46294",
+        "2",
+        "2A",
+        "Kowalska Anna [KA]",
+        "Nowicka Ewa [NE]",
+        "Powód A",
+        "Zastępstwo",
+      ],
+    ],
+  };
+  const reduced = reduceOverview(raw);
+  assert.ok(!JSON.stringify(reduced).includes("Powód A"));
+  assert.ok(!JSON.stringify(reduced).includes("Powód B"));
+  const out = withOverview(reduced);
+  assert.deepEqual(out, [
+    "28.09.2026 — Kowalska Anna: różne powody nieobecności tego dnia.",
+  ]);
 });

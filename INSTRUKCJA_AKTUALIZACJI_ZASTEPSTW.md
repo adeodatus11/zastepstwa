@@ -18,16 +18,25 @@ Użytkownik aktualizuje zastępstwa sam na https://nauczyciel.szkolamistrzow.inf
    - **uwagi** wymagają potwierdzenia „Przejrzałem uwagi — publikuj mimo to”:
      - złączenie grup — sala musi być salą grupy, do której się dołącza
        (tam, gdzie zastępca uczy wtedy według planu); wyjątek: wychowanie fizyczne;
-     - każde złączenie grup (także z inną klasą) — forma płatności `Bezpłatne`;
-     - zajęcia biblioteczne — `Bezpłatne`;
+     - zastępca, który ma w tym czasie własną lekcję, dostaje zastępstwo tylko
+       jako złączenie grup (także z inną klasą) — forma płatności `Bezpłatne`;
+     - zastępca bez własnej lekcji z kilkoma grupami naraz — dokładnie jedna
+       płatna, pozostałe `Bezpłatne` (dwie płatne i dwie bezpłatne to uwaga);
+     - zajęcia biblioteczne — `Bezpłatne`; Barbara Wrzeszcz i Ewa Zając zawsze
+       mają zajęcia biblioteczne i zawsze `Bezpłatne`;
+     - nauczyciel nieobecny jednego dnia z różnymi powodami (z zestawienia;
+       strona podaje tylko nazwisko i datę, nie powody);
      - różnice wobec opublikowanej paczki: krótszy okres, znikające zastępstwa
        i przeniesienia, nadpisanie ręcznej poprawki (`złączenie grup` w uwagach).
    Złączenie rozpoznawane jest po frazie `złączenie grup` w uwagach, po skutku
    „Złączenie grup” w zestawieniu albo po tym, że zastępca ma w planie własną
    lekcję w tym czasie (i nie jest z niej zwolniony w tym samym eksporcie, a jego
-   oddział nie jest nieobecny). Gdy oddział zastępcy jest nieobecny (np. wycieczka)
-   i zastępstwo jest płatne, strona pokazuje uwagę „Oddział nieobecny” do
-   sprawdzenia — to na razie celowo tylko uwaga, nie reguła.
+   oddział nie jest nieobecny). Gdy oddział zastępcy jest nieobecny (np. wycieczka),
+   zastępca jest wolny, a jego zastępstwo ma być `Godzina do zliczenia` — każda
+   inna forma płatności daje uwagę „Oddział nieobecny” (decyzja użytkownika
+   z 04.10.2026). Bez zbiorczego zestawienia kontrola nie wie o wycieczkach,
+   więc `Godzina do zliczenia` przy zajętym zastępcy wygląda wtedy na błędne
+   złączenie — wgrywaj zestawienie.
 
    **Zbiorcze zestawienie zmian** zawiera powody nieobecności nauczycieli (także
    zwolnienia lekarskie) i nazwy dzienników uczniów. Strona zaraz po odczycie

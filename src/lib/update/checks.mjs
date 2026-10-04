@@ -106,6 +106,10 @@ const isMessage = (v) => {
   );
 };
 const isPE = (v) => lower(v).includes("wychowanie fizyczne");
+/** Zawsze zajęcia biblioteczne i zawsze „Bezpłatne”. */
+const LIBRARIANS = new Set(
+  ["Wrzeszcz Barbara", "Zając Ewa"].map((n) => personKey(n)),
+);
 const where = (r) =>
   `${r["Dzień"]}, lekcja ${period(r["Lekcja"])}, ${r["Oddział"]} (${r["Przedmiot"]})`;
 
@@ -241,6 +245,37 @@ function compare(subs, moves, published) {
   return out;
 }
 
+const MIXED = "Różne powody nieobecności";
+const teacherName = (v) => clean(v).replace(/\s*\[[^\]]*\]\s*$/, "");
+
+/**
+ * Dni, w których nauczyciel ma nieobecności z różnymi powodami (lekcje i dyżury
+ * z „Dane nieobecności” i „Dane zastępstwa”). Zwraca tylko datę i osobę —
+ * same powody są porównywane tutaj i nigdzie nie zostają.
+ */
+function mixedReasons(sheets) {
+  const seen = new Map();
+  for (const name of ["Dane nieobecności", "Dane zastępstwa"]) {
+    const [head = [], ...body] = sheets[name] ?? [];
+    const col = (c) => head.map(clean).indexOf(c);
+    const [d, t, why] = ["Data", "Prowadzący", "Powód nieobecności"].map(col);
+    if (d < 0 || t < 0 || why < 0) continue;
+    for (const r of body) {
+      const date = cellDate(r[d]),
+        who = teacherName(r[t]);
+      if (!date || !who) continue;
+      const k = `${date}|${who}`;
+      seen.set(k, (seen.get(k) ?? new Set()).add(lower(r[why])));
+    }
+  }
+  return [
+    ["Data", "Nauczyciel"],
+    ...[...seen]
+      .filter(([, reasons]) => reasons.size > 1)
+      .map(([k]) => k.split("|")),
+  ];
+}
+
 /** Kolumny zestawienia, których potrzebuje kontrola; reszta jest odrzucana. */
 const OVERVIEW_KEEP = {
   "Opis parametrów": null,
@@ -257,7 +292,8 @@ const OVERVIEW_KEEP = {
 /**
  * Zestawienie okrojone zaraz po odczycie: bez powodów nieobecności nauczycieli,
  * bez arkusza „Dane nieobecności” (tam bywają też nazwy dzienników uczniów)
- * i bez raportów. Nic poza tym wynikiem nie jest przechowywane.
+ * i bez raportów. Z powodów zostaje jedynie informacja, że danego dnia
+ * nauczyciel ma ich kilka różnych. Nic poza tym wynikiem nie jest przechowywane.
  */
 export function reduceOverview(sheets) {
   const out = {};
@@ -276,6 +312,7 @@ export function reduceOverview(sheets) {
       idx.map((i, x) => (y === 0 ? cols[x] : i < 0 ? "" : clean(r[i]))),
     );
   }
+  out[MIXED] = mixedReasons(sheets);
   return out;
 }
 
@@ -373,11 +410,30 @@ export function schoolRules(subs, moves, plan, overview) {
         lower(b[3]),
       );
   }
+  // Zastępstwa jednej osoby na tej samej lekcji oceniamy razem (kilka grup naraz).
+  const groups = new Map();
   for (const r of rows) {
     if (r["Oddział"].split("|").some(isIndividual)) continue;
     const pay = r["Forma płatności"],
-      sub = r["Zastępca"];
-    if (lower(r["Przedmiot"]).includes("biblioteczn") && pay !== "Bezpłatne")
+      sub = r["Zastępca"],
+      library = lower(r["Przedmiot"]).includes("biblioteczn");
+    if (LIBRARIANS.has(personKey(sub))) {
+      // Bibliotekarki zawsze prowadzą zajęcia biblioteczne, zawsze bezpłatnie.
+      if (!library)
+        out.push({
+          level: "warn",
+          group: "Zajęcia biblioteczne",
+          text: `${where(r)}: ${sub} powinna mieć zajęcia biblioteczne, w eksporcie jest „${r["Przedmiot"]}”.`,
+        });
+      if (pay !== "Bezpłatne")
+        out.push({
+          level: "warn",
+          group: "Zajęcia biblioteczne",
+          text: `${where(r)}, zastępca ${sub}: forma płatności „${pay}”, powinno być „Bezpłatne”.`,
+        });
+      continue;
+    }
+    if (library && pay !== "Bezpłatne")
       out.push({
         level: "warn",
         group: "Zajęcia biblioteczne",
@@ -385,54 +441,94 @@ export function schoolRules(subs, moves, plan, overview) {
       });
     if (isMessage(sub) && !lower(r["Uwagi"]).includes("złączenie grup"))
       continue;
-    const date = rowDate(r["Dzień"]);
-    if (!date) continue;
-    const day = new Date(date + "T12:00:00Z").getUTCDay(),
-      p = period(r["Lekcja"]);
-    const who = [personKey(sub), r["Dzień"], p].join("|");
+    if (!rowDate(r["Dzień"])) continue;
+    const k = [personKey(sub), r["Dzień"], period(r["Lekcja"])].join("|");
+    groups.set(k, [...(groups.get(k) ?? []), r]);
+  }
+  for (const [who, same] of groups) {
+    const [r0] = same,
+      sub = r0["Zastępca"],
+      date = rowDate(r0["Dzień"]),
+      p = period(r0["Lekcja"]);
+    const day = new Date(date + "T12:00:00Z").getUTCDay();
     const planned = freed.has(who)
       ? []
       : (slots.get([personKey(sub), day, p].join("|")) ?? []);
     const busy = planned.filter((l) => !classAway(l, date, p));
-    const marked =
+    const away = planned.filter((l) => classAway(l, date, p));
+    const isMarked = (r) =>
       lower(r["Uwagi"]).includes("złączenie grup") ||
       facts.merges.has([date, p, r["Oddział"], personKey(sub)].join("|"));
-    if (!busy.length && !marked) {
-      // Zastępca wolny, bo jego oddział wyjechał — płatność zostaje do sprawdzenia.
-      const away = planned.filter((l) => classAway(l, date, p));
-      if (away.length && pay !== "Bezpłatne")
-        out.push({
-          level: "warn",
-          group: "Oddział nieobecny",
-          text: `${where(r)}: ${sub} ma wtedy według planu lekcję z ${away.flatMap((l) => l.classNames).join("/")} (${away.map((l) => l.subject).join("/")}), ale ten oddział jest nieobecny. Zastępstwo jest „${pay}” — sprawdź, czy płatność jest właściwa.`,
-        });
-      continue;
-    }
-    const mine = classNames(r["Oddział"].split("|")[0]);
-    const host =
-      busy.find((l) => l.classNames.some((c) => mine.has(c))) ?? busy[0];
-    const other = host && !host.classNames.some((c) => mine.has(c));
-    const label = host
-      ? `${sub} prowadzi wtedy ${host.groupNames.join("/") === "Cała klasa" ? "" : `grupę ${host.groupNames.join("/")} `}${other ? `klasy ${host.classNames.join("/")}` : "tej samej klasy"} (${host.subject})`
-      : `${sub} ma złączenie grup${marked && !lower(r["Uwagi"]).includes("złączenie grup") ? " (według dziennika)" : ""}`;
-    if (pay !== "Bezpłatne")
-      out.push({
-        level: "warn",
-        group: "Złączenie grup",
-        text: `${where(r)}: ${label} — złączenie powinno być „Bezpłatne”, jest „${pay}”.`,
-      });
-    if (host && !isPE(r["Przedmiot"]) && !isPE(host.subject)) {
-      const expected = moved.has(who)
-        ? new Set([moved.get(who)])
-        : roomCodes(host);
-      if (expected.size && !expected.has(lower(r["Sala"])))
+    const at = `${r0["Dzień"]}, lekcja ${p}`;
+    const list = same.map((r) => `${r["Oddział"]} „${r["Forma płatności"]}”`);
+    if (!busy.length && same.length > 1) {
+      // Kilka grup naraz bez własnej lekcji: jedna płatna, reszta „Bezpłatne”.
+      const charged = same.filter((r) => r["Forma płatności"] !== "Bezpłatne");
+      if (charged.length !== 1)
         out.push({
           level: "warn",
           group: "Złączenie grup",
-          text: `${where(r)}: sala ${r["Sala"] || "(brak)"}, a ${label} w sali ${host.roomNames.join("/")}. Przy złączeniu sala powinna być ta, w której zastępca prowadzi swoją grupę.`,
+          text: `${at}: ${sub} ma jednocześnie ${same.length} zastępstwa (${list.join(", ")}). ${charged.length ? "Płatna może być tylko jedna grupa" : "Żadna grupa nie jest płatna — jedna powinna być płatna"}, pozostałe „Bezpłatne”.`,
         });
+      const want = away.length ? "Godzina do zliczenia" : null;
+      if (
+        want &&
+        charged.length === 1 &&
+        charged[0]["Forma płatności"] !== want
+      )
+        out.push({
+          level: "warn",
+          group: "Oddział nieobecny",
+          text: `${where(charged[0])}: ${sub} ma wtedy lekcję z ${away.flatMap((l) => l.classNames).join("/")}, ale ten oddział jest nieobecny — zastępstwo powinno być „${want}”, jest „${charged[0]["Forma płatności"]}”.`,
+        });
+      continue;
+    }
+    for (const r of same) {
+      const pay = r["Forma płatności"];
+      const marked = isMarked(r);
+      if (!busy.length && !marked) {
+        // Zastępca wolny, bo jego oddział jest nieobecny (np. wycieczka).
+        if (away.length && pay !== "Godzina do zliczenia")
+          out.push({
+            level: "warn",
+            group: "Oddział nieobecny",
+            text: `${where(r)}: ${sub} ma wtedy według planu lekcję z ${away.flatMap((l) => l.classNames).join("/")} (${away.map((l) => l.subject).join("/")}), ale ten oddział jest nieobecny. Zastępstwo powinno być „Godzina do zliczenia”, jest „${pay}”.`,
+          });
+        continue;
+      }
+      const mine = classNames(r["Oddział"].split("|")[0]);
+      const host =
+        busy.find((l) => l.classNames.some((c) => mine.has(c))) ?? busy[0];
+      const other = host && !host.classNames.some((c) => mine.has(c));
+      const label = host
+        ? `${sub} prowadzi wtedy ${host.groupNames.join("/") === "Cała klasa" ? "" : `grupę ${host.groupNames.join("/")} `}${other ? `klasy ${host.classNames.join("/")}` : "tej samej klasy"} (${host.subject})`
+        : `${sub} ma złączenie grup${marked && !lower(r["Uwagi"]).includes("złączenie grup") ? " (według dziennika)" : ""}`;
+      if (pay !== "Bezpłatne")
+        out.push({
+          level: "warn",
+          group: "Złączenie grup",
+          text: `${where(r)}: ${label} — złączenie powinno być „Bezpłatne”, jest „${pay}”.`,
+        });
+      if (host && !isPE(r["Przedmiot"]) && !isPE(host.subject)) {
+        const expected = moved.has(who)
+          ? new Set([moved.get(who)])
+          : roomCodes(host);
+        if (expected.size && !expected.has(lower(r["Sala"])))
+          out.push({
+            level: "warn",
+            group: "Złączenie grup",
+            text: `${where(r)}: sala ${r["Sala"] || "(brak)"}, a ${label} w sali ${host.roomNames.join("/")}. Przy złączeniu sala powinna być ta, w której zastępca prowadzi swoją grupę.`,
+          });
+      }
     }
   }
+  // Ten sam nauczyciel tego samego dnia nieobecny z różnych powodów.
+  for (const r of table(overview, MIXED))
+    out.push({
+      level: "warn",
+      group: "Powody nieobecności",
+      text: `${plDate(r["Data"])} — ${r["Nauczyciel"]}: różne powody nieobecności tego dnia.`,
+    });
   return out;
 }
 
