@@ -487,6 +487,11 @@
       const branch = parseBranch(row["Oddział"]);
       const absentTeacher = teacherLookup.resolve(row["Nauczyciel/wakat"]);
       const substituteRaw = compactSpaces(row["Zastępca"]);
+      // Zastępca jeszcze nieprzypisany („Zastępstwo” bez nazwiska albo pusto) —
+      // nie publikujemy, dopóki dziennik nie poda, kto przejmie lekcję.
+      if (!substituteRaw || normalizeText(substituteRaw) === "zastepstwo") {
+        return;
+      }
       const substituteTeacher = teacherLookup.resolve(substituteRaw);
       const event = {
         date: parseIsoDateValue(row["Dzień"]),

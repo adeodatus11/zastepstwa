@@ -230,6 +230,7 @@ function renderReview() {
     ["Dyżury", x.duties],
     ["Zajęcia inne", x.other],
     ["Pominięte (IND)", x.individual],
+    ["Pominięte (bez zastępcy)", x.unassigned],
   ]
     .map(([k, v]) => `<div><dt>${k}</dt><dd>${v}</dd></div>`)
     .join("");

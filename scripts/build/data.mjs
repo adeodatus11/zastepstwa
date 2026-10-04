@@ -135,7 +135,12 @@ function validateSheet(key, columns) {
   for (const [i, row] of XLSX.utils
     .sheet_to_json(s, { defval: "" })
     .entries()) {
-    if (!columns.every((c) => String(row[c] ?? "").trim()))
+    // Pusty „Zastępca” to zastępstwo jeszcze nieprzypisane — pomijane, nie błąd.
+    if (
+      !columns
+        .filter((c) => c !== "Zastępca")
+        .every((c) => String(row[c] ?? "").trim())
+    )
       throw Error(`Niekompletny wiersz ${i + 2} w ${key}`);
     if (key === "substitutions" && !/^\d+,/.test(String(row["Lekcja"])))
       throw Error(`Niepoprawna lekcja: wiersz ${i + 2}`);

@@ -181,6 +181,9 @@ const isMessage = (v) => {
     s.includes("złączenie grup")
   );
 };
+/** Zastępca jeszcze nieprzypisany: „Zastępstwo” bez nazwiska albo pusto. Nie publikujemy. */
+export const unassigned = (r) =>
+  !clean(r["Zastępca"]) || lower(r["Zastępca"]) === "zastępstwo";
 const isPE = (v) => lower(v).includes("wychowanie fizyczne");
 /** Zawsze zajęcia biblioteczne i zawsze „Bezpłatne” (jak w planie: „Imię Nazwisko”). */
 const LIBRARIANS = ["Barbara Wrzeszcz", "Ewa Zając"];
@@ -209,16 +212,11 @@ function structure(kind, sheets) {
   table(sheets, "Oddziały").forEach((r, i) => {
     const line = `wiersz ${i + 2}`;
     if (kind === "substitutions") {
-      if (
-        !rowDate(r["Dzień"]) ||
-        !period(r["Lekcja"]) ||
-        !r["Oddział"] ||
-        !r["Zastępca"]
-      )
+      if (!rowDate(r["Dzień"]) || !period(r["Lekcja"]) || !r["Oddział"])
         out.push({
           level: "error",
           group: "Plik",
-          text: `Niekompletne zastępstwo (${line}): brak daty, lekcji, oddziału albo zastępcy.`,
+          text: `Niekompletne zastępstwo (${line}): brak daty, lekcji albo oddziału.`,
         });
     } else if (
       !moveDate(r["Przeniesiono z"]) ||
@@ -241,7 +239,8 @@ export function summarize(subs, moves, overview) {
   const ind = (r) => r["Oddział"].split("|").some(isIndividual);
   return {
     period: periodOf(subs),
-    substitutions: rows.filter((r) => !ind(r)).length,
+    substitutions: rows.filter((r) => !ind(r) && !unassigned(r)).length,
+    unassigned: rows.filter((r) => !ind(r) && unassigned(r)).length,
     transfers: moves
       ? table(moves, "Oddziały").filter((r) => !ind(r)).length
       : null,
@@ -280,8 +279,15 @@ function compare(subs, moves, published) {
     });
   const inWindow = (r) =>
     now && rowDate(r["Dzień"]) >= now.from && rowDate(r["Dzień"]) <= now.to;
-  const fresh = new Map(table(subs, "Oddziały").map((r) => [lessonKey(r), r]));
-  for (const r of table(published.subs, "Oddziały")) {
+  // Nieprzypisane zastępstwa nie są publikowane, więc nie biorą udziału w porównaniu.
+  const fresh = new Map(
+    table(subs, "Oddziały")
+      .filter((r) => !unassigned(r))
+      .map((r) => [lessonKey(r), r]),
+  );
+  for (const r of table(published.subs, "Oddziały").filter(
+    (r) => !unassigned(r),
+  )) {
     const n = fresh.get(lessonKey(r));
     if (!n) {
       if (inWindow(r))
@@ -665,5 +671,12 @@ export function review({ subs, moves, overview, published, plan }) {
     if (published) messages.push(...compare(subs, moves, published));
     if (plan) messages.push(...schoolRules(subs, moves, plan, overview));
   }
-  return { summary: summarize(subs, moves, overview), messages };
+  const summary = summarize(subs, moves, overview);
+  if (summary.unassigned)
+    messages.push({
+      level: "info",
+      group: "Pliki",
+      text: `Pominięto ${summary.unassigned} ${summary.unassigned === 1 ? "zastępstwo" : "zastępstw(a)"} bez przypisanego zastępcy („Zastępstwo” bez nazwiska) — nie będą opublikowane, dopóki dziennik nie poda zastępcy.`,
+    });
+  return { summary, messages };
 }

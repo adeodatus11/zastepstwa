@@ -129,7 +129,7 @@ Istniały także stare kopie i referencje zamkniętego PR-a wymagające interwen
 - Ustal liczbę zastępstw, zmian dyżurów, przeniesień i wpisów zajęć innych.
 - Rozróżniaj brak wpisów od błędu odczytu. Błąd importu nie może opublikować pustej listy.
 - Sprawdź zgodność okresów obu plików. Nie dopowiadaj brakujących danych.
-- Zachowaj znaczenie wpisów takich jak `-`, `Zastępstwo`, odwołanie lekcji czy brak wskazanego zastępcy.
+- Zachowaj znaczenie wpisów takich jak `-` czy odwołanie lekcji. Zastępstwo bez przypisanego zastępcy (`Zastępstwo` bez nazwiska albo pusta komórka) **nie jest publikowane** na żadnej ze stron — pojawi się, gdy dziennik poda zastępcę (decyzja użytkownika z 04.10.2026). Strona aktualizacji podaje, ile takich wpisów pominięto.
 - Policz osobno wpisy pominięte jako `IND` i podaj tę liczbę w raporcie — brak wpisu na stronie ma być świadomy, nie przypadkowy.
 - Uwzględniaj przeniesienia między godzinami i datami, nie tylko zmiany sal.
 - Przyjmij nową paczkę jako aktualizację zgodnie z jej zakresem; nie doklejaj automatycznie poprzedniego tygodnia ani nie usuwaj innych danych bez podstawy.

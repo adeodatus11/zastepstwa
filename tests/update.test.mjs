@@ -736,3 +736,38 @@ test("Names: double surname, one part or a typo still find the teacher", () => {
     1,
   );
 });
+
+test("Substitutions without an assigned teacher are skipped, not published", () => {
+  const row = (who, pay = "-") => [
+    "05.10.2026",
+    "3, 9:40-10:25",
+    "Kowalska Anna",
+    "2A",
+    "Matematyka",
+    "12",
+    who,
+    "",
+    pay,
+  ];
+  const subs = {
+    "Opis parametrów": [["Okres: 05.10.2026 (pon.) - 05.10.2026 (pon.)"]],
+    Oddziały: [
+      HEAD,
+      row("Zastępstwo"),
+      row(""),
+      row("Nowicka Ewa", "Bezpłatne"),
+    ],
+  };
+  const { summary, messages } = review({ subs });
+  assert.equal(summary.substitutions, 1);
+  assert.equal(summary.unassigned, 2);
+  assert.deepEqual(
+    messages.filter((m) => m.level === "error"),
+    [],
+  );
+  assert.ok(
+    messages.some((m) =>
+      m.text.startsWith("Pominięto 2 zastępstw(a) bez przypisanego zastępcy"),
+    ),
+  );
+});
