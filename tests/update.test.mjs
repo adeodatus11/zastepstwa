@@ -22,7 +22,11 @@ import {
 
 const dom = { DOMParser, XMLSerializer };
 const NS = "http://schemas.openxmlformats.org/spreadsheetml/2006/main";
-const published = fs.readFileSync("InformacjeOZastepstwach.xlsx");
+// Stała, oczyszczona paczka z arkuszem zajęć innych i zgodnymi okresami —
+// bieżące pliki zmieniają się co tydzień i nie muszą mieć ani jednego, ani drugiego.
+const published = fs.readFileSync(
+  "tests/fixtures/InformacjeOZastepstwach.xlsx",
+);
 
 // Syntetyczny identyfikator w kopii opublikowanego pliku — w repozytorium
 // nie ma i nie może być prawdziwych nazw dzienników.
@@ -121,7 +125,7 @@ test("Package files are recognised by content and pass the review", async () => 
   const subs = (await readWorkbook(published, DOMParser)).sheets;
   const moves = (
     await readWorkbook(
-      fs.readFileSync("InformacjeOPrzeniesieniach.xlsx"),
+      fs.readFileSync("tests/fixtures/InformacjeOPrzeniesieniach.xlsx"),
       DOMParser,
     )
   ).sheets;

@@ -36,7 +36,13 @@ const esc = (v) =>
   );
 const plDate = (iso) => iso.split("-").reverse().join(".");
 
-const state = { files: {}, result: null, plan: null, published: undefined };
+const state = {
+  files: {},
+  result: null,
+  checking: null,
+  plan: null,
+  published: undefined,
+};
 
 function storage(kind) {
   try {
@@ -166,7 +172,15 @@ function renderFiles(notes) {
   say("files-status", notes.join("<br>"), notes.length ? "error" : "");
 }
 
-async function check() {
+// Zmiana tokenu uruchamia kontrolę ponownie (porównanie z opublikowaną paczką),
+// a kliknięcie „Opublikuj” zdejmuje fokus z pola tokenu — publish() musi więc
+// poczekać na trwającą kontrolę, zamiast czytać jej pusty wynik.
+function check() {
+  state.checking = runCheck();
+  return state.checking;
+}
+
+async function runCheck() {
   const { substitutions: s, transfers: m, overview: o } = state.files;
   state.result = null;
   $("review").hidden = !s;
@@ -283,6 +297,17 @@ async function publish() {
   $("publish").disabled = true;
   say("publish-status", "Wysyłam oczyszczone pliki…");
   try {
+    await state.checking;
+    updateButtons();
+    if ($("publish").disabled) {
+      say(
+        "publish-status",
+        "Kontrola paczki się zmieniła — sprawdź uwagi i opublikuj ponownie.",
+        "error",
+      );
+      return;
+    }
+    $("publish").disabled = true;
     const who = await whoami(token);
     const p = state.result.summary.period;
     const what = state.files.transfers

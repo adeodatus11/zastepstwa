@@ -6,7 +6,10 @@ import sys,io,openpyxl
 sys.path.insert(0,'scripts')
 from privacy_xlsx import sanitize,sensitive_values,INDIVIDUAL_MARKER
 from pathlib import Path
-data=Path('InformacjeOZastepstwach.xlsx').read_bytes()
+# The published file changes every week (it may lack the diary sheet), so the
+# regression checks run on a fixed, already sanitised package.
+assert not sensitive_values(Path('InformacjeOZastepstwach.xlsx').read_bytes())
+data=Path('tests/fixtures/InformacjeOZastepstwach.xlsx').read_bytes()
 assert not sensitive_values(data)
 import zipfile,xml.etree.ElementTree as E
 n='{http://schemas.openxmlformats.org/spreadsheetml/2006/main}'
