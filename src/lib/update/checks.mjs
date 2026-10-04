@@ -672,11 +672,24 @@ export function review({ subs, moves, overview, published, plan }) {
     if (plan) messages.push(...schoolRules(subs, moves, plan, overview));
   }
   const summary = summarize(subs, moves, overview);
-  if (summary.unassigned)
+  if (summary.unassigned) {
+    const n = summary.unassigned;
+    const word =
+      n === 1
+        ? "zastępstwo"
+        : [2, 3, 4].includes(n % 10) && ![12, 13, 14].includes(n % 100)
+          ? "zastępstwa"
+          : "zastępstw";
+    const list = table(subs, "Oddziały")
+      .filter(
+        (r) => !r["Oddział"].split("|").some(isIndividual) && unassigned(r),
+      )
+      .map((r) => `${where(r)}, za: ${r["Nauczyciel/wakat"] || "(brak)"}`);
     messages.push({
       level: "info",
       group: "Pliki",
-      text: `Pominięto ${summary.unassigned} ${summary.unassigned === 1 ? "zastępstwo" : "zastępstw(a)"} bez przypisanego zastępcy („Zastępstwo” bez nazwiska) — nie będą opublikowane, dopóki dziennik nie poda zastępcy.`,
+      text: `Pominięto ${n} ${word} bez przypisanego zastępcy („Zastępstwo” bez nazwiska) — nie będą opublikowane, dopóki dziennik nie poda zastępcy: ${list.join("; ")}.`,
     });
+  }
   return { summary, messages };
 }

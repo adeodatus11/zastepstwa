@@ -765,9 +765,11 @@ test("Substitutions without an assigned teacher are skipped, not published", () 
     messages.filter((m) => m.level === "error"),
     [],
   );
-  assert.ok(
-    messages.some((m) =>
-      m.text.startsWith("Pominięto 2 zastępstw(a) bez przypisanego zastępcy"),
-    ),
+  const info = messages.find((m) => m.text.startsWith("Pominięto"));
+  assert.match(info.text, /^Pominięto 2 zastępstwa bez przypisanego zastępcy/);
+  // Lista pominiętych: dzień, lekcja, oddział, przedmiot i nieobecny nauczyciel.
+  assert.match(
+    info.text,
+    /: 05\.10\.2026, lekcja 3, 2A \(Matematyka\), za: Kowalska Anna; 05\.10\.2026, lekcja 3, 2A \(Matematyka\), za: Kowalska Anna\.$/,
   );
 });
