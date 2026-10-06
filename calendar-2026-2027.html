@@ -435,6 +435,13 @@
       gap: 10px;
     }
 
+    .legend-note {
+      margin: 10px 0 0;
+      font-size: 13px;
+      line-height: 1.5;
+      color: var(--muted);
+    }
+
     .legend-swatch {
       width: 14px;
       height: 14px;
@@ -552,63 +559,38 @@
       outline-offset: 2px;
     }
 
-    #calendar .cat-classification,
-    #calendar .fc-list-event.cat-classification td {
-      background: rgba(199, 123, 22, 0.18) !important;
-      border-color: rgba(199, 123, 22, 0.24) !important;
-      color: #7b4b07 !important;
+    /* Kolor wydarzenia: preferowany kolor typu, a gdy ten sam dzień ma już taki kolor - kolejny wolny z palety (jak w kalendarzu Google). */
+    #calendar .ev-c0 { --ev-color: #c77b16; }
+    #calendar .ev-c1 { --ev-color: #0f766e; }
+    #calendar .ev-c2 { --ev-color: #2563eb; }
+    #calendar .ev-c3 { --ev-color: #b42318; }
+    #calendar .ev-c4 { --ev-color: #7c3aed; }
+    #calendar .ev-c5 { --ev-color: #1d7f65; }
+    #calendar .ev-c6 { --ev-color: #35564b; }
+    #calendar .ev-c7 { --ev-color: #db2777; }
+    #calendar .ev-c8 { --ev-color: #0891b2; }
+    #calendar .ev-c9 { --ev-color: #ea580c; }
+    #calendar .ev-c10 { --ev-color: #4f46e5; }
+    #calendar .ev-c11 { --ev-color: #4d7c0f; }
+
+    #calendar [class*="ev-c"]:not(.ev-list) {
+      background: color-mix(in srgb, var(--ev-color) 86%, #000) !important;
+      border-color: color-mix(in srgb, var(--ev-color) 86%, #000) !important;
+      color: #fff !important;
     }
 
-    #calendar .cat-council,
-    #calendar .fc-list-event.cat-council td {
-      background: rgba(15, 118, 110, 0.18) !important;
-      border-color: rgba(15, 118, 110, 0.24) !important;
-      color: #0f4e49 !important;
-    }
-
-    #calendar .cat-meeting,
-    #calendar .fc-list-event.cat-meeting td {
-      background: rgba(37, 99, 235, 0.14) !important;
-      border-color: rgba(37, 99, 235, 0.2) !important;
-      color: #1845a8 !important;
-    }
-
-    #calendar .cat-exam,
-    #calendar .fc-list-event.cat-exam td {
-      background: rgba(180, 35, 24, 0.16) !important;
-      border-color: rgba(180, 35, 24, 0.22) !important;
-      color: #7d2019 !important;
-    }
-
-    #calendar .cat-practice,
-    #calendar .fc-list-event.cat-practice td {
-      background: rgba(124, 58, 237, 0.16) !important;
-      border-color: rgba(124, 58, 237, 0.22) !important;
-      color: #5d30ae !important;
-    }
-
-    #calendar .cat-holiday,
-    #calendar .fc-list-event.cat-holiday td {
-      background: rgba(29, 127, 101, 0.18) !important;
-      border-color: rgba(29, 127, 101, 0.24) !important;
-      color: #165d4b !important;
-    }
-
-    #calendar .cat-general,
-    #calendar .fc-list-event.cat-general td {
-      background: rgba(53, 86, 75, 0.16) !important;
-      border-color: rgba(53, 86, 75, 0.22) !important;
-      color: #244239 !important;
-    }
-
-    #calendar .cat-classification *,
-    #calendar .cat-council *,
-    #calendar .cat-meeting *,
-    #calendar .cat-exam *,
-    #calendar .cat-practice *,
-    #calendar .cat-holiday *,
-    #calendar .cat-general * {
+    #calendar [class*="ev-c"]:not(.ev-list) * {
       color: inherit !important;
+    }
+
+    #calendar [class*="ev-c"]:not(.ev-list) .fc-event-main {
+      font-weight: 700;
+    }
+
+    #calendar .ev-list[class*="ev-c"] {
+      background: color-mix(in srgb, var(--ev-color) 14%, #fff) !important;
+      color: #1b2b25 !important;
+      box-shadow: inset 6px 0 0 var(--ev-color);
     }
 
     #calendar .fc-list-event:hover td {
@@ -944,6 +926,7 @@
         <section class="panel-section">
           <h3>Legenda</h3>
           <ul class="legend-list" id="legend-list"></ul>
+          <p class="legend-note">Gdy jednego dnia jest kilka wydarzeń, każde ma inny kolor. Wydarzenia wielodniowe (np. praktyki, ferie) są pokazane jako jeden pasek przez wszystkie dni.</p>
         </section>
         <section class="panel-section">
           <h3>Notatki do sprawdzenia</h3>
@@ -1001,6 +984,7 @@
       activeCategories: new Set(),
       searchTerm: '',
       confirmationOnly: false,
+      eventColors: new Map(),
       currentIcsUrl: null,
       currentIcsNeedsRevoke: false,
     };
@@ -1037,6 +1021,63 @@
       props.priority = event.priority || props.priority || 'normal';
       props.audience = event.audience || props.audience || 'wszyscy';
       return { ...event, extendedProps: props };
+    }
+
+    const EVENT_PALETTE_SIZE = 12;
+    const CATEGORY_COLOR_INDEX = {
+      classification: 0,
+      council: 1,
+      meeting: 2,
+      exam: 3,
+      practice: 4,
+      holiday: 5,
+      general: 6,
+    };
+
+    function eventDaySpan(event) {
+      const startDay = event.start.slice(0, 10);
+      let endDay = startDay;
+      if (event.end) {
+        const end = parseDateValue(event.end);
+        if (event.allDay) {
+          const last = new Date(end.getFullYear(), end.getMonth(), end.getDate() - 1);
+          endDay = `${last.getFullYear()}-${padCalendar(last.getMonth() + 1)}-${padCalendar(last.getDate())}`;
+        } else {
+          endDay = event.end.slice(0, 10);
+        }
+      }
+      return [startDay, endDay < startDay ? startDay : endDay];
+    }
+
+    function assignEventColors(events) {
+      const assigned = [];
+      const colors = new Map();
+      const ordered = events
+        .map((event) => ({ event, span: eventDaySpan(event) }))
+        .sort((a, b) => {
+          if (a.span[0] !== b.span[0]) return a.span[0].localeCompare(b.span[0]);
+          return b.span[1].localeCompare(a.span[1]);
+        });
+      ordered.forEach((item) => {
+        const preferred = CATEGORY_COLOR_INDEX[item.event.extendedProps.category] ?? CATEGORY_COLOR_INDEX.general;
+        const taken = new Set(
+          assigned
+            .filter((other) => other.span[0] <= item.span[1] && item.span[0] <= other.span[1])
+            .map((other) => other.color)
+        );
+        let color = preferred;
+        for (let step = 0; step < EVENT_PALETTE_SIZE; step++) {
+          const candidate = (preferred + step) % EVENT_PALETTE_SIZE;
+          if (!taken.has(candidate)) {
+            color = candidate;
+            break;
+          }
+        }
+        item.color = color;
+        assigned.push(item);
+        colors.set(item.event.id, color);
+      });
+      return colors;
     }
 
     function formatDate(dateLike, includeTime = false) {
@@ -1296,9 +1337,11 @@
           hour12: false,
         },
         events: state.filteredEvents,
+        eventDisplay: 'block',
         eventClass(info) {
           const props = info.event.extendedProps || {};
-          const classes = [`cat-${props.category || 'general'}`];
+          const classes = [`cat-${props.category || 'general'}`, `ev-c${state.eventColors.get(info.event.id) ?? CATEGORY_COLOR_INDEX[props.category] ?? 6}`];
+          if (info.view?.type === 'listMonth') classes.push('ev-list');
           if (props.needsConfirmation) classes.push('fc-event-confirmation');
           return classes.join(' ');
         },
@@ -1487,6 +1530,7 @@
       const payload = await response.json();
       state.meta = payload.meta;
       state.rawEvents = payload.events.map(normalizeEvent);
+      state.eventColors = assignEventColors(state.rawEvents);
       state.filteredEvents = [...state.rawEvents];
     }
 
