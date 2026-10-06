@@ -217,7 +217,7 @@ export async function init(page: string) {
     get("contact-this-week").hidden = monday === thisMonday();
     const printHeading = document.getElementById("print-heading");
     if (printHeading)
-      printHeading.innerHTML = `<h1>Dyżury kadry kierowniczej – ZSZ5</h1><p>Tydzień ${esc(get("contact-week").textContent)}</p><small>Wydruk z dnia ${shortDate(today())}.${today().slice(0, 4)}</small>`;
+      printHeading.innerHTML = `<p class="print-title">Dyżury kadry kierowniczej – ZSZ5</p><p>Tydzień ${esc(get("contact-week").textContent)}</p><small>Wydruk z dnia ${shortDate(today())}.${today().slice(0, 4)}</small>`;
     const all = supervision ? data.supervision : specialists(data.specialists);
     const entries = all.filter((e: any) => !e.date || dates.includes(e.date));
     get("contacts-current").innerHTML =
