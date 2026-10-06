@@ -215,6 +215,9 @@ export async function init(page: string) {
     get("contact-week").textContent =
       `${shortDate(dates[0])} – ${shortDate(dates[4])}.${dates[4].slice(0, 4)}`;
     get("contact-this-week").hidden = monday === thisMonday();
+    const printHeading = document.getElementById("print-heading");
+    if (printHeading)
+      printHeading.innerHTML = `<h1>Dyżury kadry kierowniczej – ZSZ5</h1><p>Tydzień ${esc(get("contact-week").textContent)}</p><small>Wydruk z dnia ${shortDate(today())}.${today().slice(0, 4)}</small>`;
     const all = supervision ? data.supervision : specialists(data.specialists);
     const entries = all.filter((e: any) => !e.date || dates.includes(e.date));
     get("contacts-current").innerHTML =
@@ -270,4 +273,25 @@ export async function init(page: string) {
     render();
   });
   sel.onchange = render;
+  // Druk: zawsze cały tydzień (A4 poziomo); po wydruku wracamy do wybranego dnia.
+  let dayBeforePrint: string | null = null;
+  const beforePrint = () => {
+    if (!supervision || sel.value === "all") return;
+    dayBeforePrint = sel.value;
+    sel.value = "all";
+    render();
+  };
+  addEventListener("beforeprint", beforePrint);
+  addEventListener("afterprint", () => {
+    if (dayBeforePrint === null) return;
+    sel.value = dayBeforePrint;
+    dayBeforePrint = null;
+    render();
+  });
+  const printButton = document.getElementById("contact-print");
+  if (printButton)
+    printButton.onclick = () => {
+      beforePrint();
+      print();
+    };
 }
