@@ -499,6 +499,146 @@
             font-size: 0.95rem;
             margin-top: 12px;
         }
+        #calendar-container {
+            background: rgba(15, 23, 42, 0.9);
+            border-radius: 16px;
+            border: 1px solid #334155;
+            margin-top: 20px;
+            padding: 25px 30px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+        }
+
+        .cal-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-bottom: 18px;
+        }
+
+        .cal-title {
+            font-size: 1.4rem;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 700;
+        }
+
+        .cal-grid {
+            display: grid;
+            grid-template-columns: repeat(7, minmax(0, 1fr));
+            gap: 4px;
+        }
+
+        .cal-dow {
+            background: #1e293b;
+            color: white;
+            font-weight: 800;
+            text-align: center;
+            padding: 8px 4px;
+            border-radius: 6px;
+            font-size: 0.95rem;
+        }
+
+        .cal-day {
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 6px;
+            min-height: 96px;
+            padding: 6px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            min-width: 0;
+        }
+
+        .cal-day.empty {
+            background: transparent;
+            border-color: transparent;
+        }
+
+        .cal-day.weekend {
+            background: #0b1220;
+        }
+
+        .cal-day.today {
+            border-color: #38bdf8;
+            box-shadow: 0 0 0 1px #38bdf8 inset;
+        }
+
+        .cal-num {
+            font-weight: 800;
+            color: #cbd5e1;
+            font-size: 0.95rem;
+        }
+
+        .cal-evt {
+            font-size: 0.78rem;
+            line-height: 1.25;
+            padding: 3px 6px;
+            border-radius: 4px;
+            color: #0f172a;
+            font-weight: 700;
+            overflow-wrap: anywhere;
+        }
+
+        .cal-evt.event { background: #fbbf24; }
+        .cal-evt.training { background: #38bdf8; }
+        .cal-evt.off { background: #94a3b8; }
+
+        .cal-list {
+            margin-top: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .cal-list-item {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-left-width: 6px;
+            border-radius: 8px;
+            padding: 10px 14px;
+            color: #e2e8f0;
+            font-size: 1rem;
+        }
+
+        .cal-list-item.event { border-left-color: #fbbf24; }
+        .cal-list-item.training { border-left-color: #38bdf8; }
+        .cal-list-item.off { border-left-color: #94a3b8; }
+
+        .cal-list-item strong {
+            color: white;
+        }
+
+        .cal-empty-msg {
+            color: #94a3b8;
+            font-size: 1rem;
+        }
+
+        @media (max-width: 700px) {
+            #calendar-container {
+                padding: 20px 12px;
+            }
+
+            .cal-day {
+                min-height: 52px;
+                padding: 3px;
+            }
+
+            .cal-evt {
+                font-size: 0;
+                padding: 0;
+                height: 6px;
+            }
+
+            .cal-dow {
+                font-size: 0.8rem;
+                padding: 6px 2px;
+            }
+        }
+
         #duty-week-container {
             background: rgba(15, 23, 42, 0.9);
             border-radius: 16px;
@@ -1467,6 +1607,22 @@
                 <table class="duty-week-table" id="duty-week-table"></table>
             </div>
             <div class="duty-week-foot" id="duty-week-foot"></div>
+        </div>
+
+        <div id="calendar-container">
+            <div class="cal-head">
+                <div class="cal-title">📅 Kalendarz</div>
+                <div class="week-nav">
+                    <button class="week-nav-btn" onclick="changeCalendarMonth(-1)" aria-label="Poprzedni miesiąc">&#10094;</button>
+                    <div class="week-display">
+                        <span class="week-label">Wybrany miesiąc</span>
+                        <span class="week-range" id="cal-month-label">...</span>
+                    </div>
+                    <button class="week-nav-btn" onclick="changeCalendarMonth(1)" aria-label="Następny miesiąc">&#10095;</button>
+                </div>
+            </div>
+            <div class="cal-grid" id="cal-grid"></div>
+            <div class="cal-list" id="cal-list"></div>
         </div>
 
         <div id="announcements-container">
@@ -3252,6 +3408,125 @@
                 resetIdleReturnTimer();
             }, { passive: true });
         });
+    </script>
+    <script>
+        (function () {
+            // Wydarzenia kalendarza. type: event | training | off. to - opcjonalny koniec zakresu.
+            const CALENDAR_EVENTS = [
+                { date: "2026-10-13", type: "event", title: "Dzień Nauczyciela – uroczysta akademia" },
+                { date: "2026-10-21", type: "training", title: "Rada pedagogiczna szkoleniowa: praca z uczniem w spektrum autyzmu", time: "15:45", duration: "ok. 3 godziny" },
+                { date: "2026-11-04", type: "training", title: "Rada pedagogiczna szkoleniowa: korzystanie ze zintegrowanej platformy edukacyjnej i innych narzędzi cyfrowych w prowadzeniu lekcji", time: "15:45", duration: "ok. 2 godziny" },
+                { date: "2026-11-11", type: "off", title: "Narodowe Święto Niepodległości – dzień wolny od zajęć" },
+                { date: "2026-11-18", type: "training", title: "Rada pedagogiczna szkoleniowa (Fundacja Karan): uzależnienia cyfrowe wśród młodzieży i nastolatków", time: "15:45", duration: "ok. 3 godziny" },
+                { date: "2026-12-23", to: "2026-12-31", type: "off", title: "Zimowa przerwa świąteczna" },
+                { date: "2027-01-01", type: "off", title: "Nowy Rok – dzień wolny od zajęć" },
+                { date: "2027-01-06", type: "off", title: "Objawienie Pańskie – dzień wolny od zajęć" },
+                { date: "2027-01-18", to: "2027-01-31", type: "off", title: "Ferie zimowe (woj. dolnośląskie)" }
+            ];
+            const MONTHS = ["Styczeń", "Luty", "Marzec", "Kwiecień", "Maj", "Czerwiec", "Lipiec", "Sierpień", "Wrzesień", "Październik", "Listopad", "Grudzień"];
+            const DOW = ["Pon", "Wt", "Śr", "Czw", "Pt", "Sob", "Ndz"];
+            const now = new Date();
+            const state = { year: now.getFullYear(), month: now.getMonth() };
+
+            function pad(n) {
+                return String(n).padStart(2, "0");
+            }
+
+            function iso(year, month, day) {
+                return `${year}-${pad(month + 1)}-${pad(day)}`;
+            }
+
+            function eventsForDay(isoDate) {
+                return CALENDAR_EVENTS.filter((e) => isoDate >= e.date && isoDate <= (e.to || e.date));
+            }
+
+            function formatShort(isoDate) {
+                const [, m, d] = isoDate.split("-").map(Number);
+                return `${d}.${pad(m)}`;
+            }
+
+            function describe(e) {
+                const when = e.to ? `${formatShort(e.date)}–${formatShort(e.to)}` : formatShort(e.date);
+                const extra = e.time ? ` Początek ${e.time}, ${e.duration}.` : "";
+                return { when, extra };
+            }
+
+            function render() {
+                const grid = document.getElementById("cal-grid");
+                const list = document.getElementById("cal-list");
+                const label = document.getElementById("cal-month-label");
+                if (!grid || !list || !label) {
+                    return;
+                }
+                const { year, month } = state;
+                label.textContent = `${MONTHS[month]} ${year}`;
+                grid.innerHTML = "";
+                DOW.forEach((name) => {
+                    const el = document.createElement("div");
+                    el.className = "cal-dow";
+                    el.textContent = name;
+                    grid.appendChild(el);
+                });
+
+                const firstDow = (new Date(year, month, 1).getDay() + 6) % 7;
+                const daysInMonth = new Date(year, month + 1, 0).getDate();
+                for (let i = 0; i < firstDow; i++) {
+                    const el = document.createElement("div");
+                    el.className = "cal-day empty";
+                    grid.appendChild(el);
+                }
+
+                const todayIso = iso(now.getFullYear(), now.getMonth(), now.getDate());
+                const monthEvents = new Map();
+                for (let day = 1; day <= daysInMonth; day++) {
+                    const isoDate = iso(year, month, day);
+                    const dow = (firstDow + day - 1) % 7;
+                    const el = document.createElement("div");
+                    el.className = "cal-day" + (dow >= 5 ? " weekend" : "") + (isoDate === todayIso ? " today" : "");
+                    const num = document.createElement("div");
+                    num.className = "cal-num";
+                    num.textContent = day;
+                    el.appendChild(num);
+                    eventsForDay(isoDate).forEach((e) => {
+                        const chip = document.createElement("div");
+                        chip.className = `cal-evt ${e.type}`;
+                        chip.textContent = (e.time ? `${e.time} ` : "") + e.title;
+                        chip.title = e.title;
+                        el.appendChild(chip);
+                        monthEvents.set(e, true);
+                    });
+                    grid.appendChild(el);
+                }
+
+                list.innerHTML = "";
+                const events = [...monthEvents.keys()].sort((a, b) => a.date.localeCompare(b.date));
+                if (!events.length) {
+                    const empty = document.createElement("div");
+                    empty.className = "cal-empty-msg";
+                    empty.textContent = "Brak wydarzeń w tym miesiącu.";
+                    list.appendChild(empty);
+                    return;
+                }
+                events.forEach((e) => {
+                    const { when, extra } = describe(e);
+                    const item = document.createElement("div");
+                    item.className = `cal-list-item ${e.type}`;
+                    const strong = document.createElement("strong");
+                    strong.textContent = when;
+                    item.append(strong, ` – ${e.title}.${extra}`);
+                    list.appendChild(item);
+                });
+            }
+
+            window.changeCalendarMonth = function (direction) {
+                const d = new Date(state.year, state.month + direction, 1);
+                state.year = d.getFullYear();
+                state.month = d.getMonth();
+                render();
+            };
+
+            render();
+        })();
     </script>
 </body>
 </html>
