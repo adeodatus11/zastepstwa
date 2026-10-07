@@ -8,7 +8,20 @@ const statuses: Record<string, string> = {
   "moved-out": "Przeniesiono",
   "duty-change": "Dyżur zastępczy",
 };
+// Zamienia nazwę nauczyciela, oddziału, sali lub miejsca dyżuru na odnośnik
+// do jej planu. Domyślnie zwraca sam tekst.
+export type Linker = (
+  kind: "teacher" | "class" | "room" | "duty",
+  name: string,
+) => string;
+const plain: Linker = (_kind, name) => esc(name);
 const names = (values: string[]) => esc(values.join(", "));
+const links = (
+  link: Linker,
+  kind: Parameters<Linker>[0],
+  values: string[],
+  separator = ", ",
+) => values.map((v) => link(kind, v)).join(separator);
 const details = (l: any) =>
   `${statuses[l.status] ? `<strong class="table-status">${statuses[l.status]}</strong>` : ""}${l.payment ? `<span class="table-payment">${esc(l.payment)}</span>` : ""}${l.note ? `<div class="table-note">${esc(l.note)}</div>` : ""}`;
 const wrap = (table: string) =>
@@ -18,6 +31,7 @@ export function timetableHTML(
   days: { date: string; rows: any[] }[],
   periods: any[],
   title: string,
+  link: Linker = plain,
 ) {
   const entries = days.flatMap((d) => d.rows);
   if (!entries.length) return '<p class="empty">Brak zajęć w tym okresie.</p>';
@@ -45,6 +59,18 @@ export function timetableHTML(
     if (p)
       slots.set(key({ ...p, period: p.number }), { ...p, period: p.number });
   }
+  // Pomija nazwę oddziału, nauczyciela lub sali, której plan właśnie oglądamy.
+  const entry = (l: any) => {
+    const groups = l.groupNames.filter((g: string) => g !== "Cała klasa");
+    const classes = [
+      l.classNames.join(", ") === title
+        ? ""
+        : links(link, "class", l.classNames),
+      names(groups),
+    ].filter(Boolean);
+    const rooms = l.roomNames.join(" / ");
+    return `<article class="lesson table-entry ${esc(l.status)}"><strong class="table-subject">${esc(l.subject)}</strong>${classes.length ? `<div>${classes.join(" · ")}</div>` : ""}${l.teacherNames.join(", ") === title ? "" : `<div>${links(link, "teacher", l.teacherNames)}</div>`}${rooms === title ? "" : `<div>${l.place ? "Miejsce" : "Sala"}: ${links(link, l.place ? "duty" : "room", l.roomNames, " / ")}</div>`}${details(l)}</article>`;
+  };
   const sorted = [...slots.values()].sort(
     (a, b) => a.start.localeCompare(b.start) || a.end.localeCompare(b.end),
   );
@@ -68,10 +94,10 @@ export function timetableHTML(
                   .filter((l) => l.start < slot.start === before)
                   .map(
                     (l) =>
-                      `<aside class="break-chip ${esc(l.status)}"><strong>${esc(l.start)}–${esc(l.end)} · ${l.status === "duty-change" ? "Zastępstwo dyżuru" : l.status === "removed" ? "Dyżur zdjęty" : "Dyżur"}</strong><span>${esc(l.place || l.roomNames.join(" / "))}${l.teacherNames.join(", ") === title ? "" : ` · ${names(l.teacherNames)}`}</span>${l.note ? `<span>${esc(l.note)}</span>` : ""}</aside>`,
+                      `<aside class="break-chip ${esc(l.status)}"><strong>${esc(l.start)}–${esc(l.end)} · ${l.status === "duty-change" ? "Zastępstwo dyżuru" : l.status === "removed" ? "Dyżur zdjęty" : "Dyżur"}</strong><span>${l.place ? link("duty", l.place) : links(link, "room", l.roomNames, " / ")}${l.teacherNames.join(", ") === title ? "" : ` · ${links(link, "teacher", l.teacherNames)}`}</span>${l.note ? `<span>${esc(l.note)}</span>` : ""}</aside>`,
                   )
                   .join("");
-              return `<td>${chips(true)}${rows.length ? rows.map((l) => `<article class="lesson table-entry ${esc(l.status)}"><strong class="table-subject">${esc(l.subject)}</strong>${l.classNames.length ? `<div>${names(l.classNames)}${l.groupNames.filter((g: string) => g !== "Cała klasa").length ? ` · ${names(l.groupNames.filter((g: string) => g !== "Cała klasa"))}` : ""}</div>` : ""}${l.teacherNames.join(", ") === title ? "" : `<div>${names(l.teacherNames)}</div>`}<div>${l.place ? "Miejsce" : "Sala"}: ${esc(l.roomNames.join(" / "))}</div>${details(l)}</article>`).join("") : '<span class="table-empty" aria-label="Brak zajęć">—</span>'}${chips(false)}</td>`;
+              return `<td>${chips(true)}${rows.length ? rows.map(entry).join("") : '<span class="table-empty" aria-label="Brak zajęć">—</span>'}${chips(false)}</td>`;
             })
             .join("")}</tr>`,
       )
@@ -84,25 +110,26 @@ export function changesHTML(
   duties: any[],
   date: string,
   dutiesOnly = false,
+  link: Linker = plain,
 ) {
   const lessons = rows.filter((l) => !l.place);
   const dutyTable = duties.length
     ? wrap(
-        `<table class="changes-table duty-changes-table"><caption>Zastępstwa dyżurów · ${esc(dateLabel(date))}</caption><thead><tr>${["Godzina", "Miejsce dyżuru", "Nauczyciel nieobecny", "Zastępca", "Uwagi"].map((h) => `<th scope="col">${h}</th>`).join("")}</tr></thead><tbody>${duties.map((d) => `<tr><th scope="row">${esc(d.time)}</th><td>${esc(d.place)}</td><td>${esc(d.absentTeacherName)}</td><td><strong>${esc(d.substituteTeacherName || d.rawSubstituteLabel)}</strong></td><td>${esc(d.note || "—")}</td></tr>`).join("")}</tbody></table>`,
+        `<table class="changes-table duty-changes-table"><caption>Zastępstwa dyżurów · ${esc(dateLabel(date))}</caption><thead><tr>${["Godzina", "Miejsce dyżuru", "Nauczyciel nieobecny", "Zastępca", "Uwagi"].map((h) => `<th scope="col">${h}</th>`).join("")}</tr></thead><tbody>${duties.map((d) => `<tr><th scope="row">${esc(d.time)}</th><td>${link("duty", d.place)}</td><td>${link("teacher", d.absentTeacherName)}</td><td><strong>${link("teacher", d.substituteTeacherName || d.rawSubstituteLabel)}</strong></td><td>${esc(d.note || "—")}</td></tr>`).join("")}</tbody></table>`,
       )
     : '<p class="empty">Brak zastępstw dyżurów na ten dzień.</p>';
   if (dutiesOnly) return dutyTable;
   const lessonsTable = lessons.length
     ? wrap(
-        `<table class="changes-table"><caption>Zastępstwa i przeniesienia · ${esc(dateLabel(date))}</caption><thead><tr>${["Lekcja / godziny", "Oddział", "Przedmiot", "Nauczyciel", "Sala", "Zmiana / uwagi"].map((h) => `<th scope="col">${h}</th>`).join("")}</tr></thead><tbody>${lessons.map((l) => `<tr class="change-row ${esc(l.status)}"><th scope="row">${esc(l.period)}<br>${esc(l.start)}–${esc(l.end)}</th><td>${names(l.classNames)}${l.groupNames.length ? `<br>${names(l.groupNames)}` : ""}</td><td>${esc(l.subject)}</td><td>${names(l.teacherNames)}</td><td>${names(l.roomNames)}</td><td>${details(l)}</td></tr>`).join("")}</tbody></table>`,
+        `<table class="changes-table"><caption>Zastępstwa i przeniesienia · ${esc(dateLabel(date))}</caption><thead><tr>${["Lekcja / godziny", "Oddział", "Przedmiot", "Nauczyciel", "Sala", "Zmiana / uwagi"].map((h) => `<th scope="col">${h}</th>`).join("")}</tr></thead><tbody>${lessons.map((l) => `<tr class="change-row ${esc(l.status)}"><th scope="row">${esc(l.period)}<br>${esc(l.start)}–${esc(l.end)}</th><td>${links(link, "class", l.classNames)}${l.groupNames.length ? `<br>${names(l.groupNames)}` : ""}</td><td>${esc(l.subject)}</td><td>${links(link, "teacher", l.teacherNames)}</td><td>${links(link, "room", l.roomNames)}</td><td>${details(l)}</td></tr>`).join("")}</tbody></table>`,
       )
     : '<p class="empty">Brak zmian w lekcjach na ten dzień.</p>';
   return lessonsTable + dutyTable;
 }
 
-export function otherActivitiesHTML(entries: any[]) {
+export function otherActivitiesHTML(entries: any[], link: Linker = plain) {
   if (!entries.length) return "";
   return wrap(
-    `<table class="changes-table"><caption>Zmiany zajęć innych</caption><thead><tr>${["Data / godziny", "Nauczyciel", "Zajęcia", "Sala", "Informacja"].map((h) => `<th scope="col">${h}</th>`).join("")}</tr></thead><tbody>${entries.map((e) => `<tr><th scope="row">${esc(dateLabel(e.date))}<br>${esc(e.time)}</th><td>${esc(e.absentTeacherName)}</td><td>${esc(e.subject)}</td><td>${esc(e.room)}</td><td>${esc(e.message === "-" ? "Nie wskazano zastępcy" : e.message)}${e.note ? `<br>${esc(e.note)}` : ""}</td></tr>`).join("")}</tbody></table>`,
+    `<table class="changes-table"><caption>Zmiany zajęć innych</caption><thead><tr>${["Data / godziny", "Nauczyciel", "Zajęcia", "Sala", "Informacja"].map((h) => `<th scope="col">${h}</th>`).join("")}</tr></thead><tbody>${entries.map((e) => `<tr><th scope="row">${esc(dateLabel(e.date))}<br>${esc(e.time)}</th><td>${link("teacher", e.absentTeacherName)}</td><td>${esc(e.subject)}</td><td>${link("room", e.room)}</td><td>${esc(e.message === "-" ? "Nie wskazano zastępcy" : e.message)}${e.note ? `<br>${esc(e.note)}` : ""}</td></tr>`).join("")}</tbody></table>`,
   );
 }

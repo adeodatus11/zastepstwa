@@ -614,7 +614,79 @@ main {
 .external-exclusions li + li {
   margin-top: 4px;
 }
+.plan-link {
+  color: inherit;
+  text-decoration: underline dotted var(--green);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
+.plan-link:hover,
+.plan-link:focus-visible {
+  color: var(--green);
+  text-decoration-style: solid;
+}
+.plan-print-heading {
+  display: none;
+}
 @media print {
+  /* Wydruk planu: nagłówek jak w grafiku dyżurów, tydzień na jednej
+     stronie A4 w poziomie. */
+  body:has(.plan-print-heading) .page-heading,
+  #validity,
+  .schedule-content .panel-heading {
+    display: none !important;
+  }
+  .plan-print-heading {
+    display: block;
+    margin: 0 0 3mm;
+  }
+  .plan-print-heading p {
+    margin: 1mm 0 0;
+    font-size: 12pt;
+    font-weight: 700;
+  }
+  .plan-print-heading .print-title {
+    margin: 0;
+    font-size: 16pt;
+    line-height: 1.2;
+  }
+  .plan-print-heading small {
+    display: block;
+    margin-top: 1mm;
+    font-size: 8.5pt;
+  }
+  .plan-link {
+    color: inherit;
+    text-decoration: none;
+  }
+  .timetable .period-col {
+    width: 12mm;
+  }
+  .timetable .clock-col {
+    width: 18mm;
+  }
+  .timetable th,
+  .timetable td {
+    padding: 1px 3px;
+  }
+  .timetable .table-entry {
+    padding: 1px 2px;
+    line-height: 1.15;
+  }
+  .timetable .break-chip {
+    margin-top: 2px;
+    padding: 1px 4px;
+    font-size: 7.5pt;
+  }
+  .timetable .table-status,
+  .timetable .table-payment,
+  .timetable .table-note {
+    margin-top: 1px;
+    font-size: 7.5pt;
+  }
+  .timetable .table-subject {
+    margin-bottom: 1px;
+  }
   .schedule-layout > aside {
     display: none;
   }
@@ -624,10 +696,10 @@ main {
   }
   .schedule-table-wrap table {
     min-width: 0;
-    font-size: 9pt;
+    font-size: 8.5pt;
   }
   .timetable .table-entry {
-    font-size: 9pt;
+    font-size: 8pt;
   }
   .schedule-table-wrap tr {
     break-inside: avoid;
