@@ -1,7 +1,21 @@
-import { timetableHTML, changesHTML, otherActivitiesHTML } from "./plan-table";
+import {
+  timetableHTML,
+  changesHTML,
+  otherActivitiesHTML,
+  type Linker,
+} from "./plan-table";
 import { validDate } from "./schema.mjs";
 import { connect } from "./data";
-import { daily, today, addDays, week, selected, esc, norm } from "./model.mjs";
+import {
+  daily,
+  today,
+  addDays,
+  week,
+  selected,
+  esc,
+  norm,
+  dateLabel,
+} from "./model.mjs";
 export const labels: Record<string, string> = {
   base: "",
   substitution: "Zastępstwo",
@@ -42,6 +56,69 @@ export async function init() {
     list = ["changes", "duties"].includes(q.get("list") || ""),
     dutiesOnly = q.get("list") === "duties";
   let plan: any, changes: any, pub: any;
+  let lookup: Record<string, Map<string, string>> | null = null;
+  // Nazwy z planu i arkuszy zmian → identyfikatory, żeby każdą osobę, oddział,
+  // salę i miejsce dyżuru dało się otworzyć jednym kliknięciem.
+  function targets() {
+    const map = (pairs: [string, string][]) =>
+      new Map(pairs.map(([name, value]) => [norm(name), value]));
+    const kinds = {
+      teacher: map(
+        Object.values(plan.teachers).map((t: any) => [t.name, t.id]),
+      ),
+      class: map(Object.entries(plan.classes).map(([v, n]) => [String(n), v])),
+      room: map(Object.entries(plan.rooms).map(([v, n]) => [String(n), v])),
+      duty: map(plan.duties.map((d: any) => [d.place, d.place])),
+    } as Record<string, Map<string, string>>;
+    for (const [name, alias] of Object.entries(plan.aliases || {}) as [
+      string,
+      any,
+    ][])
+      if (kinds[alias.type] && !kinds[alias.type].has(norm(name)))
+        kinds[alias.type].set(norm(name), alias.id);
+    return kinds;
+  }
+  const link: Linker = (kind, name) => {
+    const target = lookup?.[kind]?.get(norm(name));
+    if (!target || (kind === type && target === id && !list)) return esc(name);
+    const params = new URLSearchParams({ type: kind, id: target, date, mode });
+    params.set("view", view);
+    return `<a class="plan-link" href="?${params}">${esc(name)}</a>`;
+  };
+  const entityName = () =>
+    type === "teacher"
+      ? plan.teachers[id]?.name
+      : type === "duty"
+        ? id
+        : (type === "class" ? plan.classes : plan.rooms)[id];
+  function printHeading(dates: string[]) {
+    const heading = document.getElementById("plan-print-heading");
+    if (!heading) return;
+    const name = entityName() || "";
+    const title = list
+      ? dutiesOnly
+        ? "Zastępstwa dyżurów"
+        : "Zmiany w szkole"
+      : type === "teacher"
+        ? `Plan nauczyciela: ${name}`
+        : type === "class"
+          ? `Plan oddziału ${name}`
+          : type === "room"
+            ? `Plan sali ${name}`
+            : `Miejsce dyżurowania: ${name}`;
+    const short = (d: string) => `${d.slice(8)}.${d.slice(5, 7)}`;
+    const when =
+      dates.length > 1
+        ? `Tydzień ${short(dates[0])}–${short(dates.at(-1)!)}.${dates[0].slice(0, 4)}`
+        : `${dateLabel(dates[0])} ${dates[0].slice(0, 4)}`;
+    const version = list
+      ? ""
+      : mode === "base"
+        ? " · plan bazowy"
+        : " · plan ze zmianami";
+    const now = today();
+    heading.innerHTML = `<p class="print-title">${esc(title)}</p><p>${esc(when)}${version}</p><small>ZSZ5 Szkoła Mistrzów · wydruk z dnia ${short(now)}.${now.slice(0, 4)}</small>`;
+  }
   get("entity-type").value = type;
   get("date").value = date;
   get("mode").value = mode;
@@ -119,6 +196,7 @@ export async function init() {
           esc(pub.validTo) +
           "</p>";
     const dates = list ? [date] : view === "week" ? week(date) : [date];
+    printHeading(dates);
     const days = dates.map((d) => ({
       date: d,
       rows:
@@ -138,11 +216,13 @@ export async function init() {
             : changes.dutyChanges.filter((d: any) => d.date === date),
           date,
           dutiesOnly,
+          link,
         )
       : timetableHTML(
           days,
           plan.periods,
           get("selection-title").textContent || "Plan lekcji",
+          link,
         );
     if (!dutiesOnly || !list) {
       const other = (changes.otherActivities || []).filter(
@@ -152,13 +232,14 @@ export async function init() {
           e.date <= pub.validTo &&
           (list || (type === "teacher" && e.absentTeacherId === id)),
       );
-      get("schedule").innerHTML += otherActivitiesHTML(other);
+      get("schedule").innerHTML += otherActivitiesHTML(other, link);
     }
   }
   await connect(["plan", "changes"], (data, m) => {
     plan = data.plan;
     changes = data.changes;
     pub = m;
+    lookup = targets();
     if (!id && page?.startsWith("sale-"))
       id =
         Object.entries(plan.rooms).find(([, name]) => name === "sg1")?.[0] ||
@@ -230,6 +311,50 @@ export async function init() {
     render();
   };
   get("print").onclick = () => window.print();
+  // Odnośniki w planie przełączają widok bez przeładowania strony; wpis w
+  // historii pozwala wrócić przyciskiem „Wstecz”.
+  function open(search: string) {
+    const next = new URLSearchParams(search);
+    type = next.get("type") || type;
+    id = next.get("id") || "";
+    if (validDate(next.get("date"))) get("date").value = next.get("date")!;
+    get("mode").value = next.get("mode") || mode;
+    view = next.get("view") || view;
+    list = ["changes", "duties"].includes(next.get("list") || "");
+    dutiesOnly = next.get("list") === "duties";
+    get("entity-type").value = type;
+    get("search").value = "";
+    options();
+    render();
+  }
+  get("schedule").addEventListener("click", (event) => {
+    const a = (event.target as Element).closest<HTMLAnchorElement>(
+      "a.plan-link",
+    );
+    if (
+      !a ||
+      !plan ||
+      event.button !== 0 ||
+      event.metaKey ||
+      event.ctrlKey ||
+      event.shiftKey ||
+      event.altKey
+    )
+      return;
+    event.preventDefault();
+    history.pushState(null, "", a.href);
+    open(new URL(a.href).search);
+    // Kliknięty odnośnik znika po przerysowaniu planu, więc fokus trafia na
+    // tytuł nowego planu, a widok wraca do jego początku.
+    const title = get("selection-title");
+    title.tabIndex = -1;
+    title.focus({ preventScroll: true });
+    if (title.getBoundingClientRect().top < 0)
+      title.scrollIntoView({ block: "start" });
+  });
+  addEventListener("popstate", () => {
+    if (plan) open(location.search);
+  });
   get("favorite").onclick = () => {
     try {
       localStorage.setItem("my-teacher", id);

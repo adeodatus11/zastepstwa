@@ -69,6 +69,7 @@ Dyżury nadzoru po ostatnim tygodniu z arkusza nie są przedstawiane jako aktual
 - `src/lib/data.ts`: odświeżenie co dwie minuty i po powrocie na kartę, kontrola schematu, ostatnia działająca wersja przy awarii.
 - Wspólny CSS: progi 768 i 1200 px. Na telefonie podstawowy plan jest dzienny; tydzień przewija się wyłącznie we własnym obszarze.
 - Stare adresy `.html` pozostają wejściami do nowych widoków. Parametry planu: `type=teacher|class|room|duty`, `id`, `date=YYYY-MM-DD`, `mode=base|changes`, `view=day|week`, opcjonalnie `list=changes`.
+- Nauczyciele, oddziały, sale i miejsca dyżurów w tabeli planu i listach zmian są odnośnikami do ich planów (ta sama data, wersja i widok); „Wstecz” wraca do poprzedniego planu. „Drukuj plan” drukuje bieżący widok na A4 w poziomie z nagłówkiem: czyj to plan, tydzień lub dzień, wersja i data wydruku.
 - Preferowany nauczyciel jest lokalny dla urządzenia. Kontekst planu jest zapamiętywany w sesji. Brak kont użytkowników, service workera i trybu offline.
 - Formatowanie: `npm run format`. Regresja: polecenia poniżej.
 

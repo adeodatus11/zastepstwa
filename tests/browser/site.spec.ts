@@ -405,3 +405,38 @@ test("Update page: checks the package and commits only the provided files", asyn
     ),
   ).toBe(true);
 });
+
+test("Plan links open class, room and teacher plans; print heading names the plan", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await page.goto(
+    "/plan.html?type=teacher&date=2026-09-07&view=week&mode=base",
+  );
+  await expect(page.locator(".timetable")).toBeVisible();
+  const teacher = (await page.locator("#selection-title").textContent())!;
+  const classLink = page.locator(".timetable a.plan-link[href*='type=class']");
+  const className = (await classLink.first().textContent())!;
+  await classLink.first().click();
+  await expect(page.locator("#selection-title")).toHaveText(className);
+  await expect(page.locator("#entity-type")).toHaveValue("class");
+  expect(page.url()).toContain("type=class");
+  await page.emulateMedia({ media: "print" });
+  await expect(page.locator("#plan-print-heading")).toBeVisible();
+  await expect(page.locator("#plan-print-heading")).toContainText(
+    `Plan oddziału ${className}`,
+  );
+  await expect(page.locator(".page-heading")).toBeHidden();
+  await page.emulateMedia({ media: "screen" });
+  await expect(page.locator("#plan-print-heading")).toBeHidden();
+  const roomLink = page.locator(".timetable a.plan-link[href*='type=room']");
+  const roomName = (await roomLink.first().textContent())!;
+  await roomLink.first().click();
+  await expect(page.locator("#selection-title")).toHaveText(roomName);
+  await expect(page.locator("#entity-type")).toHaveValue("room");
+  await page.goBack();
+  await expect(page.locator("#selection-title")).toHaveText(className);
+  await page.goBack();
+  await expect(page.locator("#selection-title")).toHaveText(teacher);
+  await expect(page.locator("#entity-type")).toHaveValue("teacher");
+});
