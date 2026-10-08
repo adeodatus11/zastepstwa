@@ -25,7 +25,7 @@ Docelowo dążymy do uzyskania zgód rodziców i opiekunów na **samodzielny pow
 - **czwartek 15.10.2026** — oddziały: 1CB, 1FC, 1S. Kierownik: Aleksandra Aszkiełowicz. Opiekunowie: Anna Galert, Łukasz Wojciechowski, Krystyna Dalach, Anna Sobczak.
 - **piątek 16.10.2026** — oddziały: 1FB, 3TFB, 3TFA. Kierownik: Sylwia Bokuniewicz. Opiekunowie: Joanna Antoszewska, Alicja Smereka, Krzysztof Płatek, Magdalena Taszycka.
 - **poniedziałek 19.10.2026** — oddziały: 3K, 3WA, 4TH. Kierownik: Sylwia Bokuniewicz. Opiekunowie: Barbara Małecka, Kamil Wójcik, Łukasz Wojciechowski, Wojciech Biczysko.
-- **wtorek 20.10.2026** — oddziały: 1TFB, 2WA, 3CB. Kierownik: Aleksandra Aszkiełowicz. Opiekunowie: Anna Sobczak, Marcin Kopij, Karolina Sałdyka.
+- **wtorek 20.10.2026** — oddziały: 1TFB, 2WA, 3CB. Kierownik: Aleksandra Aszkiełowicz. Opiekunowie: Anna Sobczak, Marcin Kopij, Karolina Sałdyka-Rusek.
 - **środa 21.10.2026** — oddziały: 1TFA, 1TH. Kierownik: Aleksandra Aszkiełowicz. Opiekunowie: Edyta Jaworska, Waldemar Kaczorowski, Paweł Danielewski.
 - **czwartek 22.10.2026** — oddziały: 4TFB, 4TFA, 2TH. Kierownik: Maria Kaszak. Opiekunowie: Łukasz Wojciechowski, Krystyna Dalach, Agnieszka Hudziec.
 - **piątek 23.10.2026** — oddziały: 2TFB, 1TFH, 2FB. Kierownik: Sylwia Bokuniewicz. Opiekunowie: Edyta Jaworska, Alicja Smereka, Agnieszka Jastrzębska-Majtyka, Paweł Danielewski.
