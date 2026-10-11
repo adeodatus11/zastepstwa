@@ -150,13 +150,7 @@ export async function init() {
     }
     // Inny dzień niż dziś: wyraźny tytuł, żeby nikt nie wziął go za dzisiejszy.
     content.innerHTML = `${date === today() ? "" : `<h2 class="tvz-title">Zastępstwa na ${esc(dateLabel(date))}</h2>`}<div class="tvz-list">${groups.map((g) => teacher(g, date === today() ? now : "")).join("")}</div>`;
-    // Ciężki dzień: stopka z komunikatami ustępuje miejsca zastępstwom.
-    const list = content.querySelector(".tvz-list") as HTMLElement;
-    document.body.classList.remove("tvz-dense");
-    if (fit(list) < 0.75) {
-      document.body.classList.add("tvz-dense");
-      fit(list);
-    }
+    fit(content.querySelector(".tvz-list") as HTMLElement);
   }
   await connect(["plan", "changes"], (d, m) => {
     plan = d.plan;
@@ -188,13 +182,4 @@ export async function init() {
   };
   clock();
   setInterval(clock, 1000);
-  // Komunikaty w stopce zmieniają się niezależnie od slajdów planu.
-  const notes = document.querySelectorAll(".tv-footer-slide");
-  let note = 0;
-  if (notes.length > 1)
-    setInterval(() => {
-      notes[note].classList.remove("active");
-      note = (note + 1) % notes.length;
-      notes[note].classList.add("active");
-    }, 10000);
 }

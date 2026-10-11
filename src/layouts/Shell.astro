@@ -119,17 +119,7 @@ const menu = [
               </picture>
             )
           }</a
-        >{
-          tv && (
-            <img
-              class="tv-qr"
-              src="/qr-plan.svg"
-              width="190"
-              height="190"
-              alt="Kod QR: plan.szkolamistrzow.info"
-            />
-          )
-        }<a
+        ><a
           class="header-guide"
           href={guide}
           aria-current={section === "Przewodnik dla nauczyciela"
@@ -189,51 +179,17 @@ const menu = [
       tv && (
         <footer class="tv-footer">
           <div class="tv-footer-slides">
-            <div class="tv-footer-slide centered active">
+            <div class="tv-footer-slide active">
               <div class="tv-footer-body">
-                <p class="tv-footer-lead">
-                  Plan lekcji dostępny także na stronie:
-                </p>
-                <p class="tv-footer-url">plan.szkolamistrzow.info</p>
-              </div>
-            </div>
-            <div class="tv-footer-slide">
-              <div class="tv-footer-body">
-                <p class="tv-footer-title">
-                  Gdzie odbywa się wychowanie fizyczne?
-                </p>
-                <ul class="tv-footer-list">
-                  <li>
-                    <b>Siłownia / ping-pong</b> – piwnica, wejście środkową
-                    klatką schodową
-                  </li>
-                  <li>
-                    <b>Sala 8</b> – sala z lustrami, parter (obok portierni)
-                  </li>
-                  <li>
-                    <b>Sala 39</b> – III piętro
-                  </li>
-                </ul>
-                <p class="tv-footer-text">
-                  Część zajęć odbywa się w obiektach zewnętrznych – zgodnie z
-                  grafikiem przekazywanym przez nauczycieli WF.
-                </p>
-              </div>
-            </div>
-            <div class="tv-footer-slide">
-              <div class="tv-footer-body">
-                <p class="tv-footer-title">Nie możesz znaleźć swojej sali?</p>
-                <p class="tv-footer-text">
-                  Zeskanuj kod – prosta nawigacja po budynkach ZSZ5:
-                </p>
-                <p class="tv-footer-url small">nawigacja.szkolamistrzow.info</p>
+                <p class="tv-footer-lead">Aktualny pełny plan dostępny na:</p>
+                <p class="tv-footer-url">www.plan.szkolamistrzow.info</p>
               </div>
               <img
                 class="tv-qr"
-                src="/qr-nawigacja.svg"
+                src="/qr-plan.svg"
                 width="190"
                 height="190"
-                alt="Kod QR: nawigacja.szkolamistrzow.info"
+                alt="Kod QR: plan.szkolamistrzow.info"
               />
             </div>
           </div>

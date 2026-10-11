@@ -1083,15 +1083,15 @@ th {
 /* Wszystkie wysokości na sztywno: przeglądarka telewizora (Chrome 152)
    rozciągała elastyczny układ i wypychała stopkę poza ekran. */
 .tv-mode .site-header {
-  height: 226px;
+  height: 150px;
   flex: none;
   overflow: hidden;
   box-sizing: border-box;
 }
 .tv-mode main {
-  height: calc(1920px - var(--tv-top) - var(--tv-bottom) - 226px - 270px);
+  height: calc(1920px - var(--tv-top) - var(--tv-bottom) - 150px - 270px);
   min-height: 0;
-  max-height: calc(1920px - var(--tv-top) - var(--tv-bottom) - 226px - 270px);
+  max-height: calc(1920px - var(--tv-top) - var(--tv-bottom) - 150px - 270px);
   flex: none;
   overflow: hidden;
   box-sizing: border-box;
@@ -1121,7 +1121,7 @@ body.tv-mode .header-guide,
 }
 .tv-mode .header-inner {
   padding: 16px 24px;
-  height: 222px;
+  height: 146px;
   flex-wrap: nowrap;
   max-width: none;
 }
@@ -1268,14 +1268,6 @@ body.tv-mode .header-guide,
   display: flex;
   flex-direction: column;
   height: calc(100% - 76px);
-}
-.tv-mode.tvz-dense .tv-footer {
-  display: none;
-}
-.tv-mode.tvz-dense main {
-  height: calc(1920px - var(--tv-top) - var(--tv-bottom) - 226px);
-  max-height: calc(1920px - var(--tv-top) - var(--tv-bottom) - 226px);
-  border-radius: 0 0 8px 8px;
 }
 .tvz-title {
   font-size: 32px;
@@ -1478,7 +1470,7 @@ body.tv-mode .header-guide,
   color: #d8efe2;
 }
 .tv-footer-url {
-  font-size: 52px;
+  font-size: 44px;
   font-weight: 700;
   line-height: 1.2;
   white-space: nowrap;
