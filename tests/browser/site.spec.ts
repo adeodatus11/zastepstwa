@@ -260,8 +260,9 @@ test("TV shows only substitutions, grouped by absent teacher", async ({
   // Nagłówek: adres pełnego planu, sale WF i kod QR; stopki nie ma.
   const header = page.locator(".site-header");
   await expect(header).toContainText("www.plan.szkolamistrzow.info");
-  await expect(header).toContainText(
-    "Wychowanie fizyczne: sala 8 / sala 39 / siłownia / obiekty zewnętrzne według grafiku",
+  await expect(header.locator(".tv-info")).toContainText("Wychowanie fizyczne");
+  await expect(header.locator(".tv-info")).toContainText(
+    "sala 8 · sala 39 · siłownia · obiekty zewnętrzne według grafiku",
   );
   await expect(header.locator(".tv-qr")).toBeVisible();
   await expect(header.locator("#tv-clock")).toContainText(

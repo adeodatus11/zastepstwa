@@ -1628,32 +1628,44 @@ body.tv-mode .tv-live {
   color: var(--dark);
   border: 1px solid #b9d9c6;
 }
-/* Adres pełnego planu pod logo, kod QR osobno po prawej. */
+/* Pod logo: adres pełnego planu i sale WF — dwa osobne wiersze z etykietą,
+   wyrównane do lewej; kod QR osobno po prawej. */
 .tv-plan {
   display: contents;
 }
-.tv-plan .tv-pe {
-  display: block;
-  white-space: normal;
-  margin-top: 2px;
-  font-size: 17px;
-  color: var(--ink);
-}
-.tv-plan .tv-pe b {
-  font-size: 17px;
-}
-.tv-plan p {
+.tv-info {
   grid-area: url;
+  align-self: start;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
   margin: 0;
-  font-size: 19px;
+  font-size: 17px;
   line-height: 1.25;
-  color: var(--muted);
-  text-align: center;
-  white-space: nowrap;
+  border-top: 1px solid var(--line);
 }
-.tv-plan b {
-  font-size: 21px;
+.tv-info dt,
+.tv-info dd {
+  margin: 0;
+  padding: 5px 0;
+}
+.tv-info dt {
+  padding-right: 12px;
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--green);
+  align-self: center;
+}
+.tv-info dd {
   color: var(--ink);
+}
+.tv-info dd b {
+  font-size: 19px;
+}
+.tv-info dt:nth-of-type(n + 2),
+.tv-info dt:nth-of-type(n + 2) + dd {
+  border-top: 1px solid var(--line);
 }
 body.tv-mode .tv-plan .tv-qr {
   grid-area: qr;
@@ -1742,9 +1754,6 @@ body.tv-mode .tv-live {
 body.tv-mode .tv-qr {
   width: 136px;
   height: 136px;
-}
-body.tv-mode .tv-plan p {
-  align-self: start;
 }
 body.tv-mode main {
   background: #fff;
