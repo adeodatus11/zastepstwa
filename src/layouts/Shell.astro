@@ -7,7 +7,7 @@ import "@fontsource/source-sans-3/latin-600.css";
 import "@fontsource/source-sans-3/latin-700.css";
 import "../styles/site.css";
 import { getImage, Image } from "astro:assets";
-import tvLogo from "../assets/logo/logo-komputer-biale.png";
+import tvLogo from "../assets/logo/logo-tv-jasne-tlo.png";
 import logoDesktop from "../assets/logo/logo-komputer.png";
 import logoPhone from "../assets/logo/logo-telefon.png";
 import fs from "node:fs";
@@ -89,8 +89,8 @@ const menu = [
                 src={tvLogo}
                 alt="ZSZ5 we Wrocławiu — Szkoła Mistrzów, Plan lekcji"
                 width={1120}
-                widths={[560, 1120]}
-                sizes="560px"
+                widths={[480, 960]}
+                sizes="480px"
                 loading="eager"
                 fetchpriority="high"
                 format="webp"
@@ -119,7 +119,29 @@ const menu = [
               </picture>
             )
           }</a
-        ><a
+        >{
+          tv && (
+            <>
+              <div id="tv-clock" />
+              <div class="tv-plan">
+                <p>
+                  Pełny plan lekcji: <b>www.plan.szkolamistrzow.info</b>
+                  <span class="tv-pe">
+                    <b>Wychowanie fizyczne:</b> sala 8 / sala 39 / siłownia /
+                    obiekty zewnętrzne według grafiku
+                  </span>
+                </p>
+                <img
+                  class="tv-qr"
+                  src="/qr-plan.svg"
+                  width="160"
+                  height="160"
+                  alt="Kod QR: plan.szkolamistrzow.info"
+                />
+              </div>
+            </>
+          )
+        }<a
           class="header-guide"
           href={guide}
           aria-current={section === "Przewodnik dla nauczyciela"
@@ -175,27 +197,7 @@ const menu = [
         )
       }<slot />
     </main>
-    {
-      tv && (
-        <footer class="tv-footer">
-          <div class="tv-footer-slides">
-            <div class="tv-footer-slide active">
-              <div class="tv-footer-body">
-                <p class="tv-footer-lead">Aktualny pełny plan dostępny na:</p>
-                <p class="tv-footer-url">www.plan.szkolamistrzow.info</p>
-              </div>
-              <img
-                class="tv-qr"
-                src="/qr-plan.svg"
-                width="190"
-                height="190"
-                alt="Kod QR: plan.szkolamistrzow.info"
-              />
-            </div>
-          </div>
-        </footer>
-      )
-    }
+
     <footer class="site-footer">
       <span>Szkoła Mistrzów · ZSZ5 we Wrocławiu</span><div>
         <a href="/tv.html">Ekran TV</a><a

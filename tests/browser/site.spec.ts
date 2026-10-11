@@ -257,10 +257,17 @@ test("TV shows only substitutions, grouped by absent teacher", async ({
   // Inny dzień nie trafia na dzisiejszy ekran.
   await expect(page.locator("#tv-content")).not.toContainText("Inna Osoba");
   expect(await fitsOnScreen(page)).toBe(true);
-  await expect(page.locator(".tv-footer")).toContainText(
-    "www.plan.szkolamistrzow.info",
+  // Nagłówek: adres pełnego planu, sale WF i kod QR; stopki nie ma.
+  const header = page.locator(".site-header");
+  await expect(header).toContainText("www.plan.szkolamistrzow.info");
+  await expect(header).toContainText(
+    "Wychowanie fizyczne: sala 8 / sala 39 / siłownia / obiekty zewnętrzne według grafiku",
   );
-  await expect(page.locator(".tv-footer .tv-qr")).toBeVisible();
+  await expect(header.locator(".tv-qr")).toBeVisible();
+  await expect(header.locator("#tv-clock")).toContainText(
+    "poniedziałek12 października",
+  );
+  await expect(page.locator(".tv-footer")).toHaveCount(0);
 });
 test("TV after the last substitution shows the next day with a title", async ({
   page,
@@ -368,9 +375,8 @@ test("TV fits a heavy day on one screen without scrolling", async ({
   await expect(page.locator(".tvz-teacher")).toHaveCount(15);
   await expect(page.locator(".tvz-row")).toHaveCount(105);
   expect(await fitsOnScreen(page)).toBe(true);
-  await expect(page.locator(".tv-footer")).toBeVisible();
   // Nic nie wychodzi poza ekran 1080×1920.
-  const box = await page.locator(".tv-footer").boundingBox();
+  const box = await page.locator("main").boundingBox();
   expect(box!.y + box!.height).toBeLessThanOrEqual(1920);
 });
 
@@ -426,7 +432,7 @@ test("TV hides the site menu on wide screens", async ({ page }) => {
     await page.goto("/tv.html");
     await expect(page.locator("#navigation")).toBeHidden();
     await expect(page.locator(".site-header .header-guide")).toBeHidden();
-    await expect(page.locator(".tv-footer .tv-qr")).toBeVisible();
+    await expect(page.locator(".site-header .tv-qr")).toBeVisible();
   }
 });
 test("Update page: checks the package and commits only the provided files", async ({
