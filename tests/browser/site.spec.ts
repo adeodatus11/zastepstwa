@@ -266,7 +266,7 @@ test("TV shows only substitutions, grouped by absent teacher", async ({
   );
   await expect(header.locator(".tv-qr")).toBeVisible();
   await expect(header.locator("#tv-clock")).toContainText(
-    "poniedziałek12 października",
+    "poniedziałek, 12 października",
   );
   await expect(page.locator(".tv-footer")).toHaveCount(0);
 });
