@@ -277,6 +277,136 @@ test("Group merge: room of the host group and free of charge", () => {
   );
 });
 
+const withMoves = (moves, ...rows) =>
+  schoolRules(
+    { Oddziały: [HEAD, ...rows] },
+    {
+      Oddziały: [
+        [
+          "Przeniesiono z",
+          "Przeniesiono na",
+          "Nauczyciel/wakat",
+          "Oddział",
+          "Przedmiot",
+        ],
+        ...moves,
+      ],
+    },
+    plan,
+  ).map((m) => m.text);
+
+test("Transfers free the substitute's slot or occupy another one", () => {
+  const sub = [
+    "28.09.2026",
+    "2",
+    "Kowalska Anna",
+    "1TFH",
+    "Biologia",
+    "12",
+    "Skarupa Agnieszka",
+    "",
+    "Dodatkowo płatne",
+  ];
+  // Lekcja Skarupy z 3K przeniesiona z 2. na 5. — na 2. jest wolna, płatne w porządku.
+  const away = [
+    "28.09.2026, 2, 08:50-09:35, sala: 41",
+    "28.09.2026, 5, 11:25-12:10, sala: 41",
+    "Skarupa Agnieszka",
+    "3K|sprzedawca",
+    "Obsługa klienta",
+  ];
+  assert.deepEqual(withMoves([away], sub), []);
+  // Przeniesiona na lekcję 5 — tam Skarupa jest zajęta, więc to złączenie.
+  const busy = withMoves([away], sub.with(1, "5").with(5, "41"));
+  assert.equal(busy.length, 1);
+  assert.match(
+    busy[0],
+    /prowadzi wtedy grupę sprzedawca klasy 3KS \(Obsługa klienta\) — złączenie powinno być „Bezpłatne”, jest „Dodatkowo płatne”/,
+  );
+  assert.deepEqual(
+    withMoves([away], sub.with(1, "5").with(5, "41").with(8, "Bezpłatne")),
+    [],
+  );
+});
+
+test("Two different teachers in one room at the same lesson are flagged", () => {
+  const clashes = (moves, ...rows) =>
+    schoolRules(
+      {
+        "Opis parametrów": [["Okres: 28.09.2026 (pon.) - 04.10.2026 (niedz.)"]],
+        Oddziały: [HEAD, ...rows],
+      },
+      {
+        Oddziały: [
+          [
+            "Przeniesiono z",
+            "Przeniesiono na",
+            "Nauczyciel/wakat",
+            "Oddział",
+            "Przedmiot",
+          ],
+          ...moves,
+        ],
+      },
+      plan,
+    )
+      .filter((m) => m.group === "Sala zajęta")
+      .map((m) => m.text);
+  // Zielińska nie ma lekcji w planie; w sali 41 uczy wtedy Skarupa.
+  const sub = [
+    "28.09.2026",
+    "2",
+    "Kowalska Anna",
+    "1TFH",
+    "Biologia",
+    "41",
+    "Zielińska Ewa",
+    "",
+    "Dodatkowo płatne",
+  ];
+  const out = clashes([], sub);
+  assert.equal(out.length, 1);
+  assert.match(
+    out[0],
+    /28\.09\.2026, lekcja 2, sala 41: kilku nauczycieli naraz — Agnieszka Skarupa \(3KS sprzedawca, Obsługa klienta\); Zielińska Ewa \(1TFH, Biologia, zastępstwo\)/,
+  );
+  assert.deepEqual(clashes([], sub.with(5, "12")), []);
+  // Złączenie grup: jeden nauczyciel, kilka grup w jednej sali — w porządku.
+  assert.deepEqual(
+    clashes([], sub.with(6, "Skarupa Agnieszka").with(8, "Bezpłatne")),
+    [],
+  );
+  // Lekcja bez zastępcy albo przeniesiona nie zajmuje sali.
+  assert.deepEqual(clashes([], sub.with(6, "Zastępstwo")), []);
+  assert.deepEqual(clashes([], sub.with(6, "Przeniesiona")), []);
+  // Skarupa przeniesiona z lekcji 2 na 5: sala 41 na lekcji 2 jest wolna…
+  const away = [
+    "28.09.2026, 2, 08:50-09:35, sala: 41",
+    "28.09.2026, 5, 11:25-12:10, sala: 41",
+    "Skarupa Agnieszka",
+    "3K|sprzedawca",
+    "Obsługa klienta",
+  ];
+  assert.deepEqual(clashes([away], sub), []);
+  // …a na lekcji 5 zajęta.
+  const late = clashes([away], sub.with(1, "5"));
+  assert.equal(late.length, 1);
+  assert.match(late[0], /przeniesienie z 28\.09\.2026, lekcja 2/);
+  // Poza okresem pliku zastępstw nie sprawdzamy (brak danych o nieobecnościach).
+  assert.deepEqual(
+    clashes([
+      [
+        "05.10.2026, 2, 08:50-09:35, sala: 12",
+        "05.10.2026, 2, 08:50-09:35, sala: 41",
+        "Nowak Jan",
+        "2A",
+        "Matematyka",
+      ],
+    ]),
+    [],
+  );
+});
+
 test("Physical education merges may use another room, but stay free", () => {
   const pe = [
     "28.09.2026",

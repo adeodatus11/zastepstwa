@@ -130,6 +130,9 @@ test("Calendar filters and all views; groups and school contacts", async ({
     .getByRole("button", { name: "Nauczyciele oddziału", exact: true })
     .click();
   await expect(page.locator("#copy-teachers")).toBeVisible();
+  // Tydzień z grafikiem w repozytorium — test nie może zależeć od tego,
+  // czy grafik na bieżący tydzień został już wgrany.
+  await page.clock.install({ time: new Date("2026-10-07T10:00:00+02:00") });
   await page.goto("/dyzury-nadzoru.html");
   await page.locator("#contact-day").selectOption("all");
   await expect(page.locator(".contacts-week th")).toHaveCount(5);
