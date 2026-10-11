@@ -1263,6 +1263,172 @@ body.tv-mode .header-guide,
   padding: 60px 0;
   grid-column: 1/-1;
 }
+/* Telewizor: same zastępstwa według nieobecnych nauczycieli, bez slajdów. */
+.tv-mode #tv-content.tvz {
+  display: flex;
+  flex-direction: column;
+  height: calc(100% - 76px);
+}
+.tv-mode.tvz-dense .tv-footer {
+  display: none;
+}
+.tv-mode.tvz-dense main {
+  height: calc(1920px - var(--tv-top) - var(--tv-bottom) - 226px);
+  max-height: calc(1920px - var(--tv-top) - var(--tv-bottom) - 226px);
+  border-radius: 0 0 8px 8px;
+}
+.tvz-title {
+  font-size: 32px;
+  line-height: 1.1;
+  margin: 0 0 12px;
+  padding: 8px 14px;
+  border-radius: 6px;
+  background: #facc15;
+  color: #1a1a1a;
+  flex: none;
+}
+.tvz-list {
+  --tv-scale: 1;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  column-gap: 16px;
+}
+.tvz-list[data-cols="2"] {
+  column-count: 2;
+}
+.tvz-list[data-cols="3"] {
+  column-count: 3;
+  column-gap: 12px;
+}
+.tvz-teacher {
+  break-inside: avoid;
+  background: #1c392d;
+  border: 1px solid #456456;
+  border-radius: 8px;
+  padding: calc(8px * var(--tv-scale)) calc(12px * var(--tv-scale));
+  margin: 0 0 calc(10px * var(--tv-scale));
+}
+.tvz-teacher h2 {
+  font-size: calc(26px * var(--tv-scale));
+  line-height: 1.15;
+  padding-bottom: calc(6px * var(--tv-scale));
+  border-bottom: 2px solid #89ad99;
+  margin: 0;
+}
+.tvz-teacher h2 span {
+  display: inline-block;
+  vertical-align: middle;
+  font-size: calc(15px * var(--tv-scale));
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  background: #dc2626;
+  color: #fff;
+  padding: 2px 8px;
+  border-radius: 4px;
+  margin-right: 12px;
+}
+.tvz-teacher ol {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.tvz-row {
+  display: grid;
+  grid-template-columns:
+    calc(96px * var(--tv-scale)) calc(104px * var(--tv-scale))
+    minmax(0, 1fr) auto calc(78px * var(--tv-scale));
+  grid-template-areas: "nr class subject effect room";
+  gap: calc(12px * var(--tv-scale));
+  align-items: center;
+  padding: calc(4px * var(--tv-scale)) calc(6px * var(--tv-scale));
+  border-bottom: 1px solid #456456;
+  font-size: calc(21px * var(--tv-scale));
+  line-height: 1.18;
+}
+.tvz-row:last-child {
+  border-bottom: 0;
+}
+.tvz-list:not([data-cols="1"]) .tvz-row {
+  grid-template-columns: calc(66px * var(--tv-scale)) auto minmax(0, 1fr) auto;
+  grid-template-areas:
+    "nr class subject room"
+    "nr effect effect effect";
+  row-gap: 0;
+  column-gap: calc(10px * var(--tv-scale));
+}
+.tvz-list:not([data-cols="1"]) .tvz-nr small {
+  display: none;
+}
+.tvz-list:not([data-cols="1"]) .tvz-subject {
+  font-size: 0.85em;
+}
+.tvz-list:not([data-cols="1"]) .tvz-effect {
+  white-space: normal;
+}
+.tvz-nr {
+  grid-area: nr;
+  white-space: nowrap;
+  font-size: calc(34px * var(--tv-scale));
+  font-weight: 700;
+  line-height: 1;
+  text-align: center;
+  color: #9ad3b0;
+}
+.tvz-nr small {
+  display: block;
+  font-size: calc(13px * var(--tv-scale));
+  font-weight: 400;
+  color: #c7ddd1;
+  margin-top: 2px;
+}
+.tvz-class {
+  grid-area: class;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.tvz-class small {
+  font-size: 0.75em;
+  font-weight: 400;
+  color: #c7ddd1;
+  margin-left: 6px;
+}
+.tvz-subject {
+  grid-area: subject;
+  color: #d8efe2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.tvz-effect {
+  grid-area: effect;
+  font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.tvz-effect.late {
+  color: #fde68a;
+}
+.tvz-effect.off {
+  color: #93c5fd;
+}
+.tvz-room {
+  grid-area: room;
+  text-align: right;
+  white-space: nowrap;
+  color: #c7ddd1;
+}
+.tvz-nr.range {
+  font-size: calc(26px * var(--tv-scale));
+}
+.tvz-row.now {
+  background: rgba(250, 204, 21, 0.2);
+  box-shadow: inset 5px 0 0 #facc15;
+}
+.tvz-row.now .tvz-nr {
+  color: #facc15;
+}
 .tv-mode #tv-progress {
   height: 4px;
   flex-shrink: 0;
