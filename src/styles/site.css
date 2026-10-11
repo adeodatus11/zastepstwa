@@ -1628,28 +1628,29 @@ body.tv-mode .tv-live {
   color: var(--dark);
   border: 1px solid #b9d9c6;
 }
-/* Pod logo: adres pełnego planu i sale WF — dwa osobne wiersze z etykietą,
-   wyrównane do lewej; kod QR osobno po prawej. */
 .tv-plan {
   display: contents;
 }
 .tv-info {
   grid-area: url;
-  align-self: start;
+  align-self: end;
   display: grid;
   grid-template-columns: auto minmax(0, 1fr);
   margin: 0;
   font-size: 17px;
-  line-height: 1.25;
+  line-height: 1.3;
   border-top: 1px solid var(--line);
 }
 .tv-info dt,
 .tv-info dd {
   margin: 0;
-  padding: 5px 0;
+  padding: 4px 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .tv-info dt {
-  padding-right: 12px;
+  padding-right: 14px;
   font-size: 13px;
   font-weight: 700;
   text-transform: uppercase;
@@ -1661,7 +1662,7 @@ body.tv-mode .tv-live {
   color: var(--ink);
 }
 .tv-info dd b {
-  font-size: 19px;
+  font-size: 1.06em;
 }
 .tv-info dt:nth-of-type(n + 2),
 .tv-info dt:nth-of-type(n + 2) + dd {
@@ -1724,32 +1725,38 @@ body.tv-mode .tv-empty {
   color: var(--ink);
 }
 
-/* A — jasny pasek: logo, pod nim data; QR z adresem po prawej. */
-
-/* B — tablica: duża godzina, logo z adresem, QR; nauczyciel jako pasek. */
+/* Nagłówek: w górnym rzędzie godzina z datą, logo i kod QR; pod nimi, na
+   całą szerokość obok kodu, adres planu i sale WF — każde w jednej linii,
+   bez zawijania (telewizor potrafi rysować tekst szerzej niż podgląd). */
 body.tv-mode .header-inner {
   grid-template-columns: auto minmax(0, 1fr) auto;
-  grid-template-areas: "clock brand qr" "clock url qr";
-  gap: 4px 18px;
-}
-body.tv-mode .brand {
-  align-self: end;
+  grid-template-rows: auto auto;
+  grid-template-areas: "clock brand qr" "url url qr";
+  gap: 6px 18px;
 }
 body.tv-mode #tv-clock {
   display: grid;
-  grid-template-columns: auto;
-  gap: 0;
-  font-size: 19px;
+  grid-template-columns: auto auto;
+  grid-template-areas: "time live" "date date";
+  align-items: center;
+  gap: 2px 12px;
+  font-size: 18px;
   line-height: 1.2;
 }
 body.tv-mode .tvc-time {
-  font-size: 60px;
+  grid-area: time;
+  font-size: 52px;
   line-height: 1;
 }
+body.tv-mode .tvc-date {
+  grid-area: date;
+  white-space: nowrap;
+}
 body.tv-mode .tv-live {
+  grid-area: live;
   justify-self: start;
-  margin-top: 4px;
   font-size: 16px;
+  white-space: nowrap;
 }
 body.tv-mode .tv-qr {
   width: 136px;

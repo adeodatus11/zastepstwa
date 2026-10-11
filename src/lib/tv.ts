@@ -81,6 +81,18 @@ function fit(el: HTMLElement) {
   while (!fits() && scale > 0.3) set(best.cols, (scale -= 0.01));
   return scale;
 }
+// Wiersze pod logo zawsze w jednej linii: gdy telewizor rysuje tekst szerzej,
+// zmniejsz czcionkę danego wiersza, zamiast go zawijać albo ucinać.
+function fitHeader() {
+  for (const el of document.querySelectorAll<HTMLElement>(
+    ".tv-info dt, .tv-info dd",
+  )) {
+    el.style.fontSize = "";
+    let size = parseFloat(getComputedStyle(el).fontSize);
+    while (el.scrollWidth > el.clientWidth && size > 10)
+      el.style.fontSize = `${--size}px`;
+  }
+}
 // Dopasowanie do rzeczywistego ekranu: widok 1080×1920 skalowany i
 // wyśrodkowany w oknie; marginesy (ramka) z parametrów adresu, np.
 // tv.html?top=140&bottom=40&left=90&right=90. Parametr ?diag pokazuje
@@ -135,6 +147,7 @@ export async function init() {
     return [...groups];
   };
   function show() {
+    fitHeader();
     if (!changes) return;
     const now = nowTime();
     let date = today(),
@@ -182,7 +195,7 @@ export async function init() {
             : "Przerwa";
     const [day, date] = dateLabel(today()).split(", ");
     document.getElementById("tv-clock")!.innerHTML =
-      `<span class="tvc-time">${esc(time)}</span><span class="tvc-day">${esc(day)}</span><span class="tvc-date">${esc(date)}</span><span class="tv-live">${esc(status)}</span>`;
+      `<span class="tvc-time">${esc(time)}</span><span class="tv-live">${esc(status)}</span><span class="tvc-date">${esc(day)}, ${esc(date)}</span>`;
     if (time !== shown) show();
     shown = time;
   };
