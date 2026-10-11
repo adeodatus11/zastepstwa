@@ -1096,10 +1096,6 @@ th {
   overflow: hidden;
   box-sizing: border-box;
 }
-.tv-mode .tv-footer {
-  flex: none;
-  overflow: hidden;
-}
 .tv-mode .site-header {
   background: linear-gradient(to right, #1f5a41, #173d2e 55%, #112a21);
   border-bottom: 4px solid #9ad3b0;
@@ -1176,88 +1172,10 @@ body.tv-mode .header-guide,
   grid-auto-flow: column dense;
   gap: 16px;
 }
-.tv-card.tall {
-  grid-row: span 2;
-}
-.tv-card {
-  --tv-scale: 1;
-  padding: 14px 18px;
-  background: #1c392d;
-  border: 1px solid #456456;
-  border-radius: 8px;
-  min-width: 0;
-  overflow: hidden;
-}
-.tv-card h2 {
-  font-size: 40px;
-  line-height: 1.1;
-  padding-bottom: 8px;
-  border-bottom: 2px solid #89ad99;
-}
-.tv-lesson {
-  display: grid;
-  grid-template-columns: calc(62px * var(--tv-scale)) minmax(0, 1fr);
-  gap: 10px;
-  align-items: center;
-  padding: calc(6px * var(--tv-scale)) 0;
-  border-bottom: 1px solid #456456;
-  overflow-wrap: anywhere;
-}
 /* Zmiany (zastępstwa, przeniesienia, odwołania): czerwone. */
-.tv-lesson.changed {
-  background: rgba(239, 68, 68, 0.22);
-  box-shadow: inset 5px 0 0 #ef4444;
-}
-.tv-lesson.changed .tv-nr {
-  color: #fca5a5;
-}
-.tv-lesson .tv-nr {
-  margin: 0;
-  font-size: calc(38px * var(--tv-scale));
-  font-weight: 700;
-  line-height: 1;
-  text-align: center;
-  color: #9ad3b0;
-}
-.tv-nr small {
-  display: block;
-  font-size: calc(14px * var(--tv-scale));
-  font-weight: 400;
-  color: #c7ddd1;
-  margin-top: 2px;
-}
-/* Trwająca lekcja: inny kolor, bez dodatkowego miejsca. */
-.tv-lesson.now {
-  background: rgba(250, 204, 21, 0.2);
-  box-shadow: inset 5px 0 0 #facc15;
-}
-.tv-lesson.now .tv-nr {
-  color: #facc15;
-}
 
-.tv-lesson h3 {
-  font-size: calc(21px * var(--tv-scale));
-  line-height: 1.15;
-  margin: 0;
-}
-.tv-lesson p + h3 {
-  margin-top: 4px;
-}
-.tv-lesson p {
-  font-size: calc(17px * var(--tv-scale));
-  line-height: 1.2;
-  margin: 2px 0 0;
-  color: #d8efe2;
-}
-.tv-badge {
-  font-size: calc(14px * var(--tv-scale));
-  display: inline-block;
-  vertical-align: middle;
-  background: #dc2626;
-  color: #fff;
-  padding: 1px 6px;
-  border-radius: 4px;
-}
+/* Trwająca lekcja: inny kolor, bez dodatkowego miejsca. */
+
 .tv-empty {
   font-size: 40px;
   padding: 60px 0;
@@ -1420,101 +1338,6 @@ body.tv-mode .header-guide,
 }
 .tvz-row.now .tvz-nr {
   color: #facc15;
-}
-.tv-mode #tv-progress {
-  height: 4px;
-  flex-shrink: 0;
-  background: #9ad3b0;
-  margin-top: 14px;
-  transform-origin: left;
-  animation: progress 10s linear infinite;
-}
-.tv-footer {
-  height: 270px;
-  flex-shrink: 0;
-  background: #1f5a41;
-  border-top: 4px solid #9ad3b0;
-  border-radius: 0 0 8px 8px;
-  padding: 16px 30px;
-  box-sizing: border-box;
-}
-.tv-footer-slides {
-  position: relative;
-  height: 100%;
-}
-.tv-footer-slide {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  gap: 30px;
-  opacity: 0;
-  transition: opacity 0.8s ease;
-}
-.tv-footer-slide.active {
-  opacity: 1;
-}
-.tv-footer-body {
-  flex: 1;
-  min-width: 0;
-}
-.tv-footer-slide.centered .tv-footer-body {
-  text-align: center;
-}
-.tv-footer p {
-  margin: 0;
-}
-.tv-footer-lead {
-  font-size: 32px;
-  font-weight: 600;
-  color: #d8efe2;
-}
-.tv-footer-url {
-  font-size: 44px;
-  font-weight: 700;
-  line-height: 1.2;
-  white-space: nowrap;
-}
-.tv-footer-url.small {
-  font-size: 36px;
-  margin-top: 8px;
-}
-.tv-footer-title {
-  font-size: 32px;
-  font-weight: 700;
-  margin-bottom: 6px;
-}
-.tv-footer-text {
-  font-size: 24px;
-  line-height: 1.3;
-  color: #d8efe2;
-}
-.tv-footer-list {
-  list-style: none;
-  margin: 4px 0;
-  padding: 0;
-  font-size: 24px;
-  line-height: 1.35;
-}
-.tv-footer-list li::before {
-  content: "▸ ";
-  color: #9ad3b0;
-}
-.tv-footer-list b {
-  color: #ffd27a;
-}
-@keyframes progress {
-  from {
-    transform: scaleX(0);
-  }
-  to {
-    transform: scaleX(1);
-  }
-}
-@media (prefers-reduced-motion: reduce) {
-  .tv-mode #tv-progress {
-    animation: none;
-  }
 }
 .selector-details summary {
   font-weight: 600;
@@ -1743,3 +1566,210 @@ body.tv-mode .header-guide,
   background: var(--pale);
   box-shadow: inset 0 3px 0 var(--green);
 }
+
+/* ===== TV: jasny wygląd „tablica” — godzina, logo z adresem pełnego planu
+   i salami WF, kod QR w nagłówku; bez stopki, cała reszta to zastępstwa. */
+body.tv-mode {
+  --tv-head: 186px;
+}
+body.tv-mode .site-header {
+  height: var(--tv-head);
+  background: #fff;
+  border-bottom: 4px solid var(--green);
+  border-radius: 8px 8px 0 0;
+  color: var(--ink);
+}
+body.tv-mode .header-inner {
+  height: calc(var(--tv-head) - 4px);
+  padding: 10px 16px;
+  display: grid;
+  align-items: center;
+  gap: 6px 16px;
+  box-sizing: border-box;
+}
+body.tv-mode main {
+  height: calc(1920px - var(--tv-top) - var(--tv-bottom) - var(--tv-head));
+  max-height: calc(1920px - var(--tv-top) - var(--tv-bottom) - var(--tv-head));
+  background: var(--bg);
+  color: var(--ink);
+  padding: 12px 14px;
+  border-radius: 0 0 8px 8px;
+}
+body.tv-mode #tv-content.tvz {
+  height: 100%;
+}
+body.tv-mode .brand {
+  grid-area: brand;
+  min-width: 0;
+}
+body.tv-mode .brand img {
+  width: 100%;
+  height: auto;
+}
+body.tv-mode #tv-clock {
+  grid-area: clock;
+  height: auto;
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--ink);
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  white-space: nowrap;
+}
+.tvc-time {
+  font-weight: 700;
+  color: var(--dark);
+}
+body.tv-mode .tv-live {
+  float: none;
+  font-size: 18px;
+  background: var(--pale);
+  color: var(--dark);
+  border: 1px solid #b9d9c6;
+}
+/* Adres pełnego planu pod logo, kod QR osobno po prawej. */
+.tv-plan {
+  display: contents;
+}
+.tv-plan .tv-pe {
+  display: block;
+  white-space: normal;
+  margin-top: 2px;
+  font-size: 17px;
+  color: var(--ink);
+}
+.tv-plan .tv-pe b {
+  font-size: 17px;
+}
+.tv-plan p {
+  grid-area: url;
+  margin: 0;
+  font-size: 19px;
+  line-height: 1.25;
+  color: var(--muted);
+  text-align: center;
+  white-space: nowrap;
+}
+.tv-plan b {
+  font-size: 21px;
+  color: var(--ink);
+}
+body.tv-mode .tv-plan .tv-qr {
+  grid-area: qr;
+}
+body.tv-mode .tv-qr {
+  width: 150px;
+  height: 150px;
+  padding: 0;
+  border-radius: 0;
+  flex: none;
+}
+/* Karty — wspólne, jasne */
+body.tv-mode .tvz-teacher {
+  background: #fff;
+  border: 1px solid var(--line);
+}
+body.tv-mode .tvz-teacher h2 {
+  color: var(--dark);
+  border-bottom-color: var(--line);
+}
+body.tv-mode .tvz-row {
+  border-bottom-color: #e6ece9;
+}
+body.tv-mode .tvz-nr {
+  color: var(--green);
+}
+body.tv-mode .tvz-nr small,
+body.tv-mode .tvz-class small,
+body.tv-mode .tvz-room {
+  color: var(--muted);
+}
+body.tv-mode .tvz-subject {
+  color: #3d4f48;
+}
+body.tv-mode .tvz-effect.sub {
+  color: var(--ink);
+}
+body.tv-mode .tvz-effect.late {
+  color: #9a5b00;
+}
+body.tv-mode .tvz-effect.off {
+  color: #1d4ed8;
+}
+body.tv-mode .tvz-row.now {
+  background: #fff3bf;
+  box-shadow: inset 5px 0 0 #e0a800;
+}
+body.tv-mode .tvz-row.now .tvz-nr {
+  color: #8a5d00;
+}
+body.tv-mode .tvz-title {
+  background: #fde68a;
+  color: #3b2f00;
+}
+body.tv-mode .tv-empty {
+  color: var(--ink);
+}
+
+/* A — jasny pasek: logo, pod nim data; QR z adresem po prawej. */
+
+/* B — tablica: duża godzina, logo z adresem, QR; nauczyciel jako pasek. */
+body.tv-mode .header-inner {
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  grid-template-areas: "clock brand qr" "clock url qr";
+  gap: 4px 18px;
+}
+body.tv-mode .brand {
+  align-self: end;
+}
+body.tv-mode #tv-clock {
+  display: grid;
+  grid-template-columns: auto;
+  gap: 0;
+  font-size: 19px;
+  line-height: 1.2;
+}
+body.tv-mode .tvc-time {
+  font-size: 60px;
+  line-height: 1;
+}
+body.tv-mode .tv-live {
+  justify-self: start;
+  margin-top: 4px;
+  font-size: 16px;
+}
+body.tv-mode .tv-qr {
+  width: 136px;
+  height: 136px;
+}
+body.tv-mode .tv-plan p {
+  align-self: start;
+}
+body.tv-mode main {
+  background: #fff;
+}
+body.tv-mode .tvz-teacher {
+  border: 0;
+  padding: 0;
+  background: transparent;
+}
+body.tv-mode .tvz-teacher h2 {
+  background: var(--green);
+  color: #fff;
+  border: 0;
+  border-radius: 4px;
+  padding: calc(5px * var(--tv-scale)) calc(10px * var(--tv-scale));
+}
+body.tv-mode .tvz-teacher h2 span {
+  background: #fff;
+  color: var(--red);
+}
+body.tv-mode .tvz-row {
+  border-bottom: 0;
+}
+body.tv-mode .tvz-row:nth-child(even) {
+  background: #eef4f1;
+}
+
+/* C — kolorowe kafelki: najniższy nagłówek, każdy nieobecny w innym kolorze. */

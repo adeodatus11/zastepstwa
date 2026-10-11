@@ -43,8 +43,8 @@ function row({ from: s, to }: any, now: string) {
   const nr = s === to ? `${s.period}` : `${s.period}–${to.period}`;
   return `<li class="tvz-row${current ? " now" : ""}"><span class="tvz-nr${s === to ? "" : " range"}">${nr}<small>${esc(s.timeFrom)}–${esc(to.timeTo)}</small></span><span class="tvz-class">${esc(s.branch.className)}${s.branch.groupName ? `<small>${esc(s.branch.groupName)}</small>` : ""}</span><span class="tvz-subject">${esc(s.replacementSubject || s.subject)}</span><span class="tvz-effect ${kind}">${kind === "sub" ? "→ " : ""}${esc(effect)}</span><span class="tvz-room">${s.room ? `s.&nbsp;${esc(s.room)}` : ""}</span></li>`;
 }
-function teacher([name, rows]: [string, any[]], now: string) {
-  return `<section class="tvz-teacher"><h2><span>Nieobecność</span>${esc(name)}</h2><ol>${merge(
+function teacher([name, rows]: [string, any[]], now: string, i: number) {
+  return `<section class="tvz-teacher" data-i="${i % 6}"><h2><span>Nieobecność</span>${esc(name)}</h2><ol>${merge(
     rows,
   )
     .map((r) => row(r, now))
@@ -75,8 +75,11 @@ function fit(el: HTMLElement) {
       }
     if (lo > best.scale * 1.1) best = { cols, scale: lo };
   }
-  set(best.cols, best.scale || 0.3);
-  return best.scale;
+  // Kontrola końcowa: po zmianie kolumn układ bywa o włos wyższy.
+  let scale = best.scale || 0.3;
+  set(best.cols, scale);
+  while (!fits() && scale > 0.3) set(best.cols, (scale -= 0.01));
+  return scale;
 }
 // Dopasowanie do rzeczywistego ekranu: widok 1080×1920 skalowany i
 // wyśrodkowany w oknie; marginesy (ramka) z parametrów adresu, np.
@@ -117,7 +120,6 @@ function setupScreen() {
 export async function init() {
   let plan: any, changes: any, manifest: any;
   const content = document.getElementById("tv-content")!;
-  document.getElementById("tv-progress")?.remove();
   content.className = "tvz";
   setupScreen();
   // Zastępstwa dnia według nieobecnych, w kolejności pierwszej lekcji.
@@ -149,9 +151,12 @@ export async function init() {
       return;
     }
     // Inny dzień niż dziś: wyraźny tytuł, żeby nikt nie wziął go za dzisiejszy.
-    content.innerHTML = `${date === today() ? "" : `<h2 class="tvz-title">Zastępstwa na ${esc(dateLabel(date))}</h2>`}<div class="tvz-list">${groups.map((g) => teacher(g, date === today() ? now : "")).join("")}</div>`;
+    content.innerHTML = `${date === today() ? "" : `<h2 class="tvz-title">Zastępstwa na ${esc(dateLabel(date))}</h2>`}<div class="tvz-list">${groups.map((g, i) => teacher(g, date === today() ? now : "", i)).join("")}</div>`;
     fit(content.querySelector(".tvz-list") as HTMLElement);
   }
+  // Krój pogrubiony z polskimi znakami dociąga się dopiero, gdy pojawią się
+  // zastępstwa — tekst rośnie o kilka pikseli, więc dopasuj ponownie.
+  document.fonts?.addEventListener("loadingdone", () => show());
   await connect(["plan", "changes"], (d, m) => {
     plan = d.plan;
     changes = d.changes;
@@ -175,8 +180,9 @@ export async function init() {
           : time > (plan?.periods.at(-1)?.end || "20:00")
             ? "Po lekcjach"
             : "Przerwa";
+    const [day, date] = dateLabel(today()).split(", ");
     document.getElementById("tv-clock")!.innerHTML =
-      `${esc(dateLabel(today()))} · ${esc(time)} <span class="tv-live">${esc(status)}</span>`;
+      `<span class="tvc-time">${esc(time)}</span><span class="tvc-day">${esc(day)}</span><span class="tvc-date">${esc(date)}</span><span class="tv-live">${esc(status)}</span>`;
     if (time !== shown) show();
     shown = time;
   };
