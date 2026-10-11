@@ -29,6 +29,11 @@ Użytkownik aktualizuje zastępstwa sam na https://nauczyciel.szkolamistrzow.inf
        jako złączenie grup (także z inną klasą) — forma płatności `Bezpłatne`;
      - zastępca bez własnej lekcji z kilkoma grupami naraz — dokładnie jedna
        płatna, pozostałe `Bezpłatne` (dwie płatne i dwie bezpłatne to uwaga);
+     - sala zajęta — po przeniesieniach i zastępstwach w jednej sali na tej
+       samej lekcji jest dwóch różnych nauczycieli (dziennik tego nie pilnuje);
+       jeden nauczyciel z kilkoma grupami (złączenie) to nie błąd; sprawdzane
+       tylko lekcje ze zmianą, w okresie pliku zastępstw; lekcja bez zastępcy
+       albo „Przeniesiona” nie zajmuje sali;
      - zajęcia biblioteczne — `Bezpłatne`; Barbara Wrzeszcz i Ewa Zając zawsze
        mają zajęcia biblioteczne i zawsze `Bezpłatne`;
      - nauczyciel nieobecny jednego dnia z różnymi powodami (z zestawienia;

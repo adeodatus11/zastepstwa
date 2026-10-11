@@ -533,6 +533,145 @@ export function schoolRules(subs, moves, plan, overview) {
     ),
     ...(movedIn.get(slot) ?? []),
   ];
+
+  /**
+   * Sala zajęta przez dwóch różnych nauczycieli na tej samej lekcji — dziennik
+   * tego nie pilnuje. Plan dnia po przeniesieniach, zastępstwach i nieobecnych
+   * oddziałach; sprawdzane są tylko lekcje, których dotyczy jakaś zmiana.
+   * Jeden nauczyciel z kilkoma grupami (złączenie) w jednej sali jest w porządku.
+   */
+  function roomClashes() {
+    const index = new Map(),
+      ambiguous = new Set();
+    for (const l of plan.lessons)
+      l.roomIds.forEach((id, i) => {
+        const name = lower(l.roomNames[i]);
+        for (const c of [
+          lower(shortOf("rooms", id)),
+          name,
+          name.split(/[\s(]/)[0],
+        ])
+          if (c && index.has(c) && index.get(c) !== id) ambiguous.add(c);
+          else if (c) index.set(c, id);
+      });
+    const roomOf = (code) => {
+      const c = lower(code);
+      return !ambiguous.has(c) && index.get(c) ? index.get(c) : `?${c}`;
+    };
+    const roomLabel = (key) =>
+      key.startsWith("?") ? key.slice(1) : shortOf("rooms", key) || key;
+    const isInd = (r) => r["Oddział"].split("|").some(isIndividual);
+    const transfers = table(moves, "Oddziały")
+      .filter((r) => !isInd(r))
+      .map((r) => ({
+        r,
+        a: moveDate(r["Przeniesiono z"]),
+        b: moveDate(r["Przeniesiono na"]),
+      }))
+      .filter((m) => m.a && m.b);
+    const subRows = rows.filter((r) => !isInd(r) && rowDate(r["Dzień"]));
+    const touched = new Set([
+      ...subRows.map((r) => `${rowDate(r["Dzień"])}|${period(r["Lekcja"])}`),
+      ...transfers.flatMap(({ a, b }) => [
+        `${iso(a[1])}|${Number(a[2])}`,
+        `${iso(b[1])}|${Number(b[2])}`,
+      ]),
+    ]);
+    // Lekcje nauczyciela t z danej klasy (albo w danej sali) w tym czasie.
+    const mine = (occ, t, code, room) => {
+      const names = classNames(code.split("|")[0]);
+      const own = occ.filter((o) => o.teachers.has(t));
+      const hit = own.filter(
+        (o) => o.classNames.some((c) => names.has(c)) || o.room === room,
+      );
+      return hit.length ? hit : own.length === 1 ? own : [];
+    };
+    const out = [];
+    // Poza okresem pliku zastępstw nie wiadomo, kto jest nieobecny.
+    const span = periodOf(subs);
+    for (const slot of [...touched].sort()) {
+      const [date, ps] = slot.split("|"),
+        p = Number(ps),
+        pl = plDate(date);
+      if (!span || date < span.from || date > span.to) continue;
+      const day = new Date(date + "T12:00:00Z").getUTCDay();
+      let occ = plan.lessons
+        .filter(
+          (l) => l.day === day && l.period === p && !classAway(l, date, p),
+        )
+        .flatMap((l) =>
+          l.roomIds.map((id) => ({
+            teachers: new Set(l.teacherNames.map(personKey)),
+            who: l.teacherNames.join(", "),
+            what: `${l.classNames.join("/")}${l.groupNames.join("/") === "Cała klasa" ? "" : ` ${l.groupNames.join("/")}`}, ${l.subject}`,
+            classNames: l.classNames,
+            room: id,
+            changed: false,
+          })),
+        );
+      for (const { r, a, b } of transfers) {
+        const t = who(r["Nauczyciel/wakat"]);
+        const from = a[1] === pl && Number(a[2]) === p,
+          to = b[1] === pl && Number(b[2]) === p;
+        if (from) {
+          const gone = new Set(mine(occ, t, r["Oddział"], roomOf(a[3])));
+          occ = occ.filter((o) => !gone.has(o));
+        }
+        if (to)
+          occ.push({
+            teachers: new Set([t]),
+            who: r["Nauczyciel/wakat"],
+            what: `${r["Oddział"]}, ${r["Przedmiot"]}, ${from ? "zmiana sali" : `przeniesienie z ${a[1]}, lekcja ${a[2]}`}`,
+            classNames: [...classNames(r["Oddział"].split("|")[0])],
+            room: roomOf(b[3]),
+            changed: true,
+          });
+      }
+      for (const r of subRows) {
+        if (rowDate(r["Dzień"]) !== date || period(r["Lekcja"]) !== p) continue;
+        const gone = new Set(
+          mine(
+            occ,
+            who(r["Nauczyciel/wakat"]),
+            r["Oddział"],
+            roomOf(r["Sala"]),
+          ),
+        );
+        occ = occ.filter((o) => !gone.has(o));
+        // Odwołana albo jeszcze bez zastępcy (tej nie publikujemy) — sala wolna.
+        const sub = r["Zastępca"];
+        if (!clean(r["Sala"]) || isMessage(sub) || /^przeniesion/i.test(sub))
+          continue;
+        occ.push({
+          teachers: new Set([who(sub)]),
+          who: sub,
+          what: `${r["Oddział"]}, ${r["Przedmiot"]}, zastępstwo`,
+          classNames: [...classNames(r["Oddział"].split("|")[0])],
+          room: roomOf(r["Sala"]),
+          changed: true,
+        });
+      }
+      const byRoom = new Map();
+      for (const o of occ)
+        byRoom.set(o.room, [...(byRoom.get(o.room) ?? []), o]);
+      for (const [room, here] of byRoom) {
+        const clash = here.some((x) =>
+          here.some(
+            (y) =>
+              (x.changed || y.changed) &&
+              ![...x.teachers].some((t) => y.teachers.has(t)),
+          ),
+        );
+        if (clash)
+          out.push({
+            level: "warn",
+            group: "Sala zajęta",
+            text: `${pl}, lekcja ${p}, sala ${roomLabel(room)}: kilku nauczycieli naraz — ${[...new Set(here.map((o) => `${o.who} (${o.what})`))].join("; ")}. W jednej sali może być tylko jeden nauczyciel (złączenie grup u jednego nauczyciela jest w porządku).`,
+          });
+      }
+    }
+    return out;
+  }
   // Zastępstwa jednej osoby na tej samej lekcji oceniamy razem (kilka grup naraz).
   const groups = new Map();
   for (const r of rows) {
@@ -645,6 +784,7 @@ export function schoolRules(subs, moves, plan, overview) {
       }
     }
   }
+  out.push(...roomClashes());
   // Ten sam nauczyciel tego samego dnia nieobecny z różnych powodów.
   for (const r of table(overview, MIXED))
     out.push({
