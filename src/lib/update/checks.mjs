@@ -502,6 +502,37 @@ export function schoolRules(subs, moves, plan, overview) {
         lower(b[3]),
       );
   }
+  // Przeniesienie na inny termin: lekcja z planu znika ze swojego miejsca
+  // (nauczyciel jest wtedy wolny) i odbywa się w nowym (wtedy jest zajęty).
+  const movedOut = new Map(),
+    movedIn = new Map();
+  const add = (map, k, v) => map.set(k, [...(map.get(k) ?? []), v]);
+  for (const r of table(moves, "Oddziały")) {
+    const a = moveDate(r["Przeniesiono z"]),
+      b = moveDate(r["Przeniesiono na"]);
+    if (!a || !b || (a[1] === b[1] && a[2] === b[2])) continue;
+    const t = who(r["Nauczyciel/wakat"]),
+      [code, group = ""] = r["Oddział"].split("|"),
+      names = classNames(code);
+    add(movedOut, [t, a[1], Number(a[2])].join("|"), names);
+    add(movedIn, [t, b[1], Number(b[2])].join("|"), {
+      teacherNames: [],
+      classNames: names.size ? [...names] : [code],
+      groupNames: [group || "Cała klasa"],
+      roomIds: [""],
+      roomNames: [b[3]],
+      subject: r["Przedmiot"],
+    });
+  }
+  const scheduled = (slot, k) => [
+    ...(slots.get(k) ?? []).filter(
+      (l) =>
+        !(movedOut.get(slot) ?? []).some((names) =>
+          l.classNames.some((c) => names.has(c)),
+        ),
+    ),
+    ...(movedIn.get(slot) ?? []),
+  ];
   // Zastępstwa jednej osoby na tej samej lekcji oceniamy razem (kilka grup naraz).
   const groups = new Map();
   for (const r of rows) {
@@ -545,7 +576,7 @@ export function schoolRules(subs, moves, plan, overview) {
     const day = new Date(date + "T12:00:00Z").getUTCDay();
     const planned = freed.has(slot)
       ? []
-      : (slots.get([who(sub), day, p].join("|")) ?? []);
+      : scheduled(slot, [who(sub), day, p].join("|"));
     const busy = planned.filter((l) => !classAway(l, date, p));
     const away = planned.filter((l) => classAway(l, date, p));
     const isMarked = (r) =>
