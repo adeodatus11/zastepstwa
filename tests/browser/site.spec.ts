@@ -167,35 +167,117 @@ test("Read failure retains last snapshot and recovery works", async ({
     "Dane opublikowane",
   );
 });
-test("TV completes two accelerated rotations without clipping any panel", async ({
+// TV pokazuje same zastępstwa według nieobecnych nauczycieli. Dane podstawione
+// w teście, żeby nie zależały od opublikowanej paczki.
+const tvPeriods = [
+  ["08:00", "08:45"],
+  ["08:50", "09:35"],
+  ["09:40", "10:25"],
+  ["10:35", "11:20"],
+  ["11:25", "12:10"],
+  ["12:25", "13:10"],
+  ["13:15", "14:00"],
+  ["14:05", "14:50"],
+  ["14:55", "15:40"],
+  ["15:45", "16:30"],
+  ["16:35", "17:20"],
+];
+const tvSub = (
+  date: string,
+  absent: string,
+  period: number,
+  className: string,
+  substitute: string,
+  kind = "teacher_substitution",
+) => ({
+  date,
+  period,
+  timeFrom: tvPeriods[period - 1][0],
+  timeTo: tvPeriods[period - 1][1],
+  branch: { raw: className, className, groupName: "" },
+  subject: "Zajęcia praktyczne - projektowanie i wykonywanie fryzur",
+  replacementSubject: "Zajęcia praktyczne - projektowanie i wykonywanie fryzur",
+  absentTeacherName: absent,
+  substituteTeacherName: substitute,
+  rawSubstituteLabel: substitute,
+  kind,
+  room: "31",
+});
+async function tvWith(page: any, substitutions: any[], time: string) {
+  await page.setViewportSize({ width: 1080, height: 1920 });
+  await page.route(/\/data\/changes\..*\.json/, async (route: any) => {
+    const response = await route.fetch();
+    const json = await response.json();
+    route.fulfill({ response, json: { ...json, substitutions } });
+  });
+  await page.clock.install({ time: new Date(time) });
+  await page.goto("/tv.html");
+}
+const fitsOnScreen = (page: any) =>
+  page
+    .locator(".tvz-list")
+    .evaluate(
+      (l: HTMLElement) =>
+        l.scrollHeight <= l.clientHeight && l.scrollWidth <= l.clientWidth,
+    );
+test("TV shows only substitutions, grouped by absent teacher", async ({
   page,
 }) => {
-  await page.setViewportSize({ width: 1080, height: 1920 });
-  await page.clock.install({ time: new Date("2026-09-07T08:00:00+02:00") });
-  await page.goto("/tv.html");
-  await expect(page.locator(".tv-card")).not.toHaveCount(0);
+  await tvWith(
+    page,
+    [
+      tvSub("2026-10-12", "Anna Nowak", 1, "1A", "Jan Kowalski"),
+      tvSub("2026-10-12", "Anna Nowak", 4, "2B", "Ewa Zielińska"),
+      tvSub("2026-10-12", "Anna Nowak", 5, "2B", "Ewa Zielińska"),
+      tvSub("2026-10-12", "Anna Nowak", 6, "2B", "Ewa Zielińska"),
+      tvSub("2026-10-12", "Piotr Wiśniewski", 3, "3C", "", "late"),
+      tvSub("2026-10-13", "Inna Osoba", 2, "4D", "Jan Kowalski"),
+    ],
+    "2026-10-12T09:00:00+02:00",
+  );
+  await expect(page.locator(".tvz-teacher")).toHaveCount(2);
+  await expect(page.locator(".tv-card")).toHaveCount(0);
   if (test.info().project.name === "chromium")
     await page.screenshot({ path: "reports/screens/tv-1080.png" });
-  const sequence = new Set<string>();
-  let rotations = 0,
-    first = await page.locator("#tv-content").innerText();
-  for (let i = 0; i < 350; i++) {
-    const content = await page.locator("#tv-content").innerText();
-    if (i > 0 && content === first) {
-      rotations++;
-      if (rotations === 2) break;
-    }
-    sequence.add(content);
-    const overflow = await page
-      .locator(".tv-card")
-      .evaluateAll((nodes) =>
-        nodes.some((n) => n.scrollHeight > n.clientHeight + 1),
-      );
-    expect(overflow, `TV slide ${i}`).toBe(false);
-    await page.clock.fastForward(10000);
-  }
-  expect(rotations).toBe(2);
-  expect(sequence.size).toBeGreaterThan(1);
+  const anna = page.locator(".tvz-teacher", { hasText: "Anna Nowak" });
+  // Lekcja 1 już się skończyła; 4–6 z tym samym zastępcą to jeden wiersz.
+  await expect(anna.locator(".tvz-row")).toHaveCount(1);
+  await expect(anna).toContainText("4–6");
+  await expect(anna).toContainText("→ Ewa Zielińska");
+  // Kolejność kart: według pierwszej pozostałej lekcji.
+  await expect(page.locator(".tvz-teacher").first()).toContainText(
+    "Piotr Wiśniewski",
+  );
+  await expect(page.locator(".tvz-teacher").first()).toContainText(
+    "Przychodzą później",
+  );
+  await expect(page.locator(".tvz-row.now")).toHaveCount(0);
+  await page.clock.fastForward("01:00:00");
+  await expect(page.locator(".tvz-row.now")).toHaveCount(1);
+  // Inny dzień nie trafia na dzisiejszy ekran.
+  await expect(page.locator("#tv-content")).not.toContainText("Inna Osoba");
+  expect(await fitsOnScreen(page)).toBe(true);
+  await expect(page.locator(".tv-footer")).toContainText(
+    "www.plan.szkolamistrzow.info",
+  );
+  await expect(page.locator(".tv-footer .tv-qr")).toBeVisible();
+});
+test("TV after the last substitution shows the next day with a title", async ({
+  page,
+}) => {
+  await tvWith(
+    page,
+    [
+      tvSub("2026-10-12", "Anna Nowak", 1, "1A", "Jan Kowalski"),
+      tvSub("2026-10-13", "Inna Osoba", 2, "4D", "Jan Kowalski"),
+    ],
+    "2026-10-12T12:00:00+02:00",
+  );
+  await expect(page.locator(".tvz-title")).toContainText(
+    "Zastępstwa na wtorek, 13 października",
+  );
+  await expect(page.locator(".tvz-teacher")).toHaveCount(1);
+  await expect(page.locator(".tvz-teacher")).toContainText("Inna Osoba");
 });
 test("Text zoom 200% remains inside viewport, print retains schedule", async ({
   page,
@@ -268,29 +350,29 @@ test("Malformed first load can be retried without losing page controls", async (
   );
   await expect(page.locator("#entity option")).not.toHaveCount(0);
 });
-for (const date of ["2026-09-08", "2026-09-09", "2026-09-10", "2026-09-11"])
-  test(`TV all panels fit on ${date}`, async ({ page }) => {
-    await page.setViewportSize({ width: 1080, height: 1920 });
-    await page.clock.install({ time: new Date(`${date}T08:00:00+02:00`) });
-    await page.goto("/tv.html");
-    await expect(page.locator(".tv-card")).not.toHaveCount(0);
-    const first = await page.locator("#tv-content").innerText();
-    let complete = false;
-    for (let i = 0; i < 180; i++) {
-      if (i > 0 && (await page.locator("#tv-content").innerText()) === first) {
-        complete = true;
-        break;
-      }
-      const clipped = await page
-        .locator(".tv-card")
-        .evaluateAll((nodes) =>
-          nodes.some((n) => n.scrollHeight > n.clientHeight + 1),
-        );
-      expect(clipped, `${date} slide ${i}`).toBe(false);
-      await page.clock.fastForward(10000);
-    }
-    expect(complete).toBe(true);
-  });
+test("TV fits a heavy day on one screen without scrolling", async ({
+  page,
+}) => {
+  const heavy = Array.from({ length: 15 }, (_, t) =>
+    Array.from({ length: 7 }, (_, k) =>
+      tvSub(
+        "2026-10-15",
+        `Nauczycielka Nieobecna ${t + 1}`,
+        1 + ((t + k * 2) % 11),
+        `${1 + (k % 4)}TF${"ABCDE"[t % 5]}`,
+        `Zastępczyni Długiego Nazwiska-Dwuczłonowa ${k}`,
+      ),
+    ),
+  ).flat();
+  await tvWith(page, heavy, "2026-10-15T07:30:00+02:00");
+  await expect(page.locator(".tvz-teacher")).toHaveCount(15);
+  await expect(page.locator(".tvz-row")).toHaveCount(105);
+  expect(await fitsOnScreen(page)).toBe(true);
+  await expect(page.locator(".tv-footer")).toBeVisible();
+  // Nic nie wychodzi poza ekran 1080×1920.
+  const box = await page.locator(".tv-footer").boundingBox();
+  expect(box!.y + box!.height).toBeLessThanOrEqual(1920);
+});
 
 test("Timetable aligns lesson slots and duty replacements retain source details", async ({
   page,
@@ -344,7 +426,7 @@ test("TV hides the site menu on wide screens", async ({ page }) => {
     await page.goto("/tv.html");
     await expect(page.locator("#navigation")).toBeHidden();
     await expect(page.locator(".site-header .header-guide")).toBeHidden();
-    await expect(page.locator(".site-header .tv-qr")).toBeVisible();
+    await expect(page.locator(".tv-footer .tv-qr")).toBeVisible();
   }
 });
 test("Update page: checks the package and commits only the provided files", async ({

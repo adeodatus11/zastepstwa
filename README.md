@@ -65,6 +65,7 @@ Dyżury nadzoru po ostatnim tygodniu z arkusza nie są przedstawiane jako aktual
 
 - Astro: wspólny szablon stron i statyczny HTML. Lokalny Source Sans 3 oraz logo optymalizowane do WebP.
 - `src/lib/model.mjs`: wspólny model planu i zmian, używany także przez TV.
+- `src/lib/tv.ts`: ekran TV (`tv.html`, pion 1080×1920). Pokazuje wyłącznie zastępstwa danego dnia, pogrupowane według nieobecnych nauczycieli, wszystkie naraz — bez slajdów i bez przewijania: sam dobiera 1–3 kolumny i wielkość czcionki. Kolejne lekcje z tą samą klasą, zastępcą i salą łączą się w jeden wiersz, zakończone znikają, a po ostatnim zastępstwie dnia (i w weekend) widać najbliższy dzień z zastępstwami. Uwag z dziennika ani form płatności TV nie pokazuje. Stopka zawsze: adres pełnego planu i kod QR.
 - `scripts/build/data.mjs`: import, kontrola wejścia, wersjonowane JSON i manifest. Python odpowiada za istniejącą logikę kalendarza.
 - `src/lib/data.ts`: odświeżenie co dwie minuty i po powrocie na kartę, kontrola schematu, ostatnia działająca wersja przy awarii.
 - Wspólny CSS: progi 768 i 1200 px. Na telefonie podstawowy plan jest dzienny; tydzień przewija się wyłącznie we własnym obszarze.
