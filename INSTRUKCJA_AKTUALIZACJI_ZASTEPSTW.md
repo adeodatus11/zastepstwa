@@ -38,7 +38,10 @@ Użytkownik aktualizuje zastępstwa sam na https://nauczyciel.szkolamistrzow.inf
    Złączenie rozpoznawane jest po frazie `złączenie grup` w uwagach, po skutku
    „Złączenie grup” w zestawieniu albo po tym, że zastępca ma w planie własną
    lekcję w tym czasie (i nie jest z niej zwolniony w tym samym eksporcie, a jego
-   oddział nie jest nieobecny). Gdy oddział zastępcy jest nieobecny (np. wycieczka),
+   oddział nie jest nieobecny). Własne lekcje zastępcy liczą się po
+   przeniesieniach z pliku przeniesień: lekcja przeniesiona na inny termin
+   zwalnia go w pierwotnym miejscu, a przeniesiona na tę godzinę go zajmuje.
+   Gdy oddział zastępcy jest nieobecny (np. wycieczka),
    zastępca jest wolny, a jego zastępstwo ma być `Godzina do zliczenia` — każda
    inna forma płatności daje uwagę „Oddział nieobecny” (decyzja użytkownika
    z 04.10.2026). Bez zbiorczego zestawienia kontrola nie wie o wycieczkach,
