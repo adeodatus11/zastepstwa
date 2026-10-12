@@ -39,6 +39,12 @@ const phoneLogo = await getImage({
   format: "webp",
 });
 const guide = "/przewodnik.html";
+// TV: logo nie jest linkiem. Przeglądarka telewizora ustawia kursor pilota na
+// pierwszym linku, przybliża go i przewija do niego — obraz się przesuwał.
+const Brand = tv ? "div" : "a";
+const brandProps = tv
+  ? {}
+  : { href: "/index.html", "aria-label": "Szkoła Mistrzów — pulpit" };
 const menu = [
   ["Pulpit", "/index.html"],
   ["Plan", "/plan.html"],
@@ -79,10 +85,7 @@ const menu = [
     ><a class="skip" href="#tresc">Przejdź do treści</a>
     <header class="site-header">
       <div class="header-inner">
-        <a
-          class="brand"
-          href="/index.html"
-          aria-label="Szkoła Mistrzów — pulpit"
+        <Brand class="brand" {...brandProps}
           >{
             tv ? (
               <Image
@@ -118,7 +121,7 @@ const menu = [
                 </>
               </picture>
             )
-          }</a
+          }</Brand
         >{
           tv && (
             <>
