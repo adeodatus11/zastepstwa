@@ -62,8 +62,9 @@ function fit(el: HTMLElement) {
   };
   let best = { cols: 1, scale: 0 };
   for (const cols of [1, 2, 3]) {
+    // Mało zastępstw: czcionka rośnie (do 1,6×), żeby wypełnić ekran.
     let lo = 0.3,
-      hi = 1;
+      hi = 1.6;
     set(cols, hi);
     if (fits()) lo = hi;
     else

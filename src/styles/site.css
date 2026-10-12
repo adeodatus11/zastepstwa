@@ -1069,12 +1069,14 @@ th {
   overflow: hidden;
   background: #000;
   color: #fff;
-  /* Telewizor na korytarzu powiększa obraz i ucina ok. 85 px z boków oraz
-     ok. 150 px u góry i u dołu (zdjęcie z 28.09.2026), stąd szeroka ramka. */
-  --tv-top: 185px;
-  --tv-bottom: 185px;
-  --tv-left: 110px;
-  --tv-right: 110px;
+  /* Ramka na brzeg ekranu telewizora na korytarzu. Zdjęcie z 12.10.2026
+     (pomiar położenia kart): obraz jest przesunięty w górę — ekran pokazuje
+     stronę od ok. 213 px w dół, a dół strony mieści się z zapasem; z boków
+     widać więcej niż 110–970 px. Stąd duży margines u góry, mały na dole. */
+  --tv-top: 240px;
+  --tv-bottom: 30px;
+  --tv-left: 70px;
+  --tv-right: 70px;
   padding: var(--tv-top) var(--tv-right) var(--tv-bottom) var(--tv-left);
   box-sizing: border-box;
   display: flex;
