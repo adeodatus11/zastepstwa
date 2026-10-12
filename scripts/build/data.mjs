@@ -1,4 +1,5 @@
 import { assertPayload, validDate } from "../../src/lib/schema.mjs";
+import { retime } from "../../src/lib/model.mjs";
 import fs from "node:fs/promises";
 import path from "node:path";
 import vm from "node:vm";
@@ -319,6 +320,37 @@ for (const sheetName of w.SheetNames) {
 if (!supervisionWeeks.length)
   throw Error("Brak grafiku nadzoru (arkusz „grafik RRRR-MM-DD”)");
 supervisionWeeks.sort((x, y) => x.from.localeCompare(y.from));
+const specialDays = config.specialDays || {};
+for (const [date, d] of Object.entries(specialDays)) {
+  if (!validDate(date) || typeof d?.title !== "string" || !d.title)
+    throw Error(`specialDays: „${date}” wymaga daty RRRR-MM-DD i tytułu`);
+  for (const [n, t] of Object.entries(d.periods || {}))
+    if (
+      !periods.some((p) => p.number === +n) ||
+      !/^\d{1,2}:\d{2}-\d{1,2}:\d{2}$/.test(t)
+    )
+      throw Error(
+        `specialDays ${date}: lekcja ${n} „${t}” (oczekiwane GG:MM-GG:MM)`,
+      );
+}
+// Eksport dziennika podaje standardowe godziny także w dniu skróconych lekcji.
+const timed = { periods, specialDays };
+const shift = (o, date, from, to) => {
+  if (!o?.[from] || !o?.[to]) return;
+  const t = retime(timed, date, o[from], o[to]);
+  o[from] = t.start;
+  o[to] = t.end;
+};
+for (const s of changes.substitutions) shift(s, s.date, "timeFrom", "timeTo");
+for (const e of changes.transfers)
+  for (const side of [e.from, e.to])
+    shift(side, side?.date, "timeFrom", "timeTo");
+for (const e of changes.dutyChanges) {
+  const [start, end] = (e.time.match(/\d{1,2}:\d{2}/g) || []).map(pad);
+  if (!start || !end) continue;
+  const t = retime(timed, e.date, start, end);
+  if (t.start !== start || t.end !== end) e.time = `${t.start}-${t.end}`;
+}
 for (const date of Object.keys(config.supervisionNotes || {}))
   if (!validDate(date))
     throw Error(`supervisionNotes: klucz „${date}” musi być datą RRRR-MM-DD`);
@@ -358,6 +390,7 @@ const payloads = {
     duties,
     aliases,
     shorts,
+    specialDays,
   },
   changes,
   calendar,

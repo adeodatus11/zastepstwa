@@ -15,6 +15,8 @@ import {
   esc,
   norm,
   dateLabel,
+  specialDay,
+  periodsOn,
 } from "./model.mjs";
 export const labels: Record<string, string> = {
   base: "",
@@ -196,6 +198,15 @@ export async function init() {
           esc(pub.validTo) +
           "</p>";
     const dates = list ? [date] : view === "week" ? week(date) : [date];
+    get("validity").innerHTML += dates
+      .filter((d) => d >= pub.validFrom && d <= pub.validTo)
+      .map((d) => [d, specialDay(plan, d)] as const)
+      .filter(([, s]) => s)
+      .map(
+        ([d, s]: any) =>
+          `<p class="notice"><strong>${esc(dateLabel(d))}: ${esc(s.title)}</strong>${s.note ? `<br>${esc(s.note)}` : ""}</p>`,
+      )
+      .join("");
     printHeading(dates);
     const days = dates.map((d) => ({
       date: d,
@@ -211,7 +222,9 @@ export async function init() {
     get("schedule").innerHTML = list
       ? changesHTML(
           days[0].rows,
-          date < pub.validFrom || date > pub.validTo
+          date < pub.validFrom ||
+            date > pub.validTo ||
+            specialDay(plan, date)?.dayOff
             ? []
             : changes.dutyChanges.filter((d: any) => d.date === date),
           date,
@@ -219,8 +232,26 @@ export async function init() {
           link,
         )
       : timetableHTML(
-          days,
-          plan.periods,
+          // Tydzień ma jeden rozkład godzin: wpisy dnia ze zmienionymi
+          // godzinami trafiają do zwykłych wierszy i podają godziny w uwadze.
+          dates.length > 1
+            ? days.map((d) => ({
+                ...d,
+                rows: d.rows.map((l: any) =>
+                  l.baseStart
+                    ? {
+                        ...l,
+                        start: l.baseStart,
+                        end: l.baseEnd,
+                        note: [`Tego dnia ${l.start}–${l.end}`, l.note]
+                          .filter(Boolean)
+                          .join(" · "),
+                      }
+                    : l,
+                ),
+              }))
+            : days,
+          periodsOn(plan, dates.length > 1 ? "" : dates[0]),
           get("selection-title").textContent || "Plan lekcji",
           link,
         );

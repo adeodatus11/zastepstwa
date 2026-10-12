@@ -1,5 +1,13 @@
 import { connect } from "./data";
-import { addDays, dayOf, today, dateLabel, esc } from "./model.mjs";
+import {
+  addDays,
+  dayOf,
+  today,
+  dateLabel,
+  esc,
+  specialDay,
+  periodsOn,
+} from "./model.mjs";
 // Telewizor pokazuje wyłącznie zastępstwa, pogrupowane według nieobecnych
 // nauczycieli — wszystko naraz, bez slajdów. Zakończone lekcje znikają;
 // gdy na dziś nic nie zostało, ekran pokazuje najbliższy dzień z zastępstwami.
@@ -181,17 +189,18 @@ export async function init() {
   let shown = "";
   const clock = () => {
     const time = nowTime();
-    const period = plan?.periods.find(
-      (p: any) => p.start <= time && p.end > time,
-    );
-    const weekend = [0, 6].includes(dayOf(today()));
+    const periods = plan ? periodsOn(plan, today()) : [];
+    const period = periods.find((p: any) => p.start <= time && p.end > time);
+    const weekend =
+      [0, 6].includes(dayOf(today())) ||
+      (!!plan && !!specialDay(plan, today())?.dayOff);
     const status = weekend
       ? "Dzień wolny"
       : period
         ? `Trwa lekcja ${period.number}`
-        : time < (plan?.periods[0]?.start || "08:00")
+        : time < (periods[0]?.start || "08:00")
           ? "Przed lekcjami"
-          : time > (plan?.periods.at(-1)?.end || "20:00")
+          : time > (periods.at(-1)?.end || "20:00")
             ? "Po lekcjach"
             : "Przerwa";
     const [day, date] = dateLabel(today()).split(", ");

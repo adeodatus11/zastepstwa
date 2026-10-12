@@ -84,10 +84,45 @@ export const selected = (l, type, id, plan) =>
       : type === "duty"
         ? l.place === id
         : l.roomNames.includes(plan.rooms[id]);
+// Jednorazowa organizacja dnia z publication.json (specialDays): skrócone
+// lekcje („8”: „14:05-14:35”) albo dzień wolny od zajęć (dayOff).
+export const specialDay = (plan, date) => plan.specialDays?.[date] || null;
+export function periodsOn(plan, date) {
+  const times = specialDay(plan, date)?.periods;
+  if (!times) return plan.periods;
+  return plan.periods.map((p) => {
+    const t = times[p.number]?.match(/\d{1,2}:\d{2}/g);
+    return t
+      ? { ...p, start: t[0].padStart(5, "0"), end: t[1].padStart(5, "0") }
+      : p;
+  });
+}
+// Godziny ze standardowego rozkładu → rozkład dnia: lekcja po numerze,
+// przerwa (dyżur) po lekcji, przed którą się kończy. Inne godziny bez zmian.
+export function retime(plan, date, start, end) {
+  const base = plan.periods,
+    day = periodsOn(plan, date);
+  if (day === base) return { start, end };
+  const i = base.findIndex((p) => p.start === start && p.end === end);
+  if (i >= 0) return { start: day[i].start, end: day[i].end };
+  const j = base.findIndex((p) => p.start === end);
+  if (j > 0 && base[j - 1].end === start)
+    return { start: day[j - 1].end, end: day[j].start };
+  if (j === 0) return { start, end: day[0].start };
+  return { start, end };
+}
+const shifted = (plan, date, l) => {
+  const t = retime(plan, date, l.start, l.end);
+  return t.start === l.start && t.end === l.end
+    ? l
+    : { ...l, ...t, baseStart: l.start, baseEnd: l.end };
+};
 export function daily(plan, changes, date, mode = "changes") {
+  if (specialDay(plan, date)?.dayOff) return [];
+  const periods = periodsOn(plan, date);
   let result = plan.lessons
     .filter((l) => l.day === dayOf(date))
-    .map((l) => ({ ...l, status: "base" }));
+    .map((l) => ({ ...shifted(plan, date, l), status: "base" }));
   if (mode === "changes") {
     for (const e of changes.transfers || []) {
       const originals = plan.lessons.filter(
@@ -113,7 +148,7 @@ export function daily(plan, changes, date, mode = "changes") {
           teacherIds: [e.teacherId].filter(Boolean),
           teacherNames: [e.teacherName],
         };
-        const p = plan.periods.find((p) => p.number === e.to.period);
+        const p = periods.find((p) => p.number === e.to.period);
         result.push({
           ...base,
           id: `${base.id}-in-${e.to.date}-${e.to.period}`,
@@ -148,7 +183,7 @@ export function daily(plan, changes, date, mode = "changes") {
         groupNames: [e.branch.groupName].filter(Boolean),
         roomNames: [],
       };
-      const p = plan.periods.find((p) => p.number === e.period);
+      const p = periods.find((p) => p.number === e.period);
       result.push({
         ...base,
         id: `${base.id}-sub-${e.absentTeacherId}-${result.length}`,
@@ -173,7 +208,7 @@ export function daily(plan, changes, date, mode = "changes") {
   const duties = plan.duties
     .filter((d) => d.day === dayOf(date))
     .map((d) => ({
-      ...d,
+      ...shifted(plan, date, d),
       status: "duty",
       subject: "Dyżur",
       teacherIds: [d.teacherId],
@@ -213,6 +248,20 @@ export function daily(plan, changes, date, mode = "changes") {
         note: `Za: ${e.absentTeacherName}. ${e.note || ""}`,
       });
     }
+  // Zastępstwa i przeniesienia mają już godziny dnia; tydzień układa je
+  // jednak w wierszach standardowego rozkładu.
+  result = result.map((l) => {
+    const b = plan.periods.find((p) => p.number === l.period),
+      d = periods.find((p) => p.number === l.period);
+    return !l.baseStart &&
+      b &&
+      d &&
+      d !== b &&
+      l.start === d.start &&
+      l.end === d.end
+      ? { ...l, baseStart: b.start, baseEnd: b.end }
+      : l;
+  });
   return [...result, ...duties].sort(
     (a, b) =>
       a.start.localeCompare(b.start) ||

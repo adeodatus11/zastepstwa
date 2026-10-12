@@ -19,6 +19,7 @@ async function fixture() {
   await fs.mkdir(path.join(dir, "src/content"), { recursive: true });
   await fs.mkdir(path.join(dir, "src/lib"), { recursive: true });
   await fs.copyFile("src/lib/schema.mjs", path.join(dir, "src/lib/schema.mjs"));
+  await fs.copyFile("src/lib/model.mjs", path.join(dir, "src/lib/model.mjs"));
   await fs.copyFile(
     "src/content/specialists.json",
     path.join(dir, "src/content/specialists.json"),

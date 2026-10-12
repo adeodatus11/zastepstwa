@@ -15,6 +15,7 @@ import {
   tvPages,
   tvDayPages,
   excerpt,
+  retime,
 } from "../src/lib/model.mjs";
 const manifest = JSON.parse(fs.readFileSync("public/data/manifest.json"));
 const plan = JSON.parse(fs.readFileSync("public" + manifest.files.plan));
@@ -97,7 +98,10 @@ test("Every transfer produces a target event in its destination day/room", () =>
   }
 });
 test("Every deputy duty retained, including person not present in base timetable", () => {
-  for (const e of changes.dutyChanges)
+  // Dzień wolny od zajęć (specialDays.dayOff) nie ma lekcji ani dyżurów.
+  for (const e of changes.dutyChanges.filter(
+    (e) => !plan.specialDays?.[e.date]?.dayOff,
+  ))
     assert.ok(
       daily(plan, changes, e.date).some(
         (l) =>
@@ -318,4 +322,66 @@ test("Announcement excerpt skips salutations, headings and lists", () => {
       `komunikat ${file} musi dać zajawkę na pulpit`,
     );
   }
+});
+test("Special days: shortened periods from lesson 8 and a day off", () => {
+  const config = JSON.parse(fs.readFileSync("publication.json"));
+  assert.deepEqual(plan.specialDays, config.specialDays || {});
+  for (const [date, day] of Object.entries(plan.specialDays)) {
+    const rows = daily(plan, changes, date);
+    if (day.dayOff) {
+      assert.equal(rows.length, 0, date);
+      assert.equal(daily(plan, changes, date, "base").length, 0, date);
+      continue;
+    }
+    const times = Object.fromEntries(
+      Object.entries(day.periods || {}).map(([n, t]) => [n, t.split("-")]),
+    );
+    for (const l of rows.filter((l) => times[l.period] && !l.change?.to)) {
+      assert.deepEqual(
+        [l.start, l.end],
+        times[l.period],
+        `${date} ${l.period}`,
+      );
+      // Widok tygodnia układa wpis w wierszu standardowej lekcji.
+      const p = plan.periods.find((p) => p.number === l.period);
+      assert.deepEqual([l.baseStart, l.baseEnd], [p.start, p.end]);
+    }
+    // Lekcje spoza zmiany zostają przy standardowych godzinach.
+    for (const l of rows.filter((l) => l.period && !times[l.period])) {
+      const p = plan.periods.find((p) => p.number === l.period);
+      if (!l.change) assert.deepEqual([l.start, l.end], [p.start, p.end]);
+    }
+    // Dyżury na przerwach: koniec przerwy = początek kolejnej lekcji dnia.
+    const starts = new Set(
+      plan.periods.map((p) => (times[p.number] ? times[p.number][0] : p.start)),
+    );
+    for (const d of rows.filter((l) => l.status === "duty" && l.end >= "14:05"))
+      assert.ok(starts.has(d.end), `Dyżur ${d.start}–${d.end} poza przerwą`);
+    for (const s of changes.substitutions.filter(
+      (s) => s.date === date && times[s.period],
+    ))
+      assert.deepEqual([s.timeFrom, s.timeTo], times[s.period]);
+  }
+  const special = {
+    periods: plan.periods,
+    specialDays: {
+      "2026-10-13": { periods: { 8: "14:05-14:35", 9: "14:40-15:10" } },
+    },
+  };
+  assert.deepEqual(retime(special, "2026-10-13", "14:50", "14:55"), {
+    start: "14:35",
+    end: "14:40",
+  });
+  assert.deepEqual(retime(special, "2026-10-13", "14:00", "14:05"), {
+    start: "14:00",
+    end: "14:05",
+  });
+  assert.deepEqual(retime(special, "2026-10-13", "08:00", "14:40"), {
+    start: "08:00",
+    end: "14:40",
+  });
+  assert.deepEqual(retime(special, "2026-10-20", "14:05", "14:50"), {
+    start: "14:05",
+    end: "14:50",
+  });
 });
