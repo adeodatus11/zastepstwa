@@ -68,7 +68,7 @@ function fit(el: HTMLElement) {
     el.dataset.cols = String(cols);
     el.style.setProperty("--tv-scale", String(scale));
   };
-  let best = { cols: 1, scale: 0 };
+  const results: { cols: number; scale: number }[] = [];
   for (const cols of [1, 2, 3]) {
     // Mało zastępstw: czcionka rośnie (do 1,6×), żeby wypełnić ekran.
     let lo = 0.3,
@@ -82,7 +82,15 @@ function fit(el: HTMLElement) {
         if (fits()) lo = mid;
         else hi = mid;
       }
-    if (lo > best.scale * 1.1) best = { cols, scale: lo };
+    results.push({ cols, scale: lo });
+  }
+  // Najmniej kolumn, w których czcionka ma co najmniej 100% (w szerszej
+  // kolumnie nazwiska się nie łamią); inaczej więcej kolumn tylko wtedy,
+  // gdy wyraźnie powiększa tekst.
+  let best = results.find((r) => r.scale >= 1);
+  if (!best) {
+    best = results[0];
+    for (const r of results) if (r.scale > best.scale * 1.1) best = r;
   }
   // Kontrola końcowa: po zmianie kolumn układ bywa o włos wyższy.
   let scale = best.scale || 0.3;
@@ -115,27 +123,31 @@ function setupScreen() {
       body.style.setProperty(`--tv-${side}`, `${Math.min(value, 400)}px`);
   }
   if ("scrollRestoration" in history) history.scrollRestoration = "manual";
-  const diag = params.has("diag") ? document.createElement("div") : null;
-  if (diag) {
-    diag.className = "tv-diag";
-    body.after(diag);
-  }
+  // Tymczasowo zawsze: wymiary okna i przybliżenie widoku na dole ekranu,
+  // żeby ze zdjęcia telewizora odczytać, co robi jego przeglądarka.
+  const diag = document.createElement("div");
+  diag.className = "tv-probe";
+  document.querySelector("main")?.append(diag);
   const fitScreen = () => {
     const scale = Math.min(innerWidth / 1080, innerHeight / 1920);
     body.style.transform =
       scale === 1 && innerWidth === 1080 && innerHeight === 1920
         ? ""
         : `translate(${(innerWidth - 1080 * scale) / 2}px, ${(innerHeight - 1920 * scale) / 2}px) scale(${scale})`;
-    // Strona nigdy nie może być przewinięta (Chrome na telewizorze przewijał).
+    // Strona nigdy nie może być przewinięta (Chrome na telewizorze przewijał),
+    // a nic nie może mieć fokusu — przeglądarka przybliża i przewija do niego.
+    (document.activeElement as HTMLElement | null)?.blur?.();
     scrollTo(0, 0);
     document.documentElement.scrollTop = 0;
     body.scrollTop = 0;
-    if (diag)
-      diag.textContent = `okno ${innerWidth}×${innerHeight} · DPR ${devicePixelRatio} · skala ${scale.toFixed(3)} · ekran ${screen.width}×${screen.height}`;
+    const vv = window.visualViewport;
+    diag.textContent = `okno ${innerWidth}×${innerHeight} · ekran ${screen.width}×${screen.height} · DPR ${devicePixelRatio} · skala ${scale.toFixed(3)} · widok ${vv ? `${Math.round(vv.width)}×${Math.round(vv.height)} ×${vv.scale.toFixed(2)} +${Math.round(vv.offsetLeft)},${Math.round(vv.offsetTop)}` : "?"} · przewinięcie ${Math.round(scrollY)} · ${(navigator.userAgent.match(/(Chrome|Firefox|Version)\/[\d.]+/) || [navigator.userAgent.slice(0, 30)])[0]}`;
   };
   fitScreen();
   addEventListener("resize", fitScreen);
   addEventListener("scroll", fitScreen, true);
+  window.visualViewport?.addEventListener("resize", fitScreen);
+  window.visualViewport?.addEventListener("scroll", fitScreen);
   setInterval(fitScreen, 5000);
 }
 export async function init() {
