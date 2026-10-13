@@ -254,6 +254,14 @@ const menu = [
           );
         });
     </script>
-    <!-- Cloudflare Web Analytics --><script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "cb4332db42e34a89be561261c783bb5b"}'></script><!-- End Cloudflare Web Analytics -->
+    <!-- Cloudflare Web Analytics --><script is:inline>
+      if (window.location.hostname === "nauczyciel.szkolamistrzow.info") {
+        const script = document.createElement("script");
+        script.type = "module";
+        script.src = "https://static.cloudflareinsights.com/beacon.min.js";
+        script.dataset.cfBeacon = '{"token": "cb4332db42e34a89be561261c783bb5b"}';
+        document.head.appendChild(script);
+      }
+    </script><!-- End Cloudflare Web Analytics -->
   </body>
 </html>
