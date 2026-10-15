@@ -1887,3 +1887,30 @@ body.tv-mode #tv-content {
   overflow-wrap: anywhere;
   pointer-events: none;
 }
+
+/* Ekran TV: nagłówek i plan ustawione bezwzględnie od krawędzi ekranu.
+   Aplikacja na telewizorze zmieniała marginesy strony (diagnostyka 15.10.2026:
+   dół 120 px zamiast 70, nagłówek od 0 zamiast od 70 px), więc położenie nie
+   może zależeć od paddingu ani od układu flex. */
+body.tv-mode {
+  position: relative !important;
+  margin: 0 !important;
+}
+body.tv-mode > .site-header {
+  position: absolute !important;
+  top: var(--tv-top) !important;
+  left: var(--tv-left) !important;
+  right: var(--tv-right) !important;
+  height: var(--tv-head) !important;
+  margin: 0 !important;
+}
+body.tv-mode > main {
+  position: absolute !important;
+  top: calc(var(--tv-top) + var(--tv-head)) !important;
+  left: var(--tv-left) !important;
+  right: var(--tv-right) !important;
+  bottom: var(--tv-bottom) !important;
+  height: auto !important;
+  max-height: none !important;
+  margin: 0 !important;
+}
