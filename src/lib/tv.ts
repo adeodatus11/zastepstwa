@@ -128,6 +128,11 @@ function setupScreen() {
   const diag = document.createElement("div");
   diag.className = "tv-probe";
   document.querySelector("main")?.append(diag);
+  // Tymczasowo: duża ramka diagnostyczna na środku ekranu (adres strony,
+  // faktyczne marginesy i położenie nagłówka/planu), czytelna ze zdjęcia.
+  const big = document.createElement("div");
+  big.className = "tv-bigdiag";
+  if (!params.has("bez-linijek")) body.append(big);
   // Tymczasowo: linijki przy krawędziach (paski co 25 px z liczbą pikseli
   // od brzegu strony). Ze zdjęcia widać, ile telewizor ucina z każdej strony.
   if (!params.has("bez-linijek")) {
@@ -167,6 +172,19 @@ function setupScreen() {
         el.scrollLeft = 0;
       }
     const vv = window.visualViewport;
+    if (big.isConnected) {
+      const cs = getComputedStyle(body),
+        r = (sel: string) => {
+          const b = document.querySelector(sel)?.getBoundingClientRect();
+          return b ? `${Math.round(b.top)}–${Math.round(b.bottom)}` : "?";
+        };
+      big.innerText = [
+        `adres: ${location.pathname}${location.search || " (bez parametrów)"}`,
+        `ramka: góra ${cs.paddingTop} · dół ${cs.paddingBottom} · lewo ${cs.paddingLeft} · prawo ${cs.paddingRight}`,
+        `nagłówek ${r(".site-header")} · plan ${r("main")} · strona ${r("body")}`,
+        `okno ${innerWidth}×${innerHeight} · przewinięcie ${Math.round(scrollY)}/${inner}`,
+      ].join("\n");
+    }
     diag.textContent = `okno ${innerWidth}×${innerHeight} · ekran ${screen.width}×${screen.height} · DPR ${devicePixelRatio} · skala ${scale.toFixed(3)} · widok ${vv ? `${Math.round(vv.width)}×${Math.round(vv.height)} ×${vv.scale.toFixed(2)} +${Math.round(vv.offsetLeft)},${Math.round(vv.offsetTop)}` : "?"} · przewinięcie ${Math.round(scrollY)}/${inner} · ${(navigator.userAgent.match(/(Chrome|Firefox|Version)\/[\d.]+/) || [navigator.userAgent.slice(0, 30)])[0]}`;
   };
   fitScreen();
