@@ -128,9 +128,9 @@ function setupScreen() {
   const diag = document.createElement("div");
   diag.className = "tv-probe";
   document.querySelector("main")?.append(diag);
-  // Tymczasowo: linijki przy krawędziach (paski co 25 px z liczbą pikseli
+  // Linijki przy krawędziach tylko z tv.html?linijki (paski co 25 px z liczbą pikseli
   // od brzegu strony). Ze zdjęcia widać, ile telewizor ucina z każdej strony.
-  if (!params.has("bez-linijek")) {
+  if (params.has("linijki")) {
     const ruler = document.createElement("div");
     ruler.className = "tv-ruler";
     const strip = (side: string, depth: number) =>
