@@ -1857,3 +1857,16 @@ body.tv-mode {
   height: 140px;
   writing-mode: vertical-rl;
 }
+
+/* Ekran TV: nic nie może być przewijalne. „overflow: hidden” da się przewinąć
+   programowo (przeglądarka telewizora przesuwała treść w górę względem ekranu
+   — linijki z 15.10.2026), „overflow: clip” — nie. */
+html.tv-root,
+body.tv-mode,
+body.tv-mode .site-header,
+body.tv-mode .header-inner,
+body.tv-mode main,
+body.tv-mode #app,
+body.tv-mode #tv-content {
+  overflow: clip;
+}

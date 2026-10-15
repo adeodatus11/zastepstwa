@@ -158,8 +158,16 @@ function setupScreen() {
     scrollTo(0, 0);
     document.documentElement.scrollTop = 0;
     body.scrollTop = 0;
+    // Przewinięcie wnętrza (nagłówek, plan) też zerujemy i pokazujemy w diagnostyce.
+    let inner = 0;
+    for (const el of document.querySelectorAll<HTMLElement>("body.tv-mode *"))
+      if (el.scrollTop || el.scrollLeft) {
+        inner += Math.abs(el.scrollTop) + Math.abs(el.scrollLeft);
+        el.scrollTop = 0;
+        el.scrollLeft = 0;
+      }
     const vv = window.visualViewport;
-    diag.textContent = `okno ${innerWidth}×${innerHeight} · ekran ${screen.width}×${screen.height} · DPR ${devicePixelRatio} · skala ${scale.toFixed(3)} · widok ${vv ? `${Math.round(vv.width)}×${Math.round(vv.height)} ×${vv.scale.toFixed(2)} +${Math.round(vv.offsetLeft)},${Math.round(vv.offsetTop)}` : "?"} · przewinięcie ${Math.round(scrollY)} · ${(navigator.userAgent.match(/(Chrome|Firefox|Version)\/[\d.]+/) || [navigator.userAgent.slice(0, 30)])[0]}`;
+    diag.textContent = `okno ${innerWidth}×${innerHeight} · ekran ${screen.width}×${screen.height} · DPR ${devicePixelRatio} · skala ${scale.toFixed(3)} · widok ${vv ? `${Math.round(vv.width)}×${Math.round(vv.height)} ×${vv.scale.toFixed(2)} +${Math.round(vv.offsetLeft)},${Math.round(vv.offsetTop)}` : "?"} · przewinięcie ${Math.round(scrollY)}/${inner} · ${(navigator.userAgent.match(/(Chrome|Firefox|Version)\/[\d.]+/) || [navigator.userAgent.slice(0, 30)])[0]}`;
   };
   fitScreen();
   addEventListener("resize", fitScreen);
