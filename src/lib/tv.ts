@@ -128,6 +128,23 @@ function setupScreen() {
   const diag = document.createElement("div");
   diag.className = "tv-probe";
   document.querySelector("main")?.append(diag);
+  // Tymczasowo: linijki przy krawędziach (paski co 25 px z liczbą pikseli
+  // od brzegu strony). Ze zdjęcia widać, ile telewizor ucina z każdej strony.
+  if (!params.has("bez-linijek")) {
+    const ruler = document.createElement("div");
+    ruler.className = "tv-ruler";
+    const strip = (side: string, depth: number) =>
+      `<div class="tv-ruler-${side}">${Array.from(
+        { length: depth / 25 },
+        (_, i) => `<span>${(i + 1) * 25}</span>`,
+      ).join("")}</div>`;
+    ruler.innerHTML =
+      strip("top", 300) +
+      strip("bottom", 300) +
+      strip("left", 200) +
+      strip("right", 200);
+    body.append(ruler);
+  }
   const fitScreen = () => {
     const scale = Math.min(innerWidth / 1080, innerHeight / 1920);
     body.style.transform =
@@ -137,6 +154,7 @@ function setupScreen() {
     // Strona nigdy nie może być przewinięta (Chrome na telewizorze przewijał),
     // a nic nie może mieć fokusu — przeglądarka przybliża i przewija do niego.
     (document.activeElement as HTMLElement | null)?.blur?.();
+    window.getSelection()?.removeAllRanges();
     scrollTo(0, 0);
     document.documentElement.scrollTop = 0;
     body.scrollTop = 0;

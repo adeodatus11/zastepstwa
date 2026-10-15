@@ -1787,3 +1787,73 @@ body.tv-mode .tvz-row:nth-child(even) {
 }
 
 /* C — kolorowe kafelki: najniższy nagłówek, każdy nieobecny w innym kolorze. */
+
+/* Bez zaznaczania i przeciągania na ekranie TV (pilot zaznaczał kod QR). */
+body.tv-mode {
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-user-drag: none;
+  -webkit-tap-highlight-color: transparent;
+}
+/* Tymczasowe linijki kalibracyjne przy krawędziach ekranu TV. */
+.tv-ruler {
+  position: absolute;
+  inset: 0;
+  z-index: 50;
+  pointer-events: none;
+  font: 700 18px/1 monospace;
+  color: #000;
+}
+.tv-ruler > div {
+  position: absolute;
+  display: flex;
+}
+.tv-ruler span {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+}
+.tv-ruler span:nth-child(odd) {
+  background: #facc15;
+}
+.tv-ruler span:nth-child(even) {
+  background: #f472b6;
+}
+.tv-ruler-top,
+.tv-ruler-bottom {
+  left: 470px;
+  width: 140px;
+  flex-direction: column;
+}
+.tv-ruler-top {
+  top: 0;
+}
+.tv-ruler-bottom {
+  bottom: 0;
+  flex-direction: column-reverse;
+}
+.tv-ruler-top span,
+.tv-ruler-bottom span {
+  height: 25px;
+  width: 140px;
+}
+.tv-ruler-left,
+.tv-ruler-right {
+  top: 890px;
+  height: 140px;
+}
+.tv-ruler-left {
+  left: 0;
+}
+.tv-ruler-right {
+  right: 0;
+  flex-direction: row-reverse;
+}
+.tv-ruler-left span,
+.tv-ruler-right span {
+  width: 25px;
+  height: 140px;
+  writing-mode: vertical-rl;
+}
