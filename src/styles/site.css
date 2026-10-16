@@ -1073,11 +1073,12 @@ th {
      przesunięcie obrazu szło za treścią — przeglądarka telewizora przybliżała
      i przewijała do logo, które było linkiem (kursor pilota). Logo nie jest
      już linkiem, fokus jest zdejmowany; ramka wróciła do umiarkowanej. */
-  --tv-top: 70px;
-  --tv-bottom: 70px;
-  /* Boki: linijki z 16.10.2026 — telewizor ucina ok. 55 px z każdej strony. */
-  --tv-left: 85px;
-  --tv-right: 85px;
+  --tv-top: 60px;
+  --tv-bottom: 60px;
+  /* Linijki z 15–16.10.2026: telewizor ucina ok. 55 px u góry i u dołu
+     i ok. 50 px z boków — ramka 60 px z każdej strony. */
+  --tv-left: 60px;
+  --tv-right: 60px;
   padding: var(--tv-top) var(--tv-right) var(--tv-bottom) var(--tv-left);
   box-sizing: border-box;
   display: flex;

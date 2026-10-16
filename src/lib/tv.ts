@@ -165,10 +165,10 @@ function setupScreen() {
     const cs = getComputedStyle(body),
       num = (name: string, fallback: number) =>
         parseFloat(cs.getPropertyValue(name)) || fallback,
-      top = num("--tv-top", 70),
-      bottom = num("--tv-bottom", 70),
-      left = num("--tv-left", 85),
-      right = num("--tv-right", 85),
+      top = num("--tv-top", 60),
+      bottom = num("--tv-bottom", 60),
+      left = num("--tv-left", 60),
+      right = num("--tv-right", 60),
       headH = num("--tv-head", 186);
     for (const el of [head, main]) {
       el.style.setProperty("transform", "none", "important");
