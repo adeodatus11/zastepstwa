@@ -150,6 +150,40 @@ function setupScreen() {
       strip("right", 200);
     body.append(ruler);
   }
+  // Korekta położenia skryptem: aplikacja na telewizorze nakłada własne style
+  // (nagłówek od 0 px, dół 120 px) silniejsze niż nasze CSS. Mierzymy, gdzie
+  // naprawdę są nagłówek i plan, i przesuwamy je transformacją na miejsce
+  // wynikające z ramki (--tv-top, --tv-bottom).
+  let shiftHead = 0,
+    shiftMain = 0;
+  const pinLayout = () => {
+    const head = document.querySelector<HTMLElement>(".site-header"),
+      main = document.querySelector<HTMLElement>("main");
+    if (!head || !main) return;
+    const cs = getComputedStyle(body),
+      top = parseFloat(cs.getPropertyValue("--tv-top")) || 70,
+      bottom = parseFloat(cs.getPropertyValue("--tv-bottom")) || 70,
+      headH = parseFloat(cs.getPropertyValue("--tv-head")) || 186;
+    head.style.setProperty("transform", "none", "important");
+    main.style.setProperty("transform", "none", "important");
+    const h = head.getBoundingClientRect();
+    shiftHead = top - h.top;
+    head.style.setProperty(
+      "transform",
+      `translateY(${shiftHead}px)`,
+      "important",
+    );
+    const mainH = 1920 - top - headH - bottom;
+    for (const prop of ["height", "min-height", "max-height"])
+      main.style.setProperty(prop, `${mainH}px`, "important");
+    const m = main.getBoundingClientRect();
+    shiftMain = top + h.height - m.top;
+    main.style.setProperty(
+      "transform",
+      `translateY(${shiftMain}px)`,
+      "important",
+    );
+  };
   const fitScreen = () => {
     const scale = Math.min(innerWidth / 1080, innerHeight / 1920);
     body.style.transform =
@@ -171,6 +205,7 @@ function setupScreen() {
         el.scrollTop = 0;
         el.scrollLeft = 0;
       }
+    pinLayout();
     const vv = window.visualViewport;
     if (big.isConnected) {
       const cs = getComputedStyle(body),
@@ -178,7 +213,12 @@ function setupScreen() {
           const b = document.querySelector(sel)?.getBoundingClientRect();
           return b ? `${Math.round(b.top)}–${Math.round(b.bottom)}` : "?";
         };
+      const hs = getComputedStyle(
+        document.querySelector(".site-header") ?? body,
+      );
       big.innerText = [
+        `wersja ${document.querySelector<HTMLMetaElement>('meta[name="app-version"]')?.content ?? "?"} · korekta ${Math.round(shiftHead)}/${Math.round(shiftMain)} px`,
+        `nagłówek: position ${hs.position} · top ${hs.top} · height ${hs.height} · arkuszy ${document.styleSheets.length}`,
         `adres: ${location.pathname}${location.search || " (bez parametrów)"}`,
         `ramka: góra ${cs.paddingTop} · dół ${cs.paddingBottom} · lewo ${cs.paddingLeft} · prawo ${cs.paddingRight}`,
         `nagłówek ${r(".site-header")} · plan ${r("main")} · strona ${r("body")}`,
