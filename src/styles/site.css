@@ -1075,8 +1075,9 @@ th {
      już linkiem, fokus jest zdejmowany; ramka wróciła do umiarkowanej. */
   --tv-top: 70px;
   --tv-bottom: 70px;
-  --tv-left: 50px;
-  --tv-right: 50px;
+  /* Boki: linijki z 16.10.2026 — telewizor ucina ok. 55 px z każdej strony. */
+  --tv-left: 85px;
+  --tv-right: 85px;
   padding: var(--tv-top) var(--tv-right) var(--tv-bottom) var(--tv-left);
   box-sizing: border-box;
   display: flex;

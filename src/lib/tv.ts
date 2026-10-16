@@ -155,34 +155,59 @@ function setupScreen() {
   // naprawdę są nagłówek i plan, i przesuwamy je transformacją na miejsce
   // wynikające z ramki (--tv-top, --tv-bottom).
   let shiftHead = 0,
-    shiftMain = 0;
+    shiftMain = 0,
+    scaleX = 1,
+    scaleY = 1;
   const pinLayout = () => {
     const head = document.querySelector<HTMLElement>(".site-header"),
       main = document.querySelector<HTMLElement>("main");
     if (!head || !main) return;
     const cs = getComputedStyle(body),
-      top = parseFloat(cs.getPropertyValue("--tv-top")) || 70,
-      bottom = parseFloat(cs.getPropertyValue("--tv-bottom")) || 70,
-      headH = parseFloat(cs.getPropertyValue("--tv-head")) || 186;
-    head.style.setProperty("transform", "none", "important");
-    main.style.setProperty("transform", "none", "important");
-    const h = head.getBoundingClientRect();
-    shiftHead = top - h.top;
-    head.style.setProperty(
-      "transform",
-      `translateY(${shiftHead}px)`,
-      "important",
-    );
+      num = (name: string, fallback: number) =>
+        parseFloat(cs.getPropertyValue(name)) || fallback,
+      top = num("--tv-top", 70),
+      bottom = num("--tv-bottom", 70),
+      left = num("--tv-left", 85),
+      right = num("--tv-right", 85),
+      headH = num("--tv-head", 186);
+    for (const el of [head, main]) {
+      el.style.setProperty("transform", "none", "important");
+      el.style.setProperty("transform-origin", "0 0", "important");
+    }
     const mainH = 1920 - top - headH - bottom;
     for (const prop of ["height", "min-height", "max-height"])
       main.style.setProperty(prop, `${mainH}px`, "important");
-    const m = main.getBoundingClientRect();
-    shiftMain = top + h.height - m.top;
-    main.style.setProperty(
-      "transform",
-      `translateY(${shiftMain}px)`,
-      "important",
-    );
+    // Nagłówek i plan razem dopasowane do prostokąta z ramki: przesunięcie
+    // i skala (osobno w poziomie i w pionie), bo style aplikacji nadpisują
+    // nasze wymiary, a transformacji nie.
+    const h = head.getBoundingClientRect(),
+      m = main.getBoundingClientRect(),
+      ux = Math.min(h.left, m.left),
+      uy = h.top,
+      uw = Math.max(h.right, m.right) - ux,
+      uh = m.bottom - h.top;
+    if (uw <= 0 || uh <= 0) return;
+    const sx = (1080 - left - right) / uw,
+      sy = (1920 - top - bottom) / uh;
+    shiftHead = top - uy;
+    shiftMain = left - ux;
+    scaleX = sx;
+    scaleY = sy;
+    for (const [el, r] of [
+      [head, h],
+      [main, m],
+    ] as const) {
+      el.style.setProperty(
+        "transform-origin",
+        `${ux - r.left}px ${uy - r.top}px`,
+        "important",
+      );
+      el.style.setProperty(
+        "transform",
+        `translate(${left - ux}px, ${top - uy}px) scale(${sx}, ${sy})`,
+        "important",
+      );
+    }
   };
   const fitScreen = () => {
     const scale = Math.min(innerWidth / 1080, innerHeight / 1920);
@@ -217,7 +242,7 @@ function setupScreen() {
         document.querySelector(".site-header") ?? body,
       );
       big.innerText = [
-        `wersja ${document.querySelector<HTMLMetaElement>('meta[name="app-version"]')?.content ?? "?"} · korekta ${Math.round(shiftHead)}/${Math.round(shiftMain)} px`,
+        `wersja ${document.querySelector<HTMLMetaElement>('meta[name="app-version"]')?.content ?? "?"} · przesunięcie ${Math.round(shiftMain)},${Math.round(shiftHead)} px · skala ${scaleX.toFixed(3)}×${scaleY.toFixed(3)}`,
         `nagłówek: position ${hs.position} · top ${hs.top} · height ${hs.height} · arkuszy ${document.styleSheets.length}`,
         `adres: ${location.pathname}${location.search || " (bez parametrów)"}`,
         `ramka: góra ${cs.paddingTop} · dół ${cs.paddingBottom} · lewo ${cs.paddingLeft} · prawo ${cs.paddingRight}`,
