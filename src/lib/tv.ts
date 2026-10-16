@@ -123,19 +123,19 @@ function setupScreen() {
       body.style.setProperty(`--tv-${side}`, `${Math.min(value, 400)}px`);
   }
   if ("scrollRestoration" in history) history.scrollRestoration = "manual";
-  // Tymczasowo zawsze: wymiary okna i przybliżenie widoku na dole ekranu,
+  // Linijka diagnostyczna na dole planu (tylko z ?diag): wymiary okna i przybliżenie widoku,
   // żeby ze zdjęcia telewizora odczytać, co robi jego przeglądarka.
   const diag = document.createElement("div");
   diag.className = "tv-probe";
-  document.querySelector("main")?.append(diag);
-  // Tymczasowo: duża ramka diagnostyczna na środku ekranu (adres strony,
-  // faktyczne marginesy i położenie nagłówka/planu), czytelna ze zdjęcia.
+  if (params.has("diag")) document.querySelector("main")?.append(diag);
+  // Diagnostyka (tv.html?diag): duża ramka na środku ekranu (wersja, adres,
+  // faktyczne marginesy, położenie nagłówka/planu, korekta), czytelna ze zdjęcia.
   const big = document.createElement("div");
   big.className = "tv-bigdiag";
-  if (!params.has("bez-linijek")) body.append(big);
-  // Tymczasowo: linijki przy krawędziach (paski co 25 px z liczbą pikseli
-  // od brzegu strony). Ze zdjęcia widać, ile telewizor ucina z każdej strony.
-  if (!params.has("bez-linijek")) {
+  if (params.has("diag")) body.append(big);
+  // Kalibracja (tv.html?linijki): paski co 25 px z liczbą pikseli od brzegu
+  // strony; ze zdjęcia z bliska widać, ile telewizor ucina z każdej strony.
+  if (params.has("linijki")) {
     const ruler = document.createElement("div");
     ruler.className = "tv-ruler";
     const strip = (side: string, depth: number) =>
