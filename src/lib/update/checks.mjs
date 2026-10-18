@@ -178,6 +178,8 @@ const isMessage = (v) => {
     s === "-" ||
     s === "zastępstwo" ||
     s.startsWith("uczniowie ") ||
+    s.startsWith("okienko") ||
+    s.startsWith("bez konsekwencji") ||
     s.includes("złączenie grup")
   );
 };
@@ -516,6 +518,7 @@ export function schoolRules(subs, moves, plan, overview) {
       names = classNames(code);
     add(movedOut, [t, a[1], Number(a[2])].join("|"), names);
     add(movedIn, [t, b[1], Number(b[2])].join("|"), {
+      movedIn: true,
       teacherNames: [],
       classNames: names.size ? [...names] : [code],
       groupNames: [group || "Cała klasa"],
@@ -713,9 +716,21 @@ export function schoolRules(subs, moves, plan, overview) {
       date = rowDate(r0["Dzień"]),
       p = period(r0["Lekcja"]);
     const day = new Date(date + "T12:00:00Z").getUTCDay();
-    const planned = freed.has(slot)
-      ? []
-      : scheduled(slot, [who(sub), day, p].join("|"));
+    // Zastępstwo z przeniesieniem: zastępca przenosi na tę godzinę tę samą
+    // lekcję (ten oddział i grupę), którą przejął — to jedna lekcja, nie złączenie.
+    const sameLesson = (l) =>
+      l.movedIn &&
+      same.some((r) => {
+        const [code, group = ""] = r["Oddział"].split("|");
+        const names = classNames(code);
+        return (
+          l.classNames.some((c) => c === code || names.has(c)) &&
+          lower(l.groupNames[0]) === lower(group || "Cała klasa")
+        );
+      });
+    const planned = (
+      freed.has(slot) ? [] : scheduled(slot, [who(sub), day, p].join("|"))
+    ).filter((l) => !sameLesson(l));
     const busy = planned.filter((l) => !classAway(l, date, p));
     const away = planned.filter((l) => classAway(l, date, p));
     const isMarked = (r) =>

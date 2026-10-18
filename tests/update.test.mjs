@@ -903,3 +903,55 @@ test("Substitutions without an assigned teacher are skipped, not published", () 
     /: 05\.10\.2026, lekcja 3, 2A \(Matematyka\), za: Kowalska Anna; 05\.10\.2026, lekcja 3, 2A \(Matematyka\), za: Kowalska Anna\.$/,
   );
 });
+
+test("Substitution with a transfer of the same lesson is not a merge", () => {
+  // Skarupa przejmuje 1TFH (za Kowalską) i przenosi tę lekcję z 9. na 2.
+  const sub = [
+    "28.09.2026",
+    "2",
+    "Kowalska Anna",
+    "1TFH",
+    "Biologia",
+    "12",
+    "Skarupa Agnieszka",
+    "",
+    "Dodatkowo płatne",
+  ];
+  const sameLesson = [
+    "28.09.2026, 9, 14:55-15:40, sala: 12",
+    "28.09.2026, 2, 08:50-09:35, sala: 12",
+    "Skarupa Agnieszka",
+    "1TFH",
+    "Biologia",
+  ];
+  // Lekcja 2 Skarupy z 3K przeniesiona gdzie indziej — zostaje tylko przejęta 1TFH.
+  const ownAway = [
+    "28.09.2026, 2, 08:50-09:35, sala: 41",
+    "28.09.2026, 7, 13:15-14:00, sala: 41",
+    "Skarupa Agnieszka",
+    "3K|sprzedawca",
+    "Obsługa klienta",
+  ];
+  assert.deepEqual(withMoves([sameLesson, ownAway], sub), []);
+  // Na tę godzinę przychodzi inna grupa — to nadal złączenie.
+  const otherGroup = sameLesson.with(3, "1TFH|gr2");
+  assert.match(
+    withMoves([otherGroup, ownAway], sub.with(3, "1TFH|gr1"))[0],
+    /złączenie powinno być „Bezpłatne”/,
+  );
+});
+
+test("Messages such as a free period for students are not a person", () => {
+  const free = (code) => [
+    "28.09.2026",
+    "4",
+    "Kowalska Anna",
+    code,
+    "Biologia",
+    "",
+    "Okienko dla uczniów",
+    "",
+    "-",
+  ];
+  assert.deepEqual(rules(free("1TFH"), free("2A"), free("3K|kucharz")), []);
+});
