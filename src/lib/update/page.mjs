@@ -5,6 +5,7 @@ import { readWorkbook } from "./xlsx.mjs";
 import { identify, reduceOverview, review } from "./checks.mjs";
 import {
   REPO,
+  latestRunSha,
   commitFiles,
   fetchPublished,
   publishState,
@@ -363,6 +364,19 @@ async function watch(token, sha, round = 0) {
       };
       $("jobs").innerHTML = jobs.map(line).join("");
       done = run.status === "completed";
+      // Nowszy push na tę gałąź anuluje starszy przebieg; nowszy commit zawiera
+      // już te pliki, więc śledzimy jego publikację.
+      if (done && run.conclusion === "cancelled") {
+        const newer = await latestRunSha(token);
+        if (newer && newer !== sha) {
+          say(
+            "publish-status",
+            "W tym samym czasie trafiła na GitHuba inna zmiana. Twoje pliki publikuje nowszy przebieg — śledzę go…",
+          );
+          setTimeout(() => watch(token, newer, round + 1), 10000);
+          return;
+        }
+      }
       if (done) {
         const job = (n) => jobs.find((j) => j.name === n)?.conclusion;
         const link = `<a href="${esc(run.url)}" target="_blank" rel="noopener">szczegóły w GitHub Actions</a>`;

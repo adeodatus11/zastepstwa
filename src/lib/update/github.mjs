@@ -100,6 +100,15 @@ export async function commitFiles(token, files, message, attempt = 0) {
 }
 
 /** Stan zadań publikacji dla danego commita: [{name, status, conclusion, url}]. */
+/** Commit ostatniego przebiegu publikacji na gałęzi (po anulowaniu starszego). */
+export async function latestRunSha(token) {
+  const runs = await gh(
+    token,
+    `/repos/${REPO.owner}/${REPO.repo}/actions/runs?branch=${REPO.branch}&event=push&per_page=1`,
+  );
+  return runs.workflow_runs?.[0]?.head_sha ?? null;
+}
+
 export async function publishState(token, sha) {
   const runs = await gh(
     token,
