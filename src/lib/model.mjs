@@ -128,9 +128,11 @@ export function daily(plan, changes, date, mode = "changes") {
       const originals = plan.lessons.filter(
         (l) => l.day === dayOf(e.from.date) && transferMatches(l, e),
       );
+      // Tylko lekcje z planu: lekcja, która przyszła tu innym przeniesieniem
+      // (zamiana dwóch lekcji między dniami), nie wyjeżdża z powrotem.
       if (e.from.date === date)
         result = result.map((l) =>
-          transferMatches(l, e)
+          l.status === "base" && transferMatches(l, e)
             ? {
                 ...l,
                 status: "moved-out",

@@ -20,7 +20,7 @@ for x in d['substitutions'] + d['transfers']:
     if not x['sourceTeacher']:
         problems.append(f"bez skrótu nauczyciela: {x['date']} lekcja {x['period']} {x['className']}")
     g = x['groupName']
-    if g and not any(s.lower() in (g.lower(), 'cała klasa') for s in x['sourceGroups']):
+    if g and not x.get('freeSlot') and not any(s.lower() in (g.lower(), 'cała klasa') for s in x['sourceGroups']):
         problems.append(f"grupa nie pokryta planem: {x['date']} lekcja {x['period']} {x['className']} {g}")
     if re.match(r'^\s*IND?\b', x['className'], re.I) or re.match(r'^\s*IND?\b', x['groupName'], re.I):
         problems.append(f"IND w publikacji: {x['date']} {x['className']} {x['groupName']}")

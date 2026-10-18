@@ -385,3 +385,63 @@ test("Special days: shortened periods from lesson 8 and a day off", () => {
     end: "14:50",
   });
 });
+test("Swapped lessons between two days keep both incoming transfers", () => {
+  // Pon. lekcja 3 ↔ pt. lekcja 5 tego samego nauczyciela i oddziału.
+  const lesson = (day, period, subject) => ({
+    id: `l${day}${period}`,
+    subject,
+    day,
+    period,
+    start: "",
+    end: "",
+    classIds: [],
+    classNames: ["1X"],
+    groupNames: ["Cała klasa"],
+    teacherIds: ["t"],
+    teacherNames: ["Anna Testowa"],
+    roomIds: [],
+    roomNames: ["33"],
+  });
+  const swapPlan = {
+    ...plan,
+    specialDays: {},
+    lessons: [lesson(1, 3, "Polski"), lesson(5, 5, "Wychowawcza")],
+    duties: [],
+  };
+  const move = (subject, from, to) => ({
+    branch: {
+      raw: "1X",
+      className: "1X",
+      classKey: "1x",
+      groupName: "",
+      groupKey: "",
+    },
+    subject,
+    teacherId: "t",
+    teacherName: "Anna Testowa",
+    note: "",
+    from: { ...from, room: "33" },
+    to: { ...to, room: "33" },
+  });
+  const mon = { date: "2026-10-19", day: 1, period: 3 },
+    fri = { date: "2026-10-23", day: 5, period: 5 };
+  const swap = {
+    substitutions: [],
+    dutyChanges: [],
+    transfers: [move("Polski", mon, fri), move("Wychowawcza", fri, mon)],
+  };
+  for (const [date, period, subject] of [
+    ["2026-10-19", 3, "Wychowawcza"],
+    ["2026-10-23", 5, "Polski"],
+  ]) {
+    const rows = daily(swapPlan, swap, date).filter((l) => l.period === period);
+    assert.deepEqual(
+      rows.map((l) => [l.status, l.change?.subject]).sort(),
+      [
+        ["moved-out", subject === "Polski" ? "Wychowawcza" : "Polski"],
+        ["transfer", subject],
+      ],
+      date,
+    );
+  }
+});
