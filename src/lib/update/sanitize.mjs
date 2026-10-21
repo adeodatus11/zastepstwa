@@ -2,7 +2,7 @@
 // Nazwa dziennika zajęć innych bywa imieniem, nazwiskiem i klasą ucznia; znika,
 // a nauczaniu indywidualnemu zostaje sam znacznik IND, żeby generatory mogły
 // je pominąć. Surowy plik nigdy nie opuszcza przeglądarki.
-import { readWorkbook } from "./xlsx.mjs";
+import { byTag, readWorkbook } from "./xlsx.mjs";
 import { writeZip } from "./zip.mjs";
 
 export const DIARY = "Dziennik zajęć innych";
@@ -50,7 +50,7 @@ export async function sanitize(input, { DOMParser, XMLSerializer }) {
     );
     let changed = false;
     for (const tag of ["si", "is"])
-      for (const item of Array.from(doc.getElementsByTagName(tag))) {
+      for (const item of byTag(doc, tag)) {
         const t = item.textContent;
         if (!replacement.has(t)) continue;
         while (item.firstChild) item.removeChild(item.firstChild);

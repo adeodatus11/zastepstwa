@@ -3,12 +3,17 @@
 import { readZip } from "./zip.mjs";
 
 const text = (bytes) => new TextDecoder().decode(bytes);
-const byTag = (node, tag) => Array.from(node.getElementsByTagName(tag));
+// Po nazwie lokalnej: część programów zapisuje znaczniki z przedrostkiem
+// (np. <s:si> po openpyxl), co getElementsByTagName("si") by pominęło.
+export const byTag = (node, tag) =>
+  Array.from(node.getElementsByTagNameNS("*", tag));
+const REL =
+  "http://schemas.openxmlformats.org/officeDocument/2006/relationships";
 
 /** Tekst komórki jak w openpyxl: runy <t>, bez wymowy fonetycznej <rPh>. */
 function stringItem(node) {
   return byTag(node, "t")
-    .filter((t) => t.parentNode.nodeName !== "rPh")
+    .filter((t) => t.parentNode.localName !== "rPh")
     .map((t) => t.textContent)
     .join("");
 }
@@ -38,7 +43,8 @@ export async function readWorkbook(input, DOMParser) {
   const sheets = {};
   for (const s of byTag(parse("xl/workbook.xml"), "sheet")) {
     const rows = [];
-    for (const row of byTag(parse(rels[s.getAttribute("r:id")]), "row")) {
+    const id = s.getAttributeNS(REL, "id") || s.getAttribute("r:id");
+    for (const row of byTag(parse(rels[id]), "row")) {
       const r = Number(row.getAttribute("r")) - 1;
       const cells = (rows[r] = []);
       for (const c of byTag(row, "c")) {

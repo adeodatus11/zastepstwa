@@ -955,3 +955,27 @@ test("Messages such as a free period for students are not a person", () => {
   ];
   assert.deepEqual(rules(free("1TFH"), free("2A"), free("3K|kucharz")), []);
 });
+
+test("Workbooks saved with prefixed XML (openpyxl) read the same", async () => {
+  // privacy_xlsx.py zapisuje <s:si>, <s:t> — czytnik strony musi to rozumieć.
+  const tainted = await withDiary("TEST STUDENT DIARY");
+  const file = path.join(
+    fs.mkdtempSync(path.join(os.tmpdir(), "upd-")),
+    "x.xlsx",
+  );
+  fs.writeFileSync(file, tainted);
+  execFileSync(process.env.PYTHON || "python3", [
+    "scripts/privacy_xlsx.py",
+    "--sanitize",
+    file,
+  ]);
+  const python = fs.readFileSync(file);
+  const text = (await readZip(python))
+    .map((f) => new TextDecoder().decode(f.bytes))
+    .join("");
+  assert.match(text, /<s:row\b/);
+  const viaPython = (await readWorkbook(python, DOMParser)).sheets;
+  const viaPage = (await sanitize(tainted, dom)).sheets;
+  assert.deepEqual(viaPython, viaPage);
+  assert.ok(viaPython["Oddziały"][0].includes("Zastępca"));
+});
