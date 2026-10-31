@@ -1,5 +1,5 @@
 ---
-title: "Wyjście ucznia do toalety w czasie lekcji — zasady postępowania"
+title: "Wyjście ucznia do toalety w czasie lekcji — praktyczny poradnik"
 date: "2026-10-30"
 ---
 
