@@ -962,6 +962,65 @@ test("Substitution without a teacher is not reported when the class is away", ()
   assert.ok(!trip.messages.some((m) => m.text.startsWith("Pominięto")));
 });
 
+test("Substitution without a teacher is not reported when a transfer takes the lesson", () => {
+  // Dziennik zostawia puste „Zastępstwo”, bo na tę godzinę przeniesiono
+  // do oddziału inną lekcję (np. zajęcia z wychowawcą) — nie ma czego zastępować.
+  const row = (day, lesson, cls) => [
+    day,
+    `${lesson}, 9:40-10:25`,
+    "Kowalska Anna",
+    cls,
+    "Matematyka",
+    "12",
+    "Zastępstwo",
+    "",
+    "-",
+  ];
+  const subs = {
+    "Opis parametrów": [["Okres: 28.09.2026 (pon.) - 04.10.2026 (niedz.)"]],
+    Oddziały: [
+      HEAD,
+      row("28.09.2026", 3, "2A"), // na lekcję 3 przeniesiono lekcję 2A
+      row("28.09.2026", 4, "2A"), // lekcja 4 — bez przeniesienia
+      row("28.09.2026", 3, "3B|gr1"), // przeniesienie dotyczy tylko gr2
+      row("28.09.2026", 3, "1C|gr1"), // przeniesienie całej klasy
+    ],
+  };
+  const move = (cls, to) => [
+    "28.09.2026, 2, 08:50-09:35, sala: 12",
+    `28.09.2026, ${to}, 09:40-10:25, sala: 12`,
+    "Nowak Jan",
+    cls,
+    "Zajęcia z wychowawcą",
+  ];
+  const moves = {
+    "Opis parametrów": [["Okres: 28.09.2026 (pon.) - 04.10.2026 (niedz.)"]],
+    Oddziały: [
+      [
+        "Przeniesiono z",
+        "Przeniesiono na",
+        "Nauczyciel/wakat",
+        "Oddział",
+        "Przedmiot",
+      ],
+      move("2A", 3),
+      move("3B|gr2", 3),
+      move("1C", 3),
+    ],
+  };
+  const { summary, messages } = review({ subs, moves });
+  assert.equal(summary.unassigned, 2);
+  assert.equal(summary.unassignedMoved, 2);
+  const info = messages.find((m) => m.text.startsWith("Pominięto"));
+  assert.match(info.text, /^Pominięto 2 zastępstwa bez przypisanego/);
+  assert.ok(!info.text.includes("lekcja 3, 2A"));
+  assert.ok(!info.text.includes("1C|gr1"));
+  assert.match(info.text, /lekcja 4, 2A/);
+  assert.match(info.text, /lekcja 3, 3B\|gr1/);
+  // Bez pliku przeniesień kontrola o nich nie wie — pokazuje wszystko.
+  assert.equal(review({ subs }).summary.unassigned, 4);
+});
+
 test("Substitution with a transfer of the same lesson is not a merge", () => {
   // Skarupa przejmuje 1TFH (za Kowalską) i przenosi tę lekcję z 9. na 2.
   const sub = [

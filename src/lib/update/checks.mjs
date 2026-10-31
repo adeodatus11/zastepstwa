@@ -240,13 +240,20 @@ export function summarize(subs, moves, overview) {
   const other = table(subs, "Dzienniki zajeć innych");
   const ind = (r) => r["Oddział"].split("|").some(isIndividual);
   const absent = overview ? absentLessons(overview) : new Map();
+  const taken = moves ? movedInLessons(moves) : new Map();
   const open = rows.filter((r) => !ind(r) && unassigned(r));
+  // Bez zastępcy, ale nie ma czego zastępować: oddział jest wtedy nieobecny
+  // (wycieczka) albo na tę godzinę przeniesiono do niego inną lekcję.
+  const away = open.filter((r) => classAwayRow(absent, r));
+  const moved = open.filter(
+    (r) => !classAwayRow(absent, r) && takenByTransfer(taken, r),
+  );
   return {
     period: periodOf(subs),
     substitutions: rows.filter((r) => !ind(r) && !unassigned(r)).length,
-    // Bez zastępcy, ale oddział jest wtedy nieobecny (wycieczka) — nic do zastąpienia.
-    unassigned: open.filter((r) => !classAwayRow(absent, r)).length,
-    unassignedAway: open.filter((r) => classAwayRow(absent, r)).length,
+    unassigned: open.length - away.length - moved.length,
+    unassignedAway: away.length,
+    unassignedMoved: moved.length,
     transfers: moves
       ? table(moves, "Oddziały").filter((r) => !ind(r)).length
       : null,
@@ -432,6 +439,37 @@ export function classAwayRow(absent, r) {
     (a) =>
       !a.group ||
       (group ? a.group === lower(group) : a.subject === lower(r["Przedmiot"])),
+  );
+}
+
+/**
+ * Lekcje oddziałów zajęte przeniesieniem: data|lekcja|oddział → grupy, których
+ * dotyczy przeniesienie na tę godzinę (pusta = cały oddział).
+ */
+function movedInLessons(moves) {
+  const taken = new Map();
+  for (const r of table(moves, "Oddziały")) {
+    const to = moveDate(r["Przeniesiono na"]);
+    if (!to) continue;
+    const [code, group = ""] = clean(r["Oddział"]).split("|");
+    if (isIndividual(code) || isIndividual(group)) continue;
+    const k = [iso(to[1]), Number(to[2]), code].join("|");
+    taken.set(k, [...(taken.get(k) ?? []), lower(group)]);
+  }
+  return taken;
+}
+
+/**
+ * Na tę godzinę przeniesiono do tego oddziału (i grupy) inną lekcję, więc
+ * lekcja z wiersza się nie odbywa — dziennik zostawia przy niej puste
+ * „Zastępstwo”, ale nie ma czego zastępować.
+ */
+export function takenByTransfer(taken, r) {
+  const [code, group = ""] = clean(r["Oddział"]).split("|");
+  const date = rowDate(r["Dzień"]);
+  if (!date || !code) return false;
+  return (taken.get([date, period(r["Lekcja"]), code].join("|")) ?? []).some(
+    (g) => !g || g === lower(group),
   );
 }
 
@@ -894,12 +932,14 @@ export function review({ subs, moves, overview, published, plan }) {
           ? "zastępstwa"
           : "zastępstw";
     const absent = overview ? absentLessons(overview) : new Map();
+    const taken = moves ? movedInLessons(moves) : new Map();
     const list = table(subs, "Oddziały")
       .filter(
         (r) =>
           !r["Oddział"].split("|").some(isIndividual) &&
           unassigned(r) &&
-          !classAwayRow(absent, r),
+          !classAwayRow(absent, r) &&
+          !takenByTransfer(taken, r),
       )
       .map((r) => `${where(r)}, za: ${r["Nauczyciel/wakat"] || "(brak)"}`);
     messages.push({

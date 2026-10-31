@@ -235,6 +235,9 @@ function renderReview() {
     ...(x.unassignedAway
       ? [["Bez zastępcy, oddział nieobecny", x.unassignedAway]]
       : []),
+    ...(x.unassignedMoved
+      ? [["Bez zastępcy, lekcja zastąpiona przeniesieniem", x.unassignedMoved]]
+      : []),
   ]
     .map(([k, v]) => `<div><dt>${k}</dt><dd>${v}</dd></div>`)
     .join("");
