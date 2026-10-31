@@ -904,6 +904,64 @@ test("Substitutions without an assigned teacher are skipped, not published", () 
   );
 });
 
+test("Substitution without a teacher is not reported when the class is away", () => {
+  // Wycieczka: oddział nieobecny, nauczyciel chory — dziennik zostawia
+  // „Zastępstwo” bez nazwiska, ale nie ma czego zastępować.
+  const row = (day, lesson, cls, who = "Zastępstwo") => [
+    day,
+    `${lesson}, 9:40-10:25`,
+    "Kowalska Anna",
+    cls,
+    "Matematyka",
+    "12",
+    who,
+    "",
+    "-",
+  ];
+  const subs = {
+    "Opis parametrów": [["Okres: 28.09.2026 (pon.) - 04.10.2026 (niedz.)"]],
+    Oddziały: [
+      HEAD,
+      row("28.09.2026", 3, "2A"), // 2A na wycieczce
+      row("28.09.2026", 4, "2A"), // lekcja 4 — 2A już wróciła
+      row("28.09.2026", 3, "3B|gr2"), // grupa, która nie wyszła
+      row("28.09.2026", 3, "1C|gr1"), // grupa, która wyszła
+    ],
+  };
+  const away = (cls, lesson) => [
+    "46293",
+    "09:40",
+    "10:25",
+    String(lesson),
+    "1",
+    "Oddział",
+    cls.split("|")[0],
+    cls,
+    "Matematyka",
+  ];
+  const ov = overview([away("2A", 3), away("3B|gr1", 3), away("1C", 3)]);
+  const { summary, messages } = review({ subs, overview: ov });
+  assert.equal(summary.unassigned, 2);
+  assert.equal(summary.unassignedAway, 2);
+  const info = messages.find((m) => m.text.startsWith("Pominięto"));
+  assert.match(info.text, /^Pominięto 2 zastępstwa bez przypisanego/);
+  assert.ok(!info.text.includes("lekcja 3, 2A"));
+  assert.ok(!info.text.includes("1C|gr1"));
+  assert.match(info.text, /lekcja 4, 2A/);
+  assert.match(info.text, /lekcja 3, 3B\|gr2/);
+  // Bez zestawienia kontrola nie wie o wycieczkach — pokazuje wszystko.
+  const without = review({ subs });
+  assert.equal(without.summary.unassigned, 4);
+  assert.equal(without.summary.unassignedAway, 0);
+  // Gdy wszystkie puste zastępstwa wypadają na wycieczkę, komunikatu nie ma.
+  const trip = review({
+    subs: { ...subs, Oddziały: [HEAD, row("28.09.2026", 3, "2A")] },
+    overview: overview([away("2A", 3)]),
+  });
+  assert.equal(trip.summary.unassigned, 0);
+  assert.ok(!trip.messages.some((m) => m.text.startsWith("Pominięto")));
+});
+
 test("Substitution with a transfer of the same lesson is not a merge", () => {
   // Skarupa przejmuje 1TFH (za Kowalską) i przenosi tę lekcję z 9. na 2.
   const sub = [

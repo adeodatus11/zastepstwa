@@ -232,6 +232,9 @@ function renderReview() {
     ["Zajęcia inne", x.other],
     ["Pominięte (IND)", x.individual],
     ["Pominięte (bez zastępcy)", x.unassigned],
+    ...(x.unassignedAway
+      ? [["Bez zastępcy, oddział nieobecny", x.unassignedAway]]
+      : []),
   ]
     .map(([k, v]) => `<div><dt>${k}</dt><dd>${v}</dd></div>`)
     .join("");

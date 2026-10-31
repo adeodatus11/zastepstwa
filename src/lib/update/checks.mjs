@@ -239,10 +239,14 @@ export function summarize(subs, moves, overview) {
   const rows = table(subs, "Oddziały");
   const other = table(subs, "Dzienniki zajeć innych");
   const ind = (r) => r["Oddział"].split("|").some(isIndividual);
+  const absent = overview ? absentLessons(overview) : new Map();
+  const open = rows.filter((r) => !ind(r) && unassigned(r));
   return {
     period: periodOf(subs),
     substitutions: rows.filter((r) => !ind(r) && !unassigned(r)).length,
-    unassigned: rows.filter((r) => !ind(r) && unassigned(r)).length,
+    // Bez zastępcy, ale oddział jest wtedy nieobecny (wycieczka) — nic do zastąpienia.
+    unassigned: open.filter((r) => !classAwayRow(absent, r)).length,
+    unassignedAway: open.filter((r) => classAwayRow(absent, r)).length,
     transfers: moves
       ? table(moves, "Oddziały").filter((r) => !ind(r)).length
       : null,
@@ -399,18 +403,41 @@ export function reduceOverview(sheets) {
   return out;
 }
 
-/** Z zestawienia: lekcje nieobecnych oddziałów i złączenia grup z dziennika. */
-export function overviewFacts(overview, who = personKey) {
+/** Lekcje nieobecnych oddziałów (wycieczki): data|lekcja|oddział → grupy i zajęcia. */
+function absentLessons(overview) {
   const absent = new Map();
   for (const r of table(overview, ABSENT)) {
-    const [code, group = ""] =
-      r["Oddział/dziennik/grupa z podziałem"].split("|");
+    const [code, group = ""] = clean(
+      r["Oddział/dziennik/grupa z podziałem"],
+    ).split("|");
     const k = [cellDate(r["Data"]), period(r["Numer lekcji"]), code].join("|");
     absent.set(k, [
       ...(absent.get(k) ?? []),
       { group: lower(group), subject: lower(r["Nazwa zajęć"]) },
     ]);
   }
+  return absent;
+}
+
+/**
+ * Wiersz eksportu zastępstw dotyczy lekcji, której oddział (albo jego grupa)
+ * jest wtedy nieobecny według zestawienia — np. wycieczka. Nie ma tam czego
+ * zastępować, więc nieobecny nauczyciel bez zastępcy to nie jest usterka.
+ */
+export function classAwayRow(absent, r) {
+  const [code, group = ""] = clean(r["Oddział"]).split("|");
+  const date = rowDate(r["Dzień"]);
+  if (!date || !code) return false;
+  return (absent.get([date, period(r["Lekcja"]), code].join("|")) ?? []).some(
+    (a) =>
+      !a.group ||
+      (group ? a.group === lower(group) : a.subject === lower(r["Przedmiot"])),
+  );
+}
+
+/** Z zestawienia: lekcje nieobecnych oddziałów i złączenia grup z dziennika. */
+export function overviewFacts(overview, who = personKey) {
+  const absent = absentLessons(overview);
   const merges = new Set(
     table(overview, "Dane zastępstwa")
       .filter((r) => lower(r["Skutek nieobecności"]) === "złączenie grup")
@@ -866,9 +893,13 @@ export function review({ subs, moves, overview, published, plan }) {
         : [2, 3, 4].includes(n % 10) && ![12, 13, 14].includes(n % 100)
           ? "zastępstwa"
           : "zastępstw";
+    const absent = overview ? absentLessons(overview) : new Map();
     const list = table(subs, "Oddziały")
       .filter(
-        (r) => !r["Oddział"].split("|").some(isIndividual) && unassigned(r),
+        (r) =>
+          !r["Oddział"].split("|").some(isIndividual) &&
+          unassigned(r) &&
+          !classAwayRow(absent, r),
       )
       .map((r) => `${where(r)}, za: ${r["Nauczyciel/wakat"] || "(brak)"}`);
     messages.push({
