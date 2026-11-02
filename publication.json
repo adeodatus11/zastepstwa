@@ -32,6 +32,11 @@
       "title": "Dzień Edukacji Narodowej — dzień wolny od zajęć lekcyjnych",
       "note": "W szkole nie odbywają się zajęcia dydaktyczne. Uczniowie BS I st. będący pracownikami młodocianymi pozostają do dyspozycji pracodawców.",
       "dayOff": true
+    },
+    "2026-11-11": {
+      "title": "Narodowe Święto Niepodległości — dzień wolny",
+      "note": "Dzień ustawowo wolny od pracy. W szkole nie odbywają się zajęcia.",
+      "dayOff": true
     }
   },
   "supervisionNotes": {
