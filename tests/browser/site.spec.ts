@@ -85,7 +85,16 @@ test("Mobile selection, day/week, changes, saved teacher, preserved URL and relo
       () => document.documentElement.scrollWidth <= innerWidth,
     ),
   ).toBe(true);
-  await page.locator("#date").fill(changes.substitutions[0].date);
+  // Eksport bywa szerszy niż plan (np. od 01.09, a plan od 07.09) — dzień
+  // ze zmianami bierzemy z okresu planu, najlepiej z udziałem wybranej osoby.
+  const inPlan = changes.substitutions.filter(
+    (s: any) => s.date >= manifest.validFrom && s.date <= manifest.validTo,
+  );
+  const probe =
+    inPlan.find((s: any) =>
+      /Najwer/.test(`${s.absentTeacherName} ${s.substituteTeacherName}`),
+    ) ?? inPlan[0];
+  await page.locator("#date").fill(probe.date);
   await page.locator("#changes").click();
   await expect(page.locator(".change-row")).not.toHaveCount(0);
   await page.reload();

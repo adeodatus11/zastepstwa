@@ -13,17 +13,27 @@ python3 "$PLAN_DIR/scripts/build_student_changes.py" \
 
 python3 - "$PLAN_DIR/student-changes.json" <<'PY'
 import json, re, sys
+from datetime import datetime
+from zoneinfo import ZoneInfo
 d = json.load(open(sys.argv[1]))
 print('Okres', d['validFrom'], '–', d['validTo'], '|', len(d['substitutions']), 'zastępstw,', len(d['transfers']), 'przeniesień')
-problems = []
+# Eksport bywa szerszy (np. od 01.09), a plan bazowy od tamtej pory się zmieniał:
+# minione dni tylko zgłaszamy, publikację blokują dni od dziś. IND — zawsze.
+today = datetime.now(ZoneInfo('Europe/Warsaw')).date().isoformat()
+problems, past = [], []
 for x in d['substitutions'] + d['transfers']:
+    found = []
     if not x['sourceTeacher']:
-        problems.append(f"bez skrótu nauczyciela: {x['date']} lekcja {x['period']} {x['className']}")
+        found.append(f"bez skrótu nauczyciela: {x['date']} lekcja {x['period']} {x['className']}")
     g = x['groupName']
     if g and not x.get('freeSlot') and not any(s.lower() in (g.lower(), 'cała klasa') for s in x['sourceGroups']):
-        problems.append(f"grupa nie pokryta planem: {x['date']} lekcja {x['period']} {x['className']} {g}")
+        found.append(f"grupa nie pokryta planem: {x['date']} lekcja {x['period']} {x['className']} {g}")
+    last = max(x['date'], x.get('toDate') or x['date'])
+    (problems if last >= today else past).extend(found)
     if re.match(r'^\s*IND?\b', x['className'], re.I) or re.match(r'^\s*IND?\b', x['groupName'], re.I):
         problems.append(f"IND w publikacji: {x['date']} {x['className']} {x['groupName']}")
+for p in past:
+    print('::notice::(miniony dzień) ' + p)
 for p in problems:
     print('::error::' + p)
 sys.exit(1 if problems else 0)
