@@ -1518,6 +1518,174 @@ body.tv-mode .header-guide,
 .news-card:target .news-open {
   display: none;
 }
+/* Grafiki w treści komunikatów: okładka, piramida, karty sygnałów i rozmowy. */
+.news-body::after {
+  content: "";
+  display: block;
+  clear: both;
+}
+.news-body h3 {
+  margin: 28px 0 8px;
+}
+.news-body blockquote {
+  margin: 20px 0;
+  padding: 14px 18px;
+  border-left: 5px solid var(--red);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  background: #fbeced;
+}
+.news-body blockquote > :first-child {
+  margin-top: 0;
+}
+.news-body blockquote > :last-child {
+  margin-bottom: 0;
+}
+.news-cover {
+  float: right;
+  width: 220px;
+  margin: 4px 0 12px 24px;
+}
+.news-cover img {
+  display: block;
+  width: 100%;
+  border-radius: 8px;
+  box-shadow: 0 6px 18px rgb(25 42 37 / 22%);
+}
+.news-cover figcaption {
+  margin-top: 8px;
+  color: var(--muted);
+  font-size: 0.8rem;
+  line-height: 1.35;
+}
+@media (max-width: 599px) {
+  .news-cover {
+    float: none;
+    width: min(240px, 70%);
+    margin: 4px auto 16px;
+  }
+}
+.allport {
+  margin: 20px 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 6px;
+}
+.allport li {
+  position: relative;
+  margin-inline: auto;
+  padding: 10px 14px 10px 54px;
+  border-radius: 10px;
+  color: white;
+  line-height: 1.35;
+}
+.allport li::before {
+  content: attr(data-level);
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: rgb(255 255 255 / 22%);
+  font-weight: 700;
+}
+.allport strong {
+  display: block;
+}
+.allport span {
+  font-size: 0.94rem;
+}
+.allport li:nth-child(1) {
+  width: 62%;
+  background: #6e1620;
+}
+.allport li:nth-child(2) {
+  width: 72%;
+  background: var(--red);
+}
+.allport li:nth-child(3) {
+  width: 82%;
+  background: var(--warning);
+}
+.allport li:nth-child(4) {
+  width: 91%;
+  background: #4a6b2a;
+}
+.allport li:nth-child(5) {
+  width: 100%;
+  background: var(--green);
+}
+@media (max-width: 599px) {
+  .allport li:nth-child(n) {
+    width: 100%;
+  }
+}
+.signal-grid,
+.talk-grid {
+  display: grid;
+  gap: 14px;
+  margin: 20px 0;
+}
+@media (min-width: 700px) {
+  .signal-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+  .talk-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+.signal-card {
+  padding: 14px 18px;
+  border: 1px solid var(--line);
+  border-top: 6px solid var(--warning);
+  border-radius: var(--radius);
+  background: #fbf3e6;
+}
+.signal-card.high {
+  border-top-color: var(--red);
+  background: #fbeced;
+}
+.signal-card h4 {
+  margin: 0 0 6px;
+  font-size: 1.05rem;
+}
+.signal-card p {
+  margin: 0 0 6px;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+.signal-card ul {
+  margin: 0;
+  padding-left: 20px;
+}
+.signal-card li {
+  margin: 4px 0;
+}
+.talk-card {
+  padding: 12px 16px;
+  border: 1px solid var(--line);
+  border-left: 5px solid var(--green);
+  border-radius: var(--radius);
+  background: var(--pale);
+}
+.talk-card p {
+  margin: 0;
+}
+.talk-card .instead {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+.talk-card .instead s {
+  text-decoration-color: var(--red);
+}
+.talk-card .ask {
+  margin-top: 6px;
+  font-weight: 600;
+}
 @media print {
   .news-card .news-body {
     display: block;
