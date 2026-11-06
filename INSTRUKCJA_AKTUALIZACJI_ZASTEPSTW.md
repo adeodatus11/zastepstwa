@@ -209,6 +209,7 @@ Liczby wpisów mają pochodzić z nowej paczki. Nie używaj na stałe liczebnoś
 4. Sprawdź publiczne strony oraz opublikowane dane. Lokalny test ani udany push nie potwierdzają publikacji.
 5. Nie zmieniaj ustawień dostępu, widoczności repozytorium ani historii Git.
 6. Jeśli znajdziesz wcześniejsze publiczne dane uczniów, zgłoś lokalizację bez przepisywania danych. Nie deklaruj usunięcia historii i kopii GitHub bez sprawdzenia.
+7. Gdy `build` przechodzi, a `deploy` kończy się błędem `Timeout reached` (GitHub Pages długo stoi w `deployment_queued` lub `updating_pages`), wdrożenie dostaje numer commita i zostaje anulowane. Ponowne uruchomienie tego samego runa (`rerun_failed_jobs`) ani ręczne uruchomienie workflow z opcją „Opublikuj” nie pomagają — każda próba dla tego samego commita kończy się od razu `Deployment cancelled`. Potrzebny jest nowy commit na `przebudowa` (np. kolejna aktualizacja przez `aktualizuj.html`).
 
 Na koniec podaj krótko okres paczki, liczbę zastępstw/przeniesień/zmian dyżurów/zajęć innych, status publikacji obu stron oraz wynik testów i konkretne problemy.
 
