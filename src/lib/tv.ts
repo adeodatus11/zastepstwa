@@ -83,6 +83,9 @@ function fit(el: HTMLElement) {
         else hi = mid;
       }
     results.push({ cols, scale: lo });
+    // Wybór poniżej i tak bierze najmniej kolumn z czcionką ≥ 100% —
+    // kolejne układy nic nie zmienią, a każdy to kilkanaście przeliczeń strony.
+    if (lo >= 1) break;
   }
   // Najmniej kolumn, w których czcionka ma co najmniej 100% (w szerszej
   // kolumnie nazwiska się nie łamią); inaczej więcej kolumn tylko wtedy,
@@ -276,7 +279,10 @@ export async function init() {
       ]);
     return [...groups];
   };
-  function show() {
+  // Dopasowanie ciężkiego dnia to kilkadziesiąt przeliczeń układu (na słabym
+  // sprzęcie sekundy), więc bez zmian w treści nie układamy jej od nowa.
+  let html = "";
+  function show(refit = false) {
     fitHeader();
     if (!changes) return;
     const now = nowTime();
@@ -288,18 +294,23 @@ export async function init() {
       if (date > manifest.validTo) break;
       groups = byTeacher(date, "00:00");
     }
-    if (!groups.length) {
-      content.innerHTML =
-        '<p class="tv-empty">Brak zaplanowanych zastępstw.</p>';
-      return;
-    }
     // Inny dzień niż dziś: wyraźny tytuł, żeby nikt nie wziął go za dzisiejszy.
-    content.innerHTML = `${date === today() ? "" : `<h2 class="tvz-title">Zastępstwa na ${esc(dateLabel(date))}</h2>`}<div class="tvz-list">${groups.map((g, i) => teacher(g, date === today() ? now : "", i)).join("")}</div>`;
-    fit(content.querySelector(".tvz-list") as HTMLElement);
+    const next = !groups.length
+      ? '<p class="tv-empty">Brak zaplanowanych zastępstw.</p>'
+      : `${date === today() ? "" : `<h2 class="tvz-title">Zastępstwa na ${esc(dateLabel(date))}</h2>`}<div class="tvz-list">${groups.map((g, i) => teacher(g, date === today() ? now : "", i)).join("")}</div>`;
+    if (next === html && !refit) return;
+    if (next !== html) content.innerHTML = html = next;
+    const list = content.querySelector<HTMLElement>(".tvz-list");
+    if (list) fit(list);
   }
   // Krój pogrubiony z polskimi znakami dociąga się dopiero, gdy pojawią się
-  // zastępstwa — tekst rośnie o kilka pikseli, więc dopasuj ponownie.
-  document.fonts?.addEventListener("loadingdone", () => show());
+  // zastępstwa — tekst rośnie o kilka pikseli, więc dopasuj ponownie (raz na
+  // serię zdarzeń: każdy dociągnięty krój zgłasza własne).
+  let refit: ReturnType<typeof setTimeout> | undefined;
+  document.fonts?.addEventListener("loadingdone", () => {
+    clearTimeout(refit);
+    refit = setTimeout(() => show(true), 50);
+  });
   await connect(["plan", "changes"], (d, m) => {
     plan = d.plan;
     changes = d.changes;
