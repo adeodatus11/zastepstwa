@@ -28,5 +28,15 @@ e-papierosa odebranego niepełnoletniemu uczniowi nie oddajemy mu po lekcji, tyl
 4. Wydaj e-papierosa wyłącznie rodzicowi lub opiekunowi prawnemu.
 5. Jeżeli sytuacja się powtarza, poproś o wsparcie pedagoga lub psychologa szkolnego — rozmowa i pomoc w rzuceniu nałogu dają zwykle więcej niż sama kara.
 
+## Źródła
+
+- Ustawa z dnia 9 listopada 1995 r. o ochronie zdrowia przed następstwami używania tytoniu i wyrobów tytoniowych (Dz.U. 1996 nr 10 poz. 55 z późn. zm.) — art. 6 ust. 1. [ISAP](https://isap.sejm.gov.pl/isap.nsf/DocDetails.xsp?id=WDU19960100055)
+- Ustawa z dnia 21 maja 2025 r. o zmianie ustawy o ochronie zdrowia przed następstwami używania tytoniu i wyrobów tytoniowych (Dz.U. 2025 poz. 799) — nowe brzmienie art. 6 ust. 1, obowiązuje od 5 lipca 2025 r. [ISAP](https://isap.sejm.gov.pl/isap.nsf/DocDetails.xsp?id=WDU20250000799)
+- Ustawa z dnia 14 grudnia 2016 r. — Prawo oświatowe (Dz.U. 2017 poz. 59 z późn. zm.) — art. 68 ust. 1 pkt 6. [ISAP](https://isap.sejm.gov.pl/isap.nsf/DocDetails.xsp?id=WDU20170000059)
+- Ustawa z dnia 26 stycznia 1982 r. — Karta Nauczyciela (Dz.U. 1982 nr 3 poz. 19 z późn. zm.) — art. 6. [ISAP](https://isap.sejm.gov.pl/isap.nsf/DocDetails.xsp?id=WDU19820030019)
+- Ustawa z dnia 23 kwietnia 1964 r. — Kodeks cywilny (Dz.U. 1964 nr 16 poz. 93 z późn. zm.) — art. 15. [ISAP](https://isap.sejm.gov.pl/isap.nsf/DocDetails.xsp?id=WDU19640160093)
+- Ustawa z dnia 25 lutego 1964 r. — Kodeks rodzinny i opiekuńczy (Dz.U. 1964 nr 9 poz. 59 z późn. zm.) — art. 92 i 95. [ISAP](https://isap.sejm.gov.pl/isap.nsf/DocDetails.xsp?id=WDU19640090059)
+- Ustawa z dnia 9 czerwca 2022 r. o wspieraniu i resocjalizacji nieletnich (Dz.U. 2022 poz. 1700; tekst jednolity Dz.U. 2026 poz. 163) — art. 4 ust. 1. [ISAP](https://isap.sejm.gov.pl/isap.nsf/DocDetails.xsp?id=WDU20220001700)
+
 Z wyrazami szacunku  
 Maciej Najwer
