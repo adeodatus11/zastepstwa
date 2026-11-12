@@ -24,9 +24,6 @@ https://www.wcdn.wroc.pl/szkolenia/forma.php?forma=12386
 
 Zachęcam szczególnie wychowawców klas do skorzystania z tej formy wsparcia.
 
-Pozdrawiam  
-Maciej Najwer
-
 <a href="https://www.wcdn.wroc.pl/szkolenia/forma.php?forma=12386"><img src="/qr-wcdn-mka3.png" alt="Kod QR do rejestracji na sieć Wychowawco, nie jesteś sam! — MKA3" width="205" height="205" loading="lazy" /></a>
 
 Zeskanuj kod QR lub [przejdź do rejestracji — MKA3](https://www.wcdn.wroc.pl/szkolenia/forma.php?forma=12386).

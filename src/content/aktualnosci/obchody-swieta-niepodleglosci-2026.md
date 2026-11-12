@@ -36,7 +36,4 @@ we wtorek, 10 listopada 2026 r., w sali kinowej odbędzie się akademia z okazji
 
 Dziękuję za pomoc w sprawnym przeprowadzeniu uroczystości.
 
-Z wyrazami szacunku<br>
-Maciej Najwer
-
 **PS** Przypominam, że działa już szatnia uczniowska, a uczniowie mają do dyspozycji szafki. Bardzo proszę Państwa o dopilnowanie, aby kurtki i inna odzież wierzchnia zostawały w szafkach lub w szatni, a nie w salach lekcyjnych.

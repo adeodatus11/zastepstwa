@@ -29,6 +29,3 @@ Racjonalny nadzór nie oznacza jednak braku nadzoru. Sąd Najwyższy podkreśla,
 5. **Wyjścia powtarzają się notorycznie albo mają charakter ucieczki od lekcji** — warto porozmawiać z uczniem i zapytać, co się dzieje. Można też poinformować wychowawcę, a w razie potrzeby poprosić o poradę pedagoga lub psychologa szkolnego. Rozmowa i wsparcie zwykle dają więcej niż ogólny zakaz.
 
 Proszę, abyśmy w takich sytuacjach kierowali się zdrowym rozsądkiem i szacunkiem dla ucznia. Odmowa „nie, bo nie” raczej nie zwiększa bezpieczeństwa, a może naruszać prawa ucznia.
-
-Z wyrazami szacunku  
-Maciej Najwer
