@@ -5,7 +5,7 @@ date: "2026-11-12"
 
 Szanowni Państwo,
 
-e-papierosa odebranego niepełnoletniemu uczniowi nie oddajemy mu po lekcji, tylko przekazujemy jego rodzicom lub opiekunom. Mamy do tego podstawę w przepisach. Poniżej zebrałem te przepisy, granice, których trzeba pilnować, oraz sposób postępowania krok po kroku.
+e-papierosa odebranego niepełnoletniemu uczniowi nie oddajemy mu po lekcji, tylko przekazujemy jego rodzicom lub opiekunom. Mamy do tego podstawę w przepisach. Poniżej zebrano te przepisy, granice, których trzeba pilnować, oraz sposób postępowania krok po kroku.
 
 ## Podstawa prawna
 
@@ -37,6 +37,3 @@ e-papierosa odebranego niepełnoletniemu uczniowi nie oddajemy mu po lekcji, tyl
 - Ustawa z dnia 23 kwietnia 1964 r. — Kodeks cywilny (Dz.U. 1964 nr 16 poz. 93 z późn. zm.) — art. 15. [ISAP](https://isap.sejm.gov.pl/isap.nsf/DocDetails.xsp?id=WDU19640160093)
 - Ustawa z dnia 25 lutego 1964 r. — Kodeks rodzinny i opiekuńczy (Dz.U. 1964 nr 9 poz. 59 z późn. zm.) — art. 92 i 95. [ISAP](https://isap.sejm.gov.pl/isap.nsf/DocDetails.xsp?id=WDU19640090059)
 - Ustawa z dnia 9 czerwca 2022 r. o wspieraniu i resocjalizacji nieletnich (Dz.U. 2022 poz. 1700; tekst jednolity Dz.U. 2026 poz. 163) — art. 4 ust. 1. [ISAP](https://isap.sejm.gov.pl/isap.nsf/DocDetails.xsp?id=WDU20220001700)
-
-Z wyrazami szacunku  
-Maciej Najwer
