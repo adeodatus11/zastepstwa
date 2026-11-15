@@ -32,20 +32,20 @@ Przypominam, że nieobecności zgłaszają Państwo do mnie SMS-em. Proszę jedn
 
 ## Urlopy bezpłatne, urlop z powodu siły wyższej i inne nieobecności
 
-Wszelkie nieobecności, szczególnie urlopy bezpłatne, trzeba koniecznie zgłaszać z wyprzedzeniem, a wniosek zawsze musi najpierw trafić do kadr. Zdarza się, że po nieobecności zapominają Państwo uzupełnić wniosek w kadrach. Przy rozliczaniu godzin stwarza to bardzo wiele problemów i niejasności: ktoś nie był w pracy, a potem okazuje się, że nie ma na to stosownego wniosku, a Dyrektor w ogóle nie wie o takiej nieobecności.
+Wszelkie nieobecności, szczególnie urlopy bezpłatne, trzeba koniecznie zgłaszać z wyprzedzeniem, a wniosek zawsze musi najpierw trafić do kadr. Zdarza się, że po nieobecności zapominają Państwo uzupełnić wniosek w kadrach. Przy rozliczaniu godzin stwarza to bardzo wiele problemów i niejasności: ktoś nie był w pracy, a potem okazuje się, że nie ma na to stosownego wniosku, a Pan Dyrektor w ogóle nie wie o takiej nieobecności.
 
 Bardzo proszę trzymać się prostego schematu:
 
 1. Wypełnienie papierowego wniosku w kadrach.
-2. Pozostawienie wniosku do podpisu Dyrektora.
-3. Zatwierdzenie wniosku przez Dyrektora.
-4. Zaplanowanie zastępstw. Jeżeli wniosek trafił na biurko Dyrektora, na pewno się o nim dowiem, bo Dyrektor zawsze informuje o takich nieobecnościach. Zastępstwa zaplanuję ja albo osoba, która w danym dniu będzie je planować.
+2. Pozostawienie wniosku do podpisu Pana Dyrektora.
+3. Zatwierdzenie wniosku przez Pana Dyrektora.
+4. Zaplanowanie zastępstw. Jeżeli wniosek trafił na biurko Pana Dyrektora, na pewno się o nim dowiem, bo Pan Dyrektor zawsze informuje o takich nieobecnościach. Zastępstwa zaplanuję ja albo osoba, która w danym dniu będzie je planować.
 
 Dodatkowa informacja SMS-em do mnie jest mile widziana, ale dopiero po złożeniu wniosku i nie zamiast niego. Proszę unikać sytuacji, w której najpierw dają Państwo znać np. o urlopie bezpłatnym, a wniosek trafia do kadr dopiero po czasie — to wprowadza bałagan.
 
 Tryb nadzwyczajny zostawmy na sytuacje naprawdę nagłe. Dobrym przykładem jest urlop z powodu siły wyższej: w nagłym wypadku zgłoszenie bez wcześniejszego wniosku jest oczywiście zrozumiałe. Jeżeli jednak wiedzą Państwo z wyprzedzeniem, że będą chcieli z niego skorzystać, proszę również wcześniej zostawić wniosek.
 
-W pokoju nauczycielskim będą dostępne druki wniosków o urlop bezpłatny i o urlop z powodu siły wyższej, tak aby — niezależnie od obecności Pani Małgorzaty Roznarskiej z kadr — mogli Państwo złożyć taki wniosek do Dyrektora. Proszę pamiętać: najpierw papierowy wniosek do Dyrektora, potem ewentualnie SMS do mnie.
+W pokoju nauczycielskim będą dostępne druki wniosków o urlop bezpłatny i o urlop z powodu siły wyższej, tak aby — niezależnie od obecności Pani Małgorzaty Roznarskiej z kadr — mogli Państwo złożyć taki wniosek do Pana Dyrektora. Proszę pamiętać: najpierw papierowy wniosek do Pana Dyrektora, potem ewentualnie SMS do mnie.
 
 ## Co dalej
 
