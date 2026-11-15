@@ -1,5 +1,5 @@
 ---
-title: "Praktyki zawodowe klas 3TFA i 3TFB (16.11–11.12) — plan lekcji bez zmian"
+title: "Praktyki 3TFA i 3TFB (16.11–11.12): plan bez zmian, dyżury i zgłaszanie nieobecności"
 date: "2026-11-15"
 ---
 
@@ -29,6 +29,23 @@ Po wyjęciu z planu lekcji klas trzecich niektóre dyżury mogą wypadać daleko
 Przypominam, że nieobecności zgłaszają Państwo do mnie SMS-em. Proszę jednak dodatkowo — zwłaszcza przy spóźnieniach, np. gdy nie dojeżdża pociąg — sprawdzić w zakładce [Dyżury nadzoru](/dyzury-nadzoru.html) na stronie nauczyciel.szkolamistrzow.info, kto pełni w danej chwili dyżur, i zgłosić to także tej osobie. Nie zawsze mam przy sobie telefon, nie zawsze mogę szybko zareagować i nie zawsze jestem w pracy.
 
 **W dniach 18–25 listopada będę nieobecny.** Nieobecności i spóźnienia w tym czasie proszę zgłaszać nie do mnie, tylko do osoby pełniącej dyżur w danym dniu (zakładka [Dyżury nadzoru](/dyzury-nadzoru.html)).
+
+## Urlopy bezpłatne, urlop z powodu siły wyższej i inne nieobecności
+
+Wszelkie nieobecności, szczególnie urlopy bezpłatne, trzeba koniecznie zgłaszać z wyprzedzeniem, a wniosek zawsze musi najpierw trafić do kadr. Zdarza się, że po nieobecności zapominają Państwo uzupełnić wniosek w kadrach. Przy rozliczaniu godzin stwarza to bardzo wiele problemów i niejasności: ktoś nie był w pracy, a potem okazuje się, że nie ma na to stosownego wniosku, a dyrektor w ogóle nie wie o takiej nieobecności.
+
+Bardzo proszę trzymać się prostego schematu:
+
+1. Wypełnienie papierowego wniosku w kadrach.
+2. Pozostawienie wniosku do podpisu dyrektora.
+3. Zatwierdzenie wniosku przez dyrektora.
+4. Zaplanowanie zastępstw. Jeżeli wniosek trafił na biurko dyrektora, na pewno się o nim dowiem, bo dyrektor zawsze informuje o takich nieobecnościach. Zastępstwa zaplanuję ja albo osoba, która w danym dniu będzie je planować.
+
+Dodatkowa informacja SMS-em do mnie jest mile widziana, ale dopiero po złożeniu wniosku i nie zamiast niego. Proszę unikać sytuacji, w której najpierw dają Państwo znać np. o urlopie bezpłatnym, a wniosek trafia do kadr dopiero po czasie — to wprowadza bałagan.
+
+Tryb nadzwyczajny zostawmy na sytuacje naprawdę nagłe. Dobrym przykładem jest urlop z powodu siły wyższej: w nagłym wypadku zgłoszenie bez wcześniejszego wniosku jest oczywiście zrozumiałe. Jeżeli jednak wiedzą Państwo z wyprzedzeniem, że będą chcieli z niego skorzystać, proszę również wcześniej zostawić wniosek.
+
+W pokoju nauczycielskim będą dostępne druki wniosków o urlop bezpłatny i o urlop z powodu siły wyższej, tak aby — niezależnie od obecności Pani Małgorzaty Roznarskiej z kadr — mogli Państwo złożyć taki wniosek do dyrektora. Proszę pamiętać: najpierw papierowy wniosek do dyrektora, potem ewentualnie SMS do mnie.
 
 ## Co dalej
 
