@@ -1,15 +1,15 @@
 {
   "meta": {
     "schoolYear": "2026/2027",
-    "generatedAt": "2026-10-30T19:07:28",
+    "generatedAt": "2026-11-17T07:46:05",
     "sourceWorkbook": "/home/user/zastepstwa/kalendarz_dzienny_role_2026_2027.xlsx",
-    "totalEvents": 96,
+    "totalEvents": 97,
     "confirmationCount": 2,
     "categoryCounts": {
       "classification": 18,
       "council": 8,
       "exam": 20,
-      "general": 17,
+      "general": 18,
       "holiday": 22,
       "meeting": 9,
       "practice": 2
@@ -350,8 +350,24 @@
     },
     {
       "id": "evt-0020",
-      "title": "RADA PEDAGOGICZNA SZKOLENIOWA: uzależnienia cyfrowe (Fundacja Karan)",
+      "title": "SZKOLENIE NIEOBOWIĄZKOWE (na zapisy): wykorzystanie AI w pracy nauczyciela",
       "start": "2026-11-18T15:45:00",
+      "allDay": false,
+      "category": "general",
+      "tags": [],
+      "priority": "normal",
+      "audience": "nauczyciele",
+      "extendedProps": {
+        "description": "15:45 - 18:45 - SZKOLENIE NIEOBOWIĄZKOWE (na zapisy): wykorzystanie AI w pracy nauczyciela\nDodatkowe szkolenie dla nauczycieli z wykorzystania sztucznej inteligencji w pracy nauczyciela. Udział nieobowiązkowy, obowiązują zapisy.",
+        "needsConfirmation": false,
+        "sourceNote": ""
+      },
+      "end": "2026-11-18T18:45:00"
+    },
+    {
+      "id": "evt-0021",
+      "title": "RADA PEDAGOGICZNA SZKOLENIOWA (obowiązkowa): uzależnienia cyfrowe (Fundacja Karan)",
+      "start": "2026-11-25T15:45:00",
       "allDay": false,
       "category": "council",
       "tags": [
@@ -360,14 +376,14 @@
       "priority": "high",
       "audience": "nauczyciele",
       "extendedProps": {
-        "description": "15:45 - 18:45 - RADA PEDAGOGICZNA SZKOLENIOWA: uzależnienia cyfrowe (Fundacja Karan)\nSzkolenie Fundacji Karan: uzależnienia cyfrowe wśród młodzieży i nastolatków (ok. 3 godziny)",
+        "description": "15:45 - 18:45 - RADA PEDAGOGICZNA SZKOLENIOWA (obowiązkowa): uzależnienia cyfrowe (Fundacja Karan)\nSzkolenie Fundacji Karan: uzależnienia cyfrowe wśród młodzieży i nastolatków (ok. 3 godziny). Udział obowiązkowy dla nauczycieli.",
         "needsConfirmation": false,
         "sourceNote": ""
       },
-      "end": "2026-11-18T18:45:00"
+      "end": "2026-11-25T18:45:00"
     },
     {
-      "id": "evt-0021",
+      "id": "evt-0022",
       "title": "3 SEMESTR BS II st.: egzaminy semestralne 30.11.2026 r. - 7.12.2026 r. (szczegółowy h...",
       "start": "2026-11-30",
       "allDay": true,
@@ -385,7 +401,7 @@
       }
     },
     {
-      "id": "evt-0022",
+      "id": "evt-0023",
       "title": "1 SEMESTR BS II st.: poinformowanie słuchaczy (w tym rodziców niepełnoletnich słuchac...",
       "start": "2026-12-01",
       "allDay": true,
@@ -403,7 +419,7 @@
       }
     },
     {
-      "id": "evt-0023",
+      "id": "evt-0024",
       "title": "KLASY 5 TECHNIKUM: wystawienie ocen półrocznych",
       "start": "2026-12-03",
       "allDay": true,
@@ -420,7 +436,7 @@
       }
     },
     {
-      "id": "evt-0024",
+      "id": "evt-0025",
       "title": "3 SEMESTR BS II st.: złożenie dokumentacji z egzaminów semestralnych; wystawienie oce...",
       "start": "2026-12-07",
       "allDay": true,
@@ -439,7 +455,7 @@
       }
     },
     {
-      "id": "evt-0025",
+      "id": "evt-0026",
       "title": "KLASY 5 TECHNIKUM: wychowawcy klas - złożenie zestawień klasyfikacyjnych",
       "start": "2026-12-08",
       "allDay": true,
@@ -457,7 +473,7 @@
       }
     },
     {
-      "id": "evt-0026",
+      "id": "evt-0027",
       "title": "RADA PEDAGOGICZNA:",
       "start": "2026-12-09T15:45:00",
       "allDay": false,
@@ -478,7 +494,7 @@
       "end": "2026-12-09T17:15:00"
     },
     {
-      "id": "evt-0027",
+      "id": "evt-0028",
       "title": "KLASY 5 TECHNIKUM: wychowawcy klas - zebrania z rodzicami na zakończenie I półrocza",
       "start": "2026-12-09T17:00:00",
       "allDay": false,
@@ -496,7 +512,7 @@
       "end": "2026-12-09T18:30:00"
     },
     {
-      "id": "evt-0028",
+      "id": "evt-0029",
       "title": "POZOSTAŁE KLASY: wszyscy nauczyciele - konsultacje dla uczniów, w tym słuchaczy BS II...",
       "start": "2026-12-09T17:00:00",
       "allDay": false,
@@ -515,7 +531,7 @@
       "end": "2026-12-09T18:00:00"
     },
     {
-      "id": "evt-0029",
+      "id": "evt-0030",
       "title": "KLASY 5 TECHNIKUM: zakończenie I półrocza",
       "start": "2026-12-11",
       "allDay": true,
@@ -532,7 +548,7 @@
       }
     },
     {
-      "id": "evt-0030",
+      "id": "evt-0031",
       "title": "MATURA PRÓBNA OKE: język polski",
       "start": "2026-12-17T09:00:00",
       "allDay": false,
@@ -550,7 +566,7 @@
       "end": "2026-12-17T10:30:00"
     },
     {
-      "id": "evt-0031",
+      "id": "evt-0032",
       "title": "MATURA PRÓBNA OKE: język polski",
       "start": "2026-12-17T09:00:00",
       "allDay": false,
@@ -566,24 +582,6 @@
         "sourceNote": ""
       },
       "end": "2026-12-17T10:30:00"
-    },
-    {
-      "id": "evt-0032",
-      "title": "MATURA PRÓBNA OKE: matematyka",
-      "start": "2026-12-18T09:00:00",
-      "allDay": false,
-      "category": "exam",
-      "tags": [
-        "egzaminy"
-      ],
-      "priority": "high",
-      "audience": "wychowawcy",
-      "extendedProps": {
-        "description": "9:00 - MATURA PRÓBNA OKE: matematyka\nWychowawcy klas maturalnych i nauczyciele matematyki: proszę o przekazanie informacji uczniom. Matura próbna nie jest sprawdzeniem wiedzy na ocenę.",
-        "needsConfirmation": false,
-        "sourceNote": ""
-      },
-      "end": "2026-12-18T10:30:00"
     },
     {
       "id": "evt-0033",
@@ -595,7 +593,7 @@
         "egzaminy"
       ],
       "priority": "high",
-      "audience": "nauczyciele",
+      "audience": "wychowawcy",
       "extendedProps": {
         "description": "9:00 - MATURA PRÓBNA OKE: matematyka\nWychowawcy klas maturalnych i nauczyciele matematyki: proszę o przekazanie informacji uczniom. Matura próbna nie jest sprawdzeniem wiedzy na ocenę.",
         "needsConfirmation": false,
@@ -605,6 +603,24 @@
     },
     {
       "id": "evt-0034",
+      "title": "MATURA PRÓBNA OKE: matematyka",
+      "start": "2026-12-18T09:00:00",
+      "allDay": false,
+      "category": "exam",
+      "tags": [
+        "egzaminy"
+      ],
+      "priority": "high",
+      "audience": "nauczyciele",
+      "extendedProps": {
+        "description": "9:00 - MATURA PRÓBNA OKE: matematyka\nWychowawcy klas maturalnych i nauczyciele matematyki: proszę o przekazanie informacji uczniom. Matura próbna nie jest sprawdzeniem wiedzy na ocenę.",
+        "needsConfirmation": false,
+        "sourceNote": ""
+      },
+      "end": "2026-12-18T10:30:00"
+    },
+    {
+      "id": "evt-0035",
       "title": "Zimowa przerwa świąteczna – 23.12.2026–31.12.2026",
       "start": "2026-12-23",
       "allDay": true,
@@ -622,7 +638,7 @@
       "end": "2027-01-01"
     },
     {
-      "id": "evt-0035",
+      "id": "evt-0036",
       "title": "Boże Narodzenie (pierwszy dzień) - dzień ustawowo wolny",
       "start": "2026-12-25",
       "allDay": true,
@@ -639,7 +655,7 @@
       }
     },
     {
-      "id": "evt-0036",
+      "id": "evt-0037",
       "title": "Boże Narodzenie (drugi dzień) - dzień ustawowo wolny",
       "start": "2026-12-26",
       "allDay": true,
@@ -656,7 +672,7 @@
       }
     },
     {
-      "id": "evt-0037",
+      "id": "evt-0038",
       "title": "Nowy Rok - dzień ustawowo wolny",
       "start": "2027-01-01",
       "allDay": true,
@@ -673,7 +689,7 @@
       }
     },
     {
-      "id": "evt-0038",
+      "id": "evt-0039",
       "title": "1 SEMESTR BS II st.: egzaminy semestralne 2.01.2027 r. - 12.01.2027 r. (szczegółowy h...",
       "start": "2027-01-04",
       "allDay": true,
@@ -691,7 +707,7 @@
       }
     },
     {
-      "id": "evt-0039",
+      "id": "evt-0040",
       "title": "EGZAMIN ZAWODOWY - sesja zimowa: 5TFB i BS II stopnia - część praktyczna (termin głów...",
       "start": "2027-01-05",
       "allDay": true,
@@ -709,7 +725,7 @@
       }
     },
     {
-      "id": "evt-0040",
+      "id": "evt-0041",
       "title": "Trzech Króli - dzień wolny",
       "start": "2027-01-06",
       "allDay": true,
@@ -726,7 +742,7 @@
       }
     },
     {
-      "id": "evt-0041",
+      "id": "evt-0042",
       "title": "KLASY 1-4 TECHNIKUM, KLASY 1-3 BS I st.: wystawienie ocen śródrocznych",
       "start": "2027-01-07",
       "allDay": true,
@@ -743,7 +759,7 @@
       }
     },
     {
-      "id": "evt-0042",
+      "id": "evt-0043",
       "title": "egzaminy zawodowe - część teoretyczna pisemna",
       "start": "2027-01-08",
       "allDay": true,
@@ -761,7 +777,7 @@
       }
     },
     {
-      "id": "evt-0043",
+      "id": "evt-0044",
       "title": "KLASY 1-5 TECHNIKUM, KLASY 1-3 BS I st.: dzień wolny od zajęć dydaktycznych",
       "start": "2027-01-08",
       "allDay": true,
@@ -778,7 +794,7 @@
       }
     },
     {
-      "id": "evt-0044",
+      "id": "evt-0045",
       "title": "KLASY 1-4 TECHNIKUM, KLASY 1-3 BS I st.: wychowawcy klas - złożenie zestawień klasyfi...",
       "start": "2027-01-11",
       "allDay": true,
@@ -797,7 +813,7 @@
       }
     },
     {
-      "id": "evt-0045",
+      "id": "evt-0046",
       "title": "1 SEMESTR BS II st.: złożenie zestawienia klasyfikacyjnego",
       "start": "2027-01-12",
       "allDay": true,
@@ -814,7 +830,7 @@
       }
     },
     {
-      "id": "evt-0046",
+      "id": "evt-0047",
       "title": "RADA PEDAGOGICZNA:",
       "start": "2027-01-13T15:00:00",
       "allDay": false,
@@ -834,7 +850,7 @@
       "end": "2027-01-13T16:30:00"
     },
     {
-      "id": "evt-0047",
+      "id": "evt-0048",
       "title": "KLASY 1-4 TECHNIKUM, KLASY 1-3 BS I st.: zakończenie I półrocza",
       "start": "2027-01-15",
       "allDay": true,
@@ -851,7 +867,7 @@
       }
     },
     {
-      "id": "evt-0048",
+      "id": "evt-0049",
       "title": "KLASY 1-4 TECHNIKUM, KLASY 1-3 BS I st.: wychowawcy klas - zebrania z rodzicami na za...",
       "start": "2027-01-15T16:30:00",
       "allDay": false,
@@ -869,7 +885,7 @@
       "end": "2027-01-15T18:00:00"
     },
     {
-      "id": "evt-0049",
+      "id": "evt-0050",
       "title": "Studniówka",
       "start": "2027-01-16",
       "allDay": true,
@@ -884,7 +900,7 @@
       }
     },
     {
-      "id": "evt-0050",
+      "id": "evt-0051",
       "title": "Ferie zimowe – 18.01.2027–31.01.2027",
       "start": "2027-01-18",
       "allDay": true,
@@ -902,7 +918,7 @@
       "end": "2027-02-01"
     },
     {
-      "id": "evt-0051",
+      "id": "evt-0052",
       "title": "RADA PEDAGOGICZNA:",
       "start": "2027-02-03T15:00:00",
       "allDay": false,
@@ -920,7 +936,7 @@
       "end": "2027-02-03T16:30:00"
     },
     {
-      "id": "evt-0052",
+      "id": "evt-0053",
       "title": "Praktyki zawodowe - klasy 4 technikum",
       "start": "2027-02-22",
       "allDay": true,
@@ -938,7 +954,7 @@
       "end": "2027-03-20"
     },
     {
-      "id": "evt-0053",
+      "id": "evt-0054",
       "title": "RADA PEDAGOGICZNA:",
       "start": "2027-03-17T15:00:00",
       "allDay": false,
@@ -956,7 +972,7 @@
       "end": "2027-03-17T16:30:00"
     },
     {
-      "id": "evt-0054",
+      "id": "evt-0055",
       "title": "4 SEMESTR BS II st.: poinformowanie słuchaczy (w tym rodziców niepełnoletnich słuchac...",
       "start": "2027-03-19",
       "allDay": true,
@@ -974,7 +990,7 @@
       }
     },
     {
-      "id": "evt-0055",
+      "id": "evt-0056",
       "title": "Wiosenna przerwa świąteczna – 25.03.2027–30.03.2027",
       "start": "2027-03-25",
       "allDay": true,
@@ -992,7 +1008,7 @@
       "end": "2027-03-31"
     },
     {
-      "id": "evt-0056",
+      "id": "evt-0057",
       "title": "Wielkanoc (Niedziela Wielkanocna) - dzień ustawowo wolny",
       "start": "2027-03-28",
       "allDay": true,
@@ -1009,7 +1025,7 @@
       }
     },
     {
-      "id": "evt-0057",
+      "id": "evt-0058",
       "title": "Poniedziałek Wielkanocny - dzień ustawowo wolny",
       "start": "2027-03-29",
       "allDay": true,
@@ -1026,7 +1042,7 @@
       }
     },
     {
-      "id": "evt-0058",
+      "id": "evt-0059",
       "title": "KLASY 5 TECHNIKUM: wystawienie proponowanych ocen końcowych (maksymalnie do godz. 16:00)",
       "start": "2027-04-09",
       "allDay": true,
@@ -1043,7 +1059,7 @@
       }
     },
     {
-      "id": "evt-0059",
+      "id": "evt-0060",
       "title": "KLASY 5 TECHNIKUM: wychowawcy klas - zebrania z rodzicami",
       "start": "2027-04-09T16:30:00",
       "allDay": false,
@@ -1061,7 +1077,7 @@
       "end": "2027-04-09T18:00:00"
     },
     {
-      "id": "evt-0060",
+      "id": "evt-0061",
       "title": "POZOSTAŁE KLASY: wszyscy nauczyciele - konsultacje dla uczniów, w tym słuchaczy BS II...",
       "start": "2027-04-09T16:30:00",
       "allDay": false,
@@ -1080,7 +1096,7 @@
       "end": "2027-04-09T17:30:00"
     },
     {
-      "id": "evt-0061",
+      "id": "evt-0062",
       "title": "4 SEMESTR BS II st.: egzaminy semestralne 19.04.2027 r. - 27.04.2027 r. (szczegółowy...",
       "start": "2027-04-19",
       "allDay": true,
@@ -1098,7 +1114,7 @@
       }
     },
     {
-      "id": "evt-0062",
+      "id": "evt-0063",
       "title": "Turniej na najlepszego ucznia w zawodzie cukiernik i piekarz",
       "start": "2027-04-20",
       "allDay": true,
@@ -1114,7 +1130,7 @@
       "end": "2027-04-23"
     },
     {
-      "id": "evt-0063",
+      "id": "evt-0064",
       "title": "KLASY 5 TECHNIKUM: wystawienie ocen końcowych",
       "start": "2027-04-22",
       "allDay": true,
@@ -1131,7 +1147,7 @@
       }
     },
     {
-      "id": "evt-0064",
+      "id": "evt-0065",
       "title": "KLASY 5 TECHNIKUM: wychowawcy klas - złożenie zestawienia klasyfikacyjnego",
       "start": "2027-04-26",
       "allDay": true,
@@ -1150,7 +1166,7 @@
       }
     },
     {
-      "id": "evt-0065",
+      "id": "evt-0066",
       "title": "4 SEMESTR BS II st.: złożenie zestawienia klasyfikacyjnego",
       "start": "2027-04-27",
       "allDay": true,
@@ -1167,7 +1183,7 @@
       }
     },
     {
-      "id": "evt-0066",
+      "id": "evt-0067",
       "title": "RADA PEDAGOGICZNA:",
       "start": "2027-04-28T15:00:00",
       "allDay": false,
@@ -1188,7 +1204,7 @@
       "end": "2027-04-28T16:30:00"
     },
     {
-      "id": "evt-0067",
+      "id": "evt-0068",
       "title": "KLASY 5 TECHNIKUM oraz 4 SEMESTR BS II st.: zakończenie roku szkolnego",
       "start": "2027-04-30",
       "allDay": true,
@@ -1206,7 +1222,7 @@
       }
     },
     {
-      "id": "evt-0068",
+      "id": "evt-0069",
       "title": "Międzynarodowe Święto Pracy",
       "start": "2027-05-01",
       "allDay": true,
@@ -1223,7 +1239,7 @@
       }
     },
     {
-      "id": "evt-0069",
+      "id": "evt-0070",
       "title": "Święto Konstytucji 3 Maja",
       "start": "2027-05-03",
       "allDay": true,
@@ -1240,7 +1256,7 @@
       }
     },
     {
-      "id": "evt-0070",
+      "id": "evt-0071",
       "title": "KLASY 1-4 TECHNIKUM: dzień wolny od zajęć dydaktycznych",
       "start": "2027-05-04",
       "allDay": true,
@@ -1258,7 +1274,7 @@
       "end": "2027-05-07"
     },
     {
-      "id": "evt-0071",
+      "id": "evt-0072",
       "title": "matura - język polski",
       "start": "2027-05-04",
       "allDay": true,
@@ -1277,7 +1293,7 @@
       }
     },
     {
-      "id": "evt-0072",
+      "id": "evt-0073",
       "title": "matura - matematyka",
       "start": "2027-05-05",
       "allDay": true,
@@ -1296,7 +1312,7 @@
       }
     },
     {
-      "id": "evt-0073",
+      "id": "evt-0074",
       "title": "matura - języki obce nowożytne",
       "start": "2027-05-06",
       "allDay": true,
@@ -1315,7 +1331,7 @@
       }
     },
     {
-      "id": "evt-0074",
+      "id": "evt-0075",
       "title": "2 SEMESTR BS II st.: poinformowanie słuchaczy (w tym rodziców niepełnoletnich słuchac...",
       "start": "2027-05-07",
       "allDay": true,
@@ -1333,7 +1349,7 @@
       }
     },
     {
-      "id": "evt-0075",
+      "id": "evt-0076",
       "title": "RADA PEDAGOGICZNA:",
       "start": "2027-05-19T15:00:00",
       "allDay": false,
@@ -1352,7 +1368,7 @@
       "end": "2027-05-19T16:30:00"
     },
     {
-      "id": "evt-0076",
+      "id": "evt-0077",
       "title": "zajęcia wg planu z 28 maja 2027 r.",
       "start": "2027-05-22",
       "allDay": true,
@@ -1367,7 +1383,7 @@
       }
     },
     {
-      "id": "evt-0077",
+      "id": "evt-0078",
       "title": "KLASY 1-4 TECHNIKUM, KLASY 1-3 BS I st.: wystawienie proponowanych ocen rocznych",
       "start": "2027-05-24",
       "allDay": true,
@@ -1384,7 +1400,7 @@
       }
     },
     {
-      "id": "evt-0078",
+      "id": "evt-0079",
       "title": "KLASY 1-4 TECHNIKUM, KLASY 1-3 BS I st.: wychowawcy klas - zebrania z rodzicami",
       "start": "2027-05-25T16:30:00",
       "allDay": false,
@@ -1402,7 +1418,7 @@
       "end": "2027-05-25T18:00:00"
     },
     {
-      "id": "evt-0079",
+      "id": "evt-0080",
       "title": "Boże Ciało",
       "start": "2027-05-27",
       "allDay": true,
@@ -1419,7 +1435,7 @@
       }
     },
     {
-      "id": "evt-0080",
+      "id": "evt-0081",
       "title": "dzień wolny do odpracowania: SOBOTA 22 maja 2027 r.",
       "start": "2027-05-28",
       "allDay": true,
@@ -1436,7 +1452,7 @@
       }
     },
     {
-      "id": "evt-0081",
+      "id": "evt-0082",
       "title": "EGZAMIN ZAWODOWY - sesja letnia: termin główny 1.06.2027 r. - 21.06.2027 r.",
       "start": "2027-06-01",
       "allDay": true,
@@ -1453,7 +1469,7 @@
       }
     },
     {
-      "id": "evt-0082",
+      "id": "evt-0083",
       "title": "dzień wolny od zajęć dydaktycznych",
       "start": "2027-06-03",
       "allDay": true,
@@ -1471,7 +1487,7 @@
       "end": "2027-06-05"
     },
     {
-      "id": "evt-0083",
+      "id": "evt-0084",
       "title": "egzaminy zawodowe - część pisemna",
       "start": "2027-06-03",
       "allDay": true,
@@ -1489,7 +1505,7 @@
       "end": "2027-06-05"
     },
     {
-      "id": "evt-0084",
+      "id": "evt-0085",
       "title": "2 SEMESTR BS II st.: egzaminy semestralne 8.06.2027 r. - 17.06.2027 r. (szczegółowy h...",
       "start": "2027-06-08",
       "allDay": true,
@@ -1507,7 +1523,7 @@
       }
     },
     {
-      "id": "evt-0085",
+      "id": "evt-0086",
       "title": "KLASY 1-4 TECHNIKUM, KLASY 1-3 BS I st.: wystawienie ocen rocznych/końcowych",
       "start": "2027-06-15",
       "allDay": true,
@@ -1524,7 +1540,7 @@
       }
     },
     {
-      "id": "evt-0086",
+      "id": "evt-0087",
       "title": "KLASY 1-4 TECHNIKUM, KLASY 1-3 BS I st.: wychowawcy klas - złożenie zestawień klasyfi...",
       "start": "2027-06-17",
       "allDay": true,
@@ -1543,7 +1559,7 @@
       }
     },
     {
-      "id": "evt-0087",
+      "id": "evt-0088",
       "title": "2 SEMESTR BS II st.: złożenie zestawienia semestralnego",
       "start": "2027-06-18",
       "allDay": true,
@@ -1560,7 +1576,7 @@
       }
     },
     {
-      "id": "evt-0088",
+      "id": "evt-0089",
       "title": "EGZAMIN ZAWODOWY - sesja letnia: ostatni dzień terminu głównego (1.06.2027 r. - 21.06...",
       "start": "2027-06-21",
       "allDay": true,
@@ -1577,7 +1593,7 @@
       }
     },
     {
-      "id": "evt-0089",
+      "id": "evt-0090",
       "title": "RADA PEDAGOGICZNA: godz. do ustalenia",
       "start": "2027-06-21",
       "allDay": true,
@@ -1596,7 +1612,7 @@
       }
     },
     {
-      "id": "evt-0090",
+      "id": "evt-0091",
       "title": "RADA PEDAGOGICZNA: godz. do ustalenia",
       "start": "2027-06-23",
       "allDay": true,
@@ -1615,7 +1631,7 @@
       }
     },
     {
-      "id": "evt-0091",
+      "id": "evt-0092",
       "title": "RADA PEDAGOGICZNA: godz. do ustalenia",
       "start": "2027-06-24",
       "allDay": true,
@@ -1632,7 +1648,7 @@
       }
     },
     {
-      "id": "evt-0092",
+      "id": "evt-0093",
       "title": "dzień wolny od zajęć dydaktyczno-wychowawczych",
       "start": "2027-06-25",
       "allDay": true,
@@ -1649,7 +1665,7 @@
       }
     },
     {
-      "id": "evt-0093",
+      "id": "evt-0094",
       "title": "zakończenie roku szkolnego",
       "start": "2027-06-25",
       "allDay": true,
@@ -1666,7 +1682,7 @@
       }
     },
     {
-      "id": "evt-0094",
+      "id": "evt-0095",
       "title": "Rada pedagogiczna - wpis wymaga doprecyzowania",
       "start": "2027-06-28",
       "allDay": true,
@@ -1686,7 +1702,7 @@
       }
     },
     {
-      "id": "evt-0095",
+      "id": "evt-0096",
       "title": "Wniebowzięcie NMP",
       "start": "2027-08-15",
       "allDay": true,
@@ -1703,7 +1719,7 @@
       }
     },
     {
-      "id": "evt-0096",
+      "id": "evt-0097",
       "title": "RADA PEDAGOGICZNA: 31 sierpnia 2027 r.",
       "start": "2027-08-31T09:00:00",
       "allDay": false,
