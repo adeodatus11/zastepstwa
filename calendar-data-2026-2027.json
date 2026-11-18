@@ -1,7 +1,7 @@
 {
   "meta": {
     "schoolYear": "2026/2027",
-    "generatedAt": "2026-11-18T08:37:27",
+    "generatedAt": "2026-11-18T08:40:54",
     "sourceWorkbook": "/home/user/zastepstwa/kalendarz_dzienny_role_2026_2027.xlsx",
     "totalEvents": 98,
     "confirmationCount": 2,
@@ -350,7 +350,7 @@
     },
     {
       "id": "evt-0020",
-      "title": "RADA PEDAGOGICZNA SZKOLENIOWA: wykorzystanie AI (Marcin Kopij)",
+      "title": "RADA PEDAGOGICZNA SZKOLENIOWA: wykorzystanie AI w pracy nauczyciela (Marcin Kopij)",
       "start": "2026-11-18T15:45:00",
       "allDay": false,
       "category": "council",
@@ -360,7 +360,7 @@
       "priority": "high",
       "audience": "nauczyciele",
       "extendedProps": {
-        "description": "15:45 - RADA PEDAGOGICZNA SZKOLENIOWA: wykorzystanie AI (Marcin Kopij)\nSzkolenie z wykorzystania sztucznej inteligencji (AI) prowadzi Marcin Kopij",
+        "description": "15:45 - RADA PEDAGOGICZNA SZKOLENIOWA: wykorzystanie AI w pracy nauczyciela (Marcin Kopij)\nSzkolenie z wykorzystania sztucznej inteligencji (AI) w pracy nauczyciela prowadzi Marcin Kopij",
         "needsConfirmation": false,
         "sourceNote": ""
       },
